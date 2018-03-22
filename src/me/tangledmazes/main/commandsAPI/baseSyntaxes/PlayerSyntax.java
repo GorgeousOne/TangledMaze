@@ -24,6 +24,7 @@ public class PlayerSyntax implements ICommandSyntax {
 		return null;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean isPlayer(String arg) {
 		
 		Player p = Bukkit.getServer().getPlayerExact(arg);
