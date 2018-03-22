@@ -3,6 +3,8 @@ package me.tangledmazes.gorgeousone.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -13,6 +15,7 @@ import org.bukkit.util.Vector;
 public class RectSelection {
 	
 	private Player p;
+	private World world;
 	private ArrayList<Vector> unboundVertices, vertices;
 	private boolean isComplete;
 	
@@ -21,6 +24,7 @@ public class RectSelection {
 	 */
 	public RectSelection(Player p) {
 		this.p = p;
+		world = p.getWorld();
 		unboundVertices = new ArrayList<>();
 		vertices = new ArrayList<>();
 		isComplete = false;
@@ -43,86 +47,101 @@ public class RectSelection {
 	}
 	
 	/**
-	 * Adds a point as vertex to the rectangle if it is not yet defined by 2 vertices and the area of the rectangle was greater than 1 
-	 * @param point
-	 * @return if the point was added as vertex
+	 * Adds a block as vertex to the rectangle if it is not yet defined by 2 vertices and the area of the rectangle was greater than 1 
+	 * @param b
+	 * @return if the block was added as vertex
 	 */
-	public void addVertex(Vector point) {
+	public void addVertex(Block b) {
+		worldCheck(b);
+		
 		if(isComplete)
 			return;
-
+		
 		if(unboundVertices.isEmpty())
-			unboundVertices.add(point);
+			unboundVertices.add(b.getLocation().toVector());
 
 		else {
-			if(point.getBlockX() == unboundVertices.get(0).getBlockX() &&
-			   point.getBlockZ() == unboundVertices.get(0).getBlockZ())
+			if(b.getX() == unboundVertices.get(0).getX() &&
+			   b.getZ() == unboundVertices.get(0).getZ())
 				return;
 			else {
-				unboundVertices.add(point);
+				unboundVertices.add(b.getLocation().toVector());
 				calcVertices();
 			}
 		}
 	}
 	
 	/**
-	 * Moves a vertex to another point
+	 * Moves a vertex to another block
 	 * @param index 
-	 * @param newPoint
+	 * @param newVertex
 	 */
-	public void moveVertexTo(Vector vertex, Vector newPoint) {
-		if(!isComplete() || !isVertex(newPoint))
+	public void moveVertexTo(Block vertex, Block newVertex) {
+		worldCheck(newVertex);
+		
+		if(!isComplete() || !isVertex(newVertex))
 			return;
 		
-		int index = indexOfVertex(newPoint);
-		vertices.get(index).setX(newPoint.getBlockX()).setZ(newPoint.getBlockZ());
+		int index = indexOfVertex(newVertex);
+		vertices.get(index).setX(newVertex.getX()).setZ(newVertex.getZ());
 		
 		if(index % 2 == 0) {
-			vertices.get(index+1 % 4).setX(newPoint.getBlockX());
-			vertices.get(index+3 % 4).setZ(newPoint.getBlockZ());
+			vertices.get(index+1 % 4).setX(newVertex.getX());
+			vertices.get(index+3 % 4).setZ(newVertex.getZ());
 		}else {
-			vertices.get(index+1 % 4).setZ(newPoint.getBlockZ());
-			vertices.get(index+3 % 4).setX(newPoint.getBlockX());
+			vertices.get(index+1 % 4).setZ(newVertex.getZ());
+			vertices.get(index+3 % 4).setX(newVertex.getX());
 		}
 	}
-
+	
 	/**
-	 * @param point
-	 * @return if the point is a vertex of the rectangle
+	 * @param b
+	 * @return if the given block is inside the rectangular shape.
 	 */
-	public boolean isVertex(Vector point) {
+	public boolean contains(Block b) {
 		if(!isComplete())
+			return false;
+		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
+			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
+	}
+	
+	/**
+	 * @param b
+	 * @return if the block is a vertex of the rectangle
+	 */
+	public boolean isVertex(Block b) {
+		if(!isComplete() || !b.getWorld().equals(world))
 			return false;
 		
 		for(Vector vertex : vertices)
-			if(point.getBlockX() == vertex.getX() &&
-			   point.getBlockZ() == vertex.getZ())
+			if(b.getX() == vertex.getX() &&
+			   b.getZ() == vertex.getZ())
 				return true;
 		return false;
 	}
 
 	/**
-	 * @param point
+	 * @param b
 	 * @return the index of the vertex in the private list
 	 */
-	private int indexOfVertex(Vector point) {
-		if(!isComplete())
+	private int indexOfVertex(Block b) {
+		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
 		for(Vector vertex : vertices)
-			if(point.getBlockX() == vertex.getX() &&
-			   point.getBlockZ() == vertex.getZ())
+			if(b.getX() == vertex.getX() &&
+			   b.getZ() == vertex.getZ())
 				return vertices.indexOf(vertex);
 		return -1;
 	}
 	
 	/**
-	 * @return if 2 points are set for defining the rectangle
+	 * @return if 2 require blocks are set for defining the rectangle
 	 */
 	public boolean isComplete() {
 		return isComplete;
 	}
-
+	
 	private void calcVertices() {
 		if(isComplete())
 			return;
@@ -140,5 +159,10 @@ public class RectSelection {
 									  new Vector(maxX, 0, maxZ),
 									  new Vector(minX, 0, maxZ)));
 		isComplete = true;
+	}
+	
+	public void worldCheck(Block b) {
+		if(!b.getWorld().equals(world))
+			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
 	}
 }
