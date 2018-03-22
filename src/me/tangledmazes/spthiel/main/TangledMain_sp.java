@@ -7,12 +7,12 @@ import me.tangledmazes.main.commandsAPI.CommandParser;
 public class TangledMain_sp implements IMain{
 
 	public void onEnable(TangledMain plugin) {
+		plugin.getCommand("tangledmaze").setExecutor(new CommandParser());
 		
-		plugin.getCommand("help").setExecutor(new CommandParser());
 	}
 	
 	public void onDisable(TangledMain plugin) {
-	
+		
 	}
 	
 	public void onLoad(TangledMain plugin) {

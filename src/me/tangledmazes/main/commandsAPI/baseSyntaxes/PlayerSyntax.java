@@ -8,26 +8,25 @@ import me.tangledmazes.main.commandsAPI.ICommandSyntax;
 public class PlayerSyntax implements ICommandSyntax {
 	
 	@Override
-	public char Symbol() {
-		return 'p';
+	public String Symbol() {
+		return "p";
 	}
 	
 	@Override
 	public boolean isSyntax(String arg) {
 		
-		return arg.matches("^[a-zA-Z_0-9]{3,16}$");
+		return arg.matches("^[a-zA-Z_0-9]{3,16}$") && getPlayer(arg) != null;
 	}
 	
 	@Override
 	public Object getTranslatedSyntax(String arg) {
 		
-		return null;
+		return getPlayer(arg);
 	}
 	
-	private boolean isPlayer(String arg) {
+	private Player getPlayer(String arg) {
 		
-		Player p = Bukkit.getServer().getPlayerExact(arg);
-		return p != null;
+		return Bukkit.getServer().getPlayerExact(arg);
 	}
 	
 }

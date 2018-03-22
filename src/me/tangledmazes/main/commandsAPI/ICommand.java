@@ -7,7 +7,7 @@ import org.bukkit.permissions.Permission;
 
 public interface ICommand {
 	
-	String getSyntax();
+	String[] getSyntaxes();
 	Set<Permission> optionalPermissions();
 	Set<Permission> requiredPermissions();
 	void run(Player player, String[] args, int syntax);

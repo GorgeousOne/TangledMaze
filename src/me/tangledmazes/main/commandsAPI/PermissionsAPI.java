@@ -26,6 +26,8 @@ public class PermissionsAPI {
 		
 		if(p.isOp())
 			return true;
+		if(p.hasPermission("tangledmaze.*") || p.hasPermission("tangledmaze.all"))
+			return true;
 		
 		boolean o = false;
 		for(Permission perm : optional) {

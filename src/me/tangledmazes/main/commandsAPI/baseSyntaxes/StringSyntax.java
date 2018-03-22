@@ -5,8 +5,8 @@ import me.tangledmazes.main.commandsAPI.ICommandSyntax;
 public class StringSyntax implements ICommandSyntax {
 	
 	@Override
-	public char Symbol() {
-		return '&';
+	public String Symbol() {
+		return "&";
 	}
 	
 	@Override

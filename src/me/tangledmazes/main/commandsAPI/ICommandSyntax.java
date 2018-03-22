@@ -2,7 +2,7 @@ package me.tangledmazes.main.commandsAPI;
 
 public interface ICommandSyntax {
 	
-	char Symbol();
+	String Symbol();
 	boolean isSyntax(String arg);
 	Object getTranslatedSyntax(String arg);
 	
