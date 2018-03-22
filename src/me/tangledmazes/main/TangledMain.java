@@ -2,6 +2,8 @@ package me.tangledmazes.main;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.tangledmazes.spthiel.main.InteractListener;
+
 public class TangledMain extends JavaPlugin {
 
 	public static TangledMain plugin;
@@ -13,7 +15,7 @@ public class TangledMain extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-	
+		this.getServer().getPluginManager().registerEvents(new InteractListener(), this);
 	}
 	
 	@Override

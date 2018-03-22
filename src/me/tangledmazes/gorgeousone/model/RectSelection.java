@@ -3,6 +3,8 @@ package me.tangledmazes.gorgeousone.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -51,16 +53,18 @@ public class RectSelection {
 	 * @param b
 	 * @return if the block was added as vertex
 	 */
+	@SuppressWarnings("deprecation")
 	public void addVertex(Block b) {
 		worldCheck(b);
 		
 		if(isComplete)
 			return;
 		
-		if(unboundVertices.isEmpty())
+		if(unboundVertices.isEmpty()) {
 			unboundVertices.add(b.getLocation().toVector());
+			p.sendBlockChange(b.getLocation(), Constants.SELECTION_BEGINNING, (byte) 0);
 
-		else {
+		}else {
 			if(b.getX() == unboundVertices.get(0).getX() &&
 			   b.getZ() == unboundVertices.get(0).getZ())
 				return;
@@ -94,16 +98,16 @@ public class RectSelection {
 		}
 	}
 	
-	/**
-	 * @param b
-	 * @return if the given block is inside the rectangular shape.
-	 */
-	public boolean contains(Block b) {
-		if(!isComplete())
-			return false;
-		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
-			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
-	}
+//	/**
+//	 * @param b
+//	 * @return if the given block is inside the rectangular shape.
+//	 */
+//	public boolean contains(Block b) {
+//		if(!isComplete())
+//			return false;
+//		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
+//			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
+//	}
 	
 	/**
 	 * @param b
@@ -142,6 +146,7 @@ public class RectSelection {
 		return isComplete;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void calcVertices() {
 		if(isComplete())
 			return;
@@ -158,6 +163,37 @@ public class RectSelection {
 									  new Vector(maxX, 0, minZ),
 									  new Vector(maxX, 0, maxZ),
 									  new Vector(minX, 0, maxZ)));
+		
+		int currentY = p.getEyeLocation().getBlockY();
+		
+		for(Vector vertice : vertices) {
+			
+			Location start = vertice.setY(currentY).toLocation(world);
+			
+			if(start.getBlock().getType() == Material.AIR) {
+				for(; currentY >= 0; currentY--) {
+					start.add(0, -1, 0);
+					
+					if(start.getBlock().getType() != Material.AIR) {
+						p.sendBlockChange(start, Constants.SELECTION_BORDER, (byte) 0);
+						vertice.setY(currentY);
+						break;
+					}
+				}
+				
+			}else {
+				for(; currentY >= 0; currentY++) {
+					start.add(0, 1, 0);
+					
+					if(start.getBlock().getType() == Material.AIR) {
+						start.add(0, -1, 0);
+						p.sendBlockChange(start, Constants.SELECTION_BORDER, (byte) 0);
+						vertice.setY(currentY-1);
+						break;
+					}
+				}
+			}
+		}
 		isComplete = true;
 	}
 	
