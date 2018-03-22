@@ -10,4 +10,8 @@ public class TangledMain_sp {
 		TangledMain.plugin.getCommand("help").setExecutor(new CommandParser());
 	}
 	
+	public void onDisable() {
+		
+	}
+	
 }
