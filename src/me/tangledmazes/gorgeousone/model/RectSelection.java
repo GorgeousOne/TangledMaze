@@ -57,18 +57,23 @@ public class RectSelection {
 	public void addVertex(Block b) {
 		worldCheck(b);
 		
-		if(isComplete)
+		if(isComplete) {
+			p.sendMessage("f u");
 			return;
+		}
 		
 		if(unboundVertices.isEmpty()) {
+			p.sendMessage("  added first block");
 			unboundVertices.add(b.getLocation().toVector());
 			p.sendBlockChange(b.getLocation(), Constants.SELECTION_BEGINNING, (byte) 0);
 
 		}else {
 			if(b.getX() == unboundVertices.get(0).getX() &&
-			   b.getZ() == unboundVertices.get(0).getZ())
+			   b.getZ() == unboundVertices.get(0).getZ()) {
+				p.sendMessage("  this should not happen");
 				return;
-			else {
+			}else {
+				p.sendMessage("  added second block");
 				unboundVertices.add(b.getLocation().toVector());
 				calcVertices();
 			}
@@ -108,6 +113,17 @@ public class RectSelection {
 //		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
 //			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
 //	}
+	
+	/**
+	 * @param b
+	 * @return if the given block is inside the rectangular shape.
+	 */
+	public boolean contains(Block b) {
+		if(!isComplete())
+			return false;
+		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
+			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
+	}
 	
 	/**
 	 * @param b
