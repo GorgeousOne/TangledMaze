@@ -1,17 +1,22 @@
 package me.tangledmazes.spthiel.main;
 
+import me.tangledmazes.main.IMain;
 import me.tangledmazes.main.TangledMain;
 import me.tangledmazes.main.commandsAPI.CommandParser;
 
-public class TangledMain_sp {
+public class TangledMain_sp implements IMain{
 
-	public void onEnable() {
+	public void onEnable(TangledMain plugin) {
 		
-		TangledMain.plugin.getCommand("help").setExecutor(new CommandParser());
+		plugin.getCommand("help").setExecutor(new CommandParser());
 	}
 	
-	public void onDisable() {
-		
+	public void onDisable(TangledMain plugin) {
+	
+	}
+	
+	public void onLoad(TangledMain plugin) {
+	
 	}
 	
 }
