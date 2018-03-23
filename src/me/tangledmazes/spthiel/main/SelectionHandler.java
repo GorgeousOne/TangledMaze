@@ -2,6 +2,7 @@ package me.tangledmazes.spthiel.main;
 
 import java.util.HashMap;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,15 +13,24 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import me.tangledmazes.gorgeousone.model.Constants;
 import me.tangledmazes.gorgeousone.model.RectSelection;
+import me.tangledmazes.main.TangledMain;
 
-public class SelecionHandler implements Listener {
+public class SelectionHandler implements Listener {
 	
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> movingSelection;
 	
-	public SelecionHandler() {
+	public SelectionHandler() {
 		selections = new HashMap<>();
 		movingSelection = new HashMap<>();
+	}
+	
+	/**
+	 * Hides all selections before reloading since they will be deleted anyway.
+	 */
+	public void reload() {
+		for(RectSelection selection : selections.values())
+			selection.hide();
 	}
 	
 	/**
@@ -29,18 +39,19 @@ public class SelecionHandler implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
-		if(e.getAction() != Action.LEFT_CLICK_BLOCK)
-			return;
-
+		
 		//check what item the player is holding
-		if(e.getItem() == null || e.getItem().getType() != Material.GOLD_SPADE)
+		if(e.getItem() == null || !TangledMain.isSelectionWand(e.getItem()))
 			return;
-
-		//cancel the event so the block does not break
+		
+		//cancel the event so the block does not break or so
 		e.setCancelled(true);
 		
-		RectSelection selection;
+		if(e.getAction() != Action.LEFT_CLICK_BLOCK)
+			return;
+		
 		Block b = e.getClickedBlock();
+		RectSelection selection;
 
 		//if there is already a selection started by the player
 		if(selections.containsKey(p)) {
@@ -48,7 +59,15 @@ public class SelecionHandler implements Listener {
 			
 			//handles selection resizing
 			if(movingSelection.containsKey(p)) {
-				p.sendMessage("move");
+				
+				//returns if new vertex is an old vertex
+				if(selection.isVertex(b)) {
+					movingSelection.remove(p);
+					selection.show();
+					return;
+				}
+				
+				//p.sendMessage("move");
 				selection.moveVertexTo(movingSelection.get(p), b);
 				movingSelection.remove(p);
 				return;
@@ -59,28 +78,29 @@ public class SelecionHandler implements Listener {
 				if(!selection.isComplete())
 					return;
 				
-				selection.sendBlockLater(b.getLocation(), Constants.SELECTION_MOVE);
-				movingSelection.put(p, b);
+				Location vertex = selection.getVertices().get(selection.indexOfVertex(b));
+				selection.sendBlockLater(vertex, Constants.SELECTION_MOVE);
+				movingSelection.put(p, vertex.getBlock());
 				return;
 			}
 			
-			selection.vanish();
+			selection.hide();
 			
 			//begins a new selection 
 			if(selection.isComplete()) {
-				p.sendMessage("");
-				p.sendMessage("newer selection");
+				//p.sendMessage("");
+				//p.sendMessage("newer selection");
 				selection = new RectSelection(p, b);
 				selections.put(p, selection);
 			
 			//sets second vertex for selection
 			}else {
-				p.sendMessage("expanding selection");
+				//p.sendMessage("expanding selection");
 				selection.addVertex(b);
 			}
 		//begins players first selection since they joined
 		}else {
-			p.sendMessage("new selection");
+			//p.sendMessage("new selection");
 			selection = new RectSelection(p, b);
 			selections.put(p, selection);
 		}
@@ -96,7 +116,7 @@ public class SelecionHandler implements Listener {
 	
 	public void deselect(Player p) {
 		if(selections.containsKey(p)) {
-			selections.get(p).vanish();
+			selections.get(p).hide();
 			selections.remove(p);
 			
 			if(movingSelection.containsKey(p))

@@ -70,11 +70,13 @@ public class TangledMain extends JavaPlugin {
 		return wand;
 	}
 	
-	public static boolean isSelectionWand(ItemStack itemStack) {
+	public static boolean isSelectionWand(ItemStack item) {
+		if(item == null)
+			return false;
 		
-		ItemMeta itemMeta = itemStack.getItemMeta();
+		ItemMeta itemMeta = item.getItemMeta();
 		ItemMeta wandmeta = wand.getItemMeta();
-		return itemStack.getType() == wand.getType() && itemStack.getDurability() == wand.getDurability() && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
+		return item.getType() == wand.getType() && item.getDurability() == wand.getDurability() && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
 	}
 	
 	private static final String[] ench = {

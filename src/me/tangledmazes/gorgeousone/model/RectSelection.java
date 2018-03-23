@@ -88,7 +88,7 @@ public class RectSelection {
 		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
 			return;
 		
-		vanish();
+		hide();
 		
 		p.sendMessage(vertex.getX() + ", " + vertex.getZ());
 		p.sendMessage(newVertex.getX() + ", " + newVertex.getZ());
@@ -118,7 +118,7 @@ public class RectSelection {
 		if(!isComplete())
 			return false;
 		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
-			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
+			   b.getZ() >= vertices.get(0).getZ() && b.getZ() <= vertices.get(2).getZ();
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class RectSelection {
 	 * @param b
 	 * @return the index of the vertex in the private list
 	 */
-	private int indexOfVertex(Block b) {
+	public int indexOfVertex(Block b) {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
@@ -221,7 +221,7 @@ public class RectSelection {
 		}.runTask(TangledMain.plugin);
 	}
 	
-	public void appear() {
+	public void show() {
 		if(isComplete())
 			for(Location vertex : vertices)
 				sendBlockLater(vertex, Constants.SELECTION_BORDER);
@@ -229,8 +229,9 @@ public class RectSelection {
 			sendBlockLater(firstVertex, Constants.SELECTION_BORDER);
 	}
 	
+	
 	@SuppressWarnings("deprecation")
-	public void vanish() {
+	public void hide() {
 		if(!isComplete() && firstVertex == null)
 			return;
 		
