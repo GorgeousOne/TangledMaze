@@ -40,7 +40,7 @@ public class TangledMain extends JavaPlugin {
 		
 		String NAME = "§dSelection Shovel";
 		
-		ItemStack wand = new ItemStack(Material.GOLD_SPADE);
+		wand = new ItemStack(Material.GOLD_SPADE);
 		wand.setAmount(1);
 		wand.setDurability((short) 1);
 		ItemMeta wandmeta = wand.getItemMeta();
@@ -62,10 +62,11 @@ public class TangledMain extends JavaPlugin {
 	
 	public static ItemStack getWand() {
 		
-		List<String> s = wand.getItemMeta().getLore();
+		ItemMeta meta = wand.getItemMeta();
+		List<String> s = meta.getLore();
 		s.set(0,"§7" + getCustomEnchanment());
-		wand.getItemMeta().setLore(s);
-		
+		meta.setLore(s);
+		wand.setItemMeta(meta);
 		return wand;
 	}
 	
@@ -73,8 +74,7 @@ public class TangledMain extends JavaPlugin {
 		
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		ItemMeta wandmeta = wand.getItemMeta();
-		
-		return itemStack.getType() == wand.getType() && itemStack.getDurability() == wand.getDurability() && itemStack.getData() == wand.getData() && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
+		return itemStack.getType() == wand.getType() && itemStack.getDurability() == wand.getDurability() && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
 	}
 	
 	private static final String[] ench = {

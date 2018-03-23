@@ -1,18 +1,12 @@
 package me.tangledmazes.spthiel.commands;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import org.bukkit.Material;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 
 import me.tangledmazes.main.TangledMain;
@@ -34,7 +28,6 @@ public class CommandListener implements CommandExecutor {
 			if (args.length > 0) {
 				switch (args[0].toLowerCase()) {
 					case "wand":
-						
 						
 						for (ItemStack i : p.getInventory().getContents()) {
 							if (i != null && TangledMain.isSelectionWand(i))
