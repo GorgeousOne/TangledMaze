@@ -99,17 +99,6 @@ public class RectSelection {
 		calcVertices(newVertex.getLocation(), opposite);
 	}
 	
-//	/**
-//	 * @param b
-//	 * @return if the given block is inside the rectangular shape.
-//	 */
-//	public boolean contains(Block b) {
-//		if(!isComplete())
-//			return false;
-//		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
-//			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
-//	}
-	
 	/**
 	 * @param b
 	 * @return if the given block is inside the rectangular shape.

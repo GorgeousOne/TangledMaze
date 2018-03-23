@@ -3,7 +3,6 @@ package me.tangledmazes.spthiel.main;
 import java.util.HashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
