@@ -2,9 +2,9 @@ package me.tangledmazes.gorgeousone.model;
 
 import java.util.ArrayList;
 
-import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
 public interface Shape {
 
-	public ArrayList<Vector> getBorder();
+	public ArrayList<Location> getBorder();
 }

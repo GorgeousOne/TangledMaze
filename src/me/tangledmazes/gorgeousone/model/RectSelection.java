@@ -39,6 +39,13 @@ public class RectSelection {
 	}
 	
 	/**
+	 * @return the word this selection is being created in.
+	 */
+	public World getWorld() {
+		return world;
+	}
+	
+	/**
 	 * @return the player who creates the selection.
 	 */
 	public Player getPlayer() {
@@ -153,8 +160,8 @@ public class RectSelection {
 	
 	/**
 	 * Calculates the
-	 * @param p0
-	 * @param p1
+	 * @param p0 first corner of the rectangle, optimally the first block that was clicked
+	 * @param p1 second, opposite corner of the rectangle, optimally the last block that was clicked
 	 */
 	private void calcVertices(Location p0, Location p1) {
 		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
@@ -164,10 +171,10 @@ public class RectSelection {
 
 		
 		vertices = new ArrayList<>(Arrays.asList(
-			getNearestSurface(new Location(world, minX, p0.getY(), minZ)),
-			getNearestSurface(new Location(world, maxX, p0.getY(), minZ)),
-			getNearestSurface(new Location(world, maxX, p0.getY(), maxZ)),
-			getNearestSurface(new Location(world, minX, p0.getY(), maxZ))));
+			getNearestSurface(new Location(world, minX, p1.getY(), minZ)),
+			getNearestSurface(new Location(world, maxX, p1.getY(), minZ)),
+			getNearestSurface(new Location(world, maxX, p1.getY(), maxZ)),
+			getNearestSurface(new Location(world, minX, p1.getY(), maxZ))));
 	
 		for(Location vertex : vertices)
 			sendBlockLater(vertex, Constants.SELECTION_BORDER);

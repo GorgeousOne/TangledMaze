@@ -13,21 +13,19 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import me.tangledmazes.gorgeousone.model.Constants;
 import me.tangledmazes.gorgeousone.model.RectSelection;
 
-public class InteractListener implements Listener {
+public class SelecionHandler implements Listener {
 	
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> movingSelection;
 	
-	public InteractListener() {
+	public SelecionHandler() {
 		selections = new HashMap<>();
 		movingSelection = new HashMap<>();
 	}
 	
-	public void reset() {
-		for(RectSelection sel : selections.values())
-			sel.vanish();
-	}
-	
+	/**
+	 * Handles everything a player can do with their selection wand.
+	 */
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
@@ -43,11 +41,12 @@ public class InteractListener implements Listener {
 		
 		RectSelection selection;
 		Block b = e.getClickedBlock();
-		
+
+		//if there is already a selection started by the player
 		if(selections.containsKey(p)) {
 			selection = selections.get(p);
-
 			
+			//handles selection resizing
 			if(movingSelection.containsKey(p)) {
 				p.sendMessage("move");
 				selection.moveVertexTo(movingSelection.get(p), b);
@@ -55,6 +54,7 @@ public class InteractListener implements Listener {
 				return;
 			}
 			
+			//begins selection resizing
 			if(selection.isVertex(b)) {
 				if(!selection.isComplete())
 					return;
@@ -65,17 +65,20 @@ public class InteractListener implements Listener {
 			}
 			
 			selection.vanish();
-
+			
+			//begins a new selection 
 			if(selection.isComplete()) {
 				p.sendMessage("");
 				p.sendMessage("newer selection");
 				selection = new RectSelection(p, b);
 				selections.put(p, selection);
-				
+			
+			//sets second vertex for selection
 			}else {
 				p.sendMessage("expanding selection");
 				selection.addVertex(b);
-			}			
+			}
+		//begins players first selection since they joined
 		}else {
 			p.sendMessage("new selection");
 			selection = new RectSelection(p, b);
@@ -83,4 +86,21 @@ public class InteractListener implements Listener {
 		}
 	}
 	
+	public RectSelection getSelection(Player p) {
+		return selections.get(p);
+	}
+
+	public boolean hasSelection(Player p) {
+		return selections.containsKey(p);
+	}
+	
+	public void deselect(Player p) {
+		if(selections.containsKey(p)) {
+			selections.get(p).vanish();
+			selections.remove(p);
+			
+			if(movingSelection.containsKey(p))
+				movingSelection.remove(p);
+		}
+	}
 }
