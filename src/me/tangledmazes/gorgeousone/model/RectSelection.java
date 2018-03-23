@@ -3,31 +3,39 @@ package me.tangledmazes.gorgeousone.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import me.tangledmazes.main.TangledMain;
 
 /**
  * A class to store the vertices of an Rectangle during being created
- * @author Aaron
  */
 public class RectSelection {
 	
 	private Player p;
 	private World world;
-	private ArrayList<Vector> unboundVertices, vertices;
+	private Location firstVertex;
+	private ArrayList<Location> vertices;
 	private boolean isComplete;
 	
 	/**
+	 * Begins a rectangular selection with the first vertex already given
 	 * @param p Player who is creating this rectangle
+	 * @param b first vertex of the rectangle
 	 */
-	public RectSelection(Player p) {
+	public RectSelection(Player p, Block b) {
 		this.p = p;
 		world = p.getWorld();
-		unboundVertices = new ArrayList<>();
 		vertices = new ArrayList<>();
 		isComplete = false;
+		
+		firstVertex = b.getLocation();
+		sendBlockLater(firstVertex, Constants.SELECTION_BEGINNING);
 	}
 	
 	/**
@@ -40,7 +48,7 @@ public class RectSelection {
 	/**
 	 * @return the list of vertices of the rectangle in case the rectangle is completed
 	 */
-	public ArrayList<Vector> getVertices() {
+	public ArrayList<Location> getVertices() {
 		if(!isComplete())
 			return null;
 		return vertices;
@@ -57,18 +65,11 @@ public class RectSelection {
 		if(isComplete)
 			return;
 		
-		if(unboundVertices.isEmpty())
-			unboundVertices.add(b.getLocation().toVector());
-
-		else {
-			if(b.getX() == unboundVertices.get(0).getX() &&
-			   b.getZ() == unboundVertices.get(0).getZ())
-				return;
-			else {
-				unboundVertices.add(b.getLocation().toVector());
-				calcVertices();
-			}
-		}
+		if(b.getX() == firstVertex.getX() &&
+		   b.getZ() == firstVertex.getZ())
+			return;
+			
+		calcVertices(firstVertex, b.getLocation());
 	}
 	
 	/**
@@ -77,22 +78,30 @@ public class RectSelection {
 	 * @param newVertex
 	 */
 	public void moveVertexTo(Block vertex, Block newVertex) {
-		worldCheck(newVertex);
-		
-		if(!isComplete() || !isVertex(newVertex))
+		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
 			return;
 		
-		int index = indexOfVertex(newVertex);
-		vertices.get(index).setX(newVertex.getX()).setZ(newVertex.getZ());
+		vanish();
 		
-		if(index % 2 == 0) {
-			vertices.get(index+1 % 4).setX(newVertex.getX());
-			vertices.get(index+3 % 4).setZ(newVertex.getZ());
-		}else {
-			vertices.get(index+1 % 4).setZ(newVertex.getZ());
-			vertices.get(index+3 % 4).setX(newVertex.getX());
-		}
+		p.sendMessage(vertex.getX() + ", " + vertex.getZ());
+		p.sendMessage(newVertex.getX() + ", " + newVertex.getZ());
+
+		int index = indexOfVertex(vertex);
+		Location opposite = vertices.get((index+2) % 4);
+		
+		calcVertices(newVertex.getLocation(), opposite);
 	}
+	
+//	/**
+//	 * @param b
+//	 * @return if the given block is inside the rectangular shape.
+//	 */
+//	public boolean contains(Block b) {
+//		if(!isComplete())
+//			return false;
+//		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
+//			   b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX();
+//	}
 	
 	/**
 	 * @param b
@@ -113,7 +122,7 @@ public class RectSelection {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return false;
 		
-		for(Vector vertex : vertices)
+		for(Location vertex : vertices)
 			if(b.getX() == vertex.getX() &&
 			   b.getZ() == vertex.getZ())
 				return true;
@@ -128,7 +137,7 @@ public class RectSelection {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
-		for(Vector vertex : vertices)
+		for(Location vertex : vertices)
 			if(b.getX() == vertex.getX() &&
 			   b.getZ() == vertex.getZ())
 				return vertices.indexOf(vertex);
@@ -142,27 +151,86 @@ public class RectSelection {
 		return isComplete;
 	}
 	
-	private void calcVertices() {
-		if(isComplete())
-			return;
-		
-		Vector p0 = unboundVertices.get(0),
-			   p1 = unboundVertices.get(1);
-		
+	/**
+	 * Calculates the
+	 * @param p0
+	 * @param p1
+	 */
+	private void calcVertices(Location p0, Location p1) {
 		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
 			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
 			maxX = Math.max(p0.getBlockX(), p1.getBlockX()),
 			maxZ = Math.max(p0.getBlockZ(), p1.getBlockZ());
+
 		
-		vertices.addAll(Arrays.asList(new Vector(minX, 0, minZ),
-									  new Vector(maxX, 0, minZ),
-									  new Vector(maxX, 0, maxZ),
-									  new Vector(minX, 0, maxZ)));
+		vertices = new ArrayList<>(Arrays.asList(
+			getNearestSurface(new Location(world, minX, p0.getY(), minZ)),
+			getNearestSurface(new Location(world, maxX, p0.getY(), minZ)),
+			getNearestSurface(new Location(world, maxX, p0.getY(), maxZ)),
+			getNearestSurface(new Location(world, minX, p0.getY(), maxZ))));
+	
+		for(Location vertex : vertices)
+			sendBlockLater(vertex, Constants.SELECTION_BORDER);
+			
 		isComplete = true;
 	}
 	
-	public void worldCheck(Block b) {
+	private void worldCheck(Block b) {
 		if(!b.getWorld().equals(world))
 			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
+	}
+	
+	private Location getNearestSurface(Location loc) {
+		Location iter = loc.clone();
+		
+		if(loc.getBlock().getType() == Material.AIR) {
+			while(iter.getY() >= 0) {
+				iter.add(0, -1, 0);
+				
+				if(iter.getBlock().getType() != Material.AIR)
+					return iter;
+			}
+			iter.setY(loc.getY());
+		}
+		
+		while(iter.getY() <= 255) {
+			iter.add(0, 1, 0);
+			
+			if(iter.getBlock().getType() == Material.AIR) {
+				iter.add(0, -1, 0);
+				return iter;
+			}
+		}
+		return null;
+	}
+	
+	public void sendBlockLater(Location loc, Material m) {
+		new BukkitRunnable() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				p.sendBlockChange(loc, m, (byte) 0);
+			}
+		}.runTask(TangledMain.plugin);
+	}
+	
+	public void appear() {
+		if(isComplete())
+			for(Location vertex : vertices)
+				sendBlockLater(vertex, Constants.SELECTION_BORDER);
+		else
+			sendBlockLater(firstVertex, Constants.SELECTION_BORDER);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void vanish() {
+		if(!isComplete() && firstVertex == null)
+			return;
+		
+		if(isComplete())
+			for(Location vertex : vertices)
+				p.sendBlockChange(vertex, vertex.getBlock().getType(), (byte) 0);
+		else
+			p.sendBlockChange(firstVertex, firstVertex.getBlock().getType(), (byte) 0);
 	}
 }

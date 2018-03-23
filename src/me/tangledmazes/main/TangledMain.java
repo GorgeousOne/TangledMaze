@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.tangledmazes.gorgeousone.main.TangledMain_go;
 import me.tangledmazes.spthiel.main.TangledMain_sp;
 
 public class TangledMain extends JavaPlugin {
@@ -19,7 +20,7 @@ public class TangledMain extends JavaPlugin {
 	@Override
 	public void onLoad() {
 		plugin = this;
-		addMain(new TangledMain_sp());
+		addMain(new TangledMain_sp(), new TangledMain_go());
 		
 		mains.forEach(main -> main.onLoad(this));
 	}
@@ -27,13 +28,11 @@ public class TangledMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		mains.forEach(main -> main.onEnable(this));
-	
 	}
 	
 	@Override
 	public void onDisable() {
 		mains.forEach(main -> main.onDisable(this));
-	
 	}
 
 }

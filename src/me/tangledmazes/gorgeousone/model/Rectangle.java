@@ -2,11 +2,12 @@ package me.tangledmazes.gorgeousone.model;
 
 import java.util.ArrayList;
 
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class Rectangle implements Shape {
 
-	private ArrayList<Vector> vertices;
+	private ArrayList<Location> vertices;
 	
 	public Rectangle(RectSelection selection) {
 		if(!selection.isComplete())
@@ -20,8 +21,8 @@ public class Rectangle implements Shape {
 	public ArrayList<Vector> getBorder() {
 		ArrayList<Vector> points = new ArrayList<>();
 
-		Vector v0 = vertices.get(0).clone(),
-			   v2 = vertices.get(3).clone();
+		Location v0 = vertices.get(0).clone(),
+				 v2 = vertices.get(3).clone();
 		 
 		for(int x = v0.getBlockX();  x <= v2.getX(); x++) {
 			points.add(new Vector(x, 0, v0.getZ()));
