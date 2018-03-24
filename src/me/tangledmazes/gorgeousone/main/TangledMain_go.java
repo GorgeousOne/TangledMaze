@@ -29,6 +29,10 @@ public class TangledMain_go implements IMain{
 		handler.reload();
 	}
 	
+	public SelectionHandler getSelectionHandler() {
+		return handler;
+	}
+	
 	//TODO put this in a utils class?
 	public static Location getNearestSurface(Location loc) {
 		Location iter = loc.clone();
