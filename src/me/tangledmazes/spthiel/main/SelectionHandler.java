@@ -10,17 +10,27 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import me.tangledmazes.gorgeousone.model.Constants;
-import me.tangledmazes.gorgeousone.model.RectSelection;
+import me.tangledmazes.gorgeousone.main.Constants;
+import me.tangledmazes.gorgeousone.mazestuff.Maze;
+import me.tangledmazes.gorgeousone.selectionstuff.RectSelection;
 import me.tangledmazes.main.TangledMain;
 
 public class SelectionHandler implements Listener {
 	
+	public static final int
+		RECTANGULAR = 0,
+		ELLIPTICAL = 1,
+		POLYGONAL = 2;
+
+	private HashMap<Player, Maze> mazes;
+	private HashMap<Player, Integer> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> movingSelection;
 	
 	public SelectionHandler() {
-		selections = new HashMap<>();
+		mazes           = new HashMap<>();
+		selectionTypes  = new HashMap<>();
+		selections      = new HashMap<>();
 		movingSelection = new HashMap<>();
 	}
 	
@@ -95,7 +105,7 @@ public class SelectionHandler implements Listener {
 			//sets second vertex for selection
 			}else {
 				//p.sendMessage("expanding selection");
-				selection.addVertex(b);
+				selection.complete(b);
 			}
 		//begins players first selection since they joined
 		}else {
@@ -113,6 +123,10 @@ public class SelectionHandler implements Listener {
 		return selections.containsKey(p);
 	}
 	
+	public void setSelectionType(Player p, int type) {
+		selectionTypes.put(p, type);
+	}
+	
 	public void deselect(Player p) {
 		if(selections.containsKey(p)) {
 			selections.get(p).hide();
@@ -122,4 +136,8 @@ public class SelectionHandler implements Listener {
 				movingSelection.remove(p);
 		}
 	}
+	
+	public void addSelectionToMaze(Player p) {}
+	
+	public void subtractSelctionFromMaze(Player p) {}
 }

@@ -1,4 +1,4 @@
-package me.tangledmazes.gorgeousone.model;
+package me.tangledmazes.gorgeousone.main;
 
 import org.bukkit.Material;
 
