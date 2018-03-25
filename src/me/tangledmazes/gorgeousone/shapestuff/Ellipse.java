@@ -1,6 +1,7 @@
 package me.tangledmazes.gorgeousone.shapestuff;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,9 +12,19 @@ import me.tangledmazes.gorgeousone.selectionstuff.RectSelection;
 
 public class Ellipse implements Shape {
 	
+	private ArrayList<Vector> dirs = new ArrayList<>(Arrays.asList(
+			new Vector( 1, 0,  0),
+			new Vector( 1, 0,  1),
+			new Vector( 0, 0,  1),
+			new Vector(-1, 0,  1),
+			new Vector(-1, 0,  0),
+			new Vector(-1, 0, -1),
+			new Vector( 0, 0, -1),
+			new Vector( 1, 0, -1)));
+	
 	private World world;
 	private ArrayList<Location> vertices, border, fill;
-	private double aspect;
+	private double radiusX, radiusZ, aspect;
 	
 	public Ellipse(RectSelection selection) {
 		if(!selection.isComplete())
@@ -24,42 +35,11 @@ public class Ellipse implements Shape {
 		border = new ArrayList<>();
 		fill   = new ArrayList<>();
 		
-		int width = selection.getWidth(),
-			depth = selection.getDepth();
-		
-		aspect = 1d * depth / width;
-		
-		int minX = vertices.get(0).getBlockX(),
-			minZ = vertices.get(0).getBlockZ();
-		
-		Vector relMid = new Vector(width/2d, 0, depth/2d);
-		Vector relPoint;
-		double adjacent, angle, borderZ;
-		
-		for(int x = 0; x < width; x++) {
-		
-			adjacent = Math.abs(x+0.5 - relMid.getX());
-			angle    = Math.acos(adjacent / (width/2d));
-			borderZ  = Math.sin(angle) * depth/2d;
-			
-			System.out.println("border: " + borderZ);
-			
-			for(int z = 0; z < depth; z++) {
-				relPoint = new Vector(aspect * (x+0.5), 0, z+0.5);
-				
-				if(relMid.distance(relPoint) <= depth/2d) {
-					Location point = TangledMain_go.getNearestSurface(new Location(world, minX+x, vertices.get(0).getY(), minZ+z));
-					
-					fill.add(point.clone());
-					System.out.println((int) Math.abs(relPoint.getZ() - width/2d));
+		radiusX = selection.getWidth() / 2d;
+		radiusZ = selection.getDepth() / 2d;
+		aspect = 1d * radiusZ / radiusX;
 
-					if(Math.abs(borderZ - Math.abs(relPoint.getZ() - width/2d)) < 3) {
-						border.add(point.clone());
-						System.out.println("added");
-					}
-				}
-			}
-		}
+		calcFillAndBorder();
 	}
 	
 	@Override
@@ -78,5 +58,39 @@ public class Ellipse implements Shape {
 		return false;
 	}
 	
-	
+	private void calcFillAndBorder() {
+			int minX = vertices.get(0).getBlockX(),
+				minZ = vertices.get(0).getBlockZ();
+			
+			Vector relMid = new Vector(0, 0, 0);
+			Vector point;
+			
+			for(double x = -radiusX; x < radiusX; x++)
+				for(double z = -radiusZ; z < radiusZ; z++) {
+					
+					point = new Vector(aspect * (x+0.5), 0, z+0.5);
+					Location loc = TangledMain_go.getNearestSurface(new Location(
+							world,
+							minX + radiusX + x,
+							vertices.get(0).getY(),
+							minZ + radiusZ + z));
+					
+					//using radius-0: the circle looks edged
+					//using radius-1/2: only one block sticks out at the edges
+					// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
+					if(relMid.distance(point) <= radiusZ - 0.25)
+						fill.add(loc);
+					else
+						continue;
+					
+					for(Vector dir : dirs) {
+						Vector neighbour = point.clone().add(dir.clone().setX(aspect * dir.getX()));
+						
+						if(relMid.distance(neighbour) > radiusZ - 0.25) {
+							border.add(loc);
+							break;
+						}
+					}
+				}
+	}
 }

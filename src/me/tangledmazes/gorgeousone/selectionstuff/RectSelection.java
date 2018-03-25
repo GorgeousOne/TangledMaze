@@ -77,17 +77,6 @@ public class RectSelection {
 		return vertices.get(2).getBlockZ() - vertices.get(0).getBlockZ() + 1;
 	}
 	
-//	public Location getMid() {
-//		if(!isComplete)
-//			return null;
-//		
-//		return TangledMain_go.getNearestSurface(new Location(
-//				 world,
-//				(vertices.get(0).getX() + vertices.get(2).getX()) / 2,
-//				 vertices.get(0).getY(),
-//				(vertices.get(0).getX() + vertices.get(2).getX()) / 2));
-//	}
-	
 	/**
 	 * Completes the selection by adding a second block as second, opposite vertex
 	 * @param b
@@ -108,7 +97,6 @@ public class RectSelection {
 		
 		Shape r = new Ellipse(this);
 		for(Location loc : r.getBorder()) {
-			System.out.println(loc.toVector());
 			sendBlockLater(loc, Constants.SELECTION_BORDER);
 		}
 		
