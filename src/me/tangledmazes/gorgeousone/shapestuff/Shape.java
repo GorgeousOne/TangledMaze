@@ -10,4 +10,5 @@ public interface Shape {
 	public ArrayList<Location> getFill();
 	
 	public boolean contains(Location point);
+	public boolean borderContains(Location point);
 }

@@ -3,7 +3,10 @@ package me.tangledmazes.gorgeousone.mazestuff;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
+import me.tangledmazes.gorgeousone.main.Constants;
+import me.tangledmazes.gorgeousone.main.TangledMain_go;
 import me.tangledmazes.gorgeousone.shapestuff.Shape;
 
 /**
@@ -12,17 +15,17 @@ import me.tangledmazes.gorgeousone.shapestuff.Shape;
  */
 public class Maze {
 	
+	private Player p;
 	private ArrayList<Location> fill, border;
 	private ArrayList<Shape> borderAreas;
 	
-	public Maze(Shape borderArea) {
+	public Maze(Player creator, Shape borderArea) {
 		
+		p = creator;
 		fill = borderArea.getFill();
 		border = borderArea.getBorder();
 		
 		borderAreas = new ArrayList<>();
-		//wallAreas = new ArrayList<>();
-		
 		borderAreas.add(borderArea);
 	}
 	
@@ -36,28 +39,48 @@ public class Maze {
 		if(newBorder.isEmpty())
 			return;
 		
-		for (int i = border.size(); i >= 0; i--) {
-			if(s.contains(border.get(i)))
+		for (int i = border.size()-1; i >= 0; i--) {
+			if(s.contains(border.get(i)) && !s.borderContains(border.get(i)))
 				border.remove(i);
 		}
 				
-		//ArrayList<Location> newFill = new ArrayList<>();
+		ArrayList<Location> newFill = new ArrayList<>();
 		
 		for(Location point : s.getFill())
 			if(!contains(point))
 				fill.add(point.clone());
+		
+		borderAreas.add(s);
+		border.addAll(newBorder);
+		fill.addAll(newFill);
 	}
 	
 	public void subtract(Shape s) {
-		
-		
 	}
+	
 	/**
 	 * @param point 
 	 * @return if the point is inside the area of the maze.
 	 */
 	public boolean contains(Location point) {
+		for(Shape area : borderAreas)
+			if(area.contains(point))
+				return true;
 		return false;
+	}
+	
+	public void show() {
+		for(Location point : fill)
+			TangledMain_go.sendBlockLater(p, point, Constants.SELECTION_BORDER);
+		for(Location point : border)
+			TangledMain_go.sendBlockLater(p, point, Constants.MAZE_BORDER);
+	}
+	
+	public void hide() {
+		for(Location point : border)
+			TangledMain_go.sendBlockLater(p, point, point.getBlock().getType());
+		for(Location point : fill)
+			TangledMain_go.sendBlockLater(p, point, point.getBlock().getType());
 	}
 	
 //	/**

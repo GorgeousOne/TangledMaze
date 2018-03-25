@@ -28,6 +28,16 @@ public class Rectangle implements Shape {
 	}
 	
 	@Override
+	public ArrayList<Location> getBorder() {
+		return border;
+	}
+
+	@Override
+	public ArrayList<Location> getFill() {
+		return fill;
+	}
+	
+	@Override
 	public boolean contains(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
@@ -37,15 +47,10 @@ public class Rectangle implements Shape {
 	}
 	
 	@Override
-	public ArrayList<Location> getBorder() {
-		return border;
+	public boolean borderContains(Location point) {
+		return false;	//TODO implement
 	}
-
-	@Override
-	public ArrayList<Location> getFill() {
-		return fill;
-	}
-
+	
 	private void calcFillAndBorder() {
 		Vector v0 = vertices.get(0).toVector(),
 				   v2 = vertices.get(2).toVector();

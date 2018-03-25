@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import me.tangledmazes.gorgeousone.exceptions.MazeNotFoundException;
 import me.tangledmazes.gorgeousone.exceptions.SelectionNotFoundExcetion;
 import me.tangledmazes.gorgeousone.main.Constants;
+import me.tangledmazes.gorgeousone.main.TangledMain_go;
 import me.tangledmazes.gorgeousone.mazestuff.Maze;
 import me.tangledmazes.gorgeousone.selectionstuff.RectSelection;
 import me.tangledmazes.main.TangledMain;
@@ -27,13 +28,13 @@ public class SelectionHandler implements Listener {
 	private HashMap<Player, Maze> mazes;
 	private HashMap<Player, Integer> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
-	private HashMap<Player, Block> movingSelection;
+	private HashMap<Player, Block> resizingSelections;
 	
 	public SelectionHandler() {
 		mazes           = new HashMap<>();
 		selectionTypes  = new HashMap<>();
 		selections      = new HashMap<>();
-		movingSelection = new HashMap<>();
+		resizingSelections = new HashMap<>();
 	}
 	
 	/**
@@ -69,18 +70,18 @@ public class SelectionHandler implements Listener {
 			selection = selections.get(p);
 			
 			//handles selection resizing
-			if(movingSelection.containsKey(p)) {
+			if(resizingSelections.containsKey(p)) {
 				
 				//returns if new vertex is an old vertex
 				if(selection.isVertex(b)) {
-					movingSelection.remove(p);
+					resizingSelections.remove(p);
 					selection.show();
 					return;
 				}
 				
 				//p.sendMessage("move");
-				selection.moveVertexTo(movingSelection.get(p), b);
-				movingSelection.remove(p);
+				selection.moveVertexTo(resizingSelections.get(p), b);
+				resizingSelections.remove(p);
 				return;
 			}
 			
@@ -90,8 +91,8 @@ public class SelectionHandler implements Listener {
 					return;
 				
 				Location vertex = selection.getVertices().get(selection.indexOfVertex(b));
-				selection.sendBlockLater(vertex, Constants.SELECTION_MOVE);
-				movingSelection.put(p, vertex.getBlock());
+				TangledMain_go.sendBlockLater(selection.getPlayer(), vertex, Constants.SELECTION_MOVE);
+				resizingSelections.put(p, vertex.getBlock());
 				return;
 			}
 			
@@ -99,19 +100,27 @@ public class SelectionHandler implements Listener {
 			
 			//begins a new selection 
 			if(selection.isComplete()) {
-				//p.sendMessage("");
-				//p.sendMessage("newer selection");
 				selection = new RectSelection(p, b);
 				selections.put(p, selection);
 			
 			//sets second vertex for selection
 			}else {
-				//p.sendMessage("expanding selection");
 				selection.complete(b);
+				selections.remove(p);
+				
+				if(!mazes.containsKey(p)) {
+					mazes.put(p, new Maze(p, selection.getShape()));
+					mazes.get(p).show();
+				}else {
+					Maze m = mazes.get(p);
+					m.hide();
+					m.add(selection.getShape());
+					m.show();
+				}
+				
 			}
 		//begins players first selection since they joined
 		}else {
-			//p.sendMessage("new selection");
 			selection = new RectSelection(p, b);
 			selections.put(p, selection);
 		}
@@ -134,8 +143,8 @@ public class SelectionHandler implements Listener {
 			selections.get(p).hide();
 			selections.remove(p);
 			
-			if(movingSelection.containsKey(p))
-				movingSelection.remove(p);
+			if(resizingSelections.containsKey(p))
+				resizingSelections.remove(p);
 		}
 	}
 	
@@ -147,7 +156,7 @@ public class SelectionHandler implements Listener {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException();
 		
-		mazes.put(p, new Maze(selection.getShape()));
+		mazes.put(p, new Maze(p, selection.getShape()));
 	}
 	
 	public void addSelectionToMaze(Player p) throws Exception {

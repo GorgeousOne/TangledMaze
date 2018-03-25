@@ -4,18 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmazes.gorgeousone.main.Constants;
 import me.tangledmazes.gorgeousone.main.TangledMain_go;
 import me.tangledmazes.gorgeousone.shapestuff.Ellipse;
-import me.tangledmazes.gorgeousone.shapestuff.Rectangle;
 import me.tangledmazes.gorgeousone.shapestuff.Shape;
-import me.tangledmazes.main.TangledMain;
 
 /**
  * A class to store the vertices of an Rectangle during being created
@@ -28,19 +24,21 @@ public class RectSelection {
 	private ArrayList<Location> vertices;
 	private boolean isComplete;
 	
+	private Shape shape;
+	
 	/**
 	 * Begins a rectangular selection with the first vertex already given
-	 * @param p Player who is creating this rectangle
-	 * @param b first vertex of the rectangle
+	 * @param creator Player who is creating this rectangle
+	 * @param firstVertex first vertex of the rectangle
 	 */
-	public RectSelection(Player p, Block b) {
-		this.p = p;
-		world = p.getWorld();
+	public RectSelection(Player creator, Block firstVertex) {
+		this.p = creator;
+		world = creator.getWorld();
 		vertices = new ArrayList<>();
 		isComplete = false;
 		
-		firstVertex = b.getLocation();
-		sendBlockLater(firstVertex, Constants.SELECTION_BEGINNING);
+		this.firstVertex = firstVertex.getLocation();
+		TangledMain_go.sendBlockLater(creator, this.firstVertex, Constants.SELECTION_BEGINNING);
 	}
 	
 	/**
@@ -80,7 +78,7 @@ public class RectSelection {
 	
 	//TODO add an actual variable selection
 	public Shape getShape() {
-		return new Ellipse(this);
+		return shape;
 	}
 	
 	/**
@@ -95,18 +93,14 @@ public class RectSelection {
 			return;
 		
 		if(b.getX() == firstVertex.getX() &&
-		   b.getZ() == firstVertex.getZ())
+		   b.getZ() == firstVertex.getZ()) {
+			show();
 			return;
+		}
 			
 		calcVertices(firstVertex, b.getLocation());
 		isComplete = true;
-		
-		Shape r = new Rectangle(this);
-		for(Location loc : r.getBorder()) {
-			sendBlockLater(loc, Constants.SELECTION_BORDER);
-		}
-		
-		show();
+		shape = new Ellipse(this);
 	}
 	
 	/**
@@ -198,22 +192,12 @@ public class RectSelection {
 			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
 	}
 	
-	public void sendBlockLater(Location loc, Material m) {
-		new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void run() {
-				p.sendBlockChange(loc, m, (byte) 0);
-			}
-		}.runTask(TangledMain.plugin);
-	}
-	
 	public void show() {
 		if(isComplete())
 			for(Location vertex : vertices)
-				sendBlockLater(vertex, Constants.SELECTION_CORNER);
+				TangledMain_go.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
 		else
-			sendBlockLater(firstVertex, Constants.SELECTION_BEGINNING);
+			TangledMain_go.sendBlockLater(p, firstVertex, Constants.SELECTION_BEGINNING);
 	}
 	
 	

@@ -24,6 +24,7 @@ public class Ellipse implements Shape {
 	
 	private World world;
 	private ArrayList<Location> vertices, border, fill;
+	private Vector mid;
 	private double radiusX, radiusZ, aspect;
 	
 	public Ellipse(RectSelection selection) {
@@ -38,13 +39,15 @@ public class Ellipse implements Shape {
 		radiusX = selection.getWidth() / 2d;
 		radiusZ = selection.getDepth() / 2d;
 		aspect = 1d * radiusZ / radiusX;
+		
+		mid = new Vector((vertices.get(0).getX() + vertices.get(2).getX()) / 2, 0,
+						 (vertices.get(0).getZ() + vertices.get(2).getZ()) / 2);
 
 		calcFillAndBorder();
 	}
 	
 	@Override
 	public ArrayList<Location> getBorder() {
-		// TODO Auto-generated method stub
 		return border;
 	}
 	
@@ -55,8 +58,32 @@ public class Ellipse implements Shape {
 	
 	@Override
 	public boolean contains(Location point) {
+		Vector point2 = point.toVector();
+		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
+		point2.setY(0);
+		
+		return mid.distance(point2) <= radiusZ - 0.25;
+	}
+	
+	@Override
+	public boolean borderContains(Location point) {
+		Vector point2 = point.toVector();
+		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
+		point2.setY(0);
+		
+		if(mid.distance(point2) > radiusZ - 0.25)
+			return false;
+		
+		for(Vector dir : dirs) {
+			Vector neighbour = point2.clone().add(dir.clone().setX(aspect * dir.getX()));
+			
+			if(mid.distance(neighbour) > radiusZ - 0.25)
+				return true;
+		}
+		
 		return false;
 	}
+	
 	
 	private void calcFillAndBorder() {
 		int posX = vertices.get(0).getBlockX(),
