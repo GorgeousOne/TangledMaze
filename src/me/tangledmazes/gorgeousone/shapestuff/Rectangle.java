@@ -24,18 +24,7 @@ public class Rectangle implements Shape {
 		border = new ArrayList<>();
 		fill   = new ArrayList<>();
 		
-		Vector v0 = vertices.get(0).toVector(),
-			   v2 = vertices.get(2).toVector();
-		
-		//calculate border blocks
-		for(int x = v0.getBlockX();   x <= v2.getX(); x++) {
-			border.add(TangledMain_go.getNearestSurface(new Location(world, x, v0.getY(), v0.getZ())));
-			border.add(TangledMain_go.getNearestSurface(new Location(world, x, v0.getY(), v2.getZ())));
-		}
-		for(int z = v0.getBlockZ()+1; z <  v2.getZ(); z++) {
-			border.add(TangledMain_go.getNearestSurface(new Location(world, v0.getX(), v0.getY(), z)));
-			border.add(TangledMain_go.getNearestSurface(new Location(world, v2.getX(), v0.getY(), z)));
-		}
+		calcFillAndBorder();
 	}
 	
 	@Override
@@ -56,10 +45,20 @@ public class Rectangle implements Shape {
 	public ArrayList<Location> getFill() {
 		return fill;
 	}
-	
-//	@SuppressWarnings("deprecation")
-//	public void show() {
-//		for(Location point : border)
-//			p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
-//	}
+
+	private void calcFillAndBorder() {
+		Vector v0 = vertices.get(0).toVector(),
+				   v2 = vertices.get(2).toVector();
+		
+		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
+			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
+		
+				Location loc = TangledMain_go.getNearestSurface(new Location(world, x, v0.getY(), z));
+				fill.add(loc);
+				
+				if(x == v0.getX() || x == v2.getX() ||
+				   z == v0.getZ() || z == v2.getZ())
+					border.add(loc.clone());
+			}
+	}
 }

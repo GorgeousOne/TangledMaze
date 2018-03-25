@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import me.tangledmazes.gorgeousone.exceptions.MazeNotFoundException;
+import me.tangledmazes.gorgeousone.exceptions.SelectionNotFoundExcetion;
 import me.tangledmazes.gorgeousone.main.Constants;
 import me.tangledmazes.gorgeousone.mazestuff.Maze;
 import me.tangledmazes.gorgeousone.selectionstuff.RectSelection;
@@ -137,7 +139,40 @@ public class SelectionHandler implements Listener {
 		}
 	}
 	
-	public void addSelectionToMaze(Player p) {}
+	public void startMaze(Player p) throws Exception {
+		if(!selections.containsKey(p))
+			throw new SelectionNotFoundExcetion();
+		RectSelection selection = selections.get(p);
+		
+		if(!selection.isComplete())
+			throw new IllegalArgumentException();
+		
+		mazes.put(p, new Maze(selection.getShape()));
+	}
 	
-	public void subtractSelctionFromMaze(Player p) {}
+	public void addSelectionToMaze(Player p) throws Exception {
+		if(!selections.containsKey(p))
+			throw new SelectionNotFoundExcetion();
+		if(!mazes.containsKey(p))
+			throw new MazeNotFoundException();
+		RectSelection selection = selections.get(p);
+		
+		if(!selection.isComplete())
+			throw new IllegalArgumentException();
+		
+		mazes.get(p).add(selection.getShape());
+	}
+	
+	public void subtractSelctionFromMaze(Player p)  throws Exception {
+		if(!selections.containsKey(p))
+			throw new SelectionNotFoundExcetion();
+		if(!mazes.containsKey(p))
+			throw new MazeNotFoundException();
+		RectSelection selection = selections.get(p);
+		
+		if(!selection.isComplete())
+			throw new IllegalArgumentException();
+		
+		mazes.get(p).subtract(selection.getShape());
+	}
 }

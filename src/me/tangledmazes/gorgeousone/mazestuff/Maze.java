@@ -48,7 +48,7 @@ public class Maze {
 				fill.add(point.clone());
 	}
 	
-	public void subtract() {
+	public void subtract(Shape s) {
 		
 		
 	}

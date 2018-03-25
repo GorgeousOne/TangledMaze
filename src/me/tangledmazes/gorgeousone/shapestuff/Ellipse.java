@@ -59,38 +59,38 @@ public class Ellipse implements Shape {
 	}
 	
 	private void calcFillAndBorder() {
-			int minX = vertices.get(0).getBlockX(),
-				minZ = vertices.get(0).getBlockZ();
-			
-			Vector relMid = new Vector(0, 0, 0);
-			Vector point;
-			
-			for(double x = -radiusX; x < radiusX; x++)
-				for(double z = -radiusZ; z < radiusZ; z++) {
+		int posX = vertices.get(0).getBlockX(),
+			posZ = vertices.get(0).getBlockZ();
+		
+		Vector midPoint = new Vector(0, 0, 0);
+		Vector point;
+		
+		for(double x = -radiusX; x < radiusX; x++)
+			for(double z = -radiusZ; z < radiusZ; z++) {
+				
+				point = new Vector(aspect * (x+0.5), 0, z+0.5);
+				Location loc = TangledMain_go.getNearestSurface(new Location(
+						world,
+						posX + radiusX + x,
+						vertices.get(0).getY(),
+						posZ + radiusZ + z));
+				
+				//using radius-0: the circle looks edged
+				//using radius-1/2: only one block sticks out at the edges
+				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
+				if(midPoint.distance(point) <= radiusZ - 0.25)
+					fill.add(loc);
+				else
+					continue;
+				
+				for(Vector dir : dirs) {
+					Vector neighbour = point.clone().add(dir.clone().setX(aspect * dir.getX()));
 					
-					point = new Vector(aspect * (x+0.5), 0, z+0.5);
-					Location loc = TangledMain_go.getNearestSurface(new Location(
-							world,
-							minX + radiusX + x,
-							vertices.get(0).getY(),
-							minZ + radiusZ + z));
-					
-					//using radius-0: the circle looks edged
-					//using radius-1/2: only one block sticks out at the edges
-					// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
-					if(relMid.distance(point) <= radiusZ - 0.25)
-						fill.add(loc);
-					else
-						continue;
-					
-					for(Vector dir : dirs) {
-						Vector neighbour = point.clone().add(dir.clone().setX(aspect * dir.getX()));
-						
-						if(relMid.distance(neighbour) > radiusZ - 0.25) {
-							border.add(loc);
-							break;
-						}
+					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
+						border.add(loc);
+						break;
 					}
 				}
+			}
 	}
 }

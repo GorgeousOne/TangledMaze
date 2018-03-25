@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.tangledmazes.gorgeousone.main.Constants;
 import me.tangledmazes.gorgeousone.main.TangledMain_go;
 import me.tangledmazes.gorgeousone.shapestuff.Ellipse;
+import me.tangledmazes.gorgeousone.shapestuff.Rectangle;
 import me.tangledmazes.gorgeousone.shapestuff.Shape;
 import me.tangledmazes.main.TangledMain;
 
@@ -77,6 +78,11 @@ public class RectSelection {
 		return vertices.get(2).getBlockZ() - vertices.get(0).getBlockZ() + 1;
 	}
 	
+	//TODO add an actual variable selection
+	public Shape getShape() {
+		return new Ellipse(this);
+	}
+	
 	/**
 	 * Completes the selection by adding a second block as second, opposite vertex
 	 * @param b
@@ -95,7 +101,7 @@ public class RectSelection {
 		calcVertices(firstVertex, b.getLocation());
 		isComplete = true;
 		
-		Shape r = new Ellipse(this);
+		Shape r = new Rectangle(this);
 		for(Location loc : r.getBorder()) {
 			sendBlockLater(loc, Constants.SELECTION_BORDER);
 		}
