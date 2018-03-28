@@ -14,7 +14,6 @@ public class Rectangle implements Shape {
 	private World world;
 	private ArrayList<Location> vertices, border, fill;
 	
-	
 	public Rectangle(RectSelection selection) {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The given selection is incomplete and cannot be used");

@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 
 import me.tangledmazes.gorgeousone.exceptions.MazeNotFoundException;
 import me.tangledmazes.gorgeousone.exceptions.SelectionNotFoundExcetion;
@@ -108,15 +109,10 @@ public class SelectionHandler implements Listener {
 				selection.complete(b);
 				selections.remove(p);
 				
-				if(!mazes.containsKey(p)) {
+				if(!mazes.containsKey(p))
 					mazes.put(p, new Maze(p, selection.getShape()));
-					mazes.get(p).show();
-				}else {
-					Maze m = mazes.get(p);
-					m.hide();
-					m.add(selection.getShape());
-					m.show();
-				}
+				else
+					mazes.get(p).add(selection.getShape());
 				
 			}
 		//begins players first selection since they joined
@@ -124,6 +120,12 @@ public class SelectionHandler implements Listener {
 			selection = new RectSelection(p, b);
 			selections.put(p, selection);
 		}
+	}
+	
+	@EventHandler
+	public void onDurabilityChange(PlayerItemDamageEvent e) {
+		if(TangledMain.isSelectionWand(e.getItem()))
+			e.setCancelled(true);
 	}
 	
 	public RectSelection getSelection(Player p) {

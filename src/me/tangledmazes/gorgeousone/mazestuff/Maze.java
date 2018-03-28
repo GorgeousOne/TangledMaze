@@ -1,7 +1,10 @@
 package me.tangledmazes.gorgeousone.mazestuff;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -16,43 +19,90 @@ import me.tangledmazes.gorgeousone.shapestuff.Shape;
 public class Maze {
 	
 	private Player p;
-	private ArrayList<Location> fill, border;
-	private ArrayList<Shape> borderAreas;
+	private HashMap<Chunk, ArrayList<Location>> filledChunks, borderedChunks;
+	//private ArrayList<Location> fill, border;
+	private ArrayList<Shape> shapes;
 	
-	public Maze(Player creator, Shape borderArea) {
-		
+	public Maze(Player creator, Shape borderShape) {
 		p = creator;
-		fill = borderArea.getFill();
-		border = borderArea.getBorder();
 		
-		borderAreas = new ArrayList<>();
-		borderAreas.add(borderArea);
+		filledChunks = new HashMap<>();
+		borderedChunks = new HashMap<>();
+		
+		shapes = new ArrayList<>();
+		shapes.add(borderShape);
+		
+		add(borderShape);
+	}
+	
+	private void addFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(filledChunks.containsKey(c))
+			filledChunks.get(c).add(point);
+		else
+			filledChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+
+	private void addBorder(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(borderedChunks.containsKey(c))
+			borderedChunks.get(c).add(point);
+		else
+			borderedChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
 	public void add(Shape s) {
-		ArrayList<Location> newBorder = new ArrayList<>();
+		ArrayList<Chunk> changedChunks = new ArrayList<>();
+
+		ArrayList<Location> newBorder  = new ArrayList<>(),
+							newFill    = new ArrayList<>();
 		
-		for(Location point : s.getBorder())
-			if(!contains(point))
-				newBorder.add(point.clone());
+		//check for new border blocks
+		for(Location point : s.getBorder()) {
+			if(!contains(point)) {
+				newBorder.add(point);
+				if(!changedChunks.contains(point.getChunk()))
+					changedChunks.add(point.getChunk());
+			}
+		}
 		
-		if(newBorder.isEmpty())
+		//return if the shapes is totally covered by the maze
+		if(changedChunks.isEmpty())
 			return;
 		
-		for (int i = border.size()-1; i >= 0; i--) {
-			if(s.contains(border.get(i)) && !s.borderContains(border.get(i)))
-				border.remove(i);
+		//check for new fill blocks
+		for(Location point : s.getFill()) {
+			if(!contains(point)) {
+				newFill.add(point);
+				if(!changedChunks.contains(point.getChunk()))
+					changedChunks.add(point.getChunk());
+			}
 		}
+		
+		//check for existing removable border blocks in the changed chunks
+		for(Chunk c : changedChunks) {
+			if(!borderedChunks.containsKey(c))
+				continue;
+			ArrayList<Location> currentChunk = borderedChunks.get(c);
+			
+			for(int i = currentChunk.size()-1; i >= 0; i--) {
+				Location point = currentChunk.get(i);
 				
-		ArrayList<Location> newFill = new ArrayList<>();
+				if(s.contains(point) && !s.borderContains(point))
+					currentChunk.remove(i);
+			}
+		}
 		
-		for(Location point : s.getFill())
-			if(!contains(point))
-				fill.add(point.clone());
+		//add all new blocks
+		for(Location point : newFill)
+			addFill(point);
+		for(Location point : newBorder)
+			addBorder(point);
 		
-		borderAreas.add(s);
-		border.addAll(newBorder);
-		fill.addAll(newFill);
+		//show all new blocks
+		update(changedChunks);
 	}
 	
 	public void subtract(Shape s) {
@@ -63,58 +113,61 @@ public class Maze {
 	 * @return if the point is inside the area of the maze.
 	 */
 	public boolean contains(Location point) {
-		for(Shape area : borderAreas)
-			if(area.contains(point))
+		Chunk c = point.getChunk();
+		
+		if(!filledChunks.containsKey(c))
+			return false;
+		
+		for(Location point2 : filledChunks.get(c)) {
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
 				return true;
+		}
+		return false;
+	}
+	
+	public boolean borderContains(Location point) {	//TODO think about for usefulness
+		Chunk c = point.getChunk();
+		
+		if(!borderedChunks.containsKey(c))
+			return false;
+		
+		for(Location point2 : borderedChunks.get(c)) {
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
+				return true;
+		}
 		return false;
 	}
 	
 	public void show() {
-		for(Location point : fill)
-			TangledMain_go.sendBlockLater(p, point, Constants.SELECTION_BORDER);
-		for(Location point : border)
-			TangledMain_go.sendBlockLater(p, point, Constants.MAZE_BORDER);
+		for(Chunk c : filledChunks.keySet()) {
+			for(Location point : filledChunks.get(c))
+				TangledMain_go.sendBlockLater(p, point, Constants.SELECTION_BORDER);
+			
+			if(borderedChunks.containsKey(c))
+				for(Location point : borderedChunks.get(c))
+					TangledMain_go.sendBlockLater(p, point, Constants.MAZE_BORDER);
+		}
 	}
 	
 	public void hide() {
-		for(Location point : border)
-			TangledMain_go.sendBlockLater(p, point, point.getBlock().getType());
-		for(Location point : fill)
-			TangledMain_go.sendBlockLater(p, point, point.getBlock().getType());
+		for(Chunk c : filledChunks.keySet())
+			for(Location point : filledChunks.get(c))
+				TangledMain_go.sendBlockLater(p, point, point.getBlock().getType());
 	}
 	
-//	/**
-//	 * @return the minimum point of the maze.
-//	 */
-//	public Vector getMin() {
-//		return new Vector(minX, 0, minZ);
-//	}
-//	
-//	/**
-//	 * @return the maximum point of the maze.
-//	 */
-//	public Vector getMax() {
-//		return new Vector(minX+length, 0, minZ+depth);
-//	}
-//	
-//	/**
-//	 * @param point
-//	 * @return if a wall is planned at this point of the maze.
-//	 */
-//	public boolean isWall(Vector point) {
-//		if(point.getX() < minX || point.getX() >= minX+length || 
-//		   point.getZ() < minZ || point.getZ() >= minZ+depth)
-//			return false;
-//		
-//		return wallGrid[point.getBlockX()-minX][point.getBlockZ()-minZ];
-//	}
-//	
-//	/**
-//	 * Sets if there shall be a wall at a specific point of the maze
-//	 * @param point
-//	 * @param state 
-//	 */
-//	public void setWall(Vector point, boolean state) {
-//		wallGrid[point.getBlockX()][point.getBlockZ()] = state; 
-//	}
+	public void update(ArrayList<Chunk> changedChunks) {
+		for(Chunk c : changedChunks) {
+			System.out.println(c);
+			for(Location point : filledChunks.get(c))
+				TangledMain_go.sendBlockLater(p, point, Constants.SELECTION_BORDER);
+			
+			if(borderedChunks.containsKey(c))
+				for(Location point : borderedChunks.get(c))
+					TangledMain_go.sendBlockLater(p, point, Constants.MAZE_BORDER);
+		}
+		
+		System.out.println(changedChunks.size());
+	}
 }

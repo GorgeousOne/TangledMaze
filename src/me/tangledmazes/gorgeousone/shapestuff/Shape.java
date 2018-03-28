@@ -2,6 +2,7 @@ package me.tangledmazes.gorgeousone.shapestuff;
 
 import java.util.ArrayList;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 public interface Shape {

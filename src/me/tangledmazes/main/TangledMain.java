@@ -42,7 +42,6 @@ public class TangledMain extends JavaPlugin {
 		
 		wand = new ItemStack(Material.GOLD_SPADE);
 		wand.setAmount(1);
-		wand.setDurability((short) 1);
 		ItemMeta wandmeta = wand.getItemMeta();
 		wandmeta.setDisplayName(NAME);
 		wandmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
@@ -64,7 +63,7 @@ public class TangledMain extends JavaPlugin {
 		
 		ItemMeta meta = wand.getItemMeta();
 		List<String> s = meta.getLore();
-		s.set(0,"§7" + getCustomEnchanment());
+		s.set(0,"§7" + getCustomEnchantment());
 		meta.setLore(s);
 		wand.setItemMeta(meta);
 		return wand;
@@ -76,10 +75,10 @@ public class TangledMain extends JavaPlugin {
 		
 		ItemMeta itemMeta = item.getItemMeta();
 		ItemMeta wandmeta = wand.getItemMeta();
-		return item.getType() == wand.getType() && item.getDurability() == wand.getDurability() && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
+		return item.getType() == wand.getType() && itemMeta.getDisplayName() != null && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
 	}
 	
-	private static final String[] ench = {
+	private static final String[] enchants = {
 			"Selector I",
 			"Selector II",
 			"Selector III",
@@ -89,12 +88,11 @@ public class TangledMain extends JavaPlugin {
 			"Java.exe II",
 			"Ignore WorldGuard IV"
 	};
-	private static final     Random   rnd  = new Random();
 	
-	private static String getCustomEnchanment() {
-		int select = rnd.nextInt(ench.length);
-		return ench[select];
+	private static final Random rnd = new Random();
+	
+	private static String getCustomEnchantment() {
+		int select = rnd.nextInt(enchants.length);
+		return enchants[select];
 	}
-	
-	
 }
