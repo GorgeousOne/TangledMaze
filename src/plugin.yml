@@ -1,9 +1,9 @@
 name: xXx_TangledMazes_xXx
 version: 1.0.0
-authors: [GorgeousOne,Qwertiiiiiii]
-main: me.tangledmazes.main.TangledMain
+authors: [GorgeousOne, Qwertiiiiiii]
+main: me.tangledmaze.main.TangledMain
 
 commands:
   tangledmaze:
     description: main command.
-    aliases: [tm,maze]
+    aliases: [tm, maze]
