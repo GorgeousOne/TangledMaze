@@ -3,15 +3,14 @@ package me.tangledmaze.gorgeousone.selections;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.Constants;
-import me.tangledmaze.gorgeousone.main.TangledMain_go;
-import me.tangledmaze.gorgeousone.shapes.Ellipse;
+import me.tangledmaze.gorgeousone.main.Utils;
+import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
 /**
@@ -39,7 +38,7 @@ public class RectSelection {
 		isComplete = false;
 		
 		this.firstVertex = firstVertex.getLocation();
-		TangledMain_go.sendBlockLater(creator, this.firstVertex, Constants.SELECTION_BEGINNING);
+		Utils.sendBlockLater(creator, this.firstVertex, Constants.SELECTION_BEGINNING);
 	}
 	
 	/**
@@ -101,7 +100,7 @@ public class RectSelection {
 			
 		calcVertices(firstVertex, b.getLocation());
 		isComplete = true;
-		shape = new Ellipse(this);
+		shape = new Rectangle(this);
 		
 		show();
 	}
@@ -184,10 +183,10 @@ public class RectSelection {
 
 		
 		vertices = new ArrayList<>(Arrays.asList(
-			TangledMain_go.getNearestSurface(new Location(world, minX, p1.getY(), minZ)),
-			TangledMain_go.getNearestSurface(new Location(world, maxX, p1.getY(), minZ)),
-			TangledMain_go.getNearestSurface(new Location(world, maxX, p1.getY(), maxZ)),
-			TangledMain_go.getNearestSurface(new Location(world, minX, p1.getY(), maxZ))));
+				Utils.getNearestSurface(new Location(world, minX, p1.getY(), minZ)),
+				Utils.getNearestSurface(new Location(world, maxX, p1.getY(), minZ)),
+				Utils.getNearestSurface(new Location(world, maxX, p1.getY(), maxZ)),
+				Utils.getNearestSurface(new Location(world, minX, p1.getY(), maxZ))));
 	}
 	
 	private void worldCheck(Block b) {
@@ -197,14 +196,14 @@ public class RectSelection {
 	}
 	
 	public void show() {
-		Bukkit.broadcastMessage("completed");
 		if(isComplete()) {
 			for(Location vertex : vertices)
-				TangledMain_go.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
-			for(Location point : shape.getBorder())
-				TangledMain_go.sendBlockLater(p, point, Constants.SELECTION_BORDER);
+				Utils.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
+			for(ArrayList<Location> chunk : shape.getBorder().values())
+				for(Location point : chunk)
+					Utils.sendBlockLater(p, point, Constants.SELECTION_BORDER);
 		}else
-			TangledMain_go.sendBlockLater(p, firstVertex, Constants.SELECTION_BEGINNING);
+			Utils.sendBlockLater(p, firstVertex, Constants.SELECTION_BEGINNING);
 	}
 	
 	
@@ -216,8 +215,9 @@ public class RectSelection {
 		if(isComplete()) {
 			for(Location vertex : vertices)
 				p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
-			for(Location point : shape.getBorder())
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+			for(ArrayList<Location> chunk : shape.getBorder().values())
+				for(Location point : chunk)
+					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 		}else
 			p.sendBlockChange(firstVertex, firstVertex.getBlock().getType(), firstVertex.getBlock().getData());
 	}

@@ -7,10 +7,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.main.TangledMain_go;
+import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 
-public class Ellipse implements Shape {
+public class Ellipse {
 	
 	private ArrayList<Vector> dirs = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
@@ -46,17 +46,14 @@ public class Ellipse implements Shape {
 		calcFillAndBorder();
 	}
 	
-	@Override
 	public ArrayList<Location> getBorder() {
 		return border;
 	}
 	
-	@Override
 	public ArrayList<Location> getFill() {
 		return fill;
 	}
 	
-	@Override
 	public boolean contains(Location point) {
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
@@ -65,7 +62,6 @@ public class Ellipse implements Shape {
 		return mid.distance(point2) <= radiusZ - 0.25;
 	}
 	
-	@Override
 	public boolean borderContains(Location point) {
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
@@ -96,7 +92,7 @@ public class Ellipse implements Shape {
 			for(double z = -radiusZ; z < radiusZ; z++) {
 				
 				point = new Vector(aspect * (x+0.5), 0, z+0.5);
-				Location loc = TangledMain_go.getNearestSurface(new Location(
+				Location loc = Utils.getNearestSurface(new Location(
 						world,
 						posX + radiusX + x,
 						vertices.get(0).getY(),

@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.selections;
+package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
@@ -11,11 +11,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
-import me.tangledmaze.gorgeousone.exceptions.MazeNotFoundException;
-import me.tangledmaze.gorgeousone.exceptions.SelectionNotFoundExcetion;
 import me.tangledmaze.gorgeousone.main.Constants;
-import me.tangledmaze.gorgeousone.main.TangledMain_go;
-import me.tangledmaze.gorgeousone.mazes.Maze;
+import me.tangledmaze.gorgeousone.main.Utils;
+import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.main.TangledMain;
 
 public class SelectionHandler implements Listener {
@@ -25,13 +23,13 @@ public class SelectionHandler implements Listener {
 		ELLIPTICAL = 1,
 		POLYGONAL = 2;
 
-	private HashMap<Player, Maze> mazes;
+//	private HashMap<Player, Maze> mazes;
 	private HashMap<Player, Integer> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> resizingSelections;
 	
 	public SelectionHandler() {
-		mazes           = new HashMap<>();
+//		mazes           = new HashMap<>();
 		selectionTypes  = new HashMap<>();
 		selections      = new HashMap<>();
 		resizingSelections = new HashMap<>();
@@ -43,8 +41,8 @@ public class SelectionHandler implements Listener {
 	public void reload() {
 		for(RectSelection selection : selections.values())
 			selection.hide();
-		for(Maze maze : mazes.values())
-			maze.hide();
+//		for(Maze maze : mazes.values())
+//			maze.hide();
 	}
 	
 	/**
@@ -92,7 +90,7 @@ public class SelectionHandler implements Listener {
 					return;
 				
 				Location vertex = selection.getVertices().get(selection.indexOfVertex(b));
-				TangledMain_go.sendBlockLater(selection.getPlayer(), vertex, Constants.SELECTION_MOVE);
+				Utils.sendBlockLater(selection.getPlayer(), vertex, Constants.SELECTION_MOVE);
 				resizingSelections.put(p, vertex.getBlock());
 				return;
 			}
@@ -129,7 +127,7 @@ public class SelectionHandler implements Listener {
 	public boolean hasSelection(Player p) {
 		return selections.containsKey(p);
 	}
-	
+
 	public void setSelectionType(Player p, int type) {
 		selectionTypes.put(p, type);
 	}
@@ -144,49 +142,49 @@ public class SelectionHandler implements Listener {
 		}
 	}
 	
-	public void startMaze(Player p) throws Exception {
-		if(!selections.containsKey(p))
-			throw new SelectionNotFoundExcetion();
-		RectSelection selection = selections.get(p);
-		
-		if(!selection.isComplete())
-			throw new IllegalArgumentException();
-		
-		if(mazes.containsKey(p))
-			mazes.get(p).hide();
-		
-		selection.hide();
-		mazes.put(p, new Maze(p, selection.getShape()));
-		selections.remove(p);
-	}
+//	public void startMaze(Player p) throws Exception {
+//		if(!selections.containsKey(p))
+//			throw new SelectionNotFoundExcetion();
+//		RectSelection selection = selections.get(p);
+//		
+//		if(!selection.isComplete())
+//			throw new IllegalArgumentException();
+//		
+//		if(mazes.containsKey(p))
+//			mazes.get(p).hide();
+//		
+//		selection.hide();
+//		mazes.put(p, new Maze(p, selection.getShape()));
+//		selections.remove(p);
+//	}
 	
-	public void addSelectionToMaze(Player p) throws Exception {
-		if(!mazes.containsKey(p))
-			throw new MazeNotFoundException();
-		if(!selections.containsKey(p))
-			throw new SelectionNotFoundExcetion();
-		RectSelection selection = selections.get(p);
-		
-		if(!selection.isComplete())
-			throw new IllegalArgumentException();
-		
-		selection.hide();
-		mazes.get(p).add(selection.getShape());
-		selections.remove(p);
-	}
+//	public void addSelectionToMaze(Player p) throws Exception {
+//		if(!mazes.containsKey(p))
+//			throw new MazeNotFoundException();
+//		if(!selections.containsKey(p))
+//			throw new SelectionNotFoundExcetion();
+//		RectSelection selection = selections.get(p);
+//		
+//		if(!selection.isComplete())
+//			throw new IllegalArgumentException();
+//		
+//		selection.hide();
+//		mazes.get(p).add(selection.getShape());
+//		selections.remove(p);
+//	}
 	
-	public void subtractSelctionFromMaze(Player p)  throws Exception {
-		if(!selections.containsKey(p))
-			throw new SelectionNotFoundExcetion();
-		if(!mazes.containsKey(p))
-			throw new MazeNotFoundException();
-		RectSelection selection = selections.get(p);
-		
-		if(!selection.isComplete())
-			throw new IllegalArgumentException();
-		
-		selection.hide();
-		mazes.get(p).subtract(selection.getShape());
-		selections.remove(p);
-	}
+//	public void subtractSelctionFromMaze(Player p)  throws Exception {
+//		if(!selections.containsKey(p))
+//			throw new SelectionNotFoundExcetion();
+//		if(!mazes.containsKey(p))
+//			throw new MazeNotFoundException();
+//		RectSelection selection = selections.get(p);
+//		
+//		if(!selection.isComplete())
+//			throw new IllegalArgumentException();
+//		
+//		selection.hide();
+//		mazes.get(p).subtract(selection.getShape());
+//		selections.remove(p);
+//	}
 }

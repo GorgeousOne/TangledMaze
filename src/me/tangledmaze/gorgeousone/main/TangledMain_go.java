@@ -1,20 +1,15 @@
 package me.tangledmaze.gorgeousone.main;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.listener.MazeHandler;
+import me.tangledmaze.gorgeousone.listener.SelectionHandler;
+import me.tangledmaze.gorgeousone.listener.ToolListener;
 import me.tangledmaze.main.IMain;
 import me.tangledmaze.main.TangledMain;
 
 public class TangledMain_go implements IMain {
 
-	@SuppressWarnings("unused")
-	private JavaPlugin plugin;
-	private SelectionHandler handler;
+	private SelectionHandler sHandler;
+	private MazeHandler mHandler;
 	
 	@Override
 	public void onLoad(TangledMain plugin) {
@@ -23,52 +18,26 @@ public class TangledMain_go implements IMain {
 	@Override
 	public void onEnable(TangledMain plugin) {
 		plugin = TangledMain.plugin;
-		plugin.getServer().getPluginManager().registerEvents(handler = new SelectionHandler(), plugin);
 		
+		mHandler = new MazeHandler();
+		sHandler = new SelectionHandler();
+		
+		plugin.getServer().getPluginManager().registerEvents(sHandler, plugin);
+		plugin.getServer().getPluginManager().registerEvents(new ToolListener(this), plugin);
 		plugin.getCommand("tangledmaze").setExecutor(new CommandListener(this));
 	}
 
 	@Override
 	public void onDisable(TangledMain plugin) {
-		handler.reload();
+		sHandler.reload();
+		mHandler.reload();
 	}
 	
 	public SelectionHandler getSelectionHandler() {
-		return handler;
+		return sHandler;
 	}
 	
-	//TODO put this in a utils class?
-	public static Location getNearestSurface(Location loc) {
-		Location iter = loc.clone();
-		
-		if(loc.getBlock().getType() == Material.AIR) {
-			while(iter.getY() >= 0) {
-				iter.add(0, -1, 0);
-				
-				if(iter.getBlock().getType() != Material.AIR)
-					return iter;
-			}
-			iter.setY(loc.getY());
-		}
-		
-		while(iter.getY() <= 255) {
-			iter.add(0, 1, 0);
-			
-			if(iter.getBlock().getType() == Material.AIR) {
-				iter.add(0, -1, 0);
-				return iter;
-			}
-		}
-		return null;
-	}
-	
-	public static void sendBlockLater(Player p, Location loc, Material m) {
-		new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void run() {
-				p.sendBlockChange(loc, m, (byte) 0);
-			}
-		}.runTask(TangledMain.plugin);
+	public MazeHandler getMazeHandler() {
+		return mHandler;
 	}
 }

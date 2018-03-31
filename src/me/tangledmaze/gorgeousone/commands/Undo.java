@@ -3,9 +3,8 @@ package me.tangledmaze.gorgeousone.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.exceptions.SelectionNotFoundExcetion;
+import me.tangledmaze.gorgeousone.listener.SelectionHandler;
 import me.tangledmaze.gorgeousone.main.TangledMain_go;
-import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class Undo {
 
@@ -20,7 +19,7 @@ public class Undo {
 		try {
 			
 		} catch (Exception e) {
-			if(e instanceof SelectionNotFoundExcetion)
+			if(e instanceof IllegalArgumentException)
 				p.sendMessage(ChatColor.RED + "");
 		}
 	}
