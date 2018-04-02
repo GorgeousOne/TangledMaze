@@ -9,17 +9,19 @@ import org.bukkit.inventory.ItemStack;
 
 import me.tangledmaze.gorgeousone.commands.Add;
 import me.tangledmaze.gorgeousone.commands.Start;
+import me.tangledmaze.gorgeousone.commands.Subtract;
 import me.tangledmaze.main.TangledMain;
 
 public class CommandListener implements CommandExecutor {
 	
 	private Start startCommand;
 	private Add addCommand;
-
+	private Subtract subtCommand;
 	
 	public CommandListener(TangledMain_go plugin) {
 		startCommand = new Start(plugin);
 		addCommand = new Add(plugin);
+		subtCommand = new Subtract(plugin);
 	}
 	
 	@Override
@@ -51,6 +53,7 @@ public class CommandListener implements CommandExecutor {
 						addCommand.execute(p);
 						break;
 					case "subtract":
+						subtCommand.execute(p);
 						break;
 					case "undo":
 						break;

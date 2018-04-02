@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
+import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
@@ -76,7 +77,6 @@ public class RectSelection {
 		return vertices.get(2).getBlockZ() - vertices.get(0).getBlockZ() + 1;
 	}
 	
-	//TODO add an actual variable selection
 	public Shape getShape() {
 		return shape;
 	}
@@ -100,8 +100,8 @@ public class RectSelection {
 			
 		calcVertices(firstVertex, b.getLocation());
 		isComplete = true;
-		shape = new Rectangle(this);
 		
+		shape = new Rectangle(this);
 		show();
 	}
 	
@@ -119,6 +119,7 @@ public class RectSelection {
 		Location opposite = vertices.get((index+2) % 4);
 		
 		calcVertices(newVertex.getLocation(), opposite);
+		shape = new Ellipse(this);
 		show();
 	}
 	
@@ -197,11 +198,11 @@ public class RectSelection {
 	
 	public void show() {
 		if(isComplete()) {
-			for(Location vertex : vertices)
-				Utils.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
 			for(ArrayList<Location> chunk : shape.getBorder().values())
 				for(Location point : chunk)
 					Utils.sendBlockLater(p, point, Constants.SELECTION_BORDER);
+			for(Location vertex : vertices)
+				Utils.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
 		}else
 			Utils.sendBlockLater(p, firstVertex, Constants.SELECTION_BEGINNING);
 	}

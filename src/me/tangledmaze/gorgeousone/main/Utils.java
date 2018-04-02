@@ -1,14 +1,33 @@
 package me.tangledmaze.gorgeousone.main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import me.tangledmaze.main.TangledMain;
 
 public class Utils {
 
+	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
+			new Vector( 1, 0,  0),
+			new Vector( 1, 0,  1),
+			new Vector( 0, 0,  1),
+			new Vector(-1, 0,  1),
+			new Vector(-1, 0,  0),
+			new Vector(-1, 0, -1),
+			new Vector( 0, 0, -1),
+			new Vector( 1, 0, -1)));
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Vector> getDirs() {
+		return (ArrayList<Vector>) DIRECTIONS.clone();
+	}
+	
 	public static Location getNearestSurface(Location loc) {
 		Location iter = loc.clone();
 		

@@ -46,13 +46,17 @@ public class Rectangle implements Shape {
 		if(!point.getWorld().equals(world))
 			return false;
 		
-		return point.getX() >= vertices.get(0).getX() && point.getZ() <= vertices.get(2).getX() &&
+		return point.getX() >= vertices.get(0).getX() && point.getX() <= vertices.get(2).getX() &&
 			   point.getZ() >= vertices.get(0).getZ() && point.getZ() <= vertices.get(2).getZ();
 	}
 	
 	@Override
 	public boolean borderContains(Location point) {
-		return false;	//TODO implement
+		Vector v0 = vertices.get(0).toVector(),
+			   v2 = vertices.get(2).toVector();
+		
+		return (point.getBlockX() == v0.getX() || point.getBlockX() == v2.getX()) && (point.getBlockZ() >= v0.getZ() && point.getBlockZ() <= v2.getZ()) ||
+			   (point.getBlockZ() == v0.getZ() || point.getBlockZ() == v2.getZ()) && (point.getBlockX() >= v0.getX() && point.getBlockX() <= v2.getX());
 	}
 	
 	private void calcFillAndBorder() {

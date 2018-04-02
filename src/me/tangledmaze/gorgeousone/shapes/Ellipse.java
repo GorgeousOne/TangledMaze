@@ -2,7 +2,9 @@ package me.tangledmaze.gorgeousone.shapes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -10,20 +12,11 @@ import org.bukkit.util.Vector;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 
-public class Ellipse {
-	
-	private ArrayList<Vector> dirs = new ArrayList<>(Arrays.asList(
-			new Vector( 1, 0,  0),
-			new Vector( 1, 0,  1),
-			new Vector( 0, 0,  1),
-			new Vector(-1, 0,  1),
-			new Vector(-1, 0,  0),
-			new Vector(-1, 0, -1),
-			new Vector( 0, 0, -1),
-			new Vector( 1, 0, -1)));
+public class Ellipse implements Shape {
 	
 	private World world;
-	private ArrayList<Location> vertices, border, fill;
+	private ArrayList<Location> vertices;
+	private HashMap<Chunk, ArrayList<Location>> borderChunks, fillChunks;
 	private Vector mid;
 	private double radiusX, radiusZ, aspect;
 	
@@ -33,8 +26,8 @@ public class Ellipse {
 
 		world    = selection.getWorld();
 		vertices = selection.getVertices();
-		border = new ArrayList<>();
-		fill   = new ArrayList<>();
+		borderChunks = new HashMap<>();
+		fillChunks   = new HashMap<>();
 		
 		radiusX = selection.getWidth() / 2d;
 		radiusZ = selection.getDepth() / 2d;
@@ -46,12 +39,15 @@ public class Ellipse {
 		calcFillAndBorder();
 	}
 	
-	public ArrayList<Location> getBorder() {
-		return border;
+	
+	@Override
+	public HashMap<Chunk, ArrayList<Location>> getBorder() {
+		return borderChunks;
 	}
 	
-	public ArrayList<Location> getFill() {
-		return fill;
+	@Override
+	public HashMap<Chunk, ArrayList<Location>> getFill() {
+		return fillChunks;
 	}
 	
 	public boolean contains(Location point) {
@@ -70,7 +66,7 @@ public class Ellipse {
 		if(mid.distance(point2) > radiusZ - 0.25)
 			return false;
 		
-		for(Vector dir : dirs) {
+		for(Vector dir : Utils.getDirs()) {
 			Vector neighbour = point2.clone().add(dir.clone().setX(aspect * dir.getX()));
 			
 			if(mid.distance(neighbour) > radiusZ - 0.25)
@@ -86,13 +82,13 @@ public class Ellipse {
 			posZ = vertices.get(0).getBlockZ();
 		
 		Vector midPoint = new Vector(0, 0, 0);
-		Vector point;
+		Vector iter;
 		
 		for(double x = -radiusX; x < radiusX; x++)
 			for(double z = -radiusZ; z < radiusZ; z++) {
 				
-				point = new Vector(aspect * (x+0.5), 0, z+0.5);
-				Location loc = Utils.getNearestSurface(new Location(
+				iter = new Vector(aspect * (x+0.5), 0, z+0.5);
+				Location point = Utils.getNearestSurface(new Location(
 						world,
 						posX + radiusX + x,
 						vertices.get(0).getY(),
@@ -101,19 +97,37 @@ public class Ellipse {
 				//using radius-0: the circle looks edged
 				//using radius-1/2: only one block sticks out at the edges
 				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
-				if(midPoint.distance(point) <= radiusZ - 0.25)
-					fill.add(loc);
+				if(midPoint.distance(iter) <= radiusZ - 0.25)
+					addFill(point);
 				else
 					continue;
 				
-				for(Vector dir : dirs) {
-					Vector neighbour = point.clone().add(dir.clone().setX(aspect * dir.getX()));
+				for(Vector dir : Utils.getDirs()) {
+					Vector neighbour = iter.clone().add(dir.clone().setX(aspect * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
-						border.add(loc);
+						addBorder(point);
 						break;
 					}
 				}
 			}
+	}
+	
+	private void addFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(fillChunks.containsKey(c))
+			fillChunks.get(c).add(point);
+		else
+			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	private void addBorder(Location point) {
+		Chunk c = point.getChunk();
+
+		if(borderChunks.containsKey(c))
+			borderChunks.get(c).add(point);
+		else
+			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 }

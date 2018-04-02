@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -22,8 +21,9 @@ public class Maze {
 	
 	private Player p;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
-	//private ArrayList<Location> fill, border;
 	private ArrayList<Shape> shapes;
+
+	private boolean isVisible;
 	
 	public Maze(Player creator, Shape borderShape) {
 		p = creator;
@@ -55,6 +55,17 @@ public class Maze {
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
+	private void removeFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		for(Location point2 : fillChunks.get(c))
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ()) {
+				fillChunks.get(c).remove(point2);
+				break;
+			}
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void add(Shape s) {
 		ArrayList<Chunk> newShapeChunks = new ArrayList<>(),
@@ -81,13 +92,12 @@ public class Maze {
 
 		//return if the shapes is totally covered by the maze
 		if(newShapeChunks.isEmpty()) {
-			Bukkit.broadcastMessage("meh nothing new");
 			update(overlappingBorderChunks);
 			return;
 		}
 
 		//check for new fill blocks
-		for(Chunk c : s.getBorder().keySet())
+		for(Chunk c : s.getFill().keySet())
 			for(Location point : s.getFill().get(c)) {
 				if(!contains(point)) {
 					newFill.add(point);
@@ -101,6 +111,7 @@ public class Maze {
 		for(Chunk c : newShapeChunks) {
 			if(!borderChunks.containsKey(c))
 				continue;
+
 			ArrayList<Location> currentChunk = borderChunks.get(c);
 			
 			for(int i = currentChunk.size()-1; i >= 0; i--) {
@@ -119,12 +130,63 @@ public class Maze {
 		for(Location point : newBorder)
 			addBorder(point);
 
-		//show all new blocks
+		//show the new border and re-show overlapping border parts (they may be hidden with the shape)
 		update(newShapeChunks);
 		update(overlappingBorderChunks);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void subtract(Shape s) {
+		ArrayList<Chunk> newVoidChunks = new ArrayList<>();
+		ArrayList<Location> newBorder  = new ArrayList<>();
+		
+		//get new border points where shape is cutting into maze
+		for(Chunk c : s.getBorder().keySet()) {
+			for(Location point : s.getBorder().get(c))
+
+				if(contains(point) && !borderContains(point)) {
+					newBorder.add(point);
+
+					if(!newVoidChunks.contains(c))
+						newVoidChunks.add(c);
+				}
+		}
+		
+		if(newVoidChunks.isEmpty())
+			return;
+
+		//remove all overlapping fill
+		for(Chunk c : s.getFill().keySet())
+			for(Location point : s.getFill().get(c))
+				
+				if(contains(point)) {
+					removeFill(point);
+					
+					if(!newVoidChunks.contains(c))
+						newVoidChunks.add(c);
+				}
+
+		//remove all maze border inside the shape
+		for(Chunk c : newVoidChunks) {
+			if(!borderChunks.containsKey(c))
+				continue;
+
+			ArrayList<Location> current = borderChunks.get(c);
+			
+			for(int i = current.size()-1; i >= 0; i--) {
+				Location point = current.get(i);
+				
+				if(s.contains(point) && !s.borderContains(point)) {
+					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+					current.remove(point);
+				}
+			}
+		}
+		
+		for(Location point : newBorder)
+			addBorder(point);
+
+		update(newVoidChunks);
 	}
 	
 	/**
@@ -145,7 +207,7 @@ public class Maze {
 		return false;
 	}
 	
-	public boolean borderContains(Location point) {	//TODO think about for usefulness
+	public boolean borderContains(Location point) {
 		Chunk c = point.getChunk();
 		
 		if(!borderChunks.containsKey(c))
@@ -171,6 +233,10 @@ public class Maze {
 	}
 	
 	public void show() {
+		if(isVisible)
+			return;
+		isVisible = true;
+
 		for(Chunk c : fillChunks.keySet())
 			if(borderChunks.containsKey(c))
 				for(Location point : borderChunks.get(c))
@@ -179,6 +245,10 @@ public class Maze {
 	
 	@SuppressWarnings("deprecation")
 	public void hide() {
+		if(!isVisible)
+			return;
+		isVisible = false;
+		
 		for(Chunk c : borderChunks.keySet())
 			for(Location point : borderChunks.get(c))
 				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());

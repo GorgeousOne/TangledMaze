@@ -42,16 +42,16 @@ public class TangledMain extends JavaPlugin {
 		
 		wand = new ItemStack(Material.GOLD_SPADE);
 		wand.setAmount(1);
-		ItemMeta wandmeta = wand.getItemMeta();
-		wandmeta.setDisplayName(NAME);
-		wandmeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-		wandmeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		ItemMeta meta = wand.getItemMeta();
+		meta.setDisplayName(NAME);
+		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
-		lore.add("§bUltimate tool for maze selections.");
-		lore.add("§bUse right click to set or move points.");
-		wandmeta.setLore(lore);
-		wand.setItemMeta(wandmeta);
+		lore.add("§bThe tool to create mazes.");
+		lore.add("§bUse left click to begin a selection.");
+		meta.setLore(lore);
+		wand.setItemMeta(meta);
 	}
 	
 	@Override
@@ -62,9 +62,9 @@ public class TangledMain extends JavaPlugin {
 	public static ItemStack getWand() {
 		
 		ItemMeta meta = wand.getItemMeta();
-		List<String> s = meta.getLore();
-		s.set(0,"§7" + getCustomEnchantment());
-		meta.setLore(s);
+		List<String> lore = meta.getLore();
+		lore.set(0,"§7" + getCustomEnchantment());
+		meta.setLore(lore);
 		wand.setItemMeta(meta);
 		return wand;
 	}

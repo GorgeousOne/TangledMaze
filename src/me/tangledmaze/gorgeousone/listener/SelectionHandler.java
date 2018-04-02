@@ -23,13 +23,11 @@ public class SelectionHandler implements Listener {
 		ELLIPTICAL = 1,
 		POLYGONAL = 2;
 
-//	private HashMap<Player, Maze> mazes;
 	private HashMap<Player, Integer> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> resizingSelections;
 	
 	public SelectionHandler() {
-//		mazes           = new HashMap<>();
 		selectionTypes  = new HashMap<>();
 		selections      = new HashMap<>();
 		resizingSelections = new HashMap<>();
@@ -41,8 +39,6 @@ public class SelectionHandler implements Listener {
 	public void reload() {
 		for(RectSelection selection : selections.values())
 			selection.hide();
-//		for(Maze maze : mazes.values())
-//			maze.hide();
 	}
 	
 	/**
