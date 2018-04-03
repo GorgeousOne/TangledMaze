@@ -22,11 +22,10 @@ public class Maze {
 	private Player p;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Shape> shapes;
-
 	private boolean isVisible;
 	
-	public Maze(Player creator, Shape borderShape) {
-		p = creator;
+	public Maze(Shape borderShape, Player editor) {
+		p = editor;
 		
 		fillChunks = new HashMap<>();
 		borderChunks = new HashMap<>();
@@ -233,7 +232,7 @@ public class Maze {
 	}
 	
 	public void show() {
-		if(isVisible)
+		if(isVisible || p == null)
 			return;
 		isVisible = true;
 
@@ -245,8 +244,9 @@ public class Maze {
 	
 	@SuppressWarnings("deprecation")
 	public void hide() {
-		if(!isVisible)
+		if(!isVisible || p == null)
 			return;
+		
 		isVisible = false;
 		
 		for(Chunk c : borderChunks.keySet())
@@ -255,6 +255,9 @@ public class Maze {
 	}
 	
 	public void update(ArrayList<Chunk> changedChunks) {
+		if(p == null)
+			return;
+		
 		for(Chunk c : changedChunks)
 			if(borderChunks.containsKey(c))
 				for(Location point : borderChunks.get(c))

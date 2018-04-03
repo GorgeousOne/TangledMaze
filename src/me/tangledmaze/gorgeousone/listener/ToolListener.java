@@ -2,9 +2,11 @@ package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +35,6 @@ public class ToolListener implements Listener {
 				  newItem      = i.getItem(e.getNewSlot());
 		
 		if(TangledMain.isSelectionWand(newItem)) {
-//			p.sendMessage("nice wand");
 
 			if(mHandler.hasMaze(p))
 				mHandler.getMaze(p).show();
@@ -47,5 +48,10 @@ public class ToolListener implements Listener {
 			if(sHandler.hasSelection(p))
 				sHandler.getSelection(p).hide();
 		}
+	}
+	
+	@EventHandler
+	public void onBlockExp(BlockExpEvent e) {
+		Bukkit.broadcastMessage("" + e.getExpToDrop());
 	}
 }

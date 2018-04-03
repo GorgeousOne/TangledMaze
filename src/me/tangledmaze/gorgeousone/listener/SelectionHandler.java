@@ -14,6 +14,8 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.shapes.Rectangle;
+import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.main.TangledMain;
 
 public class SelectionHandler implements Listener {
@@ -23,7 +25,7 @@ public class SelectionHandler implements Listener {
 		ELLIPTICAL = 1,
 		POLYGONAL = 2;
 
-	private HashMap<Player, Integer> selectionTypes;
+	private HashMap<Player, Class<? extends Shape>> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> resizingSelections;
 	
@@ -75,7 +77,9 @@ public class SelectionHandler implements Listener {
 					return;
 				}
 				
+				selection.hide();
 				selection.moveVertexTo(resizingSelections.get(p), b);
+				selection.show();
 				resizingSelections.remove(p);
 				return;
 			}
@@ -96,16 +100,21 @@ public class SelectionHandler implements Listener {
 			
 			//begins a new selection 
 			if(selection.isComplete()) {
-				selection = new RectSelection(p, b);
+				selection = new RectSelection(b, p, selectionTypes.get(p));
 				selections.put(p, selection);
 			
 			//sets second vertex for selection
-			}else
+			}else {
 				selection.complete(b);
+				selection.show();
+			}
 			
-		//begins players first selection since they joined
+		//begins players very first selection since they joined
 		}else {
-			selection = new RectSelection(p, b);
+			if(!selectionTypes.containsKey(p))
+				selectionTypes.put(p, Rectangle.class);
+			
+			selection = new RectSelection(b, p, selectionTypes.get(p));
 			selections.put(p, selection);
 		}
 	}
@@ -124,7 +133,7 @@ public class SelectionHandler implements Listener {
 		return selections.containsKey(p);
 	}
 
-	public void setSelectionType(Player p, int type) {
+	public void setSelectionType(Player p, Class<? extends Shape> type) {
 		selectionTypes.put(p, type);
 	}
 	

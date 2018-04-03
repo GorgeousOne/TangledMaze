@@ -35,7 +35,7 @@ public class Utils {
 			while(iter.getY() >= 0) {
 				iter.add(0, -1, 0);
 				
-				if(iter.getBlock().getType() != Material.AIR)
+				if(iter.getBlock().getType().isSolid())
 					return iter;
 			}
 			iter.setY(loc.getY());

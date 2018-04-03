@@ -35,7 +35,7 @@ public class MazeHandler {
 		if(mazes.containsKey(p))
 			mazes.get(p).hide();
 		
-		Maze maze = new Maze(p, selection.getShape());
+		Maze maze = new Maze(selection.getShape(), p);
 		mazes.put(p, maze);
 		
 		selection.hide();

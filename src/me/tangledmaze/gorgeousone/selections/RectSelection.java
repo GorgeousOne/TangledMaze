@@ -1,5 +1,7 @@
 package me.tangledmaze.gorgeousone.selections;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,8 +12,6 @@ import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
-import me.tangledmaze.gorgeousone.shapes.Ellipse;
-import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
 /**
@@ -21,25 +21,32 @@ public class RectSelection {
 	
 	private Player p;
 	private World world;
-	private Location firstVertex;
-	private ArrayList<Location> vertices;
-	private boolean isComplete;
-	
 	private Shape shape;
 	
+	private Location firstVertex;
+	private ArrayList<Location> vertices;
+	private boolean isComplete, isVisible;
+	
+	private Class<? extends Shape> shapeType;
 	/**
 	 * Begins a rectangular selection with the first vertex already given
-	 * @param creator Player who is creating this rectangle
+	 * @param editor Player who is creating this rectangle (can be left null)
 	 * @param firstVertex first vertex of the rectangle
 	 */
-	public RectSelection(Player creator, Block firstVertex) {
-		this.p = creator;
-		world = creator.getWorld();
+	public RectSelection(Block firstVertex, Player editor, Class<? extends Shape> shapeType) {
+		this.p = editor;
+		world = firstVertex.getWorld();
 		vertices = new ArrayList<>();
 		isComplete = false;
 		
-		this.firstVertex = firstVertex.getLocation();
-		Utils.sendBlockLater(creator, this.firstVertex, Constants.SELECTION_BEGINNING);
+		this.firstVertex = Utils.getNearestSurface(firstVertex.getLocation());
+		
+		if(p != null) {
+			Utils.sendBlockLater(editor, this.firstVertex, Constants.SELECTION_BEGINNING);
+			isVisible = true;
+		}
+		
+		this.shapeType = shapeType;
 	}
 	
 	/**
@@ -92,17 +99,18 @@ public class RectSelection {
 		if(isComplete)
 			return;
 		
-		if(b.getX() == firstVertex.getX() &&
-		   b.getZ() == firstVertex.getZ()) {
-			show();
-			return;
-		}
-			
 		calcVertices(firstVertex, b.getLocation());
 		isComplete = true;
 		
-		shape = new Rectangle(this);
-		show();
+		try {
+			Constructor<? extends Shape> con = shapeType.getConstructor(this.getClass());
+			shape = con.newInstance(this);
+			
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+//		shape = new Rectangle(this);
 	}
 	
 	/**
@@ -114,13 +122,18 @@ public class RectSelection {
 		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
 			return;
 		
-		hide();
 		int index = indexOfVertex(vertex);
 		Location opposite = vertices.get((index+2) % 4);
 		
 		calcVertices(newVertex.getLocation(), opposite);
-		shape = new Ellipse(this);
-		show();
+
+		try {
+			Constructor<? extends Shape> con = shapeType.getConstructor(this.getClass());
+			shape = con.newInstance(this);
+			
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -197,6 +210,10 @@ public class RectSelection {
 	}
 	
 	public void show() {
+		if(isVisible || p == null)
+			return;
+		isVisible = true;
+		
 		if(isComplete()) {
 			for(ArrayList<Location> chunk : shape.getBorder().values())
 				for(Location point : chunk)
@@ -210,8 +227,9 @@ public class RectSelection {
 	
 	@SuppressWarnings("deprecation")
 	public void hide() {
-		if(!isComplete() && firstVertex == null)
+		if(!isVisible || p == null || !isComplete() && firstVertex == null)
 			return;
+		isVisible = false;
 		
 		if(isComplete()) {
 			for(Location vertex : vertices)
