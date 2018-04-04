@@ -19,11 +19,6 @@ import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.main.TangledMain;
 
 public class SelectionHandler implements Listener {
-	
-	public static final int
-		RECTANGULAR = 0,
-		ELLIPTICAL = 1,
-		POLYGONAL = 2;
 
 	private HashMap<Player, Class<? extends Shape>> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
@@ -133,6 +128,10 @@ public class SelectionHandler implements Listener {
 		return selections.containsKey(p);
 	}
 
+	public Class<? extends Shape> getSelectionType(Player p) {
+		return selectionTypes.containsKey(p) ? selectionTypes.get(p) : Rectangle.class;
+	}
+	
 	public void setSelectionType(Player p, Class<? extends Shape> type) {
 		selectionTypes.put(p, type);
 	}
@@ -146,50 +145,4 @@ public class SelectionHandler implements Listener {
 				resizingSelections.remove(p);
 		}
 	}
-	
-//	public void startMaze(Player p) throws Exception {
-//		if(!selections.containsKey(p))
-//			throw new SelectionNotFoundExcetion();
-//		RectSelection selection = selections.get(p);
-//		
-//		if(!selection.isComplete())
-//			throw new IllegalArgumentException();
-//		
-//		if(mazes.containsKey(p))
-//			mazes.get(p).hide();
-//		
-//		selection.hide();
-//		mazes.put(p, new Maze(p, selection.getShape()));
-//		selections.remove(p);
-//	}
-	
-//	public void addSelectionToMaze(Player p) throws Exception {
-//		if(!mazes.containsKey(p))
-//			throw new MazeNotFoundException();
-//		if(!selections.containsKey(p))
-//			throw new SelectionNotFoundExcetion();
-//		RectSelection selection = selections.get(p);
-//		
-//		if(!selection.isComplete())
-//			throw new IllegalArgumentException();
-//		
-//		selection.hide();
-//		mazes.get(p).add(selection.getShape());
-//		selections.remove(p);
-//	}
-	
-//	public void subtractSelctionFromMaze(Player p)  throws Exception {
-//		if(!selections.containsKey(p))
-//			throw new SelectionNotFoundExcetion();
-//		if(!mazes.containsKey(p))
-//			throw new MazeNotFoundException();
-//		RectSelection selection = selections.get(p);
-//		
-//		if(!selection.isComplete())
-//			throw new IllegalArgumentException();
-//		
-//		selection.hide();
-//		mazes.get(p).subtract(selection.getShape());
-//		selections.remove(p);
-//	}
 }

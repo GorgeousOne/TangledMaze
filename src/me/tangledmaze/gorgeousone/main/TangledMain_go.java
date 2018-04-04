@@ -24,7 +24,9 @@ public class TangledMain_go implements IMain {
 		
 		plugin.getServer().getPluginManager().registerEvents(sHandler, plugin);
 		plugin.getServer().getPluginManager().registerEvents(new ToolListener(this), plugin);
+
 		plugin.getCommand("tangledmaze").setExecutor(new CommandListener(this));
+		plugin.getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
 	}
 
 	@Override

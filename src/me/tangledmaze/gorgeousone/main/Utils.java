@@ -11,8 +11,9 @@ import org.bukkit.util.Vector;
 
 import me.tangledmaze.main.TangledMain;
 
-public class Utils {
-
+public abstract class Utils {
+	
+	
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
@@ -22,7 +23,7 @@ public class Utils {
 			new Vector(-1, 0, -1),
 			new Vector( 0, 0, -1),
 			new Vector( 1, 0, -1)));
-	
+
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Vector> getDirs() {
 		return (ArrayList<Vector>) DIRECTIONS.clone();
