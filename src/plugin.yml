@@ -1,7 +1,7 @@
 name: xXx_TangledMazes_xXx
 version: 1.0.0
 authors: [GorgeousOne, Qwertiiiiiii]
-main: me.tangledmaze.main.TangledMain
+main: me.tangledmaze.gorgeousone.main.TangledMain
 
 commands:
   tangledmaze:

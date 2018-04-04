@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.commands.*;
 
-import me.tangledmaze.main.TangledMain;
-
 public class CommandListener implements CommandExecutor {
 	
 	private Select selectCommand;
@@ -17,7 +15,7 @@ public class CommandListener implements CommandExecutor {
 	private Add addCommand;
 	private Subtract subtCommand;
 	
-	public CommandListener(TangledMain_go plugin) {
+	public CommandListener(TangledMain plugin) {
 		selectCommand = new Select(plugin);
 		startCommand = new Start(plugin);
 		addCommand = new Add(plugin);

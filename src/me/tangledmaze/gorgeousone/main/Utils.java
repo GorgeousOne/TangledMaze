@@ -9,10 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.main.TangledMain;
-
 public abstract class Utils {
-	
 	
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),

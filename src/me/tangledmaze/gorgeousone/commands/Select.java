@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.listener.SelectionHandler;
 import me.tangledmaze.gorgeousone.main.Constants;
-import me.tangledmaze.gorgeousone.main.TangledMain_go;
+import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 
@@ -12,7 +12,7 @@ public class Select {
 
 	private SelectionHandler sHandler;
 	
-	public Select(TangledMain_go plugin) {
+	public Select(TangledMain plugin) {
 		sHandler = plugin.getSelectionHandler();
 	}
 	
@@ -22,16 +22,18 @@ public class Select {
 		case "rectangle":
 		case "rect":
 		case "square":
-			if(sHandler.getSelectionType(p) != Rectangle.class)
+			if(sHandler.getSelectionType(p) != Rectangle.class) {
 				sHandler.setSelectionType(p, Rectangle.class);
-			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
-			break;
+				p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
+			}
+				break;
 			
 		case "ellipse":
 		case "circle":
-			if(sHandler.getSelectionType(p) != Ellipse.class)
-			sHandler.setSelectionType(p, Ellipse.class);
-			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
+			if(sHandler.getSelectionType(p) != Ellipse.class) {
+				sHandler.setSelectionType(p, Ellipse.class);
+				p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
+			}
 			break;
 		
 		default:

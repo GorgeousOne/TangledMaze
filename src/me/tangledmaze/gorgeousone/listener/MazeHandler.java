@@ -28,6 +28,10 @@ public class MazeHandler {
 		return mazes.get(p);
 	}
 	
+	public void removeMaze(Player p) {
+		mazes.remove(p);
+	}
+	
 	public void startMaze(Player p, RectSelection selection) throws IllegalArgumentException {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");

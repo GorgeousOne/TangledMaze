@@ -4,14 +4,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.listener.SelectionHandler;
-import me.tangledmaze.gorgeousone.main.TangledMain_go;
+import me.tangledmaze.gorgeousone.main.TangledMain;
 
 public class Undo {
 
 	@SuppressWarnings("unused")
 	private SelectionHandler handler;
 	
-	public Undo(TangledMain_go plugin) {
+	public Undo(TangledMain plugin) {
 		handler = plugin.getSelectionHandler();
 	}
 	

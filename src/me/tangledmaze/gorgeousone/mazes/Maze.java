@@ -36,33 +36,22 @@ public class Maze {
 		add(borderShape);
 	}
 	
-	private void addFill(Location point) {
-		Chunk c = point.getChunk();
+	public ArrayList<Location> getFill() {
+		ArrayList<Location> fill = new ArrayList<>();
 		
-		if(fillChunks.containsKey(c))
-			fillChunks.get(c).add(point);
-		else
-			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
-	}
-
-	private void addBorder(Location point) {
-		Chunk c = point.getChunk();
+		for(ArrayList<Location> chunk : fillChunks.values())
+			fill.addAll(chunk);
 		
-		if(borderChunks.containsKey(c))
-			borderChunks.get(c).add(point);
-		else
-			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+		return fill;
 	}
 	
-	private void removeFill(Location point) {
-		Chunk c = point.getChunk();
+	public ArrayList<Location> getMainBorder() {
+		ArrayList<Location> border = new ArrayList<>();
 		
-		for(Location point2 : fillChunks.get(c))
-			if(point2.getBlockX() == point.getBlockX() &&
-			   point2.getBlockZ() == point.getBlockZ()) {
-				fillChunks.get(c).remove(point2);
-				break;
-			}
+		for(ArrayList<Location> chunk : borderChunks.values())
+			border.addAll(chunk);
+		
+		return border;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -186,6 +175,35 @@ public class Maze {
 			addBorder(point);
 
 		update(newVoidChunks);
+	}
+	
+	private void addFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(fillChunks.containsKey(c))
+			fillChunks.get(c).add(point);
+		else
+			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+
+	private void addBorder(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(borderChunks.containsKey(c))
+			borderChunks.get(c).add(point);
+		else
+			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	private void removeFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		for(Location point2 : fillChunks.get(c))
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ()) {
+				fillChunks.get(c).remove(point2);
+				break;
+			}
 	}
 	
 	/**

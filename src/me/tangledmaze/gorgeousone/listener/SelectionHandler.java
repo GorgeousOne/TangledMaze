@@ -9,14 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
 
 import me.tangledmaze.gorgeousone.main.Constants;
+import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
-import me.tangledmaze.main.TangledMain;
 
 public class SelectionHandler implements Listener {
 
@@ -45,17 +45,26 @@ public class SelectionHandler implements Listener {
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 		
-		//check what item the player is holding
+		if(e.getAction() != Action.LEFT_CLICK_BLOCK &&
+		   e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+					
 		if(e.getItem() == null || !TangledMain.isSelectionWand(e.getItem()))
 			return;
 		
-		//cancel the event so the block does not break or so
 		e.setCancelled(true);
 		
-		if(e.getAction() != Action.LEFT_CLICK_BLOCK)
-			return;
+		if(!selectionTypes.containsKey(p))
+			selectionTypes.put(p, Rectangle.class);
 		
-		Block b = e.getClickedBlock();
+		Class<? extends Shape> type = selectionTypes.get(p);
+				
+		if(type.equals(Rectangle.class) || type.equals(Ellipse.class))
+			if(e.getAction() == Action.LEFT_CLICK_BLOCK)
+				selectRect(p, e.getClickedBlock());
+	}
+	
+	private void selectRect(Player p, Block b) {
 		RectSelection selection;
 
 		//if there is already a selection started by the player
@@ -106,29 +115,24 @@ public class SelectionHandler implements Listener {
 			
 		//begins players very first selection since they joined
 		}else {
-			if(!selectionTypes.containsKey(p))
-				selectionTypes.put(p, Rectangle.class);
-			
 			selection = new RectSelection(b, p, selectionTypes.get(p));
 			selections.put(p, selection);
 		}
 	}
 	
-	@EventHandler
-	public void onDurabilityChange(PlayerItemDamageEvent e) {
-		if(TangledMain.isSelectionWand(e.getItem()))
-			e.setCancelled(true);
+	public boolean hasSelection(Player p) {
+		return selections.containsKey(p);
 	}
 	
 	public RectSelection getSelection(Player p) {
 		return selections.get(p);
 	}
 
-	public boolean hasSelection(Player p) {
-		return selections.containsKey(p);
-	}
 
 	public Class<? extends Shape> getSelectionType(Player p) {
+		if(!p.isOnline())
+			return null;
+		//TODO permission check
 		return selectionTypes.containsKey(p) ? selectionTypes.get(p) : Rectangle.class;
 	}
 	
@@ -140,9 +144,13 @@ public class SelectionHandler implements Listener {
 		if(selections.containsKey(p)) {
 			selections.get(p).hide();
 			selections.remove(p);
-			
-			if(resizingSelections.containsKey(p))
-				resizingSelections.remove(p);
+			resizingSelections.remove(p);
 		}
+	}
+	
+	public void removeSelection(Player p) {
+		selectionTypes.remove(p);
+		selections.remove(p);
+		resizingSelections.remove(p);
 	}
 }
