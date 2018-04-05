@@ -11,8 +11,7 @@ import org.bukkit.entity.Player;
 
 public class TangledCompleter implements TabCompleter {
 	
-	private ArrayList<String> subCmds;
-	
+	private ArrayList<String> subCmds, selectionTypes;
 	public TangledCompleter() {
 		subCmds = new ArrayList<>(Arrays.asList(
 				"wand",
@@ -21,6 +20,11 @@ public class TangledCompleter implements TabCompleter {
 				"add",
 				"subtract",
 				"deselect"));
+		
+		selectionTypes = new ArrayList<>(Arrays.asList(
+				"rectangle",
+				"ellipse",
+				"brush"));
 	}
 	
 	@Override
@@ -44,7 +48,7 @@ public class TangledCompleter implements TabCompleter {
 			break;
 		case 2:
 			if(args[0].equalsIgnoreCase("select"))
-				options.addAll(Arrays.asList("rectangle", "ellipse"));
+				options.addAll(selectionTypes);
 			break;
 		default:
 			break;

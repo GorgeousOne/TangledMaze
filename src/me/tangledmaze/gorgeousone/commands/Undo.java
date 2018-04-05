@@ -3,8 +3,8 @@ package me.tangledmaze.gorgeousone.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.listener.SelectionHandler;
 import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class Undo {
 

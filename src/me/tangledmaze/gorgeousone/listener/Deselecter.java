@@ -7,6 +7,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
+import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class Deselecter implements Listener {
 	
@@ -25,7 +27,7 @@ public class Deselecter implements Listener {
 		//TODO permission check maybe?
 
 		mHandler.removeMaze(e.getPlayer());
-		sHandler.removeSelection(p);
+		sHandler.remove(p);
 	}
 	
 	@EventHandler
@@ -35,6 +37,6 @@ public class Deselecter implements Listener {
 		//TODO sam as above
 		
 		mHandler.removeMaze(e.getPlayer());
-		sHandler.removeSelection(p);
+		sHandler.remove(p);
 	}
 }

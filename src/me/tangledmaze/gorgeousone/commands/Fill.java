@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.listener.MazeHandler;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeFiller;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 
 public class Fill {
 

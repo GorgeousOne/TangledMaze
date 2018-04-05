@@ -4,9 +4,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.tangledmaze.gorgeousone.listener.SelectionHandler;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class SelectionStartEvent extends SelectionEvent {
 	

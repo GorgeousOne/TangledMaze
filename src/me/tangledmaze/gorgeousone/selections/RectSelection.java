@@ -116,12 +116,11 @@ public class RectSelection {
 	}
 	
 	public boolean isVertex(Block b) {
-		if(!isComplete() || !b.getWorld().equals(world))
+		if(!isComplete())
 			return false;
-		
+
 		for(Location vertex : vertices)
-			if(b.getX() == vertex.getX() &&
-			   b.getZ() == vertex.getZ())
+			if(vertex.equals(b.getLocation()))
 				return true;
 		return false;
 	}

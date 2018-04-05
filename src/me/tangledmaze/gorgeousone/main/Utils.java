@@ -5,10 +5,19 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public abstract class Utils {
-	
+
+	private static ArrayList<Vector> CARDIANL_DIRACTIONS = new ArrayList<>(Arrays.asList(
+			new Vector( 1, 0,  0),
+			new Vector( 0, 0,  1),
+			new Vector(-1, 0,  0),
+			new Vector( 0, 0, -1)));
+				
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
@@ -19,6 +28,22 @@ public abstract class Utils {
 			new Vector( 0, 0, -1),
 			new Vector( 1, 0, -1)));
 
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Vector> getCardinalDirs() {
+		return (ArrayList<Vector>) CARDIANL_DIRACTIONS.clone();
+	}
+
+	public static void sendBlockLater(Player p, Block b, Material mat) {
+		BukkitRunnable r = new BukkitRunnable() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				p.sendBlockChange(b.getLocation(), mat, (byte) 0);
+			}
+		};
+		r.runTask(TangledMain.plugin);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Vector> getDirs() {
 		return (ArrayList<Vector>) DIRECTIONS.clone();

@@ -8,8 +8,10 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import me.tangledmaze.gorgeousone.main.Constants;
+import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
 public class Maze {
@@ -17,6 +19,8 @@ public class Maze {
 	private Player p;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Shape> shapes;
+	private int size;
+	
 	private boolean isVisible;
 	
 	public Maze(Shape borderShape, Player editor) {
@@ -29,6 +33,10 @@ public class Maze {
 		shapes.add(borderShape);
 		
 		add(borderShape);
+	}
+	
+	public int getSize() {
+		return size;
 	}
 	
 	public ArrayList<Location> getFill() {
@@ -101,7 +109,8 @@ public class Maze {
 				Location point = currentChunk.get(i);
 				
 				if(s.contains(point) && !s.borderContains(point)) {
-					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+					if(p != null)
+						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 					currentChunk.remove(point);
 				}
 			}
@@ -160,16 +169,79 @@ public class Maze {
 				Location point = current.get(i);
 				
 				if(s.contains(point) && !s.borderContains(point)) {
-					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+					if(p != null)
+						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 					current.remove(point);
 				}
 			}
 		}
 		
+		//add all new border blocks
 		for(Location point : newBorder)
 			addBorder(point);
 
+		//refresh changed chunks
 		update(newVoidChunks);
+	}
+	
+	public void brushAway(Block b) {
+		Location point = b.getLocation();
+		
+		if(!borderContains(point) || !isHighlighted(b))
+			return;
+		
+		ArrayList<Location> neighbours = new ArrayList<>();
+		ArrayList<Chunk> changedChunks = new ArrayList<>();
+		
+		boolean isExternalBorder = false,
+				isSealing = false;
+
+		//check what kind of border this block is
+		//is it at the outside of the shape? does it close the shape somehow?
+		for(Vector dir : Utils.getCardinalDirs()) {
+			Location point2 = point.clone().add(dir);
+			
+			if(!contains(point2))
+				isExternalBorder = true;
+			
+			else if(!borderContains(point2)) {
+				isSealing = true;
+				neighbours.add(point2);
+
+				if(!changedChunks.contains(point2.getChunk()))
+					changedChunks.add(point2.getChunk());
+			}
+		}
+
+		//if it is at the outside remove the fill there as well 
+		if(isExternalBorder) {
+			removeFill(point);
+			
+			//if it seals the shape not-border, neighbour blocks have to replace it
+			if(isSealing) {
+				for(Location point2 : neighbours)
+				addBorder(Utils.getNearestSurface(point2));
+			}
+		}
+
+		borderChunks.get(b.getChunk()).remove(point);
+
+		if(!changedChunks.contains(b.getChunk()))
+			changedChunks.add(b.getChunk());
+
+		//refresh changed chunks
+		update(changedChunks);
+	}
+	
+	public void addBorder(Block b) {
+		Location point = b.getLocation();
+		
+		if(!borderContains(point)) {
+			addFill(point);
+			addBorder(point);
+		}
+		if(p!= null)
+			Utils.sendBlockLater(p, b, Constants.MAZE_BORDER);
 	}
 	
 	private void addFill(Location point) {
@@ -179,6 +251,8 @@ public class Maze {
 			fillChunks.get(c).add(point);
 		else
 			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+
+		size++;
 	}
 
 	private void addBorder(Location point) {
@@ -194,9 +268,12 @@ public class Maze {
 		Chunk c = point.getChunk();
 		
 		for(Location point2 : fillChunks.get(c))
+
 			if(point2.getBlockX() == point.getBlockX() &&
 			   point2.getBlockZ() == point.getBlockZ()) {
+				
 				fillChunks.get(c).remove(point2);
+				size--;
 				break;
 			}
 	}
@@ -225,6 +302,7 @@ public class Maze {
 			if(point2.getBlockX() == point.getBlockX() &&
 			   point2.getBlockZ() == point.getBlockZ())
 				return true;
+		
 		return false;
 	}
 	
@@ -237,6 +315,7 @@ public class Maze {
 		for(Location point : borderChunks.get(c))
 			if(point.getBlock().equals(b))
 				return true;
+		
 		return false;
 	}
 	
@@ -244,6 +323,7 @@ public class Maze {
 	public void show() {
 		if(isVisible || p == null)
 			return;
+		
 		isVisible = true;
 
 		for(Chunk c : fillChunks.keySet())

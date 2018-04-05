@@ -1,10 +1,9 @@
-package me.tangledmaze.gorgeousone.listener;
+package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 
 public class MazeHandler {

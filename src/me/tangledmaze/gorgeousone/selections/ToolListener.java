@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.listener;
+package me.tangledmaze.gorgeousone.selections;
 
 import java.util.HashMap;
 
@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 
 public class ToolListener implements Listener {
 	

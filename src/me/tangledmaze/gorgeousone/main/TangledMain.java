@@ -12,11 +12,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.tangledmaze.gorgeousone.listener.MazeHandler;
 import me.tangledmaze.gorgeousone.listener.Deselecter;
-import me.tangledmaze.gorgeousone.listener.SelectionHandler;
-import me.tangledmaze.gorgeousone.listener.ToolListener;
 import me.tangledmaze.gorgeousone.mazes.MazeFiller;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
+import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.selections.ToolListener;
 
 public class TangledMain extends JavaPlugin {
 
@@ -35,9 +35,9 @@ public class TangledMain extends JavaPlugin {
 		plugin = this;
 		createWand();
 		
-		sHandler = new SelectionHandler();
 		mHandler = new MazeHandler();
 		mFiller = new MazeFiller();
+		sHandler = new SelectionHandler();
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(sHandler, this);
