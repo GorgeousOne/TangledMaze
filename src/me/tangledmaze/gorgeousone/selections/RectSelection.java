@@ -14,9 +14,6 @@ import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
-/**
- * A class to store the vertices of an Rectangle during being created
- */
 public class RectSelection {
 	
 	private Player p;
@@ -28,11 +25,7 @@ public class RectSelection {
 	private boolean isComplete, isVisible;
 	
 	private Class<? extends Shape> shapeType;
-	/**
-	 * Begins a rectangular selection with the first vertex already given
-	 * @param editor Player who is creating this rectangle (can be left null)
-	 * @param firstVertex first vertex of the rectangle
-	 */
+
 	public RectSelection(Block firstVertex, Player editor, Class<? extends Shape> shapeType) {
 		this.p = editor;
 		world = firstVertex.getWorld();
@@ -41,31 +34,22 @@ public class RectSelection {
 		
 		this.firstVertex = Utils.getNearestSurface(firstVertex.getLocation());
 		
-		if(p != null) {
-			Utils.sendBlockLater(editor, this.firstVertex, Constants.SELECTION_BEGINNING);
-			isVisible = true;
-		}
+//		if(p != null) {d
+//			Utils.sendBlockLater(editor, this.firstVertex, Constants.SELECTION_BEGINNING);
+//			isVisible = true;
+//		}
 		
 		this.shapeType = shapeType;
 	}
 	
-	/**
-	 * @return the word this selection is being created in.
-	 */
 	public World getWorld() {
 		return world;
 	}
 	
-	/**
-	 * @return the player who creates the selection.
-	 */
 	public Player getPlayer() {
 		return p;
 	}
 	
-	/**
-	 * @return the list of vertices of the rectangle in case the rectangle is completed
-	 */
 	public ArrayList<Location> getVertices() {
 		if(!isComplete())
 			return null;
@@ -88,11 +72,6 @@ public class RectSelection {
 		return shape;
 	}
 	
-	/**
-	 * Completes the selection by adding a second block as second, opposite vertex
-	 * @param b
-	 * @return if the block was added as vertex
-	 */
 	public void complete(Block b) {
 		worldCheck(b);
 		
@@ -109,15 +88,8 @@ public class RectSelection {
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		
-//		shape = new Rectangle(this);
 	}
 	
-	/**
-	 * Moves a vertex to another block
-	 * @param index 
-	 * @param newVertex
-	 */
 	public void moveVertexTo(Block vertex, Block newVertex) {
 		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
 			return;
@@ -136,10 +108,6 @@ public class RectSelection {
 		}
 	}
 	
-	/**
-	 * @param b
-	 * @return if the given block is inside the rectangular shape.
-	 */
 	public boolean contains(Block b) {
 		if(!isComplete())
 			return false;
@@ -147,10 +115,6 @@ public class RectSelection {
 			   b.getZ() >= vertices.get(0).getZ() && b.getZ() <= vertices.get(2).getZ();
 	}
 	
-	/**
-	 * @param b
-	 * @return if the block is a vertex of the rectangle
-	 */
 	public boolean isVertex(Block b) {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return false;
@@ -162,11 +126,7 @@ public class RectSelection {
 		return false;
 	}
 
-	/**
-	 * @param b
-	 * @return the index of the vertex in the private list
-	 */
-	public int indexOfVertex(Block b) {
+	private int indexOfVertex(Block b) {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
@@ -177,18 +137,10 @@ public class RectSelection {
 		return -1;
 	}
 	
-	/**
-	 * @return if 2 require blocks are set for defining the rectangle
-	 */
 	public boolean isComplete() {
 		return isComplete;
 	}
 	
-	/**
-	 * Calculates the
-	 * @param p0 first corner of the rectangle, optimally the first block that was clicked
-	 * @param p1 second, opposite corner of the rectangle, optimally the last block that was clicked
-	 */
 	private void calcVertices(Location p0, Location p1) {
 		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
 			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
@@ -209,6 +161,7 @@ public class RectSelection {
 			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void show() {
 		if(isVisible || p == null)
 			return;
@@ -217,13 +170,17 @@ public class RectSelection {
 		if(isComplete()) {
 			for(ArrayList<Location> chunk : shape.getBorder().values())
 				for(Location point : chunk)
-					Utils.sendBlockLater(p, point, Constants.SELECTION_BORDER);
-			for(Location vertex : vertices)
-				Utils.sendBlockLater(p, vertex, Constants.SELECTION_CORNER);
+					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+			showVertices();
 		}else
-			Utils.sendBlockLater(p, firstVertex, Constants.SELECTION_BEGINNING);
+			p.sendBlockChange(firstVertex, Constants.SELECTION_CORNER, (byte) 0);
 	}
 	
+	@SuppressWarnings("deprecation")
+	public void showVertices() {
+		for(Location vertex : vertices)
+			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+	}
 	
 	@SuppressWarnings("deprecation")
 	public void hide() {

@@ -5,8 +5,6 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public abstract class Utils {
@@ -49,15 +47,5 @@ public abstract class Utils {
 			}
 		}
 		return loc;
-	}
-	
-	public static void sendBlockLater(Player p, Location loc, Material m) {
-		new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void run() {
-				p.sendBlockChange(loc, m, (byte) 0);
-			}
-		}.runTask(TangledMain.plugin);
 	}
 }

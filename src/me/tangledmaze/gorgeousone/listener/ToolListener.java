@@ -22,9 +22,9 @@ public class ToolListener implements Listener {
 	private BukkitRunnable timer;
 	private static final int expiration = 10*1000;
 	
-	public ToolListener(TangledMain plugin) {
-		sHandler = plugin.getSelectionHandler();
-		mHandler = plugin.getMazeHandler();
+	public ToolListener() {
+		sHandler = TangledMain.plugin.getSelectionHandler();
+		mHandler = TangledMain.plugin.getMazeHandler();
 		
 		times = new HashMap<>();
 		

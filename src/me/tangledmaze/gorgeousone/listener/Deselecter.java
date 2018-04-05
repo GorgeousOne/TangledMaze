@@ -13,9 +13,9 @@ public class Deselecter implements Listener {
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Deselecter(TangledMain plugin) {
-		sHandler = plugin.getSelectionHandler();
-		mHandler = plugin.getMazeHandler();
+	public Deselecter() {
+		sHandler = TangledMain.plugin.getSelectionHandler();
+		mHandler = TangledMain.plugin.getMazeHandler();
 	}
 	
 	@EventHandler

@@ -11,8 +11,8 @@ public class Undo {
 	@SuppressWarnings("unused")
 	private SelectionHandler handler;
 	
-	public Undo(TangledMain plugin) {
-		handler = plugin.getSelectionHandler();
+	public Undo() {
+		handler = TangledMain.plugin.getSelectionHandler();
 	}
 	
 	public void execute(Player p) {

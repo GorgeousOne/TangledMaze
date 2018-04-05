@@ -1,9 +1,10 @@
-name: xXx_TangledMazes_xXx
+name: TangledMaze
 version: 1.0.0
-authors: [GorgeousOne, Qwertiiiiiii]
+authors: [GorgeousOne, Spthiel]
+
 main: me.tangledmaze.gorgeousone.main.TangledMain
 
 commands:
   tangledmaze:
-    description: main command.
+    description: main command for several subcommands wand, select, merge, subtract, add, deselect, start, fill
     aliases: [tm, maze]

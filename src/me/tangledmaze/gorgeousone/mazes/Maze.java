@@ -10,13 +10,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.Constants;
-import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
-/**
- * A class that stores the information about a maze, e.g. where the are of the maze is and where preset walls of the maze should stand
- * @author GorgeousOne
- */
 public class Maze {
 	
 	private Player p;
@@ -206,10 +201,6 @@ public class Maze {
 			}
 	}
 	
-	/**
-	 * @param point 
-	 * @return if the point is inside the area of the maze.
-	 */
 	public boolean contains(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -249,6 +240,7 @@ public class Maze {
 		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void show() {
 		if(isVisible || p == null)
 			return;
@@ -257,7 +249,7 @@ public class Maze {
 		for(Chunk c : fillChunks.keySet())
 			if(borderChunks.containsKey(c))
 				for(Location point : borderChunks.get(c))
-					Utils.sendBlockLater(p, point, Constants.MAZE_BORDER);
+					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -272,6 +264,7 @@ public class Maze {
 				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void update(ArrayList<Chunk> changedChunks) {
 		if(p == null)
 			return;
@@ -279,6 +272,6 @@ public class Maze {
 		for(Chunk c : changedChunks)
 			if(borderChunks.containsKey(c))
 				for(Location point : borderChunks.get(c))
-					Utils.sendBlockLater(p, point, Constants.MAZE_BORDER);
+					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 	}
 }

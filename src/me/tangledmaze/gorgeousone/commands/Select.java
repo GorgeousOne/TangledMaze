@@ -12,8 +12,8 @@ public class Select {
 
 	private SelectionHandler sHandler;
 	
-	public Select(TangledMain plugin) {
-		sHandler = plugin.getSelectionHandler();
+	public Select() {
+		sHandler = TangledMain.plugin.getSelectionHandler();
 	}
 	
 	public void execute(Player p, String selectionType) {

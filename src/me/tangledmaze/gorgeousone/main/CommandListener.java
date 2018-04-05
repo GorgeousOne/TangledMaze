@@ -15,11 +15,11 @@ public class CommandListener implements CommandExecutor {
 	private Add addCommand;
 	private Subtract subtCommand;
 	
-	public CommandListener(TangledMain plugin) {
-		selectCommand = new Select(plugin);
-		startCommand = new Start(plugin);
-		addCommand = new Add(plugin);
-		subtCommand = new Subtract(plugin);
+	public CommandListener() {
+		selectCommand = new Select();
+		startCommand = new Start();
+		addCommand = new Add();
+		subtCommand = new Subtract();
 	}
 	
 	@Override

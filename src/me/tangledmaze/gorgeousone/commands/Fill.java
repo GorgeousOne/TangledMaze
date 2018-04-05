@@ -14,9 +14,9 @@ public class Fill {
 	private MazeHandler mHandler;
 	private MazeFiller mFiller;
 	
-	public Fill(TangledMain plugin) {
-		mHandler = plugin.getMazeHandler();
-		mFiller = plugin.getMazeFiller();
+	public Fill() {
+		mHandler = TangledMain.plugin.getMazeHandler();
+		mFiller = TangledMain.plugin.getMazeFiller();
 	}
 	
 	public void execute(Player p, ArrayList<String> args) {

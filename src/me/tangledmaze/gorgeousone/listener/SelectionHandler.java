@@ -2,17 +2,19 @@ package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
-import org.bukkit.Location;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.PluginManager;
 
-import me.tangledmaze.gorgeousone.main.Constants;
+import me.tangledmaze.gorgeousone.events.SelectionCompleteEvent;
+import me.tangledmaze.gorgeousone.events.SelectionResizeEvent;
+import me.tangledmaze.gorgeousone.events.SelectionStartEvent;
 import me.tangledmaze.gorgeousone.main.TangledMain;
-import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
@@ -24,23 +26,23 @@ public class SelectionHandler implements Listener {
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> resizingSelections;
 	
+	private PluginManager pm;
+	
 	public SelectionHandler() {
 		selectionTypes  = new HashMap<>();
 		selections      = new HashMap<>();
 		resizingSelections = new HashMap<>();
+		
+		pm = Bukkit.getServer().getPluginManager();
 	}
 	
-	/**
-	 * Hides all selections before reloading since they will be deleted anyway.
-	 */
+	//hides all selections before reloading since they will be deleted anyway.
 	public void reload() {
 		for(RectSelection selection : selections.values())
 			selection.hide();
 	}
 	
-	/**
-	 * Handles everything a player can do with their selection wand.
-	 */
+	//handles interactions of players with blocks when using a selection wand
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
@@ -74,16 +76,7 @@ public class SelectionHandler implements Listener {
 			//handles selection resizing
 			if(resizingSelections.containsKey(p)) {
 				
-				//returns if new vertex is an old vertex
-				if(selection.isVertex(b)) {
-					resizingSelections.remove(p);
-					selection.show();
-					return;
-				}
-				
-				selection.hide();
-				selection.moveVertexTo(resizingSelections.get(p), b);
-				selection.show();
+				pm.callEvent(new SelectionResizeEvent(p, resizingSelections.get(p), b));
 				resizingSelections.remove(p);
 				return;
 			}
@@ -93,31 +86,21 @@ public class SelectionHandler implements Listener {
 				if(!selection.isComplete())
 					return;
 				
-				Location vertex = selection.getVertices().get(selection.indexOfVertex(b));
-				Utils.sendBlockLater(selection.getPlayer(), vertex, Constants.SELECTION_MOVE);
-				resizingSelections.put(p, vertex.getBlock());
+				resizingSelections.put(p, b);
 				return;
 			}
 			
-			//hide any unfinished or existing (soon replaced) selection
-			selection.hide();
-			
 			//begins a new selection 
-			if(selection.isComplete()) {
-				selection = new RectSelection(b, p, selectionTypes.get(p));
-				selections.put(p, selection);
+			if(selection.isComplete())
+				pm.callEvent(new SelectionStartEvent(p, b));
 			
 			//sets second vertex for selection
-			}else {
-				selection.complete(b);
-				selection.show();
-			}
+			else
+				pm.callEvent(new SelectionCompleteEvent(p, b));
 			
 		//begins players very first selection since they joined
-		}else {
-			selection = new RectSelection(b, p, selectionTypes.get(p));
-			selections.put(p, selection);
-		}
+		}else
+			pm.callEvent(new SelectionStartEvent(p, b));
 	}
 	
 	public boolean hasSelection(Player p) {
@@ -127,7 +110,10 @@ public class SelectionHandler implements Listener {
 	public RectSelection getSelection(Player p) {
 		return selections.get(p);
 	}
-
+	
+	public void setSelection(Player p, RectSelection selection) {
+		selections.put(p, selection);
+	}
 
 	public Class<? extends Shape> getSelectionType(Player p) {
 		if(!p.isOnline())

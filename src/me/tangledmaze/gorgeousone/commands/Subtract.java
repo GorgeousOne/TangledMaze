@@ -13,9 +13,9 @@ public class Subtract {
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Subtract(TangledMain plugin) {
-		sHandler = plugin.getSelectionHandler();
-		mHandler = plugin.getMazeHandler();
+	public Subtract() {
+		sHandler = TangledMain.plugin.getSelectionHandler();
+		mHandler = TangledMain.plugin.getMazeHandler();
 	}
 	
 	public void execute(Player p) {

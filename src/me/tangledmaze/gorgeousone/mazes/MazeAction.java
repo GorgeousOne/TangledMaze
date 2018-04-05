@@ -5,10 +5,6 @@ import java.util.HashMap;
 
 import org.bukkit.util.Vector;
 
-/**
- * A class that 
- * @author Aaron
- */
 public class MazeAction {
 	
 	@SuppressWarnings("unused")
@@ -26,9 +22,6 @@ public class MazeAction {
 //		}
 	}
 	
-	/**
-	 * Undo the action by restoring the previous settings of the given points
-	 */
 	public void undo() {
 //		for(Vector point : prevSettings.keySet())
 //			maze.setWall(point, prevSettings.get(point));

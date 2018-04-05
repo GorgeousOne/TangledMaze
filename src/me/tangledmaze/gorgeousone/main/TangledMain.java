@@ -20,7 +20,7 @@ import me.tangledmaze.gorgeousone.mazes.MazeFiller;
 
 public class TangledMain extends JavaPlugin {
 
-	public static TangledMain plugin; 
+	public static TangledMain plugin;
 	private static ItemStack wand;
 	
 	private SelectionHandler sHandler;
@@ -28,12 +28,11 @@ public class TangledMain extends JavaPlugin {
 	private MazeFiller mFiller;
 	
 	@Override
-	public void onLoad() {
-		plugin = this;
-	}
+	public void onLoad() {}
 	
 	@Override
 	public void onEnable() {
+		plugin = this;
 		createWand();
 		
 		sHandler = new SelectionHandler();
@@ -42,10 +41,10 @@ public class TangledMain extends JavaPlugin {
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(sHandler, this);
-		pm.registerEvents(new ToolListener(this), this);
-		pm.registerEvents(new Deselecter(this), this);
+		pm.registerEvents(new ToolListener(), this);
+		pm.registerEvents(new Deselecter(), this);
 		
-		getCommand("tangledmaze").setExecutor(new CommandListener(this));
+		getCommand("tangledmaze").setExecutor(new CommandListener());
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
 	}
 

@@ -1,17 +1,23 @@
 package me.tangledmaze.gorgeousone.events;
 
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import me.tangledmaze.gorgeousone.listener.SelectionHandler;
 
 public class SelectionEvent extends Event implements Cancellable {
 
-	private static final HandlerList handlers = new HandlerList();
-	private boolean isCancelled;
+	protected static final HandlerList handlers = new HandlerList();
+	protected boolean isCancelled;
 	
-	public SelectionEvent(SelectionHandler handler) {
+	protected Player p;
+	protected Block clickedBlock;
+	
+	public SelectionEvent(Player p, Block clickedBlock) {
+		this.p = p;
+		this.clickedBlock = clickedBlock;
 		isCancelled = false;
 	}
 	
@@ -28,5 +34,14 @@ public class SelectionEvent extends Event implements Cancellable {
 	@Override
 	public void setCancelled(boolean arg0) {
 		isCancelled = arg0;
+	}
+	
+	//TODO 
+	public Player getPlayer() {
+		return p;
+	}
+	
+	public Block getClickedBlock() {
+		return clickedBlock;
 	}
 }
