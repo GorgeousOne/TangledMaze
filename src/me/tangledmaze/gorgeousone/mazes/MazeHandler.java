@@ -1,5 +1,6 @@
 package me.tangledmaze.gorgeousone.mazes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
@@ -17,6 +18,10 @@ public class MazeHandler {
 	public void reload() {
 		for(Maze maze : mazes.values())
 			maze.hide();
+	}
+	
+	public ArrayList<Maze> getMazes() {
+		return new ArrayList<Maze>(mazes.values());
 	}
 	
 	public boolean hasMaze(Player p) {

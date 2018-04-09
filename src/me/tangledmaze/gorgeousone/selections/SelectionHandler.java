@@ -1,8 +1,10 @@
 package me.tangledmaze.gorgeousone.selections;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +16,7 @@ import org.bukkit.plugin.PluginManager;
 import me.tangledmaze.gorgeousone.events.SelectionCompleteEvent;
 import me.tangledmaze.gorgeousone.events.SelectionResizeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionStartEvent;
+import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
@@ -33,7 +36,7 @@ public class SelectionHandler implements Listener {
 	
 	public SelectionHandler() {
 		pm = Bukkit.getServer().getPluginManager();
-		mHandler = TangledMain.plugin.getMazeHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		selectionTypes  = new HashMap<>();
 		selections = new HashMap<>();
@@ -67,25 +70,18 @@ public class SelectionHandler implements Listener {
 		Class<? extends Shape> type = selectionTypes.get(p);
 		
 		if(type.equals(Rectangle.class) || type.equals(Ellipse.class)) {
-			if(e.getAction() == Action.LEFT_CLICK_BLOCK)
-				selectRect(p, b);
+			selectRect(p, b);
 			
 		}else if(type.equals(Brush.class)) {
 			if(!mHandler.hasMaze(p))
 				return;
 
-			Maze m = mHandler.getMaze(p);
-			
-			if(e.getAction() == Action.LEFT_CLICK_BLOCK)
-				m.addBorder(b);
+			Maze maze = mHandler.getMaze(p);
+			maze.brush(b);
 				
-			else {
-				m.brushAway(b);
-
-				if(m.getSize() == 0) {
-					mHandler.removeMaze(p);
-					setSelectionType(p, Rectangle.class);
-				}
+			if(maze.getSize() == 0) {
+				mHandler.removeMaze(p);
+				setSelectionType(p, Rectangle.class);
 			}
 		}
 	}
@@ -125,6 +121,10 @@ public class SelectionHandler implements Listener {
 			pm.callEvent(new SelectionStartEvent(p, b));
 	}
 	
+	public ArrayList<RectSelection> getSelections() {
+		return new ArrayList<RectSelection>(selections.values());
+	}
+	
 	public boolean hasSelection(Player p) {
 		return selections.containsKey(p);
 	}
@@ -148,11 +148,29 @@ public class SelectionHandler implements Listener {
 		selectionTypes.put(p, type);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void deselect(Player p) {
 		if(selections.containsKey(p)) {
+			
+			RectSelection selection = getSelection(p);
 			selections.get(p).hide();
-			selections.remove(p);
+			
+			if(mHandler.hasMaze(p)) {
+				Maze maze = mHandler.getMaze(p);
+				
+				if(selection.isComplete())
+					for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
+						for(Location point : chunk)
+							if(maze.isHighlighted(point.getBlock()))
+								p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+				
+				for(Location point : selection.getVertices())
+					if(maze.isHighlighted(point.getBlock()))
+						p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			}
+			
 			resizingSelections.remove(p);
+			selections.remove(p);
 		}
 	}
 	

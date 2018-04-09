@@ -13,4 +13,6 @@ public interface Shape {
 	
 	public boolean contains(Location point);
 	public boolean borderContains(Location point);
+	
+	public Location recalc(Location point);
 }

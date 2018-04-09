@@ -24,8 +24,8 @@ public class ToolListener implements Listener {
 	private static final int expiration = 10*1000;
 	
 	public ToolListener() {
-		sHandler = TangledMain.plugin.getSelectionHandler();
-		mHandler = TangledMain.plugin.getMazeHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		times = new HashMap<>();
 		
@@ -44,7 +44,7 @@ public class ToolListener implements Listener {
 					}
 			}
 		};
-		timer.runTaskTimer(TangledMain.plugin, 0, 1*20);
+		timer.runTaskTimer(TangledMain.getPlugin(), 0, 1*20);
 	}
 	
 	

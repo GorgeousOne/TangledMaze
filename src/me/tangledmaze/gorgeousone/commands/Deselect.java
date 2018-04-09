@@ -7,15 +7,13 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class Deselect {
 	
-private SelectionHandler sHandler;
+	private SelectionHandler sHandler;
 	
 	public Deselect() {
-		sHandler = TangledMain.plugin.getSelectionHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
 	}
 	
-	public void execute(Player p, String selectionType) {
-		
-		if(sHandler.hasSelection(p))
-			sHandler.deselect(p);
+	public void execute(Player p) {
+		sHandler.deselect(p);
 	}
 }

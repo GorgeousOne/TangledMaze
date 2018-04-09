@@ -10,14 +10,14 @@ import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
-public class Deselecter implements Listener {
+public class PlayerVanishListener implements Listener {
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Deselecter() {
-		sHandler = TangledMain.plugin.getSelectionHandler();
-		mHandler = TangledMain.plugin.getMazeHandler();
+	public PlayerVanishListener() {
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	
 	@EventHandler

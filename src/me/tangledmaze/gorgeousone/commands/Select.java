@@ -16,8 +16,8 @@ public class Select {
 	private MazeHandler mHandler;
 	
 	public Select() {
-		sHandler = TangledMain.plugin.getSelectionHandler();
-		mHandler = TangledMain.plugin.getMazeHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	
 	public void execute(Player p, String selectionType) {
@@ -26,22 +26,30 @@ public class Select {
 		case "rectangle":
 		case "rect":
 		case "square":
-			if(sHandler.getSelectionType(p) != Rectangle.class) {
-				sHandler.setSelectionType(p, Rectangle.class);
-				p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
-			}
+			if(sHandler.getSelectionType(p) == Rectangle.class)
 				break;
+			
+			sHandler.setSelectionType(p, Rectangle.class);
+			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
+
+			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
+				sHandler.deselect(p);
+			break;
 			
 		case "ellipse":
 		case "circle":
-			if(sHandler.getSelectionType(p) != Ellipse.class) {
-				sHandler.setSelectionType(p, Ellipse.class);
-				p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
-			}
+			if(sHandler.getSelectionType(p) == Ellipse.class)
+				break;
+			
+			sHandler.setSelectionType(p, Ellipse.class);
+			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
+
+			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
+				sHandler.deselect(p);
 			break;
 		
 		case "brush":
-			if(sHandler.getSelectionType(p) == Ellipse.class)
+			if(sHandler.getSelectionType(p) == Brush.class)
 				break;
 			
 			if(mHandler.hasMaze(p)) {

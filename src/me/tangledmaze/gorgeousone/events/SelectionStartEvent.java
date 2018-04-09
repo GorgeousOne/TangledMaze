@@ -15,7 +15,7 @@ public class SelectionStartEvent extends SelectionEvent {
 	public SelectionStartEvent(Player p, Block clickedBlock) {
 		super(p, clickedBlock);
 		
-		sHandler = TangledMain.plugin.getSelectionHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
@@ -24,13 +24,12 @@ public class SelectionStartEvent extends SelectionEvent {
 					execute();
 			}
 		};
-		event.runTask(TangledMain.plugin);
+		event.runTask(TangledMain.getPlugin());
 	}
 	
 	private void execute() {
-		if(sHandler.hasSelection(p))
-			sHandler.getSelection(p).hide();
-		
+		sHandler.deselect(p);
+
 		RectSelection selection = new RectSelection(super.clickedBlock, super.p, sHandler.getSelectionType(p));
 		sHandler.setSelection(super.p, selection);
 		selection.show();

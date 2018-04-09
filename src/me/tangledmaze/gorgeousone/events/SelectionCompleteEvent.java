@@ -15,7 +15,7 @@ private SelectionHandler sHandler;
 	public SelectionCompleteEvent(Player p, Block clickedBlock) {
 		super(p, clickedBlock);
 		
-		sHandler = TangledMain.plugin.getSelectionHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
@@ -24,7 +24,7 @@ private SelectionHandler sHandler;
 					execute();
 			}
 		};
-		event.runTask(TangledMain.plugin);
+		event.runTask(TangledMain.getPlugin());
 	}
 	
 	private void execute() {

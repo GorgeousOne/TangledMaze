@@ -76,7 +76,6 @@ public class Ellipse implements Shape {
 		return false;
 	}
 	
-	
 	private void calcFillAndBorder() {
 		int posX = vertices.get(0).getBlockX(),
 			posZ = vertices.get(0).getBlockZ();
@@ -84,15 +83,13 @@ public class Ellipse implements Shape {
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
 		
+		int maxY = Utils.maxBlockY(vertices);
+		
 		for(double x = -radiusX; x < radiusX; x++)
 			for(double z = -radiusZ; z < radiusZ; z++) {
 				
 				iter = new Vector(aspect * (x+0.5), 0, z+0.5);
-				Location point = Utils.getNearestSurface(new Location(
-						world,
-						posX + radiusX + x,
-						vertices.get(0).getY(),
-						posZ + radiusZ + z));
+				Location point = new Location(world, posX + radiusX + x, maxY, posZ + radiusZ + z);
 				
 				//using radius-0: the circle looks edged
 				//using radius-1/2: only one block sticks out at the edges
@@ -106,7 +103,7 @@ public class Ellipse implements Shape {
 					Vector neighbour = iter.clone().add(dir.clone().setX(aspect * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
-						addBorder(point);
+						addBorder(Utils.getNearestSurface(point));
 						break;
 					}
 				}
@@ -129,5 +126,30 @@ public class Ellipse implements Shape {
 			borderChunks.get(c).add(point);
 		else
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	public Location recalc(Location point) {
+		Location newPoint = Utils.getNearestSurface(point);
+		Chunk c = point.getChunk();
+		
+		if(fillChunks.containsKey(c)) {
+			for(Location point2 : fillChunks.get(c))
+				if(point2.getX() == newPoint.getX() &&
+				   point2.getZ() == newPoint.getZ()) {
+					point2.setY(newPoint.getY());
+					break;
+				}
+		}else
+			return null;
+		
+		if(borderChunks.containsKey(c))
+			for(Location point2 : borderChunks.get(c))
+				if(point2.getX() == newPoint.getX() &&
+				   point2.getZ() == newPoint.getZ()) {
+					point2.setY(newPoint.getY());
+					break;
+				}
+		
+		return newPoint;
 	}
 }

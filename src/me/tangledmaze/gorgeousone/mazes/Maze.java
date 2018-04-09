@@ -1,6 +1,7 @@
 package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -13,7 +14,6 @@ import org.bukkit.util.Vector;
 import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
-
 public class Maze {
 	
 	private Player p;
@@ -109,7 +109,7 @@ public class Maze {
 				Location point = currentChunk.get(i);
 				
 				if(s.contains(point) && !s.borderContains(point)) {
-					if(p != null)
+					if(isVisible)
 						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 					currentChunk.remove(point);
 				}
@@ -169,9 +169,10 @@ public class Maze {
 				Location point = current.get(i);
 				
 				if(s.contains(point) && !s.borderContains(point)) {
-					if(p != null)
-						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 					current.remove(point);
+					
+					if(isVisible)
+						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 				}
 			}
 		}
@@ -184,13 +185,14 @@ public class Maze {
 		update(newVoidChunks);
 	}
 	
-	public void brushAway(Block b) {
+	@SuppressWarnings("deprecation")
+	public void brush(Block b) {
 		Location point = b.getLocation();
 		
 		if(!borderContains(point) || !isHighlighted(b))
 			return;
 		
-		ArrayList<Location> neighbours = new ArrayList<>();
+		ArrayList<Location> neighbors = new ArrayList<>();
 		ArrayList<Chunk> changedChunks = new ArrayList<>();
 		
 		boolean isExternalBorder = false,
@@ -198,15 +200,15 @@ public class Maze {
 
 		//check what kind of border this block is
 		//is it at the outside of the shape? does it close the shape somehow?
-		for(Vector dir : Utils.getCardinalDirs()) {
+		for(Vector dir : Utils.getDirs()) {
 			Location point2 = point.clone().add(dir);
 			
-			if(!contains(point2))
+			if(!contains(point2)) {
 				isExternalBorder = true;
-			
-			else if(!borderContains(point2)) {
+				
+			}else if(!borderContains(point2)) {
 				isSealing = true;
-				neighbours.add(point2);
+				neighbors.add(point2);
 
 				if(!changedChunks.contains(point2.getChunk()))
 					changedChunks.add(point2.getChunk());
@@ -217,31 +219,18 @@ public class Maze {
 		if(isExternalBorder) {
 			removeFill(point);
 			
-			//if it seals the shape not-border, neighbour blocks have to replace it
-			if(isSealing) {
-				for(Location point2 : neighbours)
-				addBorder(Utils.getNearestSurface(point2));
-			}
+			//if it seals the shape not-border, neighbor blocks have to replace it
+			if(isSealing)
+				for(Location point2 : neighbors) {
+					Location surface = Utils.getNearestSurface(point2);
+					addBorder(surface);
+					
+					if(isVisible)
+						p.sendBlockChange(surface, Constants.MAZE_BORDER, (byte) 0);
+				}
 		}
 
 		borderChunks.get(b.getChunk()).remove(point);
-
-		if(!changedChunks.contains(b.getChunk()))
-			changedChunks.add(b.getChunk());
-
-		//refresh changed chunks
-		update(changedChunks);
-	}
-	
-	public void addBorder(Block b) {
-		Location point = b.getLocation();
-		
-		if(!borderContains(point)) {
-			addFill(point);
-			addBorder(point);
-		}
-		if(p!= null)
-			Utils.sendBlockLater(p, b, Constants.MAZE_BORDER);
 	}
 	
 	private void addFill(Location point) {
@@ -259,9 +248,9 @@ public class Maze {
 		Chunk c = point.getChunk();
 		
 		if(borderChunks.containsKey(c))
-			borderChunks.get(c).add(point);
+			borderChunks.get(c).add(Utils.getNearestSurface(point));
 		else
-			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+			borderChunks.put(c, new ArrayList<>(Arrays.asList(Utils.getNearestSurface(point))));
 	}
 	
 	private void removeFill(Location point) {
@@ -274,6 +263,19 @@ public class Maze {
 				
 				fillChunks.get(c).remove(point2);
 				size--;
+				break;
+			}
+	}
+	
+	private void removeBorder(Location point) {
+		Chunk c = point.getChunk();
+		
+		for(Location point2 : borderChunks.get(c))
+
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ()) {
+				
+				borderChunks.get(c).remove(point2);
 				break;
 			}
 	}
@@ -317,6 +319,23 @@ public class Maze {
 				return true;
 		
 		return false;
+	}
+	
+	public void recalc(Location point) {
+		if(!contains(point))
+			return;
+		
+			hide();
+		Location newPoint = Utils.getNearestSurface(point);
+		
+		p.sendMessage("mip möp möp mip möp");
+		removeFill(point);
+		addFill(newPoint);
+		
+		if(borderContains(point)) {
+			removeBorder(point);
+			addBorder(newPoint);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")

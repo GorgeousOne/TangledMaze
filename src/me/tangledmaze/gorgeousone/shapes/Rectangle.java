@@ -63,15 +63,17 @@ public class Rectangle implements Shape {
 		Vector v0 = vertices.get(0).toVector(),
 			   v2 = vertices.get(2).toVector();
 		
+		int maxY = Utils.maxBlockY(vertices);
+		
 		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
 			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
 				
-				Location point = Utils.getNearestSurface(new Location(world, x, v0.getY(), z));
+				Location point = new Location(world, x, maxY, z);
 				addFill(point);
 				
 				if(x == v0.getX() || x == v2.getX() ||
 				   z == v0.getZ() || z == v2.getZ()) {
-					addBorder(point);
+					addBorder(Utils.getNearestSurface(point));
 				}
 			}
 	}
@@ -92,5 +94,30 @@ public class Rectangle implements Shape {
 			borderChunks.get(c).add(point);
 		else
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	public Location recalc(Location point) {
+		Location newPoint = Utils.getNearestSurface(point);
+		Chunk c = point.getChunk();
+		
+		if(fillChunks.containsKey(c)) {
+			for(Location point2 : fillChunks.get(c))
+				if(point2.getX() == newPoint.getX() &&
+				   point2.getZ() == newPoint.getZ()) {
+					point2.setY(newPoint.getY());
+					break;
+				}
+		}else
+			return null;
+		
+		if(borderChunks.containsKey(c))
+			for(Location point2 : borderChunks.get(c))
+				if(point2.getX() == newPoint.getX() &&
+				   point2.getZ() == newPoint.getZ()) {
+					point2.setY(newPoint.getY());
+					break;
+				}
+		
+		return newPoint;
 	}
 }

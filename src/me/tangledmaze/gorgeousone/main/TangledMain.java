@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -12,7 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.tangledmaze.gorgeousone.listener.Deselecter;
+import me.tangledmaze.gorgeousone.listener.PlayerVanishListener;
+import me.tangledmaze.gorgeousone.listener.BlockChangeListener;
 import me.tangledmaze.gorgeousone.mazes.MazeFiller;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -20,7 +22,7 @@ import me.tangledmaze.gorgeousone.selections.ToolListener;
 
 public class TangledMain extends JavaPlugin {
 
-	public static TangledMain plugin;
+	private static TangledMain plugin;
 	private static ItemStack wand;
 	
 	private SelectionHandler sHandler;
@@ -33,16 +35,18 @@ public class TangledMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		createWand();
+		initWand();
 		
 		mHandler = new MazeHandler();
 		mFiller = new MazeFiller();
 		sHandler = new SelectionHandler();
 		
 		PluginManager pm = getServer().getPluginManager();
+		
 		pm.registerEvents(sHandler, this);
 		pm.registerEvents(new ToolListener(), this);
-		pm.registerEvents(new Deselecter(), this);
+		pm.registerEvents(new PlayerVanishListener(), this);
+		pm.registerEvents(new BlockChangeListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandListener());
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
@@ -54,11 +58,14 @@ public class TangledMain extends JavaPlugin {
 		mHandler.reload();
 	}
 	
+	public static TangledMain getPlugin() {
+		return plugin;
+	}
+	
 	public static ItemStack getWand() {
-		
 		ItemMeta meta = wand.getItemMeta();
 		List<String> lore = meta.getLore();
-		lore.set(0,"§7" + getCustomEnchantment());
+		lore.set(0, ChatColor.GRAY + getCustomEnchantment());
 		meta.setLore(lore);
 		wand.setItemMeta(meta);
 		return wand;
@@ -76,17 +83,17 @@ public class TangledMain extends JavaPlugin {
 		return mFiller;
 	}
 	
-	private void createWand() {
+	private void initWand() {
 		wand = new ItemStack(Material.GOLD_SPADE);
 		wand.setAmount(1);
 		ItemMeta meta = wand.getItemMeta();
-		meta.setDisplayName("§dSelection Shovel");
+		meta.setDisplayName(ChatColor.DARK_GREEN + "Selection Wand");
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
-		lore.add("§bThe tool to create mazes.");
-		lore.add("§bUse left click to begin a selection.");
+		lore.add(ChatColor.GREEN + "The tool to create mazes.");
+		lore.add(ChatColor.GREEN + "Use left click to start a selection.");
 		meta.setLore(lore);
 		wand.setItemMeta(meta);
 	}

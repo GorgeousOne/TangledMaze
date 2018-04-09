@@ -20,7 +20,6 @@ public class RectSelection {
 	private World world;
 	private Shape shape;
 	
-	private Location firstVertex;
 	private ArrayList<Location> vertices;
 	private boolean isComplete, isVisible;
 	
@@ -32,13 +31,7 @@ public class RectSelection {
 		vertices = new ArrayList<>();
 		isComplete = false;
 		
-		this.firstVertex = Utils.getNearestSurface(firstVertex.getLocation());
-		
-//		if(p != null) {d
-//			Utils.sendBlockLater(editor, this.firstVertex, Constants.SELECTION_BEGINNING);
-//			isVisible = true;
-//		}
-		
+		vertices.add(firstVertex.getLocation());
 		this.shapeType = shapeType;
 	}
 	
@@ -51,11 +44,9 @@ public class RectSelection {
 	}
 	
 	public ArrayList<Location> getVertices() {
-		if(!isComplete())
-			return null;
 		return vertices;
 	}
-
+	
 	public int getWidth() {
 		if(!isComplete)
 			return 0;
@@ -78,7 +69,7 @@ public class RectSelection {
 		if(isComplete)
 			return;
 		
-		calcVertices(firstVertex, b.getLocation());
+		calcVertices(vertices.get(0), b.getLocation());
 		isComplete = true;
 		
 		try {
@@ -108,11 +99,12 @@ public class RectSelection {
 		}
 	}
 	
-	public boolean contains(Block b) {
-		if(!isComplete())
-			return false;
-		return b.getX() >= vertices.get(0).getX() && b.getZ() <= vertices.get(2).getX() &&
-			   b.getZ() >= vertices.get(0).getZ() && b.getZ() <= vertices.get(2).getZ();
+	public boolean contains(Location point) {
+		if(isComplete())
+			return point.getBlockX() >= vertices.get(0).getX() && point.getBlockX() <= vertices.get(2).getX() &&
+				   point.getBlockZ() >= vertices.get(0).getZ() && point.getBlockZ() <= vertices.get(2).getZ();
+		else
+			return point.getBlockX() == vertices.get(0).getX() && point.getBlockZ() == vertices.get(0).getZ(); 
 	}
 	
 	public boolean isVertex(Block b) {
@@ -141,17 +133,37 @@ public class RectSelection {
 	}
 	
 	private void calcVertices(Location p0, Location p1) {
+		int maxY = Utils.maxBlockY(new ArrayList<Location>(Arrays.asList(p0, p1)));
+		
 		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
 			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
 			maxX = Math.max(p0.getBlockX(), p1.getBlockX()),
 			maxZ = Math.max(p0.getBlockZ(), p1.getBlockZ());
-
 		
 		vertices = new ArrayList<>(Arrays.asList(
-				Utils.getNearestSurface(new Location(world, minX, p1.getY(), minZ)),
-				Utils.getNearestSurface(new Location(world, maxX, p1.getY(), minZ)),
-				Utils.getNearestSurface(new Location(world, maxX, p1.getY(), maxZ)),
-				Utils.getNearestSurface(new Location(world, minX, p1.getY(), maxZ))));
+				Utils.getNearestSurface(new Location(world, minX, maxY, minZ)),
+				Utils.getNearestSurface(new Location(world, maxX, maxY, minZ)),
+				Utils.getNearestSurface(new Location(world, maxX, maxY, maxZ)),
+				Utils.getNearestSurface(new Location(world, minX, maxY, maxZ))));
+	}
+
+	public void recalc(Location point) {
+		if(!contains(point))
+			return;
+		
+		hide();
+		
+		if(isComplete() && shape.contains(point))
+			shape.recalc(point);
+		
+		Location newPoint = Utils.getNearestSurface(point);
+		
+		for(Location vertex : vertices)
+			if(vertex.getX() == newPoint.getX() &&
+			   vertex.getZ() == newPoint.getZ()) {
+				vertex.setY(newPoint.getY());
+				break;
+			}
 	}
 	
 	private void worldCheck(Block b) {
@@ -166,34 +178,34 @@ public class RectSelection {
 			return;
 		isVisible = true;
 		
-		if(isComplete()) {
+		if(isComplete())
 			for(ArrayList<Location> chunk : shape.getBorder().values())
 				for(Location point : chunk)
 					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
-			showVertices();
-		}else
-			p.sendBlockChange(firstVertex, Constants.SELECTION_CORNER, (byte) 0);
+		showVertices();
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void showVertices() {
+		if(!isVisible)
+			return;
+		
 		for(Location vertex : vertices)
 			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void hide() {
-		if(!isVisible || p == null || !isComplete() && firstVertex == null)
+		if(!isVisible || p == null)
 			return;
 		isVisible = false;
 		
-		if(isComplete()) {
-			for(Location vertex : vertices)
-				p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+		for(Location vertex : vertices)
+			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+		
+		if(isComplete())
 			for(ArrayList<Location> chunk : shape.getBorder().values())
 				for(Location point : chunk)
 					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-		}else
-			p.sendBlockChange(firstVertex, firstVertex.getBlock().getType(), firstVertex.getBlock().getData());
 	}
 }

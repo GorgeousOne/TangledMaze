@@ -17,7 +17,7 @@ public class SelectionResizeEvent extends SelectionEvent {
 		super(p, clickedBlock);
 		
 		this.oldVertex = vertex;
-		sHandler = TangledMain.plugin.getSelectionHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
@@ -26,7 +26,7 @@ public class SelectionResizeEvent extends SelectionEvent {
 					execute();
 			}
 		};
-		event.runTask(TangledMain.plugin);
+		event.runTask(TangledMain.getPlugin());
 	}
 	
 	private void execute() {

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
-public class Brush implements Shape {
+public abstract class Brush implements Shape {
 
 	@Override
 	public HashMap<Chunk, ArrayList<Location>> getBorder() {
@@ -26,5 +26,10 @@ public class Brush implements Shape {
 	@Override
 	public boolean borderContains(Location point) {
 		return false;
+	}
+
+	@Override
+	public Location recalc(Location point) {
+		return null;
 	}
 }

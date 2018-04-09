@@ -14,12 +14,14 @@ public class CommandListener implements CommandExecutor {
 	private Start startCommand;
 	private Add addCommand;
 	private Subtract subtCommand;
+	private Deselect deselectCommand;
 	
 	public CommandListener() {
 		selectCommand = new Select();
 		startCommand = new Start();
 		addCommand = new Add();
 		subtCommand = new Subtract();
+		deselectCommand = new Deselect();
 	}
 	
 	@Override
@@ -62,11 +64,13 @@ public class CommandListener implements CommandExecutor {
 				subtCommand.execute(p);
 				break;
 				
+			case "deselect":
+				deselectCommand.execute(p);
+				break;
+
 			case "undo":
 				break;
 				
-			case "deselect":
-				break;
 				
 			case "help":
 			case "h":

@@ -12,7 +12,7 @@ public class Undo {
 	private SelectionHandler handler;
 	
 	public Undo() {
-		handler = TangledMain.plugin.getSelectionHandler();
+		handler = TangledMain.getPlugin().getSelectionHandler();
 	}
 	
 	public void execute(Player p) {

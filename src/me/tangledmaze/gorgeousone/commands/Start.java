@@ -14,8 +14,8 @@ public class Start {
 	private MazeHandler mHandler;
 	
 	public Start() {
-		sHandler = TangledMain.plugin.getSelectionHandler();
-		mHandler = TangledMain.plugin.getMazeHandler();
+		sHandler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	
 	public void execute(Player p) {

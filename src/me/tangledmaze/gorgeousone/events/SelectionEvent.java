@@ -5,15 +5,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scheduler.BukkitRunnable;
 
-
-public class SelectionEvent extends Event implements Cancellable {
+public abstract class SelectionEvent extends Event implements Cancellable {
 
 	protected static final HandlerList handlers = new HandlerList();
 	protected boolean isCancelled;
 	
 	protected Player p;
 	protected Block clickedBlock;
+	protected BukkitRunnable thread;
 	
 	public SelectionEvent(Player p, Block clickedBlock) {
 		this.p = p;
@@ -36,7 +37,6 @@ public class SelectionEvent extends Event implements Cancellable {
 		isCancelled = arg0;
 	}
 	
-	//TODO 
 	public Player getPlayer() {
 		return p;
 	}
