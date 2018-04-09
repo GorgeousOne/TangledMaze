@@ -128,28 +128,17 @@ public class Ellipse implements Shape {
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
-	public Location recalc(Location point) {
-		Location newPoint = Utils.getNearestSurface(point);
+	public void recalc(Location point) {
 		Chunk c = point.getChunk();
 		
-		if(fillChunks.containsKey(c)) {
-			for(Location point2 : fillChunks.get(c))
-				if(point2.getX() == newPoint.getX() &&
-				   point2.getZ() == newPoint.getZ()) {
-					point2.setY(newPoint.getY());
-					break;
-				}
-		}else
-			return null;
-		
-		if(borderChunks.containsKey(c))
-			for(Location point2 : borderChunks.get(c))
-				if(point2.getX() == newPoint.getX() &&
-				   point2.getZ() == newPoint.getZ()) {
-					point2.setY(newPoint.getY());
-					break;
-				}
-		
-		return newPoint;
+		if(!borderChunks.containsKey(c))
+			return;
+
+		for(Location point2 : borderChunks.get(c))
+			if(point2.getX() == point.getX() &&
+			   point2.getZ() == point.getZ()) {
+				point2.setY(Utils.getNearestSurface(point).getY());
+				break;
+			}
 	}
 }

@@ -322,20 +322,12 @@ public class Maze {
 	}
 	
 	public void recalc(Location point) {
-		if(!contains(point))
+		if(!borderContains(point))
 			return;
 		
-			hide();
-		Location newPoint = Utils.getNearestSurface(point);
-		
-		p.sendMessage("mip möp möp mip möp");
-		removeFill(point);
-		addFill(newPoint);
-		
-		if(borderContains(point)) {
-			removeBorder(point);
-			addBorder(newPoint);
-		}
+		hide();
+		removeBorder(point);
+		addBorder(Utils.getNearestSurface(point));
 	}
 	
 	@SuppressWarnings("deprecation")

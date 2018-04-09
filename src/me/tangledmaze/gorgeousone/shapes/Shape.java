@@ -1,5 +1,6 @@
 package me.tangledmaze.gorgeousone.shapes;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,5 +15,5 @@ public interface Shape {
 	public boolean contains(Location point);
 	public boolean borderContains(Location point);
 	
-	public Location recalc(Location point);
+	public void recalc(Location point);
 }

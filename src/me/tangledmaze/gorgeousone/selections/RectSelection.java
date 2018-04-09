@@ -107,6 +107,13 @@ public class RectSelection {
 			return point.getBlockX() == vertices.get(0).getX() && point.getBlockZ() == vertices.get(0).getZ(); 
 	}
 	
+	public boolean borderContains(Location point) {
+		if(!isComplete())
+			return false;
+		
+		return shape.borderContains(point);
+	}
+	
 	public boolean isVertex(Block b) {
 		if(!isComplete())
 			return false;
@@ -148,23 +155,17 @@ public class RectSelection {
 	}
 
 	public void recalc(Location point) {
-		if(!contains(point))
-			return;
+
+		if(isVertex(point.getBlock())) {
+			int index = indexOfVertex(point.getBlock());
+			vertices.set(index, Utils.getNearestSurface(point));
+			hide();
 		
-		hide();
-		
-		if(isComplete() && shape.contains(point))
+		}else if(shape.borderContains(point)) {
 			shape.recalc(point);
-		
-		Location newPoint = Utils.getNearestSurface(point);
-		
-		for(Location vertex : vertices)
-			if(vertex.getX() == newPoint.getX() &&
-			   vertex.getZ() == newPoint.getZ()) {
-				vertex.setY(newPoint.getY());
-				break;
-			}
-	}
+			hide();
+		}
+	}		
 	
 	private void worldCheck(Block b) {
 		//this should only happen if I do a mistake

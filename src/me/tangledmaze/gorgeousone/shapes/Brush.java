@@ -29,7 +29,5 @@ public abstract class Brush implements Shape {
 	}
 
 	@Override
-	public Location recalc(Location point) {
-		return null;
-	}
+	public void recalc(Location point) {}
 }
