@@ -15,6 +15,7 @@ public class CommandListener implements CommandExecutor {
 	private Add addCommand;
 	private Subtract subtCommand;
 	private Deselect deselectCommand;
+	private Fill fillCommand;
 	
 	public CommandListener() {
 		selectCommand = new Select();
@@ -22,6 +23,7 @@ public class CommandListener implements CommandExecutor {
 		addCommand = new Add();
 		subtCommand = new Subtract();
 		deselectCommand = new Deselect();
+		fillCommand = new Fill();
 	}
 	
 	@Override
@@ -68,9 +70,12 @@ public class CommandListener implements CommandExecutor {
 				deselectCommand.execute(p);
 				break;
 
+			case "fill":
+				fillCommand.execute(p);
+				break;
+			
 			case "undo":
 				break;
-				
 				
 			case "help":
 			case "h":

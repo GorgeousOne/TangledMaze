@@ -1,18 +1,22 @@
-package me.tangledmaze.gorgeousone.selections;
+package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
+import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class ToolListener implements Listener {
 	
@@ -47,7 +51,6 @@ public class ToolListener implements Listener {
 		timer.runTaskTimer(TangledMain.getPlugin(), 0, 1*20);
 	}
 	
-	
 	@EventHandler
 	public void onSlotSwitch(PlayerItemHeldEvent e) {
 		Player p = e.getPlayer();
@@ -68,6 +71,29 @@ public class ToolListener implements Listener {
 			times.put(p, System.currentTimeMillis());
 	}
 	
+	@EventHandler (priority = EventPriority.LOW)
+	public void onPickUp(PlayerPickupItemEvent e) {
+		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItem().getItemStack())) {
+			Player p = e.getPlayer();
+			
+			if(mHandler.hasMaze(p))
+				mHandler.getMaze(p).show();
+			
+			if(sHandler.hasSelection(p))
+				sHandler.getSelection(p).show();
+		}
+	}
+	
+	@EventHandler (priority = EventPriority.LOW)
+	public void onDrop(PlayerDropItemEvent e) {
+		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItemDrop().getItemStack())) {
+			Player p = e.getPlayer();
+
+			if(sHandler.hasSelection(p) || mHandler.hasMaze(p))
+				times.put(p, System.currentTimeMillis());
+		}
+	}
+			
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
 		if(TangledMain.isSelectionWand(e.getItem()))

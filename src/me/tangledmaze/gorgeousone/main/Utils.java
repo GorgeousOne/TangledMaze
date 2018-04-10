@@ -2,6 +2,7 @@ package me.tangledmaze.gorgeousone.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -12,7 +13,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public abstract class Utils {
-
+	
+	
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
@@ -22,6 +24,12 @@ public abstract class Utils {
 			new Vector(-1, 0, -1),
 			new Vector( 0, 0, -1),
 			new Vector( 1, 0, -1)));
+	
+	private static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
+			new Vector( 1, 0,  0),
+			new Vector( 0, 0,  1),
+			new Vector(-1, 0,  0),
+			new Vector( 0, 0, -1)));
 
 	private static ArrayList<Material> UNSATABLE_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.BROWN_MUSHROOM,
@@ -57,14 +65,15 @@ public abstract class Utils {
 			Material.WOOD_BUTTON,
 			Material.YELLOW_FLOWER));
 	
-	public static int maxBlockY(List<Location> points) {
-		int maxY = -1;
-		
-		for(Location point : points)
-			if(point.getBlockY() > maxY)
-				maxY = point.getBlockY();
-		
-		return maxY;
+	@SuppressWarnings("unchecked")
+	public static List<Vector> directions() {
+		return (ArrayList<Vector>) DIRECTIONS.clone();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Vector> shuffledCardinalDirs() {
+		Collections.shuffle(CARDINAL_DIRS);
+		return (ArrayList<Vector>) CARDINAL_DIRS.clone();
 	}
 	
 	public static boolean isReallySolid(Block b) {
@@ -80,11 +89,6 @@ public abstract class Utils {
 			}
 		};
 		r.runTask(TangledMain.getPlugin());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Vector> getDirs() {
-		return (ArrayList<Vector>) DIRECTIONS.clone();
 	}
 	
 	public static Location getNearestSurface(Location loc) {
@@ -108,5 +112,15 @@ public abstract class Utils {
 			}
 		
 		return loc;
+	}
+	
+	public static int maxBlockY(List<Location> points) {
+		int maxY = -1;
+		
+		for(Location point : points)
+			if(point.getBlockY() > maxY)
+				maxY = point.getBlockY();
+		
+		return maxY;
 	}
 }

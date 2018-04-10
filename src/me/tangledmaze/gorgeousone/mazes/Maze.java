@@ -19,6 +19,7 @@ public class Maze {
 	private Player p;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Shape> shapes;
+	
 	private int size;
 	
 	private boolean isVisible;
@@ -35,25 +36,27 @@ public class Maze {
 		add(borderShape);
 	}
 	
+	public Player getPlayer() {
+		return p;
+	}
+	
 	public int getSize() {
 		return size;
 	}
 	
+	public ArrayList<Chunk> getChunks() {
+		return new ArrayList<Chunk>(fillChunks.keySet());
+	}
+	
 	public ArrayList<Location> getFill() {
 		ArrayList<Location> fill = new ArrayList<>();
-		
-		for(ArrayList<Location> chunk : fillChunks.values())
-			fill.addAll(chunk);
-		
+		fillChunks.values().forEach(chunk -> fill.addAll(chunk));
 		return fill;
 	}
 	
-	public ArrayList<Location> getMainBorder() {
+	public ArrayList<Location> getBorder() {
 		ArrayList<Location> border = new ArrayList<>();
-		
-		for(ArrayList<Location> chunk : borderChunks.values())
-			border.addAll(chunk);
-		
+		borderChunks.values().forEach(chunk -> border.addAll(chunk));
 		return border;
 	}
 	
@@ -200,7 +203,7 @@ public class Maze {
 
 		//check what kind of border this block is
 		//is it at the outside of the shape? does it close the shape somehow?
-		for(Vector dir : Utils.getDirs()) {
+		for(Vector dir : Utils.directions()) {
 			Location point2 = point.clone().add(dir);
 			
 			if(!contains(point2)) {

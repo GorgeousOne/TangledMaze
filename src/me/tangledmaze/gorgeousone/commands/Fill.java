@@ -1,7 +1,5 @@
 package me.tangledmaze.gorgeousone.commands;
 
-import java.util.ArrayList;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -19,7 +17,7 @@ public class Fill {
 		mFiller  = TangledMain.getPlugin().getMazeFiller();
 	}
 	
-	public void execute(Player p, ArrayList<String> args) {
+	public void execute(Player p) {
 		
 		if(!mHandler.hasMaze(p)) {
 			p.sendMessage(ChatColor.RED + "Please start a maze first.");

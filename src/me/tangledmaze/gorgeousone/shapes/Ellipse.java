@@ -66,7 +66,7 @@ public class Ellipse implements Shape {
 		if(mid.distance(point2) > radiusZ - 0.25)
 			return false;
 		
-		for(Vector dir : Utils.getDirs()) {
+		for(Vector dir : Utils.directions()) {
 			Vector neighbour = point2.clone().add(dir.clone().setX(aspect * dir.getX()));
 			
 			if(mid.distance(neighbour) > radiusZ - 0.25)
@@ -99,7 +99,7 @@ public class Ellipse implements Shape {
 				else
 					continue;
 				
-				for(Vector dir : Utils.getDirs()) {
+				for(Vector dir : Utils.directions()) {
 					Vector neighbour = iter.clone().add(dir.clone().setX(aspect * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {

@@ -14,11 +14,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.tangledmaze.gorgeousone.listener.PlayerVanishListener;
+import me.tangledmaze.gorgeousone.listener.ToolListener;
 import me.tangledmaze.gorgeousone.listener.BlockChangeListener;
 import me.tangledmaze.gorgeousone.mazes.MazeFiller;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
-import me.tangledmaze.gorgeousone.selections.ToolListener;
 
 public class TangledMain extends JavaPlugin {
 
