@@ -2,7 +2,6 @@ package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,11 +14,11 @@ import me.tangledmaze.gorgeousone.main.Utils;
 
 public class MazeFiller {
 
-	@SuppressWarnings("unused")
 	private static final int
 		UNDEFINED = 1,
 		WALL = 2,
-		PATH = 3;
+		PATH = 3,
+		ENTRANCE = 4;
 	
 	public MazeFiller() {
 	}
@@ -35,8 +34,6 @@ public class MazeFiller {
 			maxZ = minZ;
 		
 		for(Chunk c : chunks) {
-			Bukkit.broadcastMessage(c.toString());
-			
 			if(c.getX() < minX)
 				minX = c.getX();
 			else if(c.getX() > maxX)
@@ -52,23 +49,23 @@ public class MazeFiller {
 		maxX *= 16;
 		minZ *= 16;
 		maxZ *= 16;
-//		Bukkit.broadcastMessage(maxX + ", " + minX);
-//		Bukkit.broadcastMessage(maxZ + ", " + minZ);
-//		Bukkit.broadcastMessage("" + (maxX - minX));
-//		Bukkit.broadcastMessage("" + (maxZ - minZ));
 
-		int[][] map = new int[maxX - minX + 16][maxZ - minZ + 16];
+		int[][] mazeMap = new int[maxX - minX + 16][maxZ - minZ + 16];
 			
-		for(Location point : maze.getFill())
-			map[point.getBlockX() - minX][point.getBlockZ() - minZ] = UNDEFINED;
-		for(Location point : maze.getBorder())
-			map[point.getBlockX() - minX][point.getBlockZ() - minZ] = WALL;
+		for(ArrayList<Location> chunk : maze.getFill().values())
+			for(Location point : chunk)
+				mazeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = UNDEFINED;
 		
-		//TODO use maze.getStart() function when it is ready
-		Vector start = maze.getFill().get(1).toVector().add(new Vector(-minX, 0, -minZ));
+		for(ArrayList<Location> chunk : maze.getBorder().values())
+			for(Location point : chunk)
+				mazeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = WALL;
 		
-		generatePaths(maze, map, start, minX, minZ);
-		Bukkit.broadcastMessage(map.length + "");
+		for(Location entrance : maze.getEntrances())
+			mazeMap[entrance.getBlockX() - minX][entrance.getBlockZ() - minZ] = ENTRANCE;
+		
+		Vector start = maze.getEntrances().get(0).toVector().add(new Vector(-minX, 0, -minZ));
+		
+		generatePaths(maze, mazeMap, start, minX, minZ);
 	}
 	
 	private void generatePaths(Maze maze, int[][] mazeMap, Vector start, int shiftX, int shiftZ) {
@@ -116,13 +113,13 @@ public class MazeFiller {
 			}
 		};
 		pathGenerator.runTaskAsynchronously(TangledMain.getPlugin());
-	}
+}
 	
 	@SuppressWarnings("deprecation")
 	public void shoeMaze(Maze maze, int[][] mazeMap, int shiftX, int shiftZ) {
 		
+		maze.hide();
 		Player p = maze.getPlayer();
-		p.sendMessage("asdasD");
 		
 		for(int x = 0; x < mazeMap.length; x++)
 			for(int z = 0; z < mazeMap[0].length; z++) {

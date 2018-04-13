@@ -32,30 +32,49 @@ public abstract class Utils {
 			new Vector( 0, 0, -1)));
 
 	private static ArrayList<Material> UNSATABLE_SOLIDS = new ArrayList<>(Arrays.asList(
+			Material.ACACIA_DOOR,
+			Material.ACTIVATOR_RAIL,
+			Material.BIRCH_DOOR,
 			Material.BROWN_MUSHROOM,
 			Material.CACTUS,
-			Material.COCOA,
 			Material.CARPET,
 			Material.CARROT,
+			Material.COCOA,
+			Material.CHEST,
+			Material.DARK_OAK_DOOR,
+			Material.DAYLIGHT_DETECTOR,
 			Material.DEAD_BUSH,
+			Material.DETECTOR_RAIL,
 			Material.DOUBLE_PLANT,
+			Material.ENDER_CHEST,
 			Material.FIRE,
 			Material.GOLD_PLATE,
+			Material.IRON_DOOR,
 			Material.IRON_PLATE,
+			Material.JUNGLE_DOOR,
 			Material.LADDER,
+			Material.LEVER,
 			Material.LONG_GRASS,
 			Material.MELON_STEM,
 			Material.POTATO,
+			Material.POWERED_RAIL,
 			Material.PUMPKIN_STEM,
+			Material.RAILS,
 			Material.RED_MUSHROOM,
 			Material.RED_ROSE,
+			Material.REDSTONE_TORCH_OFF,
+			Material.REDSTONE_TORCH_ON,
+			Material.REDSTONE_WIRE,
 			Material.SAPLING,
 			Material.SIGN_POST,
+			Material.SPRUCE_DOOR,
 			Material.SNOW,
 			Material.STANDING_BANNER,
 			Material.STONE_BUTTON,
 			Material.STONE_PLATE,
 			Material.SUGAR_CANE_BLOCK,
+			Material.TORCH,
+			Material.TRAPPED_CHEST,
 			Material.VINE,
 			Material.WALL_BANNER,
 			Material.WALL_SIGN,
@@ -63,7 +82,40 @@ public abstract class Utils {
 			Material.WHEAT,
 			Material.WOOD_PLATE,
 			Material.WOOD_BUTTON,
+			Material.WOODEN_DOOR,
+			Material.WEB,
 			Material.YELLOW_FLOWER));
+	
+	private static ArrayList<Material> DESTRAOYABLE_SOLIDS = new ArrayList<>(Arrays.asList(
+			Material.BROWN_MUSHROOM,
+			Material.CACTUS,
+			Material.CARPET,
+			Material.CARROT,
+			Material.DEAD_BUSH,
+			Material.DOUBLE_PLANT,
+			Material.FIRE,
+			Material.LONG_GRASS,
+			Material.MELON_STEM,
+			Material.POTATO,
+			Material.PUMPKIN_STEM,
+			Material.RED_MUSHROOM,
+			Material.RED_ROSE,
+			Material.SAPLING,
+			Material.SNOW,
+			Material.SUGAR_CANE_BLOCK,
+			Material.VINE,
+			Material.WATER_LILY,
+			Material.WHEAT,
+			Material.WEB,
+			Material.YELLOW_FLOWER));
+	
+	public static boolean isReallySolid(Block b) {
+		return b.getType().isSolid() && !UNSATABLE_SOLIDS.contains(b.getType());
+	}
+
+	public static boolean canBeDestroyed(Block b) {
+		return !b.getType().isSolid() || DESTRAOYABLE_SOLIDS.contains(b.getType()); 
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<Vector> directions() {
@@ -74,10 +126,6 @@ public abstract class Utils {
 	public static ArrayList<Vector> shuffledCardinalDirs() {
 		Collections.shuffle(CARDINAL_DIRS);
 		return (ArrayList<Vector>) CARDINAL_DIRS.clone();
-	}
-	
-	public static boolean isReallySolid(Block b) {
-		return b.getType().isSolid() && !UNSATABLE_SOLIDS.contains(b.getType());
 	}
 	
 	public static void sendBlockLater(Player p, Location loc, Material mat) {

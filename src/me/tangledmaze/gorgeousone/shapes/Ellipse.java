@@ -51,6 +51,9 @@ public class Ellipse implements Shape {
 	}
 	
 	public boolean contains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
 		point2.setY(0);
@@ -59,6 +62,9 @@ public class Ellipse implements Shape {
 	}
 	
 	public boolean borderContains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
 		point2.setY(0);
@@ -74,6 +80,24 @@ public class Ellipse implements Shape {
 		}
 		
 		return false;
+	}
+	
+	private void addFill(Location point) {
+		Chunk c = point.getChunk();
+		
+		if(fillChunks.containsKey(c))
+			fillChunks.get(c).add(point);
+		else
+			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	private void addBorder(Location point) {
+		Chunk c = point.getChunk();
+
+		if(borderChunks.containsKey(c))
+			borderChunks.get(c).add(point);
+		else
+			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
 	private void calcFillAndBorder() {
@@ -95,7 +119,7 @@ public class Ellipse implements Shape {
 				//using radius-1/2: only one block sticks out at the edges
 				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
 				if(midPoint.distance(iter) <= radiusZ - 0.25)
-					addFill(point);
+					addFill(Utils.getNearestSurface(point));
 				else
 					continue;
 				
@@ -108,24 +132,6 @@ public class Ellipse implements Shape {
 					}
 				}
 			}
-	}
-	
-	private void addFill(Location point) {
-		Chunk c = point.getChunk();
-		
-		if(fillChunks.containsKey(c))
-			fillChunks.get(c).add(point);
-		else
-			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
-	}
-	
-	private void addBorder(Location point) {
-		Chunk c = point.getChunk();
-
-		if(borderChunks.containsKey(c))
-			borderChunks.get(c).add(point);
-		else
-			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
 	public void recalc(Location point) {

@@ -24,7 +24,8 @@ public class TangledCompleter implements TabCompleter {
 		selectionTypes = new ArrayList<>(Arrays.asList(
 				"rectangle",
 				"ellipse",
-				"brush"));
+				"brush",
+				"entrance"));
 	}
 	
 	@Override

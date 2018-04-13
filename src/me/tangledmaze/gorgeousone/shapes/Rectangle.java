@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -52,30 +53,14 @@ public class Rectangle implements Shape {
 	
 	@Override
 	public boolean borderContains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Vector v0 = vertices.get(0).toVector(),
 			   v2 = vertices.get(2).toVector();
 		
 		return (point.getBlockX() == v0.getX() || point.getBlockX() == v2.getX()) && (point.getBlockZ() >= v0.getZ() && point.getBlockZ() <= v2.getZ()) ||
 			   (point.getBlockZ() == v0.getZ() || point.getBlockZ() == v2.getZ()) && (point.getBlockX() >= v0.getX() && point.getBlockX() <= v2.getX());
-	}
-	
-	private void calcFillAndBorder() {
-		Vector v0 = vertices.get(0).toVector(),
-			   v2 = vertices.get(2).toVector();
-		
-		int maxY = Utils.maxBlockY(vertices);
-		
-		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
-			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
-				
-				Location point = new Location(world, x, maxY, z);
-				addFill(point);
-				
-				if(x == v0.getX() || x == v2.getX() ||
-				   z == v0.getZ() || z == v2.getZ()) {
-					addBorder(Utils.getNearestSurface(point));
-				}
-			}
 	}
 	
 	private void addFill(Location point) {
@@ -94,6 +79,25 @@ public class Rectangle implements Shape {
 			borderChunks.get(c).add(point);
 		else
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+	}
+	
+	private void calcFillAndBorder() {
+		Vector v0 = vertices.get(0).toVector(),
+			   v2 = vertices.get(2).toVector();
+		
+		int maxY = Utils.maxBlockY(vertices);
+		Bukkit.broadcastMessage("" + maxY);
+		
+		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
+			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
+				
+				Location point = new Location(world, x, maxY, z);
+				addFill(Utils.getNearestSurface(point));
+				
+				if(x == v0.getX() || x == v2.getX() ||
+				   z == v0.getZ() || z == v2.getZ())
+					addBorder(Utils.getNearestSurface(point));
+			}
 	}
 	
 	public void recalc(Location point) {

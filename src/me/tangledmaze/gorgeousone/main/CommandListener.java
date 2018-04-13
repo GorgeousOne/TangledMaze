@@ -100,11 +100,9 @@ public class CommandListener implements CommandExecutor {
 	
 	
 //	private void hasAnyPermission(Permission... perms) {
-//	
 //	}
 //	
 //	private void hasAllPermissions(Permission... perms) {
-//	
 //	}
 	
 	private void sendHelp(Player p, int page) {

@@ -24,6 +24,7 @@ import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
+import me.tangledmaze.gorgeousone.shapes.EntranceSetter;
 
 public class SelectionHandler implements Listener {
 
@@ -83,7 +84,14 @@ public class SelectionHandler implements Listener {
 				mHandler.removeMaze(p);
 				setSelectionType(p, Rectangle.class);
 			}
+		
+		}else if(type.equals(EntranceSetter.class)) {
+			if(!mHandler.hasMaze(p))
+				return;
+			
+			mHandler.getMaze(p).addEntrance(b);
 		}
+		
 	}
 	
 	private void selectRect(Player p, Block b) {

@@ -14,11 +14,12 @@ import org.bukkit.util.Vector;
 import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
+
 public class Maze {
 	
 	private Player p;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
-	private ArrayList<Shape> shapes;
+	private ArrayList<Location> entrances;
 	
 	private int size;
 	
@@ -30,9 +31,7 @@ public class Maze {
 		fillChunks = new HashMap<>();
 		borderChunks = new HashMap<>();
 		
-		shapes = new ArrayList<>();
-		shapes.add(borderShape);
-		
+		entrances = new ArrayList<>();
 		add(borderShape);
 	}
 	
@@ -48,16 +47,16 @@ public class Maze {
 		return new ArrayList<Chunk>(fillChunks.keySet());
 	}
 	
-	public ArrayList<Location> getFill() {
-		ArrayList<Location> fill = new ArrayList<>();
-		fillChunks.values().forEach(chunk -> fill.addAll(chunk));
-		return fill;
+	public HashMap<Chunk, ArrayList<Location>> getFill() {
+		return fillChunks;
 	}
 	
-	public ArrayList<Location> getBorder() {
-		ArrayList<Location> border = new ArrayList<>();
-		borderChunks.values().forEach(chunk -> border.addAll(chunk));
-		return border;
+	public HashMap<Chunk, ArrayList<Location>> getBorder() {
+		return borderChunks;
+	}
+	
+	public ArrayList<Location> getEntrances() {
+		return entrances;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -70,19 +69,19 @@ public class Maze {
 		
 		//check for new border blocks
 		//save chunks with new or overlapping border to show/refresh them later
-		for(Chunk c : s.getBorder().keySet()) {
+		for(Chunk c : s.getBorder().keySet())
 			for(Location point : s.getBorder().get(c)) {
-
+				
 				if(!contains(point)) {
 					newBorder.add(point);
 					
 					if(!newShapeChunks.contains(c))
 						newShapeChunks.add(c);
 				}
+				
 				if(borderContains(point) && !overlappingBorderChunks.contains(c))
 					overlappingBorderChunks.add(c);
 			}
-		}
 
 		//return if the shapes is totally covered by the maze
 		if(newShapeChunks.isEmpty()) {
@@ -105,17 +104,30 @@ public class Maze {
 		for(Chunk c : newShapeChunks) {
 			if(!borderChunks.containsKey(c))
 				continue;
-
+			
 			ArrayList<Location> currentChunk = borderChunks.get(c);
 			
+			borderloop:
 			for(int i = currentChunk.size()-1; i >= 0; i--) {
 				Location point = currentChunk.get(i);
 				
-				if(s.contains(point) && !s.borderContains(point)) {
-					if(isVisible)
-						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-					currentChunk.remove(point);
+				//thats the case if the point is covered by the new shape...
+				if(!s.contains(point))
+					continue;
+				
+				//...or it wont seal the new maze anymore
+				for(Vector dir : Utils.directions()) {
+					Location point2 = point.clone().add(dir);
+					
+					if(!contains(point2) && !s.contains(point2)) {
+						p.sendMessage("nah " + point.toVector().toString());
+						continue borderloop;
+					}
 				}
+
+				currentChunk.remove(point);
+				if(isVisible)
+					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 			}
 		}
 
@@ -136,8 +148,10 @@ public class Maze {
 		ArrayList<Location> newBorder  = new ArrayList<>();
 		
 		//get new border points where shape is cutting into maze
-		for(Chunk c : s.getBorder().keySet()) {
-			for(Location point : s.getBorder().get(c))
+		for(ArrayList<Location> chunk : s.getBorder().values()) {
+			Chunk c = chunk.get(0).getChunk();
+			
+			for(Location point : chunk) {
 
 				if(contains(point) && !borderContains(point)) {
 					newBorder.add(point);
@@ -145,6 +159,7 @@ public class Maze {
 					if(!newVoidChunks.contains(c))
 						newVoidChunks.add(c);
 				}
+			}
 		}
 		
 		if(newVoidChunks.isEmpty())
@@ -196,44 +211,49 @@ public class Maze {
 			return;
 		
 		ArrayList<Location> neighbors = new ArrayList<>();
-		ArrayList<Chunk> changedChunks = new ArrayList<>();
-		
-		boolean isExternalBorder = false,
-				isSealing = false;
+		boolean	isSealing = false;
 
-		//check what kind of border this block is
-		//is it at the outside of the shape? does it close the shape somehow?
+		//check if this block closes the shape somehow
 		for(Vector dir : Utils.directions()) {
 			Location point2 = point.clone().add(dir);
 			
-			if(!contains(point2)) {
-				isExternalBorder = true;
-				
-			}else if(!borderContains(point2)) {
+			//if yes these neighbor blocks have to be stored
+			if(contains(point2) && !borderContains(point2)) {
 				isSealing = true;
 				neighbors.add(point2);
-
-				if(!changedChunks.contains(point2.getChunk()))
-					changedChunks.add(point2.getChunk());
 			}
 		}
 
-		//if it is at the outside remove the fill there as well 
-		if(isExternalBorder) {
-			removeFill(point);
-			
-			//if it seals the shape not-border, neighbor blocks have to replace it
-			if(isSealing)
-				for(Location point2 : neighbors) {
-					Location surface = Utils.getNearestSurface(point2);
-					addBorder(surface);
-					
-					if(isVisible)
-						p.sendBlockChange(surface, Constants.MAZE_BORDER, (byte) 0);
-				}
-		}
-
+		removeFill(point);
 		borderChunks.get(b.getChunk()).remove(point);
+		
+		if(!isSealing)
+			return;
+		
+		//if it seals the shape neighbor blocks have to replace it
+		for(Location point2 : neighbors) {
+			Location surface = Utils.getNearestSurface(point2);
+			addBorder(surface);
+			
+			if(isVisible)
+				p.sendBlockChange(surface, Constants.MAZE_BORDER, (byte) 0);
+		}
+	}
+	
+	public void addEntrance(Block b) {
+		Location newStart = b.getLocation();
+		
+		if(!borderContains(newStart) || !isHighlighted(b))
+			return;
+		
+		for(Location start : entrances)
+			if(start.distance(newStart) <= 1) {
+				Utils.sendBlockLater(p, newStart, Constants.MAZE_BORDER);
+				return;
+			}
+		
+		entrances.add(newStart);
+		Utils.sendBlockLater(p, newStart, Constants.MAZE_START);
 	}
 	
 	private void addFill(Location point) {
@@ -282,7 +302,7 @@ public class Maze {
 				break;
 			}
 	}
-	
+
 	public boolean contains(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -324,26 +344,18 @@ public class Maze {
 		return false;
 	}
 	
-	public void recalc(Location point) {
-		if(!borderContains(point))
-			return;
-		
-		hide();
-		removeBorder(point);
-		addBorder(Utils.getNearestSurface(point));
-	}
-	
 	@SuppressWarnings("deprecation")
 	public void show() {
 		if(isVisible || p == null)
 			return;
 		
 		isVisible = true;
-
-		for(Chunk c : fillChunks.keySet())
-			if(borderChunks.containsKey(c))
-				for(Location point : borderChunks.get(c))
-					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+		for(ArrayList<Location> chunk : borderChunks.values())
+			for(Location point : chunk)
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		for(Location start : entrances)
+			p.sendBlockChange(start, Constants.MAZE_START, (byte) 0);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -353,8 +365,8 @@ public class Maze {
 		
 		isVisible = false;
 		
-		for(Chunk c : borderChunks.keySet())
-			for(Location point : borderChunks.get(c))
+		for(ArrayList<Location> chunk : borderChunks.values())
+			for(Location point : chunk)
 				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
 	
@@ -367,5 +379,14 @@ public class Maze {
 			if(borderChunks.containsKey(c))
 				for(Location point : borderChunks.get(c))
 					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+	}
+	
+	public void recalc(Location point) {
+		if(!borderContains(point))
+			return;
+		
+		hide();
+		removeBorder(point);
+		addBorder(Utils.getNearestSurface(point));
 	}
 }

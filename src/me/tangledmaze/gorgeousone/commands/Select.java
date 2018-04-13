@@ -9,6 +9,7 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
+import me.tangledmaze.gorgeousone.shapes.EntranceSetter;
 
 public class Select {
 
@@ -61,6 +62,23 @@ public class Select {
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
+				p.sendMessage("/tangledmaze start");
+			}
+			break;
+			
+		case "entrance":
+			if(sHandler.getSelectionType(p) == EntranceSetter.class)
+				break;
+			
+			if(mHandler.hasMaze(p)) {
+				sHandler.setSelectionType(p, EntranceSetter.class);
+				p.sendMessage(Constants.prefix + "Changed selection type to start setter.");
+				
+				if(sHandler.hasSelection(p))
+					sHandler.deselect(p);
+			
+			}else {
+				p.sendMessage(Constants.prefix + "The start setting tool can only be used on mazes.");
 				p.sendMessage("/tangledmaze start");
 			}
 			break;
