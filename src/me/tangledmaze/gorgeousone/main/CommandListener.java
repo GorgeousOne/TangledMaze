@@ -62,6 +62,7 @@ public class CommandListener implements CommandExecutor {
 				addCommand.execute(p);
 				break;
 				
+			case "cut":
 			case "subtract":
 				subtCommand.execute(p);
 				break;

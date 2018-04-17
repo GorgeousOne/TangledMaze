@@ -46,7 +46,7 @@ public class MazeHandler {
 		Maze maze = new Maze(selection.getShape(), p);
 		mazes.put(p, maze);
 		
-		selection.hide();
+//		selection.hide();
 		maze.show();
 	}
 	
@@ -57,7 +57,7 @@ public class MazeHandler {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		selection.hide();
+//		selection.hide();
 		mazes.get(p).add(selection.getShape());
 	}
 	
@@ -68,7 +68,7 @@ public class MazeHandler {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		selection.hide();
-		mazes.get(p).subtract(selection.getShape());
+//		selection.hide();
+		mazes.get(p).cut(selection.getShape());
 	}
 }

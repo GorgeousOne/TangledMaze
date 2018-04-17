@@ -13,7 +13,7 @@ public class Constants {
 	
 	public static final Material
 		MAZE_BORDER      = Material.REDSTONE_BLOCK,
-		MAZE_START       = Material.DIAMOND_BLOCK,
+		MAZE_ENTRANCE       = Material.DIAMOND_BLOCK,
 		SELECTION_CORNER = Material.LAPIS_BLOCK,
 		SELECTION_BORDER = Material.GOLD_BLOCK,
 		SELECTION_MOVE   = Material.COAL_BLOCK;

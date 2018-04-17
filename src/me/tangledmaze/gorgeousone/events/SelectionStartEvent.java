@@ -32,6 +32,6 @@ public class SelectionStartEvent extends SelectionEvent {
 
 		RectSelection selection = new RectSelection(super.clickedBlock, super.p, sHandler.getSelectionType(p));
 		sHandler.setSelection(super.p, selection);
-		selection.show();
+		sHandler.show(selection);
 	}
 }

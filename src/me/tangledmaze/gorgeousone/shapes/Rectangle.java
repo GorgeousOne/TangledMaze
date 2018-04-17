@@ -47,8 +47,8 @@ public class Rectangle implements Shape {
 		if(!point.getWorld().equals(world))
 			return false;
 		
-		return point.getX() >= vertices.get(0).getX() && point.getX() <= vertices.get(2).getX() &&
-			   point.getZ() >= vertices.get(0).getZ() && point.getZ() <= vertices.get(2).getZ();
+		return point.getBlockX() >= vertices.get(0).getX() && point.getBlockX() <= vertices.get(2).getX() &&
+			   point.getBlockZ() >= vertices.get(0).getZ() && point.getBlockZ() <= vertices.get(2).getZ();
 	}
 	
 	@Override

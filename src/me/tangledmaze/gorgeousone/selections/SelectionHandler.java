@@ -47,7 +47,7 @@ public class SelectionHandler implements Listener {
 	//hides all selections before reloading since they will be deleted anyway.
 	public void reload() {
 		for(RectSelection selection : selections.values())
-			selection.hide();
+			hide(selection);
 	}
 	
 	//handles interactions of players with blocks when using a selection wand
@@ -157,26 +157,50 @@ public class SelectionHandler implements Listener {
 	}
 	
 	@SuppressWarnings("deprecation")
+	public void show(RectSelection selection) {
+		Player p = selection.getPlayer();
+		
+		if(p == null) //|| isVisible
+			return;
+		
+//		isVisible = true;
+		
+		if(selection.isComplete())
+			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
+				for(Location point : chunk)
+					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+		
+		for(Location vertex : selection.getVertices())
+			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void hide(RectSelection selection) {
+	Player p = selection.getPlayer();
+		
+		if(selection.getPlayer() == null)
+			return;
+		
+		if(selection.isComplete()) {
+			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
+				for(Location point : chunk)
+					if(mHandler.hasMaze(p) && mHandler.getMaze(p).borderContains(point))
+						p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+					else
+						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+			
+		}
+		
+		for(Location vertex : selection.getVertices())
+			if(mHandler.hasMaze(p) && mHandler.getMaze(p).borderContains(vertex))
+				p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
+			else
+				p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+	}
+	
 	public void deselect(Player p) {
 		if(selections.containsKey(p)) {
-			
-			RectSelection selection = getSelection(p);
-			selections.get(p).hide();
-			
-			if(mHandler.hasMaze(p)) {
-				Maze maze = mHandler.getMaze(p);
-				
-				if(selection.isComplete())
-					for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
-						for(Location point : chunk)
-							if(maze.isHighlighted(point.getBlock()))
-								p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-				
-				for(Location point : selection.getVertices())
-					if(maze.isHighlighted(point.getBlock()))
-						p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-			}
-			
+			hide(selections.get(p));
 			resizingSelections.remove(p);
 			selections.remove(p);
 		}

@@ -1,21 +1,16 @@
 package me.tangledmaze.gorgeousone.events;
 
-import java.util.ArrayList;
-
-import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
-import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class SelectionResizeEvent extends SelectionEvent {
 
 	private SelectionHandler sHandler;
-	private MazeHandler mHandler;
 	private Block oldVertex;
 	private Player p;
 	
@@ -26,7 +21,6 @@ public class SelectionResizeEvent extends SelectionEvent {
 		this.p = p;
 
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
-		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
@@ -42,16 +36,12 @@ public class SelectionResizeEvent extends SelectionEvent {
 		RectSelection selection = sHandler.getSelection(p);
 		
 		if(selection.isVertex(super.clickedBlock)) {
-			selection.showVertices();
+			sHandler.show(selection);
 			return;
 		}
 
-		selection.hide();
-		
-		if(mHandler.hasMaze(p))
-			 mHandler.getMaze(p).update(new ArrayList<Chunk> (selection.getShape().getBorder().keySet()));
-		
+		sHandler.hide(selection);
 		selection.moveVertexTo(oldVertex, super.clickedBlock);
-		selection.show();
+		sHandler.show(selection);
 	}
 }

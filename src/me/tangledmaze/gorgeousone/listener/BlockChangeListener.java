@@ -3,8 +3,11 @@ package me.tangledmaze.gorgeousone.listener;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
@@ -60,6 +63,27 @@ public class BlockChangeListener implements Listener {
 		}.runTask(TangledMain.getPlugin());
 	}
 	
+	@EventHandler
+	public void onChunkLoad(PlayerInteractEvent e) {
+		if(e.getAction() != Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK)
+			return;
+		
+		ItemStack item = e.getItem();
+
+		if(TangledMain.isSelectionWand(item))
+			return;
+
+		Location point = e.getClickedBlock().getLocation();
+		
+		for(Maze maze : mHandler.getMazes())
+			if(maze.borderContains(point))
+				maze.hide();
+		
+		for(RectSelection selection : sHandler.getSelections())
+			if(selection.borderContains(point))
+				sHandler.hide(selection);
+	}
+	
 	private void update(Location point) {
 		for(Maze maze : mHandler.getMazes())
 			if(maze.contains(point))
@@ -68,6 +92,9 @@ public class BlockChangeListener implements Listener {
 		for(RectSelection selection : sHandler.getSelections()) {
 			if(selection.contains(point)) {
 				selection.recalc(point);
+				
+				if(selection.borderContains(point))
+					sHandler.hide(selection);
 			}
 		}
 	}

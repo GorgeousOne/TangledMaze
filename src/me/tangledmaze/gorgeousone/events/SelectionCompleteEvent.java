@@ -29,8 +29,8 @@ private SelectionHandler sHandler;
 	
 	private void execute() {
 		RectSelection selection = sHandler.getSelection(p);
-		selection.hide();
+		sHandler.hide(selection);
 		selection.complete(super.clickedBlock);
-		selection.show();
+		sHandler.show(selection);
 	}
 }

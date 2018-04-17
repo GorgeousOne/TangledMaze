@@ -18,8 +18,9 @@ public class TangledCompleter implements TabCompleter {
 				"select",
 				"start",
 				"add",
-				"subtract",
-				"deselect"));
+				"cut",
+				"deselect",
+				"fill"));
 		
 		selectionTypes = new ArrayList<>(Arrays.asList(
 				"rectangle",

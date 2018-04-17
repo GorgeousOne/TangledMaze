@@ -10,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 
@@ -21,7 +20,7 @@ public class RectSelection {
 	private Shape shape;
 	
 	private ArrayList<Location> vertices;
-	private boolean isComplete, isVisible;
+	private boolean isComplete; //isVisible;
 	
 	private Class<? extends Shape> shapeType;
 
@@ -155,15 +154,13 @@ public class RectSelection {
 	}
 
 	public void recalc(Location point) {
-
-		if(isVertex(point.getBlock())) {
-			int index = indexOfVertex(point.getBlock());
-			vertices.set(index, Utils.getNearestSurface(point));
-			hide();
-		
-		}else if(shape.borderContains(point)) {
+		if(shape.borderContains(point)) {
 			shape.recalc(point);
-			hide();
+		
+			if(isVertex(point.getBlock())) {
+				int index = indexOfVertex(point.getBlock());
+				vertices.set(index, Utils.getNearestSurface(point));
+			}	
 		}
 	}		
 	
@@ -171,42 +168,5 @@ public class RectSelection {
 		//this should only happen if I do a mistake
 		if(!b.getWorld().equals(world))
 			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void show() {
-		if(isVisible || p == null)
-			return;
-		isVisible = true;
-		
-		if(isComplete())
-			for(ArrayList<Location> chunk : shape.getBorder().values())
-				for(Location point : chunk)
-					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
-		showVertices();
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void showVertices() {
-		if(!isVisible)
-			return;
-		
-		for(Location vertex : vertices)
-			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void hide() {
-		if(!isVisible || p == null)
-			return;
-		isVisible = false;
-		
-		for(Location vertex : vertices)
-			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
-		
-		if(isComplete())
-			for(ArrayList<Location> chunk : shape.getBorder().values())
-				for(Location point : chunk)
-					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
 }

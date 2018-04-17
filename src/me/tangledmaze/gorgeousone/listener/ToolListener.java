@@ -2,7 +2,6 @@ package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
-import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,15 +10,13 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
-import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class ToolListener implements Listener {
@@ -29,7 +26,7 @@ public class ToolListener implements Listener {
 	
 	private HashMap<Player, Long> times;
 	private BukkitRunnable timer;
-	private static final int expiration = 10*1000;
+	private static final int expiration = 0*1000;
 	
 	public ToolListener() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
@@ -48,7 +45,7 @@ public class ToolListener implements Listener {
 						if(mHandler.hasMaze(p))
 							mHandler.getMaze(p).hide();
 						if(sHandler.hasSelection(p))
-							sHandler.getSelection(p).hide();
+							sHandler.hide(sHandler.getSelection(p));
 					}
 			}
 		};
@@ -69,7 +66,7 @@ public class ToolListener implements Listener {
 			if(mHandler.hasMaze(p))
 				mHandler.getMaze(p).show();
 			if(sHandler.hasSelection(p))
-				sHandler.getSelection(p).show();
+				sHandler.show(sHandler.getSelection(p));
 		
 		}else if(TangledMain.isSelectionWand(previousItem))			
 			times.put(p, System.currentTimeMillis());
@@ -84,7 +81,7 @@ public class ToolListener implements Listener {
 				mHandler.getMaze(p).show();
 			
 			if(sHandler.hasSelection(p))
-				sHandler.getSelection(p).show();
+				sHandler.show(sHandler.getSelection(p));
 		}
 	}
 	
@@ -97,20 +94,12 @@ public class ToolListener implements Listener {
 				times.put(p, System.currentTimeMillis());
 		}
 	}
-		
+
 	@EventHandler
-	public void onUnload(ChunkUnloadEvent e) {
-		Chunk c = e.getChunk();
-		
-		for(Maze m : mHandler.getMazes())
-			if(m.getFill().containsKey(c))
-				m.hide();
-		
-		for(RectSelection s : sHandler.getSelections())
-			if(s.isComplete() && s.getShape().getFill().containsKey(c))
-				s.hide();
+	public void onChunkLoad(ChunkLoadEvent e) {
+		//sHandler.update(e.getChunk()); TODO implement
 	}
-			
+	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
 		if(TangledMain.isSelectionWand(e.getItem()))
