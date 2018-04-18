@@ -20,13 +20,13 @@ public class TangledCompleter implements TabCompleter {
 				"add",
 				"cut",
 				"deselect",
-				"fill"));
+				"build"));
 		
 		selectionTypes = new ArrayList<>(Arrays.asList(
 				"rectangle",
 				"ellipse",
 				"brush",
-				"entrance"));
+				"exit"));
 	}
 	
 	@Override

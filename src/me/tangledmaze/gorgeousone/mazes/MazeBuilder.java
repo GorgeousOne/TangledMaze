@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.main.Utils;
 
-public class MazeFiller {
+public class MazeBuilder {
 
 	private static final int
 		UNDEFINED = 1,
@@ -20,10 +20,26 @@ public class MazeFiller {
 		PATH = 3,
 		ENTRANCE = 4;
 	
-	public MazeFiller() {
+	private ArrayList<Maze> mazeQueue;
+	
+	public MazeBuilder() {
+		mazeQueue = new ArrayList<>();
 	}
 	
-	public void fillMaze(Maze maze) {
+	public int queueMaze(Maze maze) {
+		mazeQueue.add(maze);
+
+		if(mazeQueue.size() == 1)
+			buildNextMaze();
+		
+		return mazeQueue.indexOf(maze);
+	}
+	
+	private void buildNextMaze() {
+		if(mazeQueue.isEmpty())
+			return;
+		
+		Maze maze = mazeQueue.get(0);
 		
 		ArrayList<Chunk> chunks = maze.getChunks();
 		Chunk first = chunks.get(0);
@@ -60,11 +76,12 @@ public class MazeFiller {
 			for(Location point : chunk)
 				mazeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = WALL;
 		
-		for(Location entrance : maze.getEntrances())
+		for(Location entrance : maze.getExits())
 			mazeMap[entrance.getBlockX() - minX][entrance.getBlockZ() - minZ] = ENTRANCE;
 		
-		Vector start = maze.getEntrances().get(0).toVector().add(new Vector(-minX, 0, -minZ));
+		Vector start = maze.getExits().get(0).toVector().add(new Vector(-minX, 0, -minZ));
 		
+		maze.hide();
 		generatePaths(maze, mazeMap, start, minX, minZ);
 	}
 	
@@ -72,53 +89,62 @@ public class MazeFiller {
 		BukkitRunnable pathGenerator = new BukkitRunnable() {
 			@Override
 			public void run() {
+				
 				ArrayList<Vector> openEnds = new ArrayList<>();
 				openEnds.add(start);
+				boolean isFirstLoop = true;
 				
+				mazefilling:
 				while(!openEnds.isEmpty()) {
-					
 					Vector lastEnd = openEnds.get(openEnds.size()-1);
-					boolean isClosed = true;
 					
 					for(Vector dir : Utils.shuffledCardinalDirs()) {
 						
 						Vector path = lastEnd.clone().add(dir),
 							   newEnd = path.clone().add(dir);
 						
-						if(newEnd.getBlockX() < 0 || newEnd.getBlockX() > mazeMap.length ||
-						   newEnd.getBlockZ() < 0 || newEnd.getBlockZ() > mazeMap[0].length)
+						if(path.getBlockX() < 0 || path.getBlockX() >= mazeMap.length ||
+						   path.getBlockZ() < 0 || path.getBlockZ() >= mazeMap[0].length)
 							continue;
 
-						if(path.getBlockX() < 0 || path.getBlockX() > mazeMap.length ||
-						   path.getBlockZ() < 0 || path.getBlockZ() > mazeMap[0].length)
+						if(mazeMap[path.getBlockX()][path.getBlockZ()] != UNDEFINED &&
+						   mazeMap[path.getBlockX()][path.getBlockZ()] != ENTRANCE)
 							continue;
 
-						if(mazeMap[  path.getBlockX()][  path.getBlockZ()] != UNDEFINED ||
-						   mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] != UNDEFINED)
+						if(isFirstLoop) {
+							mazeMap[path.getBlockX()][  path.getBlockZ()] = PATH;
+							
+							isFirstLoop = false;
+							openEnds.add(path);
+							continue mazefilling;
+						}
+						
+						if(newEnd.getBlockX() < 0 || newEnd.getBlockX() >= mazeMap.length ||
+						   newEnd.getBlockZ() < 0 || newEnd.getBlockZ() >= mazeMap[0].length)
+							continue;
+
+						if(mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] != UNDEFINED &&
+						   mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] != ENTRANCE)
 							continue;
 						
 						mazeMap[  path.getBlockX()][  path.getBlockZ()] = PATH;
 						mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] = PATH;
 						
 						openEnds.add(newEnd);
-						isClosed = false;
-						break;
+						continue mazefilling;
 					}
-					
-					if(isClosed)
-						openEnds.remove(lastEnd);
+
+					openEnds.remove(lastEnd);
 				}
 				
-				MazeFiller.this.shoeMaze(maze, mazeMap, shiftX, shiftZ);
+				MazeBuilder.this.showMaze(maze, mazeMap, shiftX, shiftZ);
 			}
 		};
 		pathGenerator.runTaskAsynchronously(TangledMain.getPlugin());
-}
+	}
 	
 	@SuppressWarnings("deprecation")
-	public void shoeMaze(Maze maze, int[][] mazeMap, int shiftX, int shiftZ) {
-		
-		maze.hide();
+	public void showMaze(Maze maze, int[][] mazeMap, int shiftX, int shiftZ) {
 		Player p = maze.getPlayer();
 		
 		for(int x = 0; x < mazeMap.length; x++)
@@ -127,8 +153,11 @@ public class MazeFiller {
 				if(mazeMap[x][z] != WALL && mazeMap[x][z] != UNDEFINED)
 					continue;
 				
-				Location l = Utils.getNearestSurface(new Location(p.getWorld(), x+shiftX, 64, z+shiftZ));
+				Location l = Utils.getNearestSurface(new Location(p.getWorld(), x+shiftX, maze.getY(x+shiftX,z+shiftZ), z+shiftZ));
 				p.sendBlockChange(l, Material.LEAVES, (byte) (Math.random() * 4));
 			}
+		
+		mazeQueue.remove(maze);
+		buildNextMaze();
 	}
 }

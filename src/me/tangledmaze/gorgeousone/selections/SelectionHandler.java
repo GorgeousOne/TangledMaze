@@ -24,7 +24,7 @@ import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
-import me.tangledmaze.gorgeousone.shapes.EntranceSetter;
+import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
 public class SelectionHandler implements Listener {
 
@@ -81,15 +81,15 @@ public class SelectionHandler implements Listener {
 			maze.brush(b);
 				
 			if(maze.getSize() == 0) {
-				mHandler.removeMaze(p);
+				mHandler.deselctMaze(p);
 				setSelectionType(p, Rectangle.class);
 			}
 		
-		}else if(type.equals(EntranceSetter.class)) {
+		}else if(type.equals(ExitSetter.class)) {
 			if(!mHandler.hasMaze(p))
 				return;
 			
-			mHandler.getMaze(p).addEntrance(b);
+			mHandler.getMaze(p).addExit(b);
 		}
 		
 	}

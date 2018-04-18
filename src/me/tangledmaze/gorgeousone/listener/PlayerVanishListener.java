@@ -26,7 +26,7 @@ public class PlayerVanishListener implements Listener {
 		
 		//TODO permission check maybe?
 
-		mHandler.removeMaze(e.getPlayer());
+		mHandler.deselctMaze(e.getPlayer());
 		sHandler.remove(p);
 	}
 	
@@ -36,7 +36,7 @@ public class PlayerVanishListener implements Listener {
 			
 		//TODO sam as above
 		
-		mHandler.removeMaze(e.getPlayer());
+		mHandler.deselctMaze(e.getPlayer());
 		sHandler.remove(p);
 	}
 }

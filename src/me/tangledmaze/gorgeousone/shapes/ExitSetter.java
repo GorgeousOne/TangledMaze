@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
-public abstract class EntranceSetter implements Shape {
+public abstract class ExitSetter implements Shape {
 
 	@Override
 	public HashMap<Chunk, ArrayList<Location>> getBorder() {

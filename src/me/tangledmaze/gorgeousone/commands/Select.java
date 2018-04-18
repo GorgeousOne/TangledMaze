@@ -9,7 +9,7 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
-import me.tangledmaze.gorgeousone.shapes.EntranceSetter;
+import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
 public class Select {
 
@@ -66,13 +66,13 @@ public class Select {
 			}
 			break;
 			
-		case "entrance":
-			if(sHandler.getSelectionType(p) == EntranceSetter.class)
+		case "exit":
+			if(sHandler.getSelectionType(p) == ExitSetter.class)
 				break;
 			
 			if(mHandler.hasMaze(p)) {
-				sHandler.setSelectionType(p, EntranceSetter.class);
-				p.sendMessage(Constants.prefix + "Changed selection type to start setter.");
+				sHandler.setSelectionType(p, ExitSetter.class);
+				p.sendMessage(Constants.prefix + "Changed selection type to entrance setter.");
 				
 				if(sHandler.hasSelection(p))
 					sHandler.deselect(p);

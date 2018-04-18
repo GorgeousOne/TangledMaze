@@ -42,10 +42,10 @@ public class ToolListener implements Listener {
 					if(System.currentTimeMillis() - times.get(p) >= expiration) {
 						times.remove(p);
 								
-						if(mHandler.hasMaze(p))
-							mHandler.getMaze(p).hide();
 						if(sHandler.hasSelection(p))
 							sHandler.hide(sHandler.getSelection(p));
+						if(mHandler.hasMaze(p))
+							mHandler.getMaze(p).hide();
 					}
 			}
 		};
@@ -79,7 +79,6 @@ public class ToolListener implements Listener {
 			
 			if(mHandler.hasMaze(p))
 				mHandler.getMaze(p).show();
-			
 			if(sHandler.hasSelection(p))
 				sHandler.show(sHandler.getSelection(p));
 		}
