@@ -184,7 +184,7 @@ public class SelectionHandler implements Listener {
 		if(selection.isComplete()) {
 			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
 				for(Location point : chunk)
-					if(mHandler.hasMaze(p) && mHandler.getMaze(p).borderContains(point))
+					if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(point.getBlock()))
 						p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 					else
 						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
@@ -192,13 +192,13 @@ public class SelectionHandler implements Listener {
 		}
 		
 		for(Location vertex : selection.getVertices())
-			if(mHandler.hasMaze(p) && mHandler.getMaze(p).borderContains(vertex))
+			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(vertex.getBlock()))
 				p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
 			else
 				p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
 	}
 	
-	public void deselect(Player p) {
+	public void deselectSelection(Player p) {
 		if(selections.containsKey(p)) {
 			hide(selections.get(p));
 			resizingSelections.remove(p);

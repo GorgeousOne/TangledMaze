@@ -28,7 +28,7 @@ public class SelectionStartEvent extends SelectionEvent {
 	}
 	
 	private void execute() {
-		sHandler.deselect(p);
+		sHandler.deselectSelection(p);
 
 		RectSelection selection = new RectSelection(super.clickedBlock, super.p, sHandler.getSelectionType(p));
 		sHandler.setSelection(super.p, selection);

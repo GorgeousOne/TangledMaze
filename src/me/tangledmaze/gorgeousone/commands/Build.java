@@ -17,12 +17,12 @@ public class Build {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
-	private MazeBuilder mFiller;
+	private MazeBuilder mBuilder;
 	
 	public Build() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
-		mFiller  = TangledMain.getPlugin().getMazeFiller();
+		mBuilder  = TangledMain.getPlugin().getMazeBuilder();
 	}
 	
 	public void execute(Player p) {
@@ -43,7 +43,7 @@ public class Build {
 		}
 		
 		mHandler.deselctMaze(p);
-		int queuePosition = mFiller.queueMaze(maze);
+		int queuePosition = mBuilder.enqueueMaze(maze);
 
 		if(queuePosition != 0) {
 			p.sendMessage(Constants.prefix + "Your maze has been queued. Position in queue: " + queuePosition);

@@ -1,10 +1,13 @@
 package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Stack;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -26,13 +29,23 @@ public class MazeBuilder {
 		mazeQueue = new ArrayList<>();
 	}
 	
-	public int queueMaze(Maze maze) {
+	public int enqueueMaze(Maze maze) {
 		mazeQueue.add(maze);
-
+		maze.hide();
+		
 		if(mazeQueue.size() == 1)
 			buildNextMaze();
 		
 		return mazeQueue.indexOf(maze);
+	}
+	
+	public void discard(Player p) {
+		for(Maze maze : mazeQueue) {
+			if(p.equals(maze.getPlayer())) {
+				mazeQueue.remove(maze);
+				return;
+			}
+		}
 	}
 	
 	private void buildNextMaze() {
@@ -81,23 +94,23 @@ public class MazeBuilder {
 		
 		Vector start = maze.getExits().get(0).toVector().add(new Vector(-minX, 0, -minZ));
 		
-		maze.hide();
 		generatePaths(maze, mazeMap, start, minX, minZ);
 	}
 	
 	private void generatePaths(Maze maze, int[][] mazeMap, Vector start, int shiftX, int shiftZ) {
+		
 		BukkitRunnable pathGenerator = new BukkitRunnable() {
 			@Override
 			public void run() {
 				
-				ArrayList<Vector> openEnds = new ArrayList<>();
-				openEnds.add(start);
+				Stack<Vector> openEnds = new Stack<>();
+				openEnds.push(start);
+				
 				boolean isFirstLoop = true;
 				
 				mazefilling:
 				while(!openEnds.isEmpty()) {
-					Vector lastEnd = openEnds.get(openEnds.size()-1);
-					
+					Vector lastEnd = openEnds.peek();
 					for(Vector dir : Utils.shuffledCardinalDirs()) {
 						
 						Vector path = lastEnd.clone().add(dir),
@@ -115,7 +128,7 @@ public class MazeBuilder {
 							mazeMap[path.getBlockX()][  path.getBlockZ()] = PATH;
 							
 							isFirstLoop = false;
-							openEnds.add(path);
+							openEnds.push(path);
 							continue mazefilling;
 						}
 						
@@ -130,13 +143,12 @@ public class MazeBuilder {
 						mazeMap[  path.getBlockX()][  path.getBlockZ()] = PATH;
 						mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] = PATH;
 						
-						openEnds.add(newEnd);
+						openEnds.push(newEnd);
 						continue mazefilling;
 					}
 
-					openEnds.remove(lastEnd);
+					openEnds.pop();
 				}
-				
 				MazeBuilder.this.showMaze(maze, mazeMap, shiftX, shiftZ);
 			}
 		};
@@ -145,19 +157,43 @@ public class MazeBuilder {
 	
 	@SuppressWarnings("deprecation")
 	public void showMaze(Maze maze, int[][] mazeMap, int shiftX, int shiftZ) {
-		Player p = maze.getPlayer();
 		
-		for(int x = 0; x < mazeMap.length; x++)
-			for(int z = 0; z < mazeMap[0].length; z++) {
+		BukkitRunnable builder = new BukkitRunnable() {
+			@Override
+			public void run() {
 				
-				if(mazeMap[x][z] != WALL && mazeMap[x][z] != UNDEFINED)
-					continue;
+				Player p = maze.getPlayer();
+				Random rnd = new Random();
 				
-				Location l = Utils.getNearestSurface(new Location(p.getWorld(), x+shiftX, maze.getY(x+shiftX,z+shiftZ), z+shiftZ));
-				p.sendBlockChange(l, Material.LEAVES, (byte) (Math.random() * 4));
+				for(int x = 0; x < mazeMap.length; x++)
+					for(int z = 0; z < mazeMap[0].length; z++) {
+						
+						if(mazeMap[x][z] != WALL && mazeMap[x][z] != UNDEFINED)
+							continue;
+						
+						Location point = Utils.getNearestSurface(new Location(p.getWorld(), x+shiftX, maze.getY(x+shiftX,z+shiftZ), z+shiftZ));
+						
+						Block wall0 = point.clone().add(0, 1, 0).getBlock(),
+							  wall1 = point.clone().add(0, 2, 0).getBlock();
+						
+						if(Utils.canBeReplaced(wall0)) {
+							wall0.setType(Material.LEAVES);
+							wall0.setData((byte) rnd.nextInt(5));
+						}
+						
+						if(Utils.canBeReplaced(wall1)) {
+							wall1.setType(Material.LEAVES);
+							wall1.setData((byte) rnd.nextInt(5));
+						}
+						
+						p.sendBlockChange(point, Material.LEAVES, (byte) (Math.random() * 4));
+					}
+				
+				mazeQueue.remove(maze);
+				buildNextMaze();				
 			}
+		};
 		
-		mazeQueue.remove(maze);
-		buildNextMaze();
+		builder.runTask(TangledMain.getPlugin());
 	}
 }

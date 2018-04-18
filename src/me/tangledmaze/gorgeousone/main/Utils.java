@@ -35,6 +35,7 @@ public abstract class Utils {
 			Material.ACACIA_DOOR,
 			Material.ACTIVATOR_RAIL,
 			Material.BIRCH_DOOR,
+			Material.BREWING_STAND,
 			Material.BROWN_MUSHROOM,
 			Material.CACTUS,
 			Material.CARPET,
@@ -48,6 +49,7 @@ public abstract class Utils {
 			Material.DOUBLE_PLANT,
 			Material.ENDER_CHEST,
 			Material.FIRE,
+			Material.FLOWER_POT,
 			Material.GOLD_PLATE,
 			Material.IRON_DOOR,
 			Material.IRON_PLATE,
@@ -56,6 +58,7 @@ public abstract class Utils {
 			Material.LEVER,
 			Material.LONG_GRASS,
 			Material.MELON_STEM,
+			Material.PISTON_MOVING_PIECE,
 			Material.POTATO,
 			Material.POWERED_RAIL,
 			Material.PUMPKIN_STEM,
@@ -67,14 +70,17 @@ public abstract class Utils {
 			Material.REDSTONE_WIRE,
 			Material.SAPLING,
 			Material.SIGN_POST,
+			Material.SKULL,
 			Material.SPRUCE_DOOR,
 			Material.SNOW,
-			Material.STANDING_BANNER,
+			Material.STANDING_BANNER,	
 			Material.STONE_BUTTON,
 			Material.STONE_PLATE,
 			Material.SUGAR_CANE_BLOCK,
 			Material.TORCH,
 			Material.TRAPPED_CHEST,
+			Material.TRIPWIRE,
+			Material.TRIPWIRE_HOOK,
 			Material.VINE,
 			Material.WALL_BANNER,
 			Material.WALL_SIGN,
@@ -86,7 +92,7 @@ public abstract class Utils {
 			Material.WEB,
 			Material.YELLOW_FLOWER));
 	
-	private static ArrayList<Material> DESTRAOYABLE_SOLIDS = new ArrayList<>(Arrays.asList(
+	private static ArrayList<Material> REPLACABLE_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.BROWN_MUSHROOM,
 			Material.CACTUS,
 			Material.CARPET,
@@ -113,8 +119,8 @@ public abstract class Utils {
 		return b.getType().isSolid() && !UNSATABLE_SOLIDS.contains(b.getType());
 	}
 
-	public static boolean canBeDestroyed(Block b) {
-		return !b.getType().isSolid() || DESTRAOYABLE_SOLIDS.contains(b.getType()); 
+	public static boolean canBeReplaced(Block b) {
+		return !b.getType().isSolid() || REPLACABLE_SOLIDS.contains(b.getType()); 
 	}
 	
 	@SuppressWarnings("unchecked")

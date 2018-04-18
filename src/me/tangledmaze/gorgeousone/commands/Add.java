@@ -26,7 +26,7 @@ public class Add {
 		
 		try {
 			mHandler.addSelectionToMaze(p, sHandler.getSelection(p));
-			sHandler.deselect(p);
+			sHandler.deselectSelection(p);
 			p.sendMessage(Constants.prefix + "Added selection to maze.");
 			
 		}catch (Exception e) {

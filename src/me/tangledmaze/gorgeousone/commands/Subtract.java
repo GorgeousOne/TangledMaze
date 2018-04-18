@@ -25,8 +25,8 @@ public class Subtract {
 		}
 		
 		try {
-			mHandler.subtractSelctionFromMaze(p, sHandler.getSelection(p));
-			sHandler.deselect(p);
+			mHandler.cutSelctionFromMaze(p, sHandler.getSelection(p));
+			sHandler.deselectSelection(p);
 			p.sendMessage(Constants.prefix + "Subtracted area from maze.");
 			
 		}catch (Exception e) {

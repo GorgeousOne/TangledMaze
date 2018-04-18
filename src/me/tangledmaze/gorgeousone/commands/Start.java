@@ -26,7 +26,7 @@ public class Start {
 		
 		try {
 			mHandler.startMaze(p, sHandler.getSelection(p));
-			sHandler.deselect(p);
+			sHandler.deselectSelection(p);
 			p.sendMessage(Constants.prefix + "Started a maze from selection.");
 			
 		} catch (IllegalArgumentException e) {

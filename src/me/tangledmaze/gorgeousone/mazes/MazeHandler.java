@@ -3,8 +3,10 @@ package me.tangledmaze.gorgeousone.mazes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 
 public class MazeHandler {
@@ -33,6 +35,13 @@ public class MazeHandler {
 	}
 	
 	public void deselctMaze(Player p) {
+		if(hasMaze(p)) {
+			mazes.get(p).hide();
+			mazes.remove(p);
+		}
+	}
+	
+	public void remove(Player p) {
 		mazes.remove(p);
 	}
 	
@@ -51,21 +60,25 @@ public class MazeHandler {
 	
 	public void addSelectionToMaze(Player p, RectSelection selection) throws Exception {
 		if(!mazes.containsKey(p))
-			throw new NullPointerException("Could not find a maze that was created by " + p.getName() + ".");
+			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
 		
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		mazes.get(p).add(selection.getShape());
+		Maze maze = mazes.get(p);
+		
+		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getAddition(selection.getShape())));
 	}
 	
-	public void subtractSelctionFromMaze(Player p, RectSelection selection)  throws Exception {
+	public void cutSelctionFromMaze(Player p, RectSelection selection)  throws Exception {
 		if(!mazes.containsKey(p))
-			throw new NullPointerException("Could not find a maze that pas created by " + p.getName());
+			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
 		
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		mazes.get(p).cut(selection.getShape());
+//		mazes.get(p).cut(selection.getShape());
+		Maze maze = mazes.get(p);
+		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getSubtraction(selection.getShape())));
 	}
 }

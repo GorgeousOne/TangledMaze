@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -86,7 +85,6 @@ public class Rectangle implements Shape {
 			   v2 = vertices.get(2).toVector();
 		
 		int maxY = Utils.maxBlockY(vertices);
-		Bukkit.broadcastMessage("" + maxY);
 		
 		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
 			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {

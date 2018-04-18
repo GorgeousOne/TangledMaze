@@ -1,29 +1,46 @@
 package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
 public class MazeAction {
 	
-	@SuppressWarnings("unused")
-	private Maze maze;
-	@SuppressWarnings("unused")
-	private HashMap<Vector, Boolean> prevSettings;
+	private ArrayList<Location> addedFill, removedFill, addedBorder, removedBorder, removedExits;
 	
-	public MazeAction(Maze maze, ArrayList<Vector> points, boolean isWall) {
-		this.maze = maze;
-		this.prevSettings = new HashMap<>();
+	public MazeAction(ArrayList<Location> addedFill,   ArrayList<Location> removedFill,
+					  ArrayList<Location> addedBorder, ArrayList<Location> removedBorder,
+					  ArrayList<Location> removedExits) {
 		
-//		for(Vector point : points) {
-//			prevSettings.put(point.clone(), maze.isWall(point));
-//			maze.setWall(point, isWall);
-//		}
+		this.addedFill     = addedFill;
+		this.addedBorder   = addedBorder;
+		this.removedFill   = removedFill;
+		this.removedBorder = removedBorder;
+		this.removedExits  = removedExits;
+	}
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<Location> getAddedFill() {
+		return (ArrayList<Location>) addedFill.clone();
+	}
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<Location> getRemovedFill() {
+		return (ArrayList<Location>) removedFill.clone();
+	}
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<Location> getAddedBorder() {
+		return (ArrayList<Location>) addedBorder.clone();
 	}
 	
-	public void undo() {
-//		for(Vector point : prevSettings.keySet())
-//			maze.setWall(point, prevSettings.get(point));
+	@SuppressWarnings("unchecked")
+	public ArrayList<Location> getRemovedBorder() {
+		return (ArrayList<Location>) removedBorder.clone();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<Location> getRemovedExits() {
+		return (ArrayList<Location>) removedExits.clone();
 	}
 }

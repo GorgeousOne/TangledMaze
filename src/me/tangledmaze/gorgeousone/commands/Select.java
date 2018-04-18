@@ -34,7 +34,7 @@ public class Select {
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 
 			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
-				sHandler.deselect(p);
+				sHandler.deselectSelection(p);
 			break;
 			
 		case "ellipse":
@@ -46,7 +46,7 @@ public class Select {
 			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 
 			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
-				sHandler.deselect(p);
+				sHandler.deselectSelection(p);
 			break;
 		
 		case "brush":
@@ -58,7 +58,7 @@ public class Select {
 				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
 				
 				if(sHandler.hasSelection(p))
-					sHandler.deselect(p);
+					sHandler.deselectSelection(p);
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
@@ -75,7 +75,7 @@ public class Select {
 				p.sendMessage(Constants.prefix + "Changed selection type to entrance setter.");
 				
 				if(sHandler.hasSelection(p))
-					sHandler.deselect(p);
+					sHandler.deselectSelection(p);
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The start setting tool can only be used on mazes.");

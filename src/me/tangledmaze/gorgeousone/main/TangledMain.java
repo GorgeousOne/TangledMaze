@@ -79,21 +79,23 @@ public class TangledMain extends JavaPlugin {
 		return mHandler;
 	}
 	
-	public MazeBuilder getMazeFiller() {
+	public MazeBuilder getMazeBuilder() {
 		return mFiller;
 	}
 	
 	private void initWand() {
 		wand = new ItemStack(Material.GOLD_SPADE);
-		wand.setAmount(1);
+		
 		ItemMeta meta = wand.getItemMeta();
 		meta.setDisplayName(ChatColor.DARK_GREEN + "Selection Wand");
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
 		lore.add(ChatColor.GREEN + "The tool to create mazes.");
 		lore.add(ChatColor.GREEN + "Use left click to start a selection.");
+		
 		meta.setLore(lore);
 		wand.setItemMeta(meta);
 	}
@@ -108,14 +110,13 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	private static final String[] enchants = {
-			"Selector I",
-			"Selector II",
-			"Selector III",
+			"Selecting Thingy III",
+			"Difficult Handling II",
+			"Ignore WorldGuard V",
 			"Infinite Maze I",
-			"Ban hammer I",
-			"Force OP I",
-			"Java.exe II",
-			"Ignore WorldGuard IV"
+			"Wubba Lubba Dub Dub IX",
+			"Curvy Boi II",
+			"Unbreaking ∞"
 	};
 	
 	private static final Random rnd = new Random();
