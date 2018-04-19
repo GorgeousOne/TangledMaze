@@ -42,7 +42,7 @@ public class Maze {
 		return p;
 	}
 	
-	public int getSize() {
+	public int size() {
 		return size;
 	}
 	
@@ -81,7 +81,7 @@ public class Maze {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void complete(MazeAction action) {
+	public void process(MazeAction action) {
 		for(Location point : action.getRemovedFill())
 			removeFill(point);
 		

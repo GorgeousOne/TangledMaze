@@ -19,6 +19,12 @@ public class Add {
 	}
 	
 	public void execute(Player p) {
+		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.sendMessage(Constants.insufficientPerms);
+			return;
+		}
+		
 		if(!sHandler.hasSelection(p)) {
 			p.sendMessage(ChatColor.RED + "Select an area first.");
 			return;
@@ -26,7 +32,6 @@ public class Add {
 		
 		try {
 			mHandler.addSelectionToMaze(p, sHandler.getSelection(p));
-			sHandler.deselectSelection(p);
 			p.sendMessage(Constants.prefix + "Added selection to maze.");
 			
 		}catch (Exception e) {

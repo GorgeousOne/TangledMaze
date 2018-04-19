@@ -66,7 +66,6 @@ public class MazeHandler {
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
 		Maze maze = mazes.get(p);
-		
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getAddition(selection.getShape())));
 	}
 	
@@ -77,7 +76,6 @@ public class MazeHandler {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-//		mazes.get(p).cut(selection.getShape());
 		Maze maze = mazes.get(p);
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getSubtraction(selection.getShape())));
 	}

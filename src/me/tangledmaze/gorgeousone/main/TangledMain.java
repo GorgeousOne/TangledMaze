@@ -21,13 +21,15 @@ import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class TangledMain extends JavaPlugin {
-
+	
 	private static TangledMain plugin;
 	private static ItemStack wand;
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
-	private MazeBuilder mFiller;
+	private MazeBuilder mBuilder;
+	
+	private static int buidlSizeNormal, buidlSizeVIP, buidlSizeStaff;
 	
 	@Override
 	public void onLoad() {}
@@ -35,15 +37,19 @@ public class TangledMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
+		loadConfig();
 		initWand();
 		
+		buidlSizeNormal = getConfig().getInt("normal");
+		buidlSizeVIP    = getConfig().getInt("vip");
+		buidlSizeStaff  = getConfig().getInt("staff");
+		
 		mHandler = new MazeHandler();
-		mFiller = new MazeBuilder();
+		mBuilder  = new MazeBuilder();
 		sHandler = new SelectionHandler();
 		
 		PluginManager pm = getServer().getPluginManager();
 		
-		pm.registerEvents(sHandler, this);
 		pm.registerEvents(new ToolListener(), this);
 		pm.registerEvents(new PlayerVanishListener(), this);
 		pm.registerEvents(new BlockChangeListener(), this);
@@ -62,15 +68,6 @@ public class TangledMain extends JavaPlugin {
 		return plugin;
 	}
 	
-	public static ItemStack getWand() {
-		ItemMeta meta = wand.getItemMeta();
-		List<String> lore = meta.getLore();
-		lore.set(0, ChatColor.GRAY + getCustomEnchantment());
-		meta.setLore(lore);
-		wand.setItemMeta(meta);
-		return wand;
-	}
-	
 	public SelectionHandler getSelectionHandler() {
 		return sHandler;
 	}
@@ -80,9 +77,30 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	public MazeBuilder getMazeBuilder() {
-		return mFiller;
+		return mBuilder;
+	}
+
+	public static ItemStack getWand() {
+		ItemMeta meta = wand.getItemMeta();
+		List<String> lore = meta.getLore();
+		lore.set(0, ChatColor.GRAY + getCustomEnchantment());
+		meta.setLore(lore);
+		wand.setItemMeta(meta);
+		return wand;
 	}
 	
+	public static int getBuidlSizeNormal() {
+		return buidlSizeNormal;
+	}
+
+	public static int getBuidlSizeVIP() {
+		return buidlSizeVIP;
+	}
+
+	public static int getBuidlSizeStaff() {
+		return buidlSizeStaff;
+	}
+
 	private void initWand() {
 		wand = new ItemStack(Material.GOLD_SPADE);
 		
@@ -112,17 +130,24 @@ public class TangledMain extends JavaPlugin {
 	private static final String[] enchants = {
 			"Selecting Thingy III",
 			"Difficult Handling II",
+			"Unbreaking ∞",
+			"Powerful X",
 			"Ignore WorldGuard V",
 			"Infinite Maze I",
-			"Wubba Lubba Dub Dub IX",
-			"Curvy Boi II",
-			"Unbreaking ∞"
+			"Wubba Lubba Dub Dub IV",
+			"Artifact Lv. XCIX"
 	};
 	
-	private static final Random rnd = new Random();
-	
 	private static String getCustomEnchantment() {
+		Random rnd = new Random();
+		
 		int select = rnd.nextInt(enchants.length);
 		return enchants[select];
+	}
+	
+	private void loadConfig() {
+		reloadConfig();
+		getConfig().options().copyDefaults(true);
+		saveConfig();
 	}
 }

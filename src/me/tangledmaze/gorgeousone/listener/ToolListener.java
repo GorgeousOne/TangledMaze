@@ -2,11 +2,16 @@ package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -15,6 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -50,6 +56,34 @@ public class ToolListener implements Listener {
 			}
 		};
 		timer.runTaskTimer(TangledMain.getPlugin(), 0, 1*20);
+	}
+	
+	@EventHandler
+	public void inInteract(PlayerInteractEvent e) {
+		
+		Player p = e.getPlayer();
+		
+		if(e.getAction() != Action.LEFT_CLICK_BLOCK &&
+		   e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+		
+		ItemStack item = e.getItem();
+		
+		if(item == null || !TangledMain.isSelectionWand(item))
+			return;
+		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
+			p.getWorld().playSound( p.getLocation(), Sound.ITEM_BREAK, 1f, 1f);
+			p.damage(0);
+
+			p.getInventory().remove(item);
+			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
+			return;
+		}
+		
+		e.setCancelled(true);
+		sHandler.handlWand(p, e.getClickedBlock());
 	}
 	
 	@EventHandler

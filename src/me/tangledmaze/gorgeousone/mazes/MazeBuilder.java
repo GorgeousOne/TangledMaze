@@ -2,7 +2,6 @@ package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Stack;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -103,14 +102,25 @@ public class MazeBuilder {
 			@Override
 			public void run() {
 				
-				Stack<Vector> openEnds = new Stack<>();
-				openEnds.push(start);
+				Random rnd = new Random();
+				ArrayList<Vector> openEnds = new ArrayList<>();
+				openEnds.add(start);
 				
+				int counter = 0;
 				boolean isFirstLoop = true;
 				
 				mazefilling:
 				while(!openEnds.isEmpty()) {
-					Vector lastEnd = openEnds.peek();
+					
+					Vector lastEnd;
+					
+					if(counter < 16)
+						lastEnd = openEnds.get(openEnds.size()-1);
+					else {
+						lastEnd = openEnds.get(rnd.nextInt(openEnds.size()));
+						counter = 0;
+					}
+					
 					for(Vector dir : Utils.shuffledCardinalDirs()) {
 						
 						Vector path = lastEnd.clone().add(dir),
@@ -128,7 +138,7 @@ public class MazeBuilder {
 							mazeMap[path.getBlockX()][  path.getBlockZ()] = PATH;
 							
 							isFirstLoop = false;
-							openEnds.push(path);
+							openEnds.add(path);
 							continue mazefilling;
 						}
 						
@@ -143,11 +153,12 @@ public class MazeBuilder {
 						mazeMap[  path.getBlockX()][  path.getBlockZ()] = PATH;
 						mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] = PATH;
 						
-						openEnds.push(newEnd);
+						openEnds.add(newEnd);
+						counter++;
 						continue mazefilling;
 					}
 
-					openEnds.pop();
+					openEnds.remove(lastEnd);
 				}
 				MazeBuilder.this.showMaze(maze, mazeMap, shiftX, shiftZ);
 			}
@@ -155,10 +166,10 @@ public class MazeBuilder {
 		pathGenerator.runTaskAsynchronously(TangledMain.getPlugin());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void showMaze(Maze maze, int[][] mazeMap, int shiftX, int shiftZ) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				
@@ -185,8 +196,6 @@ public class MazeBuilder {
 							wall1.setType(Material.LEAVES);
 							wall1.setData((byte) rnd.nextInt(5));
 						}
-						
-						p.sendBlockChange(point, Material.LEAVES, (byte) (Math.random() * 4));
 					}
 				
 				mazeQueue.remove(maze);

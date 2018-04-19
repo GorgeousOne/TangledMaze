@@ -44,7 +44,10 @@ public class CommandListener implements CommandExecutor {
 		
 		switch (args[0].toLowerCase()) {
 			case "wand":
-				p.getInventory().addItem(TangledMain.getWand());
+				if(p.hasPermission(Constants.wandPerm))
+					p.getInventory().addItem(TangledMain.getWand());
+				else
+					p.sendMessage(Constants.insufficientPerms);
 				break;
 				
 			case "select":

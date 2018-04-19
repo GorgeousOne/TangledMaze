@@ -23,6 +23,11 @@ public class Select {
 	
 	public void execute(Player p, String selectionType) {
 		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.sendMessage(Constants.insufficientPerms);
+			return;
+		}
+		
 		switch (selectionType.toLowerCase()) {
 		case "rectangle":
 		case "rect":

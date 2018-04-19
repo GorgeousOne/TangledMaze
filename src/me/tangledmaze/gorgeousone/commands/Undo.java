@@ -3,6 +3,7 @@ package me.tangledmaze.gorgeousone.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
@@ -16,6 +17,12 @@ public class Undo {
 	}
 	
 	public void execute(Player p) {
+		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.sendMessage(Constants.insufficientPerms);
+			return;
+		}
+		
 		try {
 			
 		} catch (Exception e) {

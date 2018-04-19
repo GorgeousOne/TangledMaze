@@ -19,6 +19,12 @@ public class Subtract {
 	}
 	
 	public void execute(Player p) {
+		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.sendMessage(Constants.insufficientPerms);
+			return;
+		}
+		
 		if(!sHandler.hasSelection(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area first.");
 			return;

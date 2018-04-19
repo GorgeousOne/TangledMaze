@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 
 public abstract class Utils {
 	
-	
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),

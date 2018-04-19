@@ -36,6 +36,11 @@ public class TangledCompleter implements TabCompleter {
 			return null;
 		if(!cmd.getName().equalsIgnoreCase("tangledmaze"))
 			return null;
+
+		Player p = (Player) sender;
+		
+		if(!p.hasPermission("tm.build"))
+			return null;
 		
 		ArrayList<String> options = new ArrayList<>();
 		

@@ -27,6 +27,11 @@ public class Build {
 	
 	public void execute(Player p) {
 		
+		if(!p.hasPermission(Constants.buildPerm)) {
+			p.sendMessage(Constants.insufficientPerms);
+			return;
+		}
+		
 		if(!mHandler.hasMaze(p)) {
 			p.sendMessage(ChatColor.RED + "Please start a maze first.");
 			p.sendMessage("/tangledmaze start");
