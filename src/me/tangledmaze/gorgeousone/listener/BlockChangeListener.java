@@ -64,7 +64,7 @@ public class BlockChangeListener implements Listener {
 	}
 	
 	@EventHandler
-	public void onChunkLoad(PlayerInteractEvent e) {
+	public void onInteract(PlayerInteractEvent e) {
 		if(e.getAction() != Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK)
 			return;
 		

@@ -16,7 +16,6 @@ permissions:
     description: Select extra large mazes like a VIP.
   tm.build.staff:
     description: Select maze of unlimited size or whatever is set in the config.
-    default: OP
   tm.getwand:
     description: Be able to get a selection wand by using /tangledmaze wand
     default: OP

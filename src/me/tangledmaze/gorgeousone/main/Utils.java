@@ -2,8 +2,6 @@ package me.tangledmaze.gorgeousone.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -123,14 +121,13 @@ public abstract class Utils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Vector> directions() {
+	public static ArrayList<Vector> directions() {
 		return (ArrayList<Vector>) DIRECTIONS.clone();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Vector> shuffledCardinalDirs() {
-		Collections.shuffle(CARDINAL_DIRS);
-		return (ArrayList<Vector>) CARDINAL_DIRS.clone();
+	public static ArrayList<Vector> cardinalDirs() {
+		return (ArrayList<Vector>) CARDINAL_DIRS.clone(); 
 	}
 	
 	public static void sendBlockLater(Player p, Location loc, Material mat) {
@@ -167,13 +164,13 @@ public abstract class Utils {
 		return loc;
 	}
 	
-	public static int maxBlockY(List<Location> points) {
-		int maxY = -1;
+	public static int getMax(ArrayList<Integer> ints) {
+		int max = 0;
 		
-		for(Location point : points)
-			if(point.getBlockY() > maxY)
-				maxY = point.getBlockY();
+		for(int i : ints)
+			if(i > max)
+				max = i;
 		
-		return maxY;
+		return max;
 	}
 }

@@ -8,12 +8,12 @@ import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import net.md_5.bungee.api.ChatColor;
 
-public class Start {
+public class StartMaze {
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Start() {
+	public StartMaze() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}

@@ -20,18 +20,16 @@ public class SelectionStartEvent extends SelectionEvent {
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
 			public void run() {
-				if(!isCancelled())
-					execute();
+				
+				if(!isCancelled()) {
+					sHandler.deselectSelection(p);
+					
+					RectSelection selection = new RectSelection(clickedBlock, p, sHandler.getSelectionType(p));
+					sHandler.setSelection(p, selection);
+					sHandler.show(selection);
+				}
 			}
 		};
 		event.runTask(TangledMain.getPlugin());
-	}
-	
-	private void execute() {
-		sHandler.deselectSelection(p);
-
-		RectSelection selection = new RectSelection(super.clickedBlock, super.p, sHandler.getSelectionType(p));
-		sHandler.setSelection(super.p, selection);
-		sHandler.show(selection);
 	}
 }

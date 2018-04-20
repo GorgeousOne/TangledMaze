@@ -29,8 +29,6 @@ public class TangledMain extends JavaPlugin {
 	private MazeHandler mHandler;
 	private MazeBuilder mBuilder;
 	
-	private static int buidlSizeNormal, buidlSizeVIP, buidlSizeStaff;
-	
 	@Override
 	public void onLoad() {}
 	
@@ -39,10 +37,6 @@ public class TangledMain extends JavaPlugin {
 		plugin = this;
 		loadConfig();
 		initWand();
-		
-		buidlSizeNormal = getConfig().getInt("normal");
-		buidlSizeVIP    = getConfig().getInt("vip");
-		buidlSizeStaff  = getConfig().getInt("staff");
 		
 		mHandler = new MazeHandler();
 		mBuilder  = new MazeBuilder();
@@ -89,18 +83,6 @@ public class TangledMain extends JavaPlugin {
 		return wand;
 	}
 	
-	public static int getBuidlSizeNormal() {
-		return buidlSizeNormal;
-	}
-
-	public static int getBuidlSizeVIP() {
-		return buidlSizeVIP;
-	}
-
-	public static int getBuidlSizeStaff() {
-		return buidlSizeStaff;
-	}
-
 	private void initWand() {
 		wand = new ItemStack(Material.GOLD_SPADE);
 		

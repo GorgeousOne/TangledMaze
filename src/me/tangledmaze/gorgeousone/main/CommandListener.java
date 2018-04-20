@@ -10,20 +10,22 @@ import me.tangledmaze.gorgeousone.commands.*;
 
 public class CommandListener implements CommandExecutor {
 	
-	private Select selectCommand;
-	private Start startCommand;
-	private Add addCommand;
-	private Subtract subtCommand;
-	private Deselect deselectCommand;
-	private Build buildCommand;
+	private SelectTool selectCommand;
+	private StartMaze startCommand;
+	private SetMazeHeight heigthCommand;
+	private AddMaze addCommand;
+	private SubtractMaze subtCommand;
+	private DeselectAll deselectCommand;
+	private BuildMaze buildCommand;
 	
 	public CommandListener() {
-		selectCommand = new Select();
-		startCommand = new Start();
-		addCommand = new Add();
-		subtCommand = new Subtract();
-		deselectCommand = new Deselect();
-		buildCommand = new Build();
+		selectCommand = new SelectTool();
+		startCommand = new StartMaze();
+		heigthCommand = new SetMazeHeight();
+		addCommand = new AddMaze();
+		subtCommand = new SubtractMaze();
+		deselectCommand = new DeselectAll();
+		buildCommand = new BuildMaze();
 	}
 	
 	@Override
@@ -59,6 +61,13 @@ public class CommandListener implements CommandExecutor {
 				
 			case "start":
 				startCommand.execute(p);
+				break;
+			
+			case "height":
+				if(args.length >= 2)
+					heigthCommand.execute(p, args[1]);
+				else
+					sendHelp(p, 2);
 				break;
 				
 			case "add":

@@ -84,7 +84,12 @@ public class Rectangle implements Shape {
 		Vector v0 = vertices.get(0).toVector(),
 			   v2 = vertices.get(2).toVector();
 		
-		int maxY = Utils.maxBlockY(vertices);
+		ArrayList<Integer> verticesYs = new ArrayList<>();
+		
+		for(Location point : vertices)
+			verticesYs.add(point.getBlockY());
+		
+		int maxY = Utils.getMax(verticesYs);
 		
 		for(int x = v0.getBlockX(); x <= v2.getX(); x++)
 			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {

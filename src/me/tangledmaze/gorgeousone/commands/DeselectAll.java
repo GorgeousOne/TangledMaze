@@ -6,14 +6,13 @@ import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
-import net.md_5.bungee.api.ChatColor;
 
-public class Add {
-
+public class DeselectAll {
+	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Add() {
+	public DeselectAll() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
@@ -25,22 +24,7 @@ public class Add {
 			return;
 		}
 		
-		if(!sHandler.hasSelection(p)) {
-			p.sendMessage(ChatColor.RED + "Select an area first.");
-			return;
-		}
-		
-		try {
-			mHandler.addSelectionToMaze(p, sHandler.getSelection(p));
-			p.sendMessage(Constants.prefix + "Added selection to maze.");
-			
-		}catch (Exception e) {
-			if(e instanceof NullPointerException) {
-				p.sendMessage(ChatColor.RED + "Start a maze first.");
-				p.sendMessage("/tangledmaze start");
-				
-			}else if(e instanceof IllegalArgumentException)
-				p.sendMessage(ChatColor.RED + "Finish your selection first.");
-		}
+		sHandler.deselectSelection(p);
+		mHandler.deselctMaze(p);
 	}
 }

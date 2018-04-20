@@ -139,7 +139,7 @@ public class RectSelection {
 	}
 	
 	private void calcVertices(Location p0, Location p1) {
-		int maxY = Utils.maxBlockY(new ArrayList<Location>(Arrays.asList(p0, p1)));
+		int maxY = Math.max(p0.getBlockY(), p1.getBlockY());
 		
 		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
 			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),

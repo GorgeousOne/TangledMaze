@@ -11,12 +11,12 @@ import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
-public class Select {
+public class SelectTool {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public Select() {
+	public SelectTool() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
@@ -77,7 +77,7 @@ public class Select {
 			
 			if(mHandler.hasMaze(p)) {
 				sHandler.setSelectionType(p, ExitSetter.class);
-				p.sendMessage(Constants.prefix + "Changed selection type to entrance setter.");
+				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
 				
 				if(sHandler.hasSelection(p))
 					sHandler.deselectSelection(p);

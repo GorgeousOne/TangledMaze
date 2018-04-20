@@ -104,10 +104,15 @@ public class Ellipse implements Shape {
 		int posX = vertices.get(0).getBlockX(),
 			posZ = vertices.get(0).getBlockZ();
 		
+		ArrayList<Integer> verticesYs = new ArrayList<>();
+		
+		for(Location point : vertices)
+			verticesYs.add(point.getBlockY());
+		
+		int maxY = Utils.getMax(verticesYs);
+		
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
-		
-		int maxY = Utils.maxBlockY(vertices);
 		
 		for(double x = -radiusX; x < radiusX; x++)
 			for(double z = -radiusZ; z < radiusZ; z++) {

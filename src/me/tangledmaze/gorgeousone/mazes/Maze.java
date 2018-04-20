@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -18,6 +19,8 @@ import me.tangledmaze.gorgeousone.shapes.Shape;
 public class Maze {
 	
 	private Player p;
+	private World w;
+	
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Location> exits;
 	
@@ -27,19 +30,29 @@ public class Maze {
 	
 	public Maze(Shape baseShape, Player editor) {
 		p = editor;
+		w = p.getWorld();
 		
 		fillChunks   = new HashMap<>();
 		borderChunks = new HashMap<>();	
 		exits        = new ArrayList<>();
 		
-		for(Chunk c : baseShape.getFill().keySet())
+		size = 0;
+		
+		for(Chunk c : baseShape.getFill().keySet()) {
 			fillChunks.put(c, baseShape.getFill().get(c));
+			size += baseShape.getFill().get(c).size();
+		}
+		
 		for(Chunk c : baseShape.getBorder().keySet())
 			borderChunks.put(c, baseShape.getBorder().get(c));
 	}
 	
 	public Player getPlayer() {
 		return p;
+	}
+	
+	public World getWorld() {
+		return w;
 	}
 	
 	public int size() {
@@ -60,24 +73,6 @@ public class Maze {
 	
 	public ArrayList<Location> getExits() {
 		return exits;
-	}
-	
-	public int getY(int x, int z) {
-		int chunkX = x >> 4,
-			chunkZ = z >> 4;
-		
-		for(Chunk c : fillChunks.keySet()) {
-			
-			if(c.getX() == chunkX &&
-			   c.getZ() == chunkZ) {
-				
-				for(Location point : fillChunks.get(c))
-					if(point.getX() == x && point.getZ() == z)
-						return point.getBlockY();
-				break;
-			}
-		}
-		return -1;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -224,6 +219,7 @@ public class Maze {
 				
 				//otherwise remove the block
 				borderDeletion.add(point);
+				fillDeletion.add(point);
 			}
 		}
 		
@@ -291,7 +287,7 @@ public class Maze {
 		
 		boolean isSealing = false;
 		
-		for(Vector dir : Utils.shuffledCardinalDirs()) {
+		for(Vector dir : Utils.cardinalDirs()) {
 			Location point2 = newExit.clone().add(dir);
 			
 			if(contains(point2) && !borderContains(point2))

@@ -17,6 +17,7 @@ public class TangledCompleter implements TabCompleter {
 				"wand",
 				"select",
 				"start",
+				"height",
 				"add",
 				"cut",
 				"deselect",

@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,7 +31,7 @@ public class ToolListener implements Listener {
 	
 	private HashMap<Player, Long> times;
 	private BukkitRunnable timer;
-	private static final int expiration = 0*1000;
+	private static final int expiration = 0*1000;	//TODO set back to 10s
 	
 	public ToolListener() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
@@ -72,6 +71,8 @@ public class ToolListener implements Listener {
 		if(item == null || !TangledMain.isSelectionWand(item))
 			return;
 		
+		e.setCancelled(true);
+
 		if(!p.hasPermission(Constants.buildPerm)) {
 			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
 			p.getWorld().playSound( p.getLocation(), Sound.ITEM_BREAK, 1f, 1f);
@@ -82,8 +83,7 @@ public class ToolListener implements Listener {
 			return;
 		}
 		
-		e.setCancelled(true);
-		sHandler.handlWand(p, e.getClickedBlock());
+		sHandler.handleInteraction(p, e.getClickedBlock());
 	}
 	
 	@EventHandler
@@ -128,11 +128,6 @@ public class ToolListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent e) {
-		//sHandler.update(e.getChunk()); TODO implement
-	}
-	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
 		if(TangledMain.isSelectionWand(e.getItem()))

@@ -13,13 +13,13 @@ import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 
-public class Build {
+public class BuildMaze {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	private MazeBuilder mBuilder;
 	
-	public Build() {
+	public BuildMaze() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		mBuilder  = TangledMain.getPlugin().getMazeBuilder();

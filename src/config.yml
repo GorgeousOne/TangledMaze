@@ -1,6 +1,0 @@
-# Here you can configure how many blocks each rank should be able to select for a maze at once.
-# A (-1) disables the limit completely.
-
-normal: 1000
-vip: 5000
-staff: -1

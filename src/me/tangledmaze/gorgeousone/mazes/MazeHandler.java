@@ -12,9 +12,11 @@ import me.tangledmaze.gorgeousone.selections.RectSelection;
 public class MazeHandler {
 	
 	private HashMap<Player, Maze> mazes;
+	private HashMap<Player, Integer> mazeHeights;
 	
 	public MazeHandler() {
 		mazes = new HashMap<>();
+		mazeHeights = new HashMap<>();
 	}
 	
 	public void reload() {
@@ -41,8 +43,17 @@ public class MazeHandler {
 		}
 	}
 	
+	public void setMazeHeight(Player p, int height) {
+		mazeHeights.put(p, height);
+	}
+	
+	public Integer getMazeHeight(Player p) {
+		return mazeHeights.get(p);
+	}
+
 	public void remove(Player p) {
 		mazes.remove(p);
+		mazeHeights.remove(p);
 	}
 	
 	public void startMaze(Player p, RectSelection selection) throws IllegalArgumentException {
@@ -54,6 +65,9 @@ public class MazeHandler {
 		
 		Maze maze = new Maze(selection.getShape(), p);
 		mazes.put(p, maze);
+		
+		if(!mazeHeights.containsKey(p))
+			mazeHeights.put(p, 2);
 		
 		maze.show();
 	}

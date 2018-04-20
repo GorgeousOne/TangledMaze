@@ -46,17 +46,18 @@ public class SelectionHandler {
 			hide(selection);
 	}
 	
-	public void handlWand(Player p, Block b) {
+	public void handleInteraction(Player p, Block b) {
 		
 		if(!selectionTypes.containsKey(p))
 			selectionTypes.put(p, Rectangle.class);
 		
 		Class<? extends Shape> type = selectionTypes.get(p);
 		
-		if(type.equals(Rectangle.class) || type.equals(Ellipse.class)) {
+		if(type.equals(Rectangle.class) || type.equals(Ellipse.class))
 			selectRect(p, b);
 			
-		}else if(type.equals(Brush.class)) {
+		else if(type.equals(Brush.class)) {
+			p.sendMessage("bouta brush ya maze huh?");
 			if(!mHandler.hasMaze(p))
 				return;
 
@@ -64,6 +65,7 @@ public class SelectionHandler {
 			maze.brush(b);
 				
 			if(maze.size() == 0) {
+				p.sendMessage("now ya brushed ya maze away");
 				mHandler.deselctMaze(p);
 				setSelectionType(p, Rectangle.class);
 			}
@@ -74,7 +76,6 @@ public class SelectionHandler {
 			
 			mHandler.getMaze(p).addExit(b);
 		}
-		
 	}
 	
 	private void selectRect(Player p, Block b) {
@@ -129,9 +130,9 @@ public class SelectionHandler {
 	}
 
 	public Class<? extends Shape> getSelectionType(Player p) {
-		if(!p.isOnline())
+		if(!p.isOnline() || !p.hasPermission(Constants.buildPerm))
 			return null;
-		//TODO permission check
+
 		return selectionTypes.containsKey(p) ? selectionTypes.get(p) : Rectangle.class;
 	}
 	
@@ -146,7 +147,7 @@ public class SelectionHandler {
 		if(p == null) //|| isVisible
 			return;
 		
-//		isVisible = true;
+//		isVisible = true;	TODO need alternative?
 		
 		if(selection.isComplete())
 			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
