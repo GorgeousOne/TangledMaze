@@ -13,7 +13,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
-import me.tangledmaze.gorgeousone.main.Utils;
+import me.tangledmaze.gorgeousone.utils.Entry;
+import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class MazeBuilder {
 
@@ -112,7 +113,7 @@ public class MazeBuilder {
 				ArrayList<Vector> openEnds = new ArrayList<>();
 				openEnds.add(start);
 				
-				int counter = 0;
+				int pathLength = 0;
 				boolean isFirstLoop = true;
 				ArrayList<Vector> directions = Utils.cardinalDirs();
 				
@@ -121,11 +122,11 @@ public class MazeBuilder {
 					
 					Vector lastEnd;
 					
-					if(counter < 3)
+					if(pathLength < 3)
 						lastEnd = openEnds.get(openEnds.size()-1);
 					else {
 						lastEnd = openEnds.get(rnd.nextInt(openEnds.size()));
-						counter = 0;
+						pathLength = 0;
 					}
 					
 					Collections.shuffle(directions);
@@ -163,11 +164,12 @@ public class MazeBuilder {
 						mazeMap[newEnd.getBlockX()][newEnd.getBlockZ()] = PATH;
 						
 						openEnds.add(newEnd);
-						counter++;
+						pathLength++;
 						continue mazefilling;
 					}
 
 					openEnds.remove(lastEnd);
+					pathLength = 0;
 				}
 				MazeBuilder.this.showMaze(maze, mazeMap, mazeYMap, shiftX, shiftZ);
 			}
@@ -179,11 +181,15 @@ public class MazeBuilder {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 //			@SuppressWarnings("deprecation")
+			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				
 				Player p = maze.getPlayer();
 				ArrayList<Vector> directions = Utils.directions();
+				ArrayList<Entry<Material, Byte>> composition = maze.getWallComposition();
+				
+				Random rnd = new Random();
 				
 				for(int x = 0; x < mazeMap.length; x++)
 					for(int z = 0; z < mazeMap[0].length; z++) {
@@ -215,8 +221,11 @@ public class MazeBuilder {
 							
 							Block b = (new Location(maze.getWorld(), x+shiftX, i, z+shiftZ)).getBlock();
 							
-							if(Utils.canBeReplaced(b))
-								b.setType(Material.PRISMARINE);
+							if(Utils.canBeReplaced(b)) {
+								Entry<Material, Byte> rndBlockType = composition.get(rnd.nextInt(composition.size()));
+								b.setType(rndBlockType.getKey());
+								b.setData(rndBlockType.getValue());
+							}
 						}
 					}
 				

@@ -9,8 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Ellipse implements Shape {
 	

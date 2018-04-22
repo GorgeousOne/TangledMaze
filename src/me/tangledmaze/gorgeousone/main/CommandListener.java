@@ -1,5 +1,7 @@
 package me.tangledmaze.gorgeousone.main;
 
+import java.util.ArrayList;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,6 +9,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.commands.*;
+import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class CommandListener implements CommandExecutor {
 	
@@ -85,7 +88,13 @@ public class CommandListener implements CommandExecutor {
 				break;
 
 			case "build":
-				buildCommand.execute(p);
+				ArrayList<String> materials = new ArrayList<>();
+				
+				if(args.length >= 2)
+					for (int i = 1; i < args.length; i++)
+						materials.add(args[i]);
+				
+				buildCommand.execute(p, materials);
 				break;
 			
 			case "undo":

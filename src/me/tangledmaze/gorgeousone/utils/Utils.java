@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.main;
+package me.tangledmaze.gorgeousone.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +9,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import me.tangledmaze.gorgeousone.main.TangledMain;
 
 public abstract class Utils {
 	

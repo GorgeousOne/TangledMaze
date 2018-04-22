@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.main;
+package me.tangledmaze.gorgeousone.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

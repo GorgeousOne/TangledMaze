@@ -12,7 +12,6 @@ import org.bukkit.plugin.PluginManager;
 import me.tangledmaze.gorgeousone.events.SelectionCompleteEvent;
 import me.tangledmaze.gorgeousone.events.SelectionResizeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionStartEvent;
-import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
@@ -20,6 +19,7 @@ import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
+import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
 public class SelectionHandler {
@@ -57,7 +57,6 @@ public class SelectionHandler {
 			selectRect(p, b);
 			
 		else if(type.equals(Brush.class)) {
-			p.sendMessage("bouta brush ya maze huh?");
 			if(!mHandler.hasMaze(p))
 				return;
 
@@ -65,7 +64,6 @@ public class SelectionHandler {
 			maze.brush(b);
 				
 			if(maze.size() == 0) {
-				p.sendMessage("now ya brushed ya maze away");
 				mHandler.deselctMaze(p);
 				setSelectionType(p, Rectangle.class);
 			}

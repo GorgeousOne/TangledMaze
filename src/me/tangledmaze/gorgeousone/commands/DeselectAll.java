@@ -2,10 +2,10 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class DeselectAll {
 	

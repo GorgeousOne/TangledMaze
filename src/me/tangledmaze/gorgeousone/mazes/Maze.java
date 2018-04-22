@@ -7,14 +7,16 @@ import java.util.HashMap;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.main.Constants;
-import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
+import me.tangledmaze.gorgeousone.utils.Constants;
+import me.tangledmaze.gorgeousone.utils.Entry;
+import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Maze {
 	
@@ -23,6 +25,7 @@ public class Maze {
 	
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Location> exits;
+	private ArrayList<Entry<Material, Byte>> wallComposition;
 	
 	private int size;
 	
@@ -59,6 +62,7 @@ public class Maze {
 		return size;
 	}
 	
+	
 	public ArrayList<Chunk> getChunks() {
 		return new ArrayList<Chunk>(fillChunks.keySet());
 	}
@@ -73,6 +77,14 @@ public class Maze {
 	
 	public ArrayList<Location> getExits() {
 		return exits;
+	}
+	
+	public ArrayList<Entry<Material, Byte>> getWallComposition() {
+		return wallComposition;
+	}
+
+	public void setWallComposition(ArrayList<Entry<Material, Byte>> composition) {
+		wallComposition = composition;
 	}
 	
 	@SuppressWarnings("deprecation")

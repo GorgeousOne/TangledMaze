@@ -10,8 +10,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.Utils;
 import me.tangledmaze.gorgeousone.shapes.Shape;
+import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class RectSelection {
 	

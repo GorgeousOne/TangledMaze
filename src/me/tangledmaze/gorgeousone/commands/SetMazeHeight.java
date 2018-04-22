@@ -2,9 +2,9 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
+import me.tangledmaze.gorgeousone.utils.Constants;
 import net.md_5.bungee.api.ChatColor;
 
 public class SetMazeHeight {
@@ -27,7 +27,7 @@ public class SetMazeHeight {
 		try {
 			mazeHeight = Integer.parseInt(arg0);
 		} catch (NumberFormatException e) {
-			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" could not be recognized as an integer.");
+			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" could not be identified as an integer.");
 			return;
 		}
 		

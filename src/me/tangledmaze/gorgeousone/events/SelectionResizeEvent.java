@@ -12,36 +12,31 @@ public class SelectionResizeEvent extends SelectionEvent {
 
 	private SelectionHandler sHandler;
 	private Block oldVertex;
-	private Player p;
 	
 	public SelectionResizeEvent(Player p, Block vertex, Block clickedBlock) {
 		super(p, clickedBlock);
 		
 		this.oldVertex = vertex;
-		this.p = p;
 
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
 			public void run() {
-				if(!isCancelled())
-					execute();
+				if(!isCancelled()) {
+					RectSelection selection = sHandler.getSelection(p);
+					
+					if(selection.isVertex(clickedBlock)) {
+						sHandler.show(selection);
+						return;
+					}
+	
+					sHandler.hide(selection);
+					selection.moveVertexTo(oldVertex, clickedBlock);
+					sHandler.show(selection);
+				}
 			}
 		};
 		event.runTask(TangledMain.getPlugin());
-	}
-	
-	private void execute() {
-		RectSelection selection = sHandler.getSelection(p);
-		
-		if(selection.isVertex(super.clickedBlock)) {
-			sHandler.show(selection);
-			return;
-		}
-
-		sHandler.hide(selection);
-		selection.moveVertexTo(oldVertex, super.clickedBlock);
-		sHandler.show(selection);
 	}
 }

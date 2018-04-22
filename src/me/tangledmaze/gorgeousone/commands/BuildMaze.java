@@ -1,9 +1,11 @@
 package me.tangledmaze.gorgeousone.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.Constants;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
@@ -12,6 +14,9 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
+import me.tangledmaze.gorgeousone.utils.Constants;
+import me.tangledmaze.gorgeousone.utils.Entry;
+import me.tangledmaze.gorgeousone.utils.NMSProvider;
 
 public class BuildMaze {
 
@@ -25,7 +30,7 @@ public class BuildMaze {
 		mBuilder  = TangledMain.getPlugin().getMazeBuilder();
 	}
 	
-	public void execute(Player p) {
+	public void execute(Player p, ArrayList<String> blockTypes) {
 		
 		if(!p.hasPermission(Constants.buildPerm)) {
 			p.sendMessage(Constants.insufficientPerms);
@@ -47,7 +52,47 @@ public class BuildMaze {
 			return;
 		}
 		
+		//----------------------------------------------------------------------------------------------------------------
+		
+		if(blockTypes.isEmpty()) {
+			p.sendMessage(ChatColor.RED + "Please specify at least one block this maze should be built of.");
+			p.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
+			return;
+		}
+		
+		ArrayList<Entry<Material, Byte>> composition = new ArrayList<>();
+		
+		for(String blockType : blockTypes) {
+			Material material;
+			byte data = 0;
+			
+			if(blockType.contains(":")) {
+				material = NMSProvider.getMaterial(blockType.split(":")[0]);
+				
+				try {
+					data = Byte.parseByte(blockType.split(":")[1]);
+				} catch (NumberFormatException e) {
+					p.sendMessage(ChatColor.RED + "\"" + blockType + "\" is wierd.");
+					return;
+				}
+				
+			}else
+				material = NMSProvider.getMaterial(blockType);
+			
+			
+			if(material == Material.AIR && !blockType.equalsIgnoreCase("air")) {
+				p.sendMessage(ChatColor.RED + "\"" + blockType + "\" does not match any block type.");
+				return;
+			}
+			
+			composition.add(new Entry<Material, Byte>(material, data));
+		}
+		
+		//----------------------------------------------------------------------------------------------------------------
+		
+		mHandler.getMaze(p).setWallComposition(composition);
 		mHandler.deselctMaze(p);
+		
 		int queuePosition = mBuilder.enqueueMaze(maze);
 
 		if(queuePosition != 0) {
@@ -58,16 +103,5 @@ public class BuildMaze {
 		if(sHandler.getSelectionType(p) == Brush.class ||
 		   sHandler.getSelectionType(p) == ExitSetter.class)
 			sHandler.setSelectionType(p, Rectangle.class);
-		
-//		if(args.isEmpty()) {
-//			p.sendMessage(ChatColor.RED + "");
-//		}
-//		
-//		for(String arg : args) {
-//			if(!arg.contains("%")) {
-//				p.sendMessage("Could not use \"" + arg + "\"");
-//				return;
-//			}
-//		}
 	}
 }
