@@ -10,6 +10,7 @@ import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class PlayerVanishListener implements Listener {
 	
@@ -27,20 +28,20 @@ public class PlayerVanishListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
 		
-		//TODO permission check maybe?
-
-		mHandler.remove(p);
-		sHandler.remove(p);
-		mBuilder.discard(p);
+		if(p.hasPermission(Constants.buildPerm)) {
+			mHandler.remove(p);
+			sHandler.remove(p);
+			mBuilder.discard(mHandler.getMaze(p));
+		}
 	}
 	
 	@EventHandler
 	public void onChangeWorld(PlayerChangedWorldEvent e) {
 		Player p = e.getPlayer();
 			
-		//TODO sam as above
-		
-		mHandler.deselctMaze(e.getPlayer());
-		sHandler.remove(p);
+		if(p.hasPermission(Constants.buildPerm)) {
+			mHandler.deselctMaze(e.getPlayer());
+			sHandler.remove(p);
+		}
 	}
 }

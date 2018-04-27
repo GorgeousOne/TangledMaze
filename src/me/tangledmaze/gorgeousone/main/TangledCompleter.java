@@ -20,7 +20,7 @@ public class TangledCompleter implements TabCompleter {
 				"height",
 				"add",
 				"cut",
-				"deselect",
+				"discard",
 				"build"));
 		
 		selectionTypes = new ArrayList<>(Arrays.asList(

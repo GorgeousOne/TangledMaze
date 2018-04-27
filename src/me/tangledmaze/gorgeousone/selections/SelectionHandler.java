@@ -30,14 +30,16 @@ public class SelectionHandler {
 	private HashMap<Player, Class<? extends Shape>> selectionTypes;
 	private HashMap<Player, RectSelection> selections;
 	private HashMap<Player, Block> resizingSelections;
+	private HashMap<RectSelection, Boolean> selectionVisibilities;
 	
 	public SelectionHandler() {
 		pm = Bukkit.getServer().getPluginManager();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
-		selectionTypes  = new HashMap<>();
-		selections = new HashMap<>();
-		resizingSelections = new HashMap<>();
+		selectionTypes        = new HashMap<>();
+		selections            = new HashMap<>();
+		resizingSelections    = new HashMap<>();
+		selectionVisibilities = new HashMap<>();
 	}
 	
 	//hides all selections before reloading since they will be deleted anyway.
@@ -125,6 +127,7 @@ public class SelectionHandler {
 	
 	public void setSelection(Player p, RectSelection selection) {
 		selections.put(p, selection);
+		selectionVisibilities.put(selection, false);
 	}
 
 	public Class<? extends Shape> getSelectionType(Player p) {
@@ -138,14 +141,18 @@ public class SelectionHandler {
 		selectionTypes.put(p, type);
 	}
 	
+	public boolean isVisible(RectSelection selection) {
+		return selectionVisibilities.get(selection);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void show(RectSelection selection) {
 		Player p = selection.getPlayer();
 		
-		if(p == null) //|| isVisible
+		if(p == null)
 			return;
 		
-//		isVisible = true;	TODO need alternative?
+		selectionVisibilities.put(selection, true);
 		
 		if(selection.isComplete())
 			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
@@ -158,11 +165,13 @@ public class SelectionHandler {
 
 	@SuppressWarnings("deprecation")
 	public void hide(RectSelection selection) {
-	Player p = selection.getPlayer();
+		Player p = selection.getPlayer();
 		
-		if(selection.getPlayer() == null)
+		if(p == null)
 			return;
 		
+		selectionVisibilities.put(selection, false);
+
 		if(selection.isComplete()) {
 			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
 				for(Location point : chunk)
@@ -182,13 +191,17 @@ public class SelectionHandler {
 	
 	public void deselectSelection(Player p) {
 		if(selections.containsKey(p)) {
-			hide(selections.get(p));
+			if(isVisible(selections.get(p)))
+				hide(selections.get(p));
+			
+			selectionVisibilities.remove(selections.get(p));
 			resizingSelections.remove(p);
 			selections.remove(p);
 		}
 	}
 	
 	public void remove(Player p) {
+		selectionVisibilities.remove(selections.get(p));
 		selectionTypes.remove(p);
 		selections.remove(p);
 		resizingSelections.remove(p);

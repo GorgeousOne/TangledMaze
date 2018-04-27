@@ -10,12 +10,9 @@ commands:
     aliases: [tm, maze]
 
 permissions:
-  tm.build.normal:
-    description: Select mazes like a normal person.
-  tm.build.vip:
-    description: Select extra large mazes like a VIP.
-  tm.build.staff:
-    description: Select maze of unlimited size or whatever is set in the config.
+  tm.build:
+    description: Have the ability to build mazes
+    default: OP
   tm.getwand:
     description: Be able to get a selection wand by using /tangledmaze wand
     default: OP

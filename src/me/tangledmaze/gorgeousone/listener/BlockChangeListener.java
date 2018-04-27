@@ -76,24 +76,28 @@ public class BlockChangeListener implements Listener {
 		Location point = e.getClickedBlock().getLocation();
 		
 		for(Maze maze : mHandler.getMazes())
-			if(maze.borderContains(point))
-				maze.hide();
+			if(mHandler.isVisible(maze) && maze.borderContains(point))
+				mHandler.hide(maze);
 		
 		for(RectSelection selection : sHandler.getSelections())
-			if(selection.borderContains(point))
+			if(sHandler.isVisible(selection) && selection.borderContains(point))
 				sHandler.hide(selection);
 	}
 	
 	private void update(Location point) {
 		for(Maze maze : mHandler.getMazes())
-			if(maze.contains(point))
+			if(maze.contains(point)) {
 				maze.recalc(point);
+				
+				if(mHandler.isVisible(maze) && maze.borderContains(point))
+					mHandler.hide(maze);
+			}
 		
 		for(RectSelection selection : sHandler.getSelections()) {
 			if(selection.contains(point)) {
 				selection.recalc(point);
 				
-				if(selection.borderContains(point))
+				if(sHandler.isVisible(selection) && selection.borderContains(point))
 					sHandler.hide(selection);
 			}
 		}

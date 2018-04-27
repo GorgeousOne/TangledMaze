@@ -26,7 +26,8 @@ public class AddMaze {
 		}
 		
 		if(!sHandler.hasSelection(p)) {
-			p.sendMessage(ChatColor.RED + "Select an area first.");
+			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
+			p.sendMessage("/tangledmaze wand");
 			return;
 		}
 		

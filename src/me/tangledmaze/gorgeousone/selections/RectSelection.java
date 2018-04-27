@@ -20,7 +20,7 @@ public class RectSelection {
 	private Shape shape;
 	
 	private ArrayList<Location> vertices;
-	private boolean isComplete; //isVisible;
+	private boolean isComplete;
 	
 	private Class<? extends Shape> shapeType;
 
@@ -112,6 +112,25 @@ public class RectSelection {
 		
 		return shape.borderContains(point);
 	}
+	
+//	public boolean isHighlighted(Block b) {
+//		Chunk c = b.getChunk();
+//		
+//		if(isComplete) {
+//			if(!shape.getBorder().containsKey(c))
+//				return false;
+//			
+//			for(Location point : shape.getBorder().get(c))
+//				if(point.getBlock().equals(b))
+//					return true;
+//		}
+//		
+//		for(Location vertex : vertices)
+//			if(vertex.getBlock().equals(b))
+//				return true;
+//		
+//		return false;
+//	}
 	
 	public boolean isVertex(Block b) {
 		if(!isComplete())

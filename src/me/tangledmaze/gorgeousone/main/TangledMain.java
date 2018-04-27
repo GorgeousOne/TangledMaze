@@ -112,8 +112,11 @@ public class TangledMain extends JavaPlugin {
 	private static final String[] enchants = {
 			"Selecting Thingy III",
 			"Difficult Handling II",
+			"Would Recommend It X/X",
 			"Unbreaking ∞",
 			"Powerful X",
+			"Tangly III",
+			"Wow I",
 			"Ignore WorldGuard V",
 			"Infinite Maze I",
 			"Wubba Lubba Dub Dub IV",

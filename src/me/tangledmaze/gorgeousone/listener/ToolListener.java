@@ -31,14 +31,13 @@ public class ToolListener implements Listener {
 	
 	private HashMap<Player, Long> times;
 	private BukkitRunnable timer;
-	private static final int expiration = 0*1000;	//TODO set back to 10s
+	private static final int expiration = 10*1000;
 	
 	public ToolListener() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		times = new HashMap<>();
-		
 		timer = new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -50,13 +49,19 @@ public class ToolListener implements Listener {
 						if(sHandler.hasSelection(p))
 							sHandler.hide(sHandler.getSelection(p));
 						if(mHandler.hasMaze(p))
-							mHandler.getMaze(p).hide();
+							mHandler.hide(mHandler.getMaze(p));
 					}
 			}
 		};
 		timer.runTaskTimer(TangledMain.getPlugin(), 0, 1*20);
 	}
 	
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent e) {
+		if(TangledMain.isSelectionWand(e.getItem()))
+			e.setCancelled(true);
+	}
+
 	@EventHandler
 	public void inInteract(PlayerInteractEvent e) {
 		
@@ -82,7 +87,6 @@ public class ToolListener implements Listener {
 			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
 			return;
 		}
-		
 		sHandler.handleInteraction(p, e.getClickedBlock());
 	}
 	
@@ -96,10 +100,10 @@ public class ToolListener implements Listener {
 		
 		if(TangledMain.isSelectionWand(newItem)) {
 			times.remove(p);
-			
-			if(mHandler.hasMaze(p))
-				mHandler.getMaze(p).show();
-			if(sHandler.hasSelection(p))
+				
+			if(mHandler.hasMaze(p) && !mHandler.isVisible(mHandler.getMaze(p)))
+				mHandler.show(mHandler.getMaze(p));
+			if(sHandler.hasSelection(p) && !sHandler.isVisible(sHandler.getSelection(p)))
 				sHandler.show(sHandler.getSelection(p));
 		
 		}else if(TangledMain.isSelectionWand(previousItem))			
@@ -111,9 +115,11 @@ public class ToolListener implements Listener {
 		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
-			if(mHandler.hasMaze(p))
-				mHandler.getMaze(p).show();
-			if(sHandler.hasSelection(p))
+				times.remove(p);
+			
+			if(mHandler.hasMaze(p) && !mHandler.isVisible(mHandler.getMaze(p)))
+				mHandler.show(mHandler.getMaze(p));
+			if(sHandler.hasSelection(p) && !sHandler.isVisible(sHandler.getSelection(p)))
 				sHandler.show(sHandler.getSelection(p));
 		}
 	}
@@ -128,9 +134,4 @@ public class ToolListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onItemDamage(PlayerItemDamageEvent e) {
-		if(TangledMain.isSelectionWand(e.getItem()))
-			e.setCancelled(true);
-	}
 }

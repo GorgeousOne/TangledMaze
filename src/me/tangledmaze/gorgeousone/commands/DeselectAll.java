@@ -26,5 +26,7 @@ public class DeselectAll {
 		
 		sHandler.deselectSelection(p);
 		mHandler.deselctMaze(p);
+		
+		p.sendMessage(Constants.prefix + "Deselected your selection and your maze.");
 	}
 }

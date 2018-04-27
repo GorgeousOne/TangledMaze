@@ -38,6 +38,13 @@ public class BuildMaze {
 		}
 		
 		if(!mHandler.hasMaze(p)) {
+			
+			if(!sHandler.hasSelection(p)) {
+				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
+				p.sendMessage("/tangledmaze start");
+				return;	
+			}
+			
 			p.sendMessage(ChatColor.RED + "Please start a maze first.");
 			p.sendMessage("/tangledmaze start");
 			return;
@@ -72,7 +79,7 @@ public class BuildMaze {
 				try {
 					data = Byte.parseByte(blockType.split(":")[1]);
 				} catch (NumberFormatException e) {
-					p.sendMessage(ChatColor.RED + "\"" + blockType + "\" is wierd.");
+					p.sendMessage(ChatColor.RED + "\"" + blockType + "\" is wierd...");
 					return;
 				}
 				
@@ -85,6 +92,11 @@ public class BuildMaze {
 				return;
 			}
 			
+			if(!material.isBlock()) {
+				p.sendMessage(ChatColor.RED + "It could be difficult to build a maze out of \"" + blockType + "\".");
+				return;
+			}
+
 			composition.add(new Entry<Material, Byte>(material, data));
 		}
 		

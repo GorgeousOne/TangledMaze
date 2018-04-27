@@ -27,9 +27,7 @@ public class Maze {
 	private ArrayList<Location> exits;
 	private ArrayList<Entry<Material, Byte>> wallComposition;
 	
-	private int size;
-	
-	private boolean isVisible;
+	private int size, wallHeight;
 	
 	public Maze(Shape baseShape, Player editor) {
 		p = editor;
@@ -40,6 +38,7 @@ public class Maze {
 		exits        = new ArrayList<>();
 		
 		size = 0;
+		wallHeight = 3;
 		
 		for(Chunk c : baseShape.getFill().keySet()) {
 			fillChunks.put(c, baseShape.getFill().get(c));
@@ -62,6 +61,9 @@ public class Maze {
 		return size;
 	}
 	
+	public int getWallHeight() {
+		return wallHeight;
+	}
 	
 	public ArrayList<Chunk> getChunks() {
 		return new ArrayList<Chunk>(fillChunks.keySet());
@@ -83,6 +85,10 @@ public class Maze {
 		return wallComposition;
 	}
 
+	public void setWallHeight(int height) {
+		wallHeight = height;
+	}
+	
 	public void setWallComposition(ArrayList<Entry<Material, Byte>> composition) {
 		wallComposition = composition;
 	}
@@ -91,25 +97,69 @@ public class Maze {
 	public void process(MazeAction action) {
 		for(Location point : action.getRemovedFill())
 			removeFill(point);
-		
+	
 		for(Location point : action.getRemovedBorder())
 			removeBorder(point);
-		
+	
 		for(Location point : action.getAddedFill())
 			addFill(point);
-		
+
 		for(Location point : action.getAddedBorder())
 			addBorder(point);
+
+		for(Location point : action.getAddedExits())
+			exits.remove(point);
 		
 		for(Location point : action.getRemovedExits())
 			exits.remove(point);
 		
-		if(isVisible) {
+		if(p != null) {
 			for(Location point : action.getRemovedBorder())
 				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 			
 			for(Location point : action.getAddedBorder())
 				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			
+			for(Location point : action.getRemovedExits())
+				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+
+			for(Location point : action.getAddedExits())
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void undo(MazeAction action) {
+		for(Location point : action.getRemovedFill())
+			addFill(point);
+	
+		for(Location point : action.getRemovedBorder())
+			addBorder(point);
+	
+		for(Location point : action.getAddedFill())
+			removeFill(point);
+
+		for(Location point : action.getAddedBorder())
+			removeBorder(point);
+
+		for(Location point : action.getAddedExits())
+			exits.remove(point);
+		
+		for(Location point : action.getRemovedExits())
+			exits.add(point);
+			
+		if(p != null) {
+			for(Location point : action.getRemovedBorder())
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			
+			for(Location point : action.getAddedBorder())
+				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+			
+			for(Location point : action.getRemovedExits())
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+
+			for(Location point : action.getAddedExits())
+				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 		}
 	}
 
@@ -117,12 +167,17 @@ public class Maze {
 		
 		ArrayList<Location>
 			fillAddition   = new ArrayList<>(),
-			fillDeletion   = new ArrayList<>(),
 			borderAddition = new ArrayList<>(),
 			borderDeletion = new ArrayList<>(),
 			exitDeletions  = new ArrayList<>();
 		
-		MazeAction addition = new MazeAction(fillAddition, fillDeletion, borderAddition, borderDeletion, exitDeletions);
+		MazeAction addition = new MazeAction(
+				fillAddition,
+				new ArrayList<>(),
+				borderAddition,
+				borderDeletion,
+				new ArrayList<>(),
+				exitDeletions);
 		
 		//check for new border blocks
 		for(Chunk c : s.getBorder().keySet())
@@ -181,13 +236,18 @@ public class Maze {
 	public MazeAction getSubtraction(Shape s) {
 		
 		ArrayList<Location>
-			fillAddition   = new ArrayList<>(),
 			fillDeletion   = new ArrayList<>(),
 			borderAddition = new ArrayList<>(),
 			borderDeletion = new ArrayList<>(),
 			exitDeletions  = new ArrayList<>();
 		
-		MazeAction deletion = new MazeAction(fillAddition, fillDeletion, borderAddition, borderDeletion, exitDeletions);
+		MazeAction deletion = new MazeAction(
+				new ArrayList<>(),
+				fillDeletion,
+				borderAddition,
+				borderDeletion,
+				new ArrayList<>(),
+				exitDeletions);
 
 		//get new border points where shape is cutting into maze
 		for(ArrayList<Location> chunk : s.getBorder().values())
@@ -250,6 +310,21 @@ public class Maze {
 		if(!borderContains(point) || !isHighlighted(b))
 			return;
 		
+//		ArrayList<Location>
+//			removedFill   = new ArrayList<>(),
+//			addFill       = new ArrayList<>(),
+//			removedBorder = new ArrayList<>(),
+//			addedBorder   = new ArrayList<>(),
+//			removedExits  = new ArrayList<>();
+//		
+//		MazeAction action = new MazeAction(
+//				addFill,
+//				removedFill,
+//				addedBorder,
+//				removedBorder,
+//				new ArrayList<>(),
+//				removedExits);
+		
 		ArrayList<Location> neighbors = new ArrayList<>();
 		boolean	isExternalBorder = false,
 				isSealingBorder = false;
@@ -271,9 +346,12 @@ public class Maze {
 		fillChunks.get(b.getChunk()).remove(point);
 		borderChunks.get(b.getChunk()).remove(point);
 
+		//if the clicked point also was an exit
 		if(exits.contains(point)) {
-			if(exits.indexOf(point) == 0 && exits.size() > 1 && isVisible)
+			//mark the next one as diamond/latest if possuble
+			if(p != null && exits.indexOf(point) == 0 && exits.size() > 1)
 				p.sendBlockChange(exits.get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+			//remove the exit
 			exits.remove(point);
 		}
 		
@@ -285,7 +363,7 @@ public class Maze {
 			Location surface = Utils.getNearestSurface(point2);
 			addBorder(surface);
 			
-			if(isVisible)
+			if(p != null)
 				p.sendBlockChange(surface, Constants.MAZE_BORDER, (byte) 0);
 		}
 	}
@@ -299,6 +377,7 @@ public class Maze {
 		
 		boolean isSealing = false;
 		
+		//check if the point is touching inner maze
 		for(Vector dir : Utils.cardinalDirs()) {
 			Location point2 = newExit.clone().add(dir);
 			
@@ -306,16 +385,17 @@ public class Maze {
 				isSealing = true;
 		}
 		
-		if(!isSealing) {
-			if(isVisible)
-				Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
+		//return if the point cant be an exit
+		if(p != null && !isSealing) {
+			Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
 			return;
 		}
 		
+		//if the clicked point is already an exit remove it
 		for(int i = 0; i < exits.size(); i++)
 			if(exits.get(i).equals(newExit)) {
 				
-				if(isVisible) {
+				if(p != null) {
 					Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
 				
 					if(i == 0 && exits.size() > 1)
@@ -326,11 +406,13 @@ public class Maze {
 				return;
 			}
 		
-		if(!exits.isEmpty() && isVisible)
+		//downgrade the last main exit to a normal exit (visually)
+		if(p != null && !exits.isEmpty())
 			p.sendBlockChange(exits.get(0), Constants.MAZE_EXIT, (byte) 0);
+		
 		exits.add(0, newExit);
 		
-		if(isVisible)
+		if(p != null)
 			Utils.sendBlockLater(p, newExit, Constants.MAZE_MAIN_EXIT);
 	}
 	
@@ -354,7 +436,6 @@ public class Maze {
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(Utils.getNearestSurface(point))));
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void removeFill(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -364,9 +445,8 @@ public class Maze {
 			   point2.getBlockZ() == point.getBlockZ()) {
 				
 				fillChunks.get(c).remove(point2);
-				if(isVisible)
-					p.sendBlockChange(point2, point2.getBlock().getType(), point2.getBlock().getData());
-
+//				if(isVisible)
+//					p.sendBlockChange(point2, point2.getBlock().getType(), point2.getBlock().getData());
 				size--;
 				break;
 			}
@@ -426,51 +506,20 @@ public class Maze {
 		return false;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void show() {
-		if(isVisible || p == null)
-			return;
-		
-		isVisible = true;
-		
-		for(ArrayList<Location> chunk : borderChunks.values())
-			for(Location point : chunk)
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-		
-		for(Location exit : exits)
-			p.sendBlockChange(exit, Constants.MAZE_EXIT, (byte) 0);
-		
-		if(!exits.isEmpty())
-			p.sendBlockChange(exits.get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
-	}
+//	@SuppressWarnings("deprecation")
+//	public void update(ArrayList<Location> points) {
+//		if(p == null)
+//			return;
+//		
+//		for(Location point : points)
+//			if(borderContains(point))
+//				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+//	}
 	
-	@SuppressWarnings("deprecation")
-	public void hide() {
-		if(!isVisible || p == null)
-			return;
-		
-		isVisible = false;
-		
-		for(ArrayList<Location> chunk : borderChunks.values())
-			for(Location point : chunk)
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-	}
-
-	@SuppressWarnings("deprecation")
-	public void update(ArrayList<Location> points) {
-		if(!isVisible)
-			return;
-		
-		for(Location point : points)
-			if(borderContains(point))
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-	}
-
 	public void recalc(Location point) {
 		if(!borderContains(point))
 			return;
 		
-		hide();
 		removeBorder(point);
 		addBorder(Utils.getNearestSurface(point));
 	}

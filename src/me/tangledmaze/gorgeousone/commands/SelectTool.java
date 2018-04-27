@@ -1,5 +1,6 @@
 package me.tangledmaze.gorgeousone.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
@@ -83,7 +84,7 @@ public class SelectTool {
 					sHandler.deselectSelection(p);
 			
 			}else {
-				p.sendMessage(Constants.prefix + "The start setting tool can only be used on mazes.");
+				p.sendMessage(Constants.prefix + "The exit setting tool can only be used on mazes.");
 				p.sendMessage("/tangledmaze start");
 			}
 			break;
@@ -95,6 +96,20 @@ public class SelectTool {
 	}
 	
 	public void sendSelectionHelp(Player p) {
-		p.sendMessage("yo mom gay");
+		p.sendMessage(Constants.prefix + "With this command you can only choose between the following tool types:");
+		
+		p.sendMessage(ChatColor.DARK_GREEN + "rectangle");
+		p.sendMessage(ChatColor.GREEN + "Your selections set with a selection wand will form rectangles.");
+		
+		p.sendMessage(ChatColor.DARK_GREEN + "ellipse");
+		p.sendMessage(ChatColor.GREEN + "Your selections will form ellipses.");
+		
+		p.sendMessage(ChatColor.DARK_GREEN + "brush");
+		p.sendMessage(ChatColor.GREEN + "By clicking on a maze's border with this tool you can brush away the border at that block.");
+		
+		p.sendMessage(ChatColor.DARK_GREEN + "exit");
+		p.sendMessage(ChatColor.GREEN + "By clicking on a maze's border you can select exits, where gaps will be left when building the maze.");
+		
+		p.sendMessage("/tangledmaze select <tool type>");
 	}
 }
