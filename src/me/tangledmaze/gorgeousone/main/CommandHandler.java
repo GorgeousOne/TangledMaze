@@ -15,42 +15,45 @@ import me.tangledmaze.gorgeousone.rawmessage.Color;
 import me.tangledmaze.gorgeousone.rawmessage.RawMessage;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
-public class CommandListener implements CommandExecutor {
+public class CommandHandler implements CommandExecutor {
 	
-	private SelectTool selectCommand;
 	private StartMaze startCommand;
-	private SetMazeHeight heigthCommand;
+	private DiscardtAll discardCommand;
+	private SelectTool selectCommand;
 	private AddMaze addCommand;
-	private SubtractMaze subtCommand;
-	private DeselectAll deselectCommand;
+	private CutMaze cutCommand;
+	private Undo undoCommand;
+	private SetMazeHeight heigthCommand;
 	private BuildMaze buildCommand;
 	
 	//contents of the first help page
 	private RawMessage[] pageLinks;
 
-	public CommandListener() {
-		selectCommand   = new SelectTool();
-		startCommand    = new StartMaze();
-		heigthCommand   = new SetMazeHeight();
-		addCommand      = new AddMaze();
-		subtCommand     = new SubtractMaze();
-		deselectCommand = new DeselectAll();
-		buildCommand    = new BuildMaze();
+	public CommandHandler() {
+		startCommand   = new StartMaze();
+		discardCommand = new DiscardtAll();
+		selectCommand  = new SelectTool();
+		addCommand     = new AddMaze();
+		cutCommand     = new CutMaze();
+		undoCommand    = new Undo();
+		heigthCommand  = new SetMazeHeight();
+		buildCommand   = new BuildMaze();
 		
-		pageLinks = new RawMessage[7];
+		pageLinks = new RawMessage[8];
 		
-		for(int i = 0; i < 7; i++) {
+		for(int i = 0; i < 8; i++) {
 			pageLinks[i] = new RawMessage();
 			pageLinks[i].add(" " + (i+2) + " ").color(Color.GREEN);
 		}
 		
-		pageLinks[0].add("start").                                  color(Color.LIGHT_GREEN).click("/tm help 2", ClickAction.RUN);
-		pageLinks[1].add("undo").                                   color(Color.LIGHT_GREEN).click("/tm help 3", ClickAction.RUN);
+		pageLinks[0].add("wand").                                   color(Color.LIGHT_GREEN).click("/tm help 2", ClickAction.RUN);
+		pageLinks[1].add("start").                                  color(Color.LIGHT_GREEN).click("/tm help 3", ClickAction.RUN);
 		pageLinks[2].add("discard").                                color(Color.LIGHT_GREEN).click("/tm help 4", ClickAction.RUN);
 		pageLinks[3].add("select <tool type>").                     color(Color.LIGHT_GREEN).click("/tm help 5", ClickAction.RUN);
 		pageLinks[4].add("add/cut").                                color(Color.LIGHT_GREEN).click("/tm help 6", ClickAction.RUN);
-		pageLinks[5].add("height <integer>").                       color(Color.LIGHT_GREEN).click("/tm help 7", ClickAction.RUN);
-		pageLinks[6].add("build <block type 1> ... <block type n>").color(Color.LIGHT_GREEN).click("/tm help 8", ClickAction.RUN);
+		pageLinks[5].add("undo").                                   color(Color.LIGHT_GREEN).click("/tm help 7", ClickAction.RUN);
+		pageLinks[6].add("height <integer>").                       color(Color.LIGHT_GREEN).click("/tm help 8", ClickAction.RUN);
+		pageLinks[7].add("build <block type 1> ... <block type n>").color(Color.LIGHT_GREEN).click("/tm help 9", ClickAction.RUN);
 	}
 	
 	@Override
@@ -81,11 +84,8 @@ public class CommandListener implements CommandExecutor {
 				startCommand.execute(p);
 				break;
 				
-			case "undo":
-				break;
-				
 			case "discard":
-				deselectCommand.execute(p);
+				discardCommand.execute(p);
 				break;
 
 			case "select":
@@ -102,7 +102,11 @@ public class CommandListener implements CommandExecutor {
 				
 			case "cut":
 			case "subtract":
-				subtCommand.execute(p);
+				cutCommand.execute(p);
+				break;
+			
+			case "undo":
+				undoCommand.execute(p);
 				break;
 				
 			case "height":
@@ -162,26 +166,33 @@ public class CommandListener implements CommandExecutor {
 				pageLink.send(p);
 			
 			break;
-
-		//start
+		//wand
 		case 2:
+			p.sendMessage(ChatColor.YELLOW + "Wand Command");
+			p.sendMessage(ChatColor.GREEN + "This commands hands you over a selection wand. This mighty tool of immeasurable power can be used to create glorious mazes.");
+			p.sendMessage(ChatColor.GREEN + "Ok how does it work:");
+			p.sendMessage(ChatColor.GREEN + "With the wand you can create selections, which are the very first idea of a maze. Just click 2 blocks anywhere and in the rectangle between them a selection will be created. "
+					+ "Click any other two blocks and a new selection will be created.");
+			p.sendMessage(ChatColor.GREEN + "If you are sure about where you want to begin your maze's ground plot use the commad " + ChatColor.DARK_GREEN + "\"start\"" + ChatColor.GREEN + ".");
+			break;
+		//start
+		case 3:
 			p.sendMessage(ChatColor.YELLOW + "Start Command");
 			p.sendMessage(ChatColor.GREEN + "When you are done creating a selection use this command to create the raw ground plot of your maze.");
 			p.sendMessage(ChatColor.GREEN + "To edit it further you can use the add/cut command and the brush tool.");
 			break;
 		//undo
-		case 3:
+		case 4:
 			p.sendMessage(ChatColor.YELLOW + "Undo Command");
-			p.sendMessage(ChatColor.GREEN + "The undo command isnt implemented yet. who knows how it wil work"); //TODO
 			break;
 		//discard
-		case 4:
+		case 5:
 			p.sendMessage(ChatColor.YELLOW + "Discard Command");
 			p.sendMessage(ChatColor.GREEN + "If you have created a ground plot for a maze you don't want to work with anymore use this command to delete it.");
 			p.sendMessage(ChatColor.GREEN + "It will also remove any existing selection of yours.");
 			break;
 		//select
-		case 5:
+		case 6:
 			p.sendMessage(ChatColor.YELLOW + "Select Command");
 			p.sendMessage(ChatColor.GREEN + "With this command you can choose which tool you want to use for editing your maze's ground plot");
 			p.sendMessage(ChatColor.GREEN + "You have the choice between the following tools:");
@@ -203,19 +214,19 @@ public class CommandListener implements CommandExecutor {
 			p.sendMessage(ChatColor.GREEN + "All these actions are undoable with the command " + ChatColor.DARK_GREEN + "\"undo\"" + ChatColor.GREEN + ".");
 			break;
 		//add + cut
-		case 6:
+		case 7:
 			p.sendMessage(ChatColor.YELLOW + "Add/Cut Command");
 			p.sendMessage(ChatColor.GREEN + "If you have a ground plot for a maze and already selected a new selection you can use these 2 commands to either add the selection to your maze or to cut it away.");
 			p.sendMessage(ChatColor.GREEN + "If you want to undo a mistake you can use the command" + ChatColor.DARK_GREEN + "\"undo\"" + ChatColor.GREEN + ".");
 			break;
 		//height
-		case 7:
+		case 8:
 			p.sendMessage(ChatColor.YELLOW + "Height Command");
 			p.sendMessage(ChatColor.GREEN + "With this command you can decide how tall the walls of your maze should be built.");
 			p.sendMessage(ChatColor.GREEN + "The default height is 3 blocks and values between 1 and 20 will be accepted (which already would be extra ordinary to my mind).");
 			break;
 		//build
-		case 8:
+		case 9:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
 			p.sendMessage(ChatColor.GREEN + "This command will finally build your maze up. You are in the postion to choose which type of blocks should be used here:");
 			p.sendMessage(ChatColor.GREEN + "After " + ChatColor.DARK_GREEN + "\"/tangledmaze build\"" + ChatColor.GREEN + " just type the names of the blocks you want to use and plus \":\" and the needed data value.");
@@ -226,6 +237,5 @@ public class CommandListener implements CommandExecutor {
 		}
 		
 		p.sendMessage("");
-//		p.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + page + "/8");
 	}
 }

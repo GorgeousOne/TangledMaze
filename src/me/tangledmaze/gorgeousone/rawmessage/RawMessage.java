@@ -38,7 +38,6 @@ public class RawMessage {
 		message.deleteCharAt(message.length()-1);
 		message.append(end);
 
-		System.out.println(message.toString());
 		return message.toString();
 	}
 }

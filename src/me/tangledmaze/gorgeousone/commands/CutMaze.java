@@ -8,12 +8,12 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import net.md_5.bungee.api.ChatColor;
 
-public class SubtractMaze {
+public class CutMaze {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public SubtractMaze() {
+	public CutMaze() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}

@@ -6,17 +6,16 @@ import org.bukkit.Location;
 
 public class MazeAction {
 	
-	private ArrayList<Location> addedFill, removedFill, addedBorder, removedBorder, addedExits, removedExits;
+	private ArrayList<Location> addedFill, removedFill, addedBorder, removedBorder, removedExits;
 	
 	public MazeAction(ArrayList<Location> addedFill,   ArrayList<Location> removedFill,
 					  ArrayList<Location> addedBorder, ArrayList<Location> removedBorder,
-					  ArrayList<Location> addedExits,  ArrayList<Location> removedExits) {
+					  ArrayList<Location> removedExits) {
 		
 		this.addedFill     = addedFill;
 		this.addedBorder   = addedBorder;
 		this.removedFill   = removedFill;
 		this.removedBorder = removedBorder;
-		this.addedExits    = addedExits;
 		this.removedExits  = removedExits;
 	}
 
@@ -34,10 +33,6 @@ public class MazeAction {
 	
 	public ArrayList<Location> getRemovedBorder() {
 		return removedBorder;
-	}
-	
-	public ArrayList<Location> getAddedExits() {
-		return addedExits;
 	}
 	
 	public ArrayList<Location> getRemovedExits() {

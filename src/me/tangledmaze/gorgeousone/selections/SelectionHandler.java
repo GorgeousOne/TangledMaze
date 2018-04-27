@@ -2,6 +2,7 @@ package me.tangledmaze.gorgeousone.selections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,9 +28,9 @@ public class SelectionHandler {
 	private PluginManager pm;
 	private MazeHandler mHandler;
 	
-	private HashMap<Player, Class<? extends Shape>> selectionTypes;
-	private HashMap<Player, RectSelection> selections;
-	private HashMap<Player, Block> resizingSelections;
+	private HashMap<UUID, Class<? extends Shape>> selectionTypes;
+	private HashMap<UUID, RectSelection> selections;
+	private HashMap<UUID, Block> resizingSelections;
 	private HashMap<RectSelection, Boolean> selectionVisibilities;
 	
 	public SelectionHandler() {
@@ -50,10 +51,10 @@ public class SelectionHandler {
 	
 	public void handleInteraction(Player p, Block b) {
 		
-		if(!selectionTypes.containsKey(p))
-			selectionTypes.put(p, Rectangle.class);
+		if(!selectionTypes.containsKey(p.getUniqueId()))
+			selectionTypes.put(p.getUniqueId(), Rectangle.class);
 		
-		Class<? extends Shape> type = selectionTypes.get(p);
+		Class<? extends Shape> type = selectionTypes.get(p.getUniqueId());
 		
 		if(type.equals(Rectangle.class) || type.equals(Ellipse.class))
 			selectRect(p, b);
@@ -80,15 +81,16 @@ public class SelectionHandler {
 	
 	private void selectRect(Player p, Block b) {
 		RectSelection selection;
-
+		UUID uuid = p.getUniqueId();
+		
 		//if there is already a selection started by the player
-		if(selections.containsKey(p)) {
-			selection = selections.get(p);
+		if(selections.containsKey(uuid)) {
+			selection = selections.get(uuid);
 			
 			//handles selection resizing
-			if(resizingSelections.containsKey(p)) {
-				pm.callEvent(new SelectionResizeEvent(p, resizingSelections.get(p), b));
-				resizingSelections.remove(p);
+			if(resizingSelections.containsKey(uuid)) {
+				pm.callEvent(new SelectionResizeEvent(p, resizingSelections.get(uuid), b));
+				resizingSelections.remove(uuid);
 				return;
 			}
 			
@@ -97,7 +99,7 @@ public class SelectionHandler {
 				if(!selection.isComplete())
 					return;
 				
-				resizingSelections.put(p, b);
+				resizingSelections.put(uuid, b);
 				return;
 			}
 			
@@ -118,15 +120,15 @@ public class SelectionHandler {
 	}
 	
 	public boolean hasSelection(Player p) {
-		return selections.containsKey(p);
+		return selections.containsKey(p.getUniqueId());
 	}
 	
 	public RectSelection getSelection(Player p) {
-		return selections.get(p);
+		return selections.get(p.getUniqueId());
 	}
 	
 	public void setSelection(Player p, RectSelection selection) {
-		selections.put(p, selection);
+		selections.put(p.getUniqueId(), selection);
 		selectionVisibilities.put(selection, false);
 	}
 
@@ -134,11 +136,11 @@ public class SelectionHandler {
 		if(!p.isOnline() || !p.hasPermission(Constants.buildPerm))
 			return null;
 
-		return selectionTypes.containsKey(p) ? selectionTypes.get(p) : Rectangle.class;
+		return selectionTypes.containsKey(p.getUniqueId()) ? selectionTypes.get(p.getUniqueId()) : Rectangle.class;
 	}
 	
 	public void setSelectionType(Player p, Class<? extends Shape> type) {
-		selectionTypes.put(p, type);
+		selectionTypes.put(p.getUniqueId(), type);
 	}
 	
 	public boolean isVisible(RectSelection selection) {
@@ -190,20 +192,24 @@ public class SelectionHandler {
 	}
 	
 	public void deselectSelection(Player p) {
-		if(selections.containsKey(p)) {
-			if(isVisible(selections.get(p)))
-				hide(selections.get(p));
+		UUID uuid = p.getUniqueId();
+		
+		if(selections.containsKey(uuid)) {
+			if(isVisible(selections.get(uuid)))
+				hide(selections.get(uuid));
 			
-			selectionVisibilities.remove(selections.get(p));
-			resizingSelections.remove(p);
-			selections.remove(p);
+			selectionVisibilities.remove(selections.get(uuid));
+			resizingSelections.remove(uuid);
+			selections.remove(uuid);
 		}
 	}
 	
 	public void remove(Player p) {
-		selectionVisibilities.remove(selections.get(p));
-		selectionTypes.remove(p);
-		selections.remove(p);
-		resizingSelections.remove(p);
+		UUID uuid = p.getUniqueId();
+		
+		selectionVisibilities.remove(selections.get(uuid));
+		selectionTypes.remove(uuid);
+		selections.remove(uuid);
+		resizingSelections.remove(uuid);
 	}
 }

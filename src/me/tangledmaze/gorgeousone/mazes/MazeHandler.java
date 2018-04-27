@@ -2,6 +2,7 @@ package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,8 +14,8 @@ import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class MazeHandler {
 	
-	private HashMap<Player, Maze> mazes;
-	private HashMap<Player, Integer> mazeHeights;
+	private HashMap<UUID, Maze> mazes;
+	private HashMap<UUID, Integer> mazeHeights;
 	private HashMap<Maze, Boolean> mazeVisibilities;
 	
 	public MazeHandler() {
@@ -33,11 +34,11 @@ public class MazeHandler {
 	}
 	
 	public boolean hasMaze(Player p) {
-		return mazes.containsKey(p);
+		return mazes.containsKey(p.getUniqueId());
 	}
 	
 	public Maze getMaze(Player p) {
-		return mazes.get(p);
+		return mazes.get(p.getUniqueId());
 	}
 	
 	public boolean isVisible(Maze maze) {
@@ -45,66 +46,72 @@ public class MazeHandler {
 	}
 	
 	public void setMazeHeight(Player p, int height) {
-		mazeHeights.put(p, height);
+		mazeHeights.put(p.getUniqueId(), height);
 		
-		if(mazes.containsKey(p))
-			mazes.get(p).setWallHeight(height);
+		if(mazes.containsKey(p.getUniqueId()))
+			mazes.get(p.getUniqueId()).setWallHeight(height);
 	}
 	
 	public Integer getMazeHeight(Player p) {
-		return mazeHeights.get(p);
+		return mazeHeights.get(p.getUniqueId());
 	}
 
 	public void deselctMaze(Player p) {
 		if(hasMaze(p)) {
-			hide(mazes.get(p));
-			mazeVisibilities.remove(mazes.get(p));
-			mazes.remove(p);
+			UUID uuid = p.getUniqueId();
+			
+			hide(mazes.get(uuid));
+			mazeVisibilities.remove(mazes.get(uuid));
+			mazes.remove(uuid);
 		}
 	}
 	
 	public void remove(Player p) {
-		mazeVisibilities.remove(mazes.get(p));
-		mazeHeights.remove(p);
-		mazes.remove(p);
+		UUID uuid = p.getUniqueId();
+		
+		mazeVisibilities.remove(mazes.get(uuid));
+		mazeHeights.remove(uuid);
+		mazes.remove(uuid);
 	}
 	
 	public void startMaze(Player p, RectSelection selection) throws IllegalArgumentException {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		if(mazes.containsKey(p))
-			hide(mazes.get(p));
+		UUID uuid = p.getUniqueId();
+
+		if(mazes.containsKey(uuid))
+			hide(mazes.get(uuid));
 		
 		Maze maze = new Maze(selection.getShape(), p);
-		mazes.put(p, maze);
+		mazes.put(uuid, maze);
 		mazeVisibilities.put(maze, false);
 		
-		if(!mazeHeights.containsKey(p))
-			mazeHeights.put(p, 3);
+		if(!mazeHeights.containsKey(uuid))
+			mazeHeights.put(uuid, 3);
 		
-		maze.setWallHeight(mazeHeights.get(p));
+		maze.setWallHeight(mazeHeights.get(uuid));
 	}
 	
 	public void addSelectionToMaze(Player p, RectSelection selection) throws Exception {
-		if(!mazes.containsKey(p))
+		if(!mazes.containsKey(p.getUniqueId()))
 			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
 		
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		Maze maze = mazes.get(p);
+		Maze maze = mazes.get(p.getUniqueId());
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getAddition(selection.getShape())));
 	}
 	
 	public void cutSelctionFromMaze(Player p, RectSelection selection)  throws Exception {
-		if(!mazes.containsKey(p))
+		if(!mazes.containsKey(p.getUniqueId()))
 			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
 		
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		Maze maze = mazes.get(p);
+		Maze maze = mazes.get(p.getUniqueId());
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getSubtraction(selection.getShape())));
 	}
 	

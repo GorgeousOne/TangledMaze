@@ -1,19 +1,18 @@
 package me.tangledmaze.gorgeousone.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.main.TangledMain;
-import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.mazes.Maze;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
-public class Undo {
+public class Undo { //TODO
 
-	@SuppressWarnings("unused")
-	private SelectionHandler handler;
+	private MazeHandler mHandler;
 	
 	public Undo() {
-		handler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	
 	public void execute(Player p) {
@@ -22,12 +21,16 @@ public class Undo {
 			p.sendMessage(Constants.insufficientPerms);
 			return;
 		}
-		
-		try {
-			
-		} catch (Exception e) {
-			if(e instanceof IllegalArgumentException)
-				p.sendMessage(ChatColor.RED + "");
+
+		if(!mHandler.hasMaze(p)) {
+			p.sendMessage(Constants.prefix + "You did not start a maze where aything can be undone.");
+			return;
 		}
+		
+		Maze maze = mHandler.getMaze(p);
+		
+		//inform the player if there could be undone something
+		if(maze.undoLast())
+			p.sendMessage(Constants.prefix + "Undid last action.");
 	}
 }

@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -113,24 +114,24 @@ public class RectSelection {
 		return shape.borderContains(point);
 	}
 	
-//	public boolean isHighlighted(Block b) {
-//		Chunk c = b.getChunk();
-//		
-//		if(isComplete) {
-//			if(!shape.getBorder().containsKey(c))
-//				return false;
-//			
-//			for(Location point : shape.getBorder().get(c))
-//				if(point.getBlock().equals(b))
-//					return true;
-//		}
-//		
-//		for(Location vertex : vertices)
-//			if(vertex.getBlock().equals(b))
-//				return true;
-//		
-//		return false;
-//	}
+	public boolean isHighlighted(Block b) {
+		Chunk c = b.getChunk();
+		
+		if(isComplete) {
+			if(!shape.getBorder().containsKey(c))
+				return false;
+			
+			for(Location point : shape.getBorder().get(c))
+				if(point.getBlock().equals(b))
+					return true;
+		}
+		
+		for(Location vertex : vertices)
+			if(vertex.getBlock().equals(b))
+				return true;
+		
+		return false;
+	}
 	
 	public boolean isVertex(Block b) {
 		if(!isComplete())

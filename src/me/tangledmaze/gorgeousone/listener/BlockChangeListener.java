@@ -1,6 +1,8 @@
 package me.tangledmaze.gorgeousone.listener;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -63,25 +65,31 @@ public class BlockChangeListener implements Listener {
 		}.runTask(TangledMain.getPlugin());
 	}
 	
+	//right clicking block doesn't really get detected... only shovels n stuff
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		if(e.getAction() != Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK)
 			return;
 		
 		ItemStack item = e.getItem();
-
+		
 		if(TangledMain.isSelectionWand(item))
 			return;
 
-		Location point = e.getClickedBlock().getLocation();
+		Player p = e.getPlayer();
+		Block b = e.getClickedBlock();
 		
-		for(Maze maze : mHandler.getMazes())
-			if(mHandler.isVisible(maze) && maze.borderContains(point))
+		if(mHandler.hasMaze(p)) {
+			Maze maze = mHandler.getMaze(p);
+			if(mHandler.isVisible(maze) && maze.isHighlighted(b))
 				mHandler.hide(maze);
+		}
 		
-		for(RectSelection selection : sHandler.getSelections())
-			if(sHandler.isVisible(selection) && selection.borderContains(point))
+		if(sHandler.hasSelection(p)) {
+			RectSelection selection = sHandler.getSelection(p);
+			if(sHandler.isVisible(selection) && selection.isHighlighted(b))
 				sHandler.hide(selection);
+		}
 	}
 	
 	private void update(Location point) {
