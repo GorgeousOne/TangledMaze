@@ -8,13 +8,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.plugin.PluginManager;
 
+import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionCompleteEvent;
 import me.tangledmaze.gorgeousone.events.SelectionResizeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionStartEvent;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
+import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.Ellipse;
@@ -49,28 +52,37 @@ public class SelectionHandler {
 			hide(selection);
 	}
 	
-	public void handleInteraction(Player p, Block b) {
+	public void handleInteraction(Player p, Block b, Action a) {
 		
+		//give this player a type of selection he is starting xD
 		if(!selectionTypes.containsKey(p.getUniqueId()))
 			selectionTypes.put(p.getUniqueId(), Rectangle.class);
 		
 		Class<? extends Shape> type = selectionTypes.get(p.getUniqueId());
 		
+		//handle rectangles and selections separately
 		if(type.equals(Rectangle.class) || type.equals(Ellipse.class))
 			selectRect(p, b);
-			
-		else if(type.equals(Brush.class)) {
-			if(!mHandler.hasMaze(p))
-				return;
-
-			Maze maze = mHandler.getMaze(p);
-			maze.brush(b);
-				
-			if(maze.size() == 0) {
-				mHandler.deselctMaze(p);
-				setSelectionType(p, Rectangle.class);
-			}
 		
+		//handle the brushing here
+		else if(type.equals(Brush.class)) {
+			
+			Maze maze = mHandler.getMaze(p);
+			MazeAction shaping = null;
+			
+			//get affected blocks of shaping as a MazeAction
+			if(a == Action.RIGHT_CLICK_BLOCK) {
+				shaping = maze.reduce(b);
+			}else
+				shaping = maze.enlarge(b);
+			
+			//if the maze was shaped somehow call an event
+			if(shaping != null)
+				pm.callEvent(new MazeShapeEvent(maze, shaping));
+			else {
+				//TODO show wrong use of tool by spawning smoke particles
+			}
+			
 		}else if(type.equals(ExitSetter.class)) {
 			if(!mHandler.hasMaze(p))
 				return;

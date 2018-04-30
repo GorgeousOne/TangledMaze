@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -30,7 +30,7 @@ public abstract class Utils {
 			new Vector(-1, 0,  0),
 			new Vector( 0, 0, -1)));
 
-	private static ArrayList<Material> UNSATABLE_SOLIDS = new ArrayList<>(Arrays.asList(
+	private static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.ACACIA_DOOR,
 			Material.ACTIVATOR_RAIL,
 			Material.BIRCH_DOOR,
@@ -114,12 +114,70 @@ public abstract class Utils {
 			Material.WEB,
 			Material.YELLOW_FLOWER));
 	
-	public static boolean isReallySolid(Block b) {
-		return b.getType().isSolid() && !UNSATABLE_SOLIDS.contains(b.getType());
+//	private static ArrayList<Material> NON_BUILD_SOLIDS = new ArrayList<>(Arrays.asList(
+//			Material.ACACIA_DOOR,
+//			Material.ACTIVATOR_RAIL,
+//			Material.BIRCH_DOOR,
+//			Material.BREWING_STAND,
+//			Material.BROWN_MUSHROOM,
+//			Material.CARPET,
+//			Material.CARROT,
+//			Material.DARK_OAK_DOOR,
+//			Material.DAYLIGHT_DETECTOR,
+//			Material.DEAD_BUSH,
+//			Material.DETECTOR_RAIL,
+//			Material.DOUBLE_PLANT,
+//			Material.ENDER_CHEST,
+//			Material.FIRE,
+//			Material.FLOWER_POT,
+//			Material.GOLD_PLATE,
+//			Material.IRON_DOOR,
+//			Material.IRON_PLATE,
+//			Material.JUNGLE_DOOR,
+//			Material.LADDER,
+//			Material.LEVER,
+//			Material.LONG_GRASS,
+//			Material.MELON_STEM,
+//			Material.PISTON_MOVING_PIECE,
+//			Material.POTATO,
+//			Material.POWERED_RAIL,
+//			Material.PUMPKIN_STEM,
+//			Material.RAILS,
+//			Material.RED_MUSHROOM,
+//			Material.RED_ROSE,
+//			Material.REDSTONE_TORCH_OFF,
+//			Material.REDSTONE_TORCH_ON,
+//			Material.REDSTONE_WIRE,
+//			Material.SAPLING,
+//			Material.SIGN_POST,
+//			Material.SKULL,
+//			Material.SPRUCE_DOOR,
+//			Material.SNOW,
+//			Material.STANDING_BANNER,	
+//			Material.STONE_BUTTON,
+//			Material.STONE_PLATE,
+//			Material.SUGAR_CANE_BLOCK,
+//			Material.TORCH,
+//			Material.TRAPPED_CHEST,
+//			Material.TRIPWIRE,
+//			Material.TRIPWIRE_HOOK,
+//			Material.VINE,
+//			Material.WALL_BANNER,
+//			Material.WALL_SIGN,
+//			Material.WATER_LILY,
+//			Material.WHEAT,
+//			Material.WOOD_PLATE,
+//			Material.WOOD_BUTTON,
+//			Material.WOODEN_DOOR,
+//			Material.WEB,
+//			Material.YELLOW_FLOWER));
+	
+	public static boolean isLikeGround(Material m) {
+		return m.isSolid() && !NOT_GROUND_SOLIDS.contains(m);
 	}
-
-	public static boolean canBeReplaced(Block b) {
-		return !b.getType().isSolid() || REPLACABLE_SOLIDS.contains(b.getType()); 
+	
+	public static boolean canBeReplaced(Material m) {
+		return !m.isSolid() || REPLACABLE_SOLIDS.contains(m); 
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -143,14 +201,14 @@ public abstract class Utils {
 		r.runTask(TangledMain.getPlugin());
 	}
 	
-	public static Location getNearestSurface(Location loc) {
+	public static Location nearestSurface(Location loc) {
 		Location iter = loc.clone();
 		
-		if(isReallySolid(iter.getBlock()))
+		if(isLikeGround(iter.getBlock().getType()))
 			while(iter.getY() <= 255) {
 				iter.add(0, 1, 0);
 				
-				if(!isReallySolid(iter.getBlock())) {
+				if(!isLikeGround(iter.getBlock().getType())) {
 					iter.add(0, -1, 0);
 					return iter;
 				}
@@ -159,7 +217,7 @@ public abstract class Utils {
 			while(iter.getY() >= 0) {
 				iter.add(0, -1, 0);
 				
-				if(isReallySolid(iter.getBlock()))
+				if(isLikeGround(iter.getBlock().getType()))
 					return iter;
 			}
 		
@@ -174,5 +232,25 @@ public abstract class Utils {
 				max = i;
 		
 		return max;
+	}
+	
+	public static ArrayList<Location> calcRectangleVertices(Location p0, Location p1) {
+		ArrayList<Location> vertices = new ArrayList<>();
+		World w = p0.getWorld();
+		
+		int maxY = Math.max(p0.getBlockY(), p1.getBlockY());
+		
+		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
+			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
+			maxX = Math.max(p0.getBlockX(), p1.getBlockX()),
+			maxZ = Math.max(p0.getBlockZ(), p1.getBlockZ());
+		
+		vertices = new ArrayList<>(Arrays.asList(
+				Utils.nearestSurface(new Location(w, minX, maxY, minZ)),
+				Utils.nearestSurface(new Location(w, maxX, maxY, minZ)),
+				Utils.nearestSurface(new Location(w, maxX, maxY, maxZ)),
+				Utils.nearestSurface(new Location(w, minX, maxY, maxZ))));
+		
+		return vertices;
 	}
 }

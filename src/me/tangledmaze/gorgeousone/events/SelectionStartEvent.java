@@ -24,7 +24,7 @@ public class SelectionStartEvent extends SelectionEvent {
 				if(!isCancelled()) {
 					sHandler.deselectSelection(p);
 					
-					RectSelection selection = new RectSelection(clickedBlock, p, sHandler.getSelectionType(p));
+					RectSelection selection = new RectSelection(clickedBlock, p);
 					sHandler.setSelection(p, selection);
 					sHandler.show(selection);
 				}

@@ -8,6 +8,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -30,6 +31,13 @@ public class MazeBuilder {
 	public MazeBuilder() {
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		mazeQueue = new ArrayList<>();
+	}
+	
+	public boolean isInQueue(Player p) {
+		for(Maze maze : mazeQueue)
+			if(p.equals(maze.getPlayer()))
+				return true;
+		return false;
 	}
 	
 	public int enqueueMaze(Maze maze) {
@@ -198,6 +206,7 @@ public class MazeBuilder {
 		int wallHeight = maze.getWallHeight();
 		
 		ArrayList<Block> placables = new ArrayList<>();
+		int pointY, neighborMaxY, maxY;
 		
 		for(int x = 0; x < mazeMap.length; x++) {
 			for(int z = 0; z < mazeMap[0].length; z++) {
@@ -205,9 +214,10 @@ public class MazeBuilder {
 				if(mazeMap[x][z] != WALL && mazeMap[x][z] != UNDEFINED)
 					continue;
 				
-				ArrayList<Integer> neighbourYs = new ArrayList<>();
-				neighbourYs.add(mazeYMap[x][z]);
-					
+				pointY = mazeYMap[x][z];
+
+				ArrayList<Integer> neighborYs = new ArrayList<>();
+				
 				for(Vector dir : directions) {
 					int x2 = x + dir.getBlockX(),
 						z2 = z + dir.getBlockZ();
@@ -216,19 +226,20 @@ public class MazeBuilder {
 					   z2 < 0 || z2 >= mazeMap[0].length)
 						continue;
 					
-					neighbourYs.add(mazeYMap[x + dir.getBlockX()][z + dir.getBlockZ()]);
+					neighborYs.add(mazeYMap[x + dir.getBlockX()][z + dir.getBlockZ()]);
 				}
 				
-				int maxY = Utils.getMax(neighbourYs),
-					groundY = mazeYMap[x][z];
+				neighborMaxY = Utils.getMax(neighborYs);
+				//make sure that the wall of this point ands at least 2 blocks above the neighbors ground
+				maxY = pointY+wallHeight >= neighborMaxY+2 ? pointY: neighborMaxY+2-wallHeight;
 				
-				for(int i = groundY+1; i <= maxY + wallHeight; i++) {
-					if(i > groundY + 2*wallHeight)
+				for(int i = pointY+1; i <= maxY + wallHeight; i++) {
+					if(i > pointY + 2*wallHeight)
 						break;
 					
 					Block b = (new Location(maze.getWorld(), x+shiftX, i, z+shiftZ)).getBlock();
 					
-					if(Utils.canBeReplaced(b))
+					if(Utils.canBeReplaced(b.getType()))
 						placables.add(b);
 				}
 			}
@@ -251,9 +262,8 @@ public class MazeBuilder {
 
 					counter++;
 
-					if(System.currentTimeMillis() - timer >= 50) {
+					if(System.currentTimeMillis() - timer >= 10) {
 						System.out.println("stopped after " + (System.currentTimeMillis() - timer) + "ms. " + counter + " coords set.");
-						System.out.println(i);
 						MazeBuilder.this.i = i;
 						counter = 0;
 						return;
@@ -271,6 +281,6 @@ public class MazeBuilder {
 				buildNextMaze();				
 			}
 		};
-		builder.runTaskTimer(TangledMain.getPlugin(), 0, 20);
+		builder.runTaskTimer(TangledMain.getPlugin(), 0, 2);
 	}
 }

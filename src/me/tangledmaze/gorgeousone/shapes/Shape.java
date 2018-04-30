@@ -9,6 +9,7 @@ import org.bukkit.Location;
 
 public interface Shape {
 	
+	public ArrayList<Location> getVertices();
 	public HashMap<Chunk, ArrayList<Location>> getBorder();
 	public HashMap<Chunk, ArrayList<Location>> getFill();
 	

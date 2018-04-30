@@ -17,6 +17,7 @@ import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Entry;
 import me.tangledmaze.gorgeousone.utils.NMSProvider;
+import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class BuildMaze {
 
@@ -36,6 +37,9 @@ public class BuildMaze {
 			p.sendMessage(Constants.insufficientPerms);
 			return;
 		}
+		
+		if(mBuilder.isInQueue(p))
+			p.sendMessage(Constants.prefix + "There already is a maze in the queue you built. Please wait until it gets finsihed before submitting a new one.");
 		
 		if(!mHandler.hasMaze(p)) {
 			
@@ -92,8 +96,9 @@ public class BuildMaze {
 				return;
 			}
 			
-			if(!material.isBlock()) {
+			if(!Utils.isLikeGround(material)) {
 				p.sendMessage(ChatColor.RED + "It could be difficult to build a maze out of \"" + blockType + "\".");
+				p.sendMessage(ChatColor.YELLOW + "This might not be reasonable and if so it will be fixed"); //TODO
 				return;
 			}
 

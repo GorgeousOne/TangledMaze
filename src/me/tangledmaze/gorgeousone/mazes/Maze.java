@@ -301,21 +301,20 @@ public class Maze {
 		return deletion;
 	}
 	
-	public void brush(Block b) {
+	public MazeAction reduce(Block b) {
 		Location point = b.getLocation();
 		
 		if(!borderContains(point) || !isHighlighted(b))
-			return;
+			return null;
 		
 		ArrayList<Location>
 			removedFill   = new ArrayList<>(),
-			addFill       = new ArrayList<>(),
 			removedBorder = new ArrayList<>(),
 			addedBorder   = new ArrayList<>(),
 			removedExits  = new ArrayList<>();
 		
 		MazeAction action = new MazeAction(
-				addFill,
+				new ArrayList<>(),
 				removedFill,
 				addedBorder,
 				removedBorder,
@@ -343,17 +342,53 @@ public class Maze {
 		removedBorder.add(point);
 		
 		//remove the exit if there is one as well ath this point
-		if(exits.contains(point)) {
+		if(exits.contains(point))
 			removedExits.add(point);
-			p.sendMessage("added");
-		}
 		
 		//if it seals the shape neighbor blocks have to replace it
 		if(isExternalBorder && isSealingBorder)
 			for(Location point2 : neighbors)
-				addedBorder.add(Utils.getNearestSurface(point2));
+				addedBorder.add(Utils.nearestSurface(point2));
 		
-		process(action);
+		return action;
+	}
+	
+	public MazeAction enlarge(Block b) {
+		Location point = b.getLocation();
+		
+		if(!borderContains(point) || !isHighlighted(b))
+			return null;
+		
+		ArrayList<Location>
+			addFill       = new ArrayList<>(),
+			removedBorder = new ArrayList<>(),
+			addedBorder   = new ArrayList<>(),
+			removedExits  = new ArrayList<>();
+		
+		MazeAction action = new MazeAction(
+				addFill,
+				new ArrayList<>(),
+				addedBorder,
+				removedBorder,
+				removedExits);
+		
+		removedBorder.add(point);
+
+		//add all uninvolved neighbors as border (and fill)
+		for(Vector dir : Utils.directions()) {
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
+			
+			if(!contains(point2)) {
+				addFill.add(point2);
+				addedBorder.add(point2);
+			}
+		}
+
+		//if there is an exit on this point remove it
+		if(exits.contains(point))
+			removedExits.add(point);
+		
+		return action;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -419,9 +454,9 @@ public class Maze {
 		Chunk c = point.getChunk();
 		
 		if(borderChunks.containsKey(c))
-			borderChunks.get(c).add(Utils.getNearestSurface(point));
+			borderChunks.get(c).add(Utils.nearestSurface(point));
 		else
-			borderChunks.put(c, new ArrayList<>(Arrays.asList(Utils.getNearestSurface(point))));
+			borderChunks.put(c, new ArrayList<>(Arrays.asList(Utils.nearestSurface(point))));
 	}
 	
 	private void removeFill(Location point) {
@@ -492,21 +527,11 @@ public class Maze {
 		return false;
 	}
 	
-//	@SuppressWarnings("deprecation")
-//	public void update(ArrayList<Location> points) {
-//		if(p == null)
-//			return;
-//		
-//		for(Location point : points)
-//			if(borderContains(point))
-//				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-//	}
-	
 	public void recalc(Location point) {
 		if(!borderContains(point))
 			return;
 		
 		removeBorder(point);
-		addBorder(Utils.getNearestSurface(point));
+		addBorder(Utils.nearestSurface(point));
 	}
 }

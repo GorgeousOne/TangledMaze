@@ -79,15 +79,11 @@ public class ToolListener implements Listener {
 		e.setCancelled(true);
 
 		if(!p.hasPermission(Constants.buildPerm)) {
-			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
-			p.getWorld().playSound( p.getLocation(), Sound.ITEM_BREAK, 1f, 1f);
-			p.damage(0);
-
-			p.getInventory().remove(item);
-			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
+			destroyTool(p, item);
 			return;
 		}
-		sHandler.handleInteraction(p, e.getClickedBlock());
+		
+		sHandler.handleInteraction(p, e.getClickedBlock(), e.getAction());
 	}
 	
 	@EventHandler
@@ -133,5 +129,17 @@ public class ToolListener implements Listener {
 				times.put(p, System.currentTimeMillis());
 		}
 	}
+	
+	private void destroyTool(Player p, ItemStack tool) {
+		p.getInventory().remove(tool);
+		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
 
+		p.damage(0);
+		p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
+		
+		//TODO is there any better way?
+		try {
+			p.getWorld().playSound( p.getLocation(), Sound.ITEM_BREAK, 1f, 1f);
+		} catch (NoSuchFieldError e) {}
+	}
 }

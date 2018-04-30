@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Ellipse implements Shape {
@@ -20,25 +19,32 @@ public class Ellipse implements Shape {
 	private Vector mid;
 	private double radiusX, radiusZ, aspect;
 	
-	public Ellipse(RectSelection selection) {
-		if(!selection.isComplete())
-			throw new IllegalArgumentException("The given selection is incomplete and cannot be used");
+	public Ellipse(ArrayList<Location> vertices) {
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("A rectangle neeeds 4 vertices to be determined.");
+		
+		this.vertices = vertices;
+		world = vertices.get(0).getWorld();
 
-		world    = selection.getWorld();
-		vertices = selection.getVertices();
 		borderChunks = new HashMap<>();
 		fillChunks   = new HashMap<>();
 		
-		radiusX = selection.getWidth() / 2d;
-		radiusZ = selection.getDepth() / 2d;
+		radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2;
+		radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2;
 		aspect = 1d * radiusZ / radiusX;
 		
-		mid = new Vector((vertices.get(0).getX() + vertices.get(2).getX()) / 2, 0,
-						 (vertices.get(0).getZ() + vertices.get(2).getZ()) / 2);
+		mid = new Vector(
+				vertices.get(0).getX() + radiusX, 0,
+				vertices.get(0).getZ() + radiusZ);
 
 		calcFillAndBorder();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<Location> getVertices() {
+		return (ArrayList<Location>) vertices.clone();
+	}
 	
 	@Override
 	public HashMap<Chunk, ArrayList<Location>> getBorder() {
@@ -124,7 +130,7 @@ public class Ellipse implements Shape {
 				//using radius-1/2: only one block sticks out at the edges
 				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
 				if(midPoint.distance(iter) <= radiusZ - 0.25)
-					addFill(Utils.getNearestSurface(point));
+					addFill(Utils.nearestSurface(point));
 				else
 					continue;
 				
@@ -132,7 +138,7 @@ public class Ellipse implements Shape {
 					Vector neighbour = iter.clone().add(dir.clone().setX(aspect * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
-						addBorder(Utils.getNearestSurface(point));
+						addBorder(Utils.nearestSurface(point));
 						break;
 					}
 				}
@@ -148,7 +154,7 @@ public class Ellipse implements Shape {
 		for(Location point2 : borderChunks.get(c))
 			if(point2.getX() == point.getX() &&
 			   point2.getZ() == point.getZ()) {
-				point2.setY(Utils.getNearestSurface(point).getY());
+				point2.setY(Utils.nearestSurface(point).getY());
 				break;
 			}
 	}

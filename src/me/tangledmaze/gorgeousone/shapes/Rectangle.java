@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Rectangle implements Shape {
@@ -18,17 +17,24 @@ public class Rectangle implements Shape {
 	private ArrayList<Location> vertices;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	
-	public Rectangle(RectSelection selection) {
-		if(!selection.isComplete())
-			throw new IllegalArgumentException("The given selection is incomplete and cannot be used");
+	public Rectangle(ArrayList<Location> vertices) {
 		
-		world    = selection.getWorld();
-		vertices = selection.getVertices();
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("A rectangle neeeds 4 vertices to be determined.");
+		
+		this.vertices = vertices;
+		world = vertices.get(0).getWorld();
 		
 		fillChunks   = new HashMap<>();
 		borderChunks = new HashMap<>();
 		
 		calcFillAndBorder();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ArrayList<Location> getVertices() {
+		return (ArrayList<Location>) vertices.clone();
 	}
 	
 	@Override
@@ -95,11 +101,11 @@ public class Rectangle implements Shape {
 			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
 				
 				Location point = new Location(world, x, maxY, z);
-				addFill(Utils.getNearestSurface(point));
+				addFill(Utils.nearestSurface(point));
 				
 				if(x == v0.getX() || x == v2.getX() ||
 				   z == v0.getZ() || z == v2.getZ())
-					addBorder(Utils.getNearestSurface(point));
+					addBorder(Utils.nearestSurface(point));
 			}
 	}
 	
@@ -112,7 +118,7 @@ public class Rectangle implements Shape {
 		for(Location point2 : borderChunks.get(c))
 			if(point2.getX() == point.getX() &&
 			   point2.getZ() == point.getZ()) {
-				point2.setY(Utils.getNearestSurface(point).getY());
+				point2.setY(Utils.nearestSurface(point).getY());
 				break;
 			}
 	}

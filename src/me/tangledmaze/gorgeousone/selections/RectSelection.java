@@ -1,9 +1,6 @@
 package me.tangledmaze.gorgeousone.selections;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -23,16 +20,13 @@ public class RectSelection {
 	private ArrayList<Location> vertices;
 	private boolean isComplete;
 	
-	private Class<? extends Shape> shapeType;
-
-	public RectSelection(Block firstVertex, Player editor, Class<? extends Shape> shapeType) {
+	public RectSelection(Block firstVertex, Player editor) {
 		this.p = editor;
 		world = firstVertex.getWorld();
 		vertices = new ArrayList<>();
 		isComplete = false;
 		
 		vertices.add(firstVertex.getLocation());
-		this.shapeType = shapeType;
 	}
 	
 	public World getWorld() {
@@ -63,41 +57,29 @@ public class RectSelection {
 		return shape;
 	}
 	
-	public void complete(Block b) {
-		worldCheck(b);
-		
-		if(isComplete)
-			return;
-		
-		calcVertices(vertices.get(0), b.getLocation());
+	public void setShape(Shape s) {
+		this.shape = s;
+		this.vertices = s.getVertices();
 		isComplete = true;
-		
-		try {
-			Constructor<? extends Shape> con = shapeType.getConstructor(this.getClass());
-			shape = con.newInstance(this);
-			
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public void moveVertexTo(Block vertex, Block newVertex) {
-		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
-			return;
-		
-		int index = indexOfVertex(vertex);
-		Location opposite = vertices.get((index+2) % 4);
-		
-		calcVertices(newVertex.getLocation(), opposite);
-
-		try {
-			Constructor<? extends Shape> con = shapeType.getConstructor(this.getClass());
-			shape = con.newInstance(this);
-			
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void moveVertexTo(Block vertex, Block newVertex) {
+//		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
+//			return;
+//		
+//		int index = indexOfVertex(vertex);
+//		Location opposite = vertices.get((index+2) % 4);
+//		
+//		calcVertices(newVertex.getLocation(), opposite);
+//
+//		try {
+//			Constructor<? extends Shape> con = shapeType.getConstructor(ArrayList.class);
+//			shape = con.newInstance(vertices);
+//			
+//		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public boolean contains(Location point) {
 		if(isComplete())
@@ -143,7 +125,7 @@ public class RectSelection {
 		return false;
 	}
 
-	private int indexOfVertex(Block b) {
+	public int indexOfVertex(Block b) {
 		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
@@ -158,35 +140,14 @@ public class RectSelection {
 		return isComplete;
 	}
 	
-	private void calcVertices(Location p0, Location p1) {
-		int maxY = Math.max(p0.getBlockY(), p1.getBlockY());
-		
-		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
-			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
-			maxX = Math.max(p0.getBlockX(), p1.getBlockX()),
-			maxZ = Math.max(p0.getBlockZ(), p1.getBlockZ());
-		
-		vertices = new ArrayList<>(Arrays.asList(
-				Utils.getNearestSurface(new Location(world, minX, maxY, minZ)),
-				Utils.getNearestSurface(new Location(world, maxX, maxY, minZ)),
-				Utils.getNearestSurface(new Location(world, maxX, maxY, maxZ)),
-				Utils.getNearestSurface(new Location(world, minX, maxY, maxZ))));
-	}
-
 	public void recalc(Location point) {
 		if(shape.borderContains(point)) {
 			shape.recalc(point);
 		
 			if(isVertex(point.getBlock())) {
 				int index = indexOfVertex(point.getBlock());
-				vertices.set(index, Utils.getNearestSurface(point));
+				vertices.set(index, Utils.nearestSurface(point));
 			}	
 		}
 	}		
-	
-	private void worldCheck(Block b) {
-		//this should only happen if I do a mistake
-		if(!b.getWorld().equals(world))
-			throw new IllegalArgumentException("The selection's world and the block's world do not match.");
-	}
 }
