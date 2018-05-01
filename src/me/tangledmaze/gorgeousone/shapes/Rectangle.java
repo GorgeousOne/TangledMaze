@@ -16,6 +16,7 @@ public class Rectangle implements Shape {
 	private World world;
 	private ArrayList<Location> vertices;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
+	private int size;
 	
 	public Rectangle(ArrayList<Location> vertices) {
 		
@@ -27,8 +28,12 @@ public class Rectangle implements Shape {
 		
 		fillChunks   = new HashMap<>();
 		borderChunks = new HashMap<>();
-		
-		calcFillAndBorder();
+	
+		size =
+			(vertices.get(1).getBlockX() - vertices.get(0).getBlockX() + 1) *
+			(vertices.get(1).getBlockX() - vertices.get(0).getBlockX() + 1);
+				
+ 		calcFillAndBorder();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -45,6 +50,11 @@ public class Rectangle implements Shape {
 	@Override
 	public HashMap<Chunk, ArrayList<Location>> getBorder() {
 		return borderChunks;
+	}
+	
+	@Override
+	public int size() {
+		return size;
 	}
 	
 	@Override

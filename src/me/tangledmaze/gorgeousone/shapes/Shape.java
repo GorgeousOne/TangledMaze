@@ -13,6 +13,8 @@ public interface Shape {
 	public HashMap<Chunk, ArrayList<Location>> getBorder();
 	public HashMap<Chunk, ArrayList<Location>> getFill();
 	
+	public int size();
+	
 	public boolean contains(Location point);
 	public boolean borderContains(Location point);
 	

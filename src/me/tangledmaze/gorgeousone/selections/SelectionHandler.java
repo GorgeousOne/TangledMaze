@@ -24,6 +24,8 @@ import me.tangledmaze.gorgeousone.shapes.Ellipse;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.gorgeousone.utils.Constants;
+import me.tangledmaze.gorgeousone.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
 public class SelectionHandler {
@@ -68,26 +70,32 @@ public class SelectionHandler {
 		else if(type.equals(Brush.class)) {
 			
 			Maze maze = mHandler.getMaze(p);
-			MazeAction shaping = null;
+			MazeAction brush = null;
 			
 			//get affected blocks of shaping as a MazeAction
 			if(a == Action.RIGHT_CLICK_BLOCK) {
-				shaping = maze.reduce(b);
+				brush = maze.reduce(b);
 			}else
-				shaping = maze.enlarge(b);
+				brush = maze.enlarge(b);
 			
 			//if the maze was shaped somehow call an event
-			if(shaping != null)
-				pm.callEvent(new MazeShapeEvent(maze, shaping));
-			else {
-				//TODO show wrong use of tool by spawning smoke particles
-			}
+			if(brush != null) {
+			
+				MazeShapeEvent brushing = new MazeShapeEvent(maze, brush);
+				pm.callEvent(brushing);
+				
+				if(brushing.isCancelled())	//TODO wait a tick?
+					Utils.sendBlockLater(p, b.getLocation(), Constants.MAZE_BORDER);
+			
+			}else if(Math.random() < 1/3d)
+				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not a maze's outline...");
 			
 		}else if(type.equals(ExitSetter.class)) {
 			if(!mHandler.hasMaze(p))
 				return;
 			
-			mHandler.getMaze(p).addExit(b);
+			if(!mHandler.getMaze(p).addExit(b) && Math.random() < 1/3d)
+				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
 		}
 	}
 	
@@ -101,8 +109,11 @@ public class SelectionHandler {
 			
 			//handles selection resizing
 			if(resizingSelections.containsKey(uuid)) {
-				pm.callEvent(new SelectionResizeEvent(p, resizingSelections.get(uuid), b));
-				resizingSelections.remove(uuid);
+				SelectionResizeEvent resize = new SelectionResizeEvent(p, resizingSelections.get(uuid), b);
+				pm.callEvent(resize);
+				
+				if(!resize.isCancelled())	//TODO actually wait that one tick before doing this?
+					resizingSelections.remove(uuid);
 				return;
 			}
 			

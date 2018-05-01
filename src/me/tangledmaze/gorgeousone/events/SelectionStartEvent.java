@@ -21,7 +21,10 @@ public class SelectionStartEvent extends SelectionEvent {
 			@Override
 			public void run() {
 				
-				if(!isCancelled()) {
+				if(isCancelled())
+					p.sendMessage(cancelMessage);
+				
+				else {
 					sHandler.deselectSelection(p);
 					
 					RectSelection selection = new RectSelection(clickedBlock, p);

@@ -29,6 +29,8 @@ public class TangledMain extends JavaPlugin {
 	private MazeHandler mHandler;
 	private MazeBuilder mBuilder;
 	
+	private int staffMazeSize, vipMazeSize, normalMazeSize;
+	
 	@Override
 	public void onLoad() {}
 	
@@ -58,6 +60,16 @@ public class TangledMain extends JavaPlugin {
 		mHandler.reload();
 	}
 	
+	private void loadConfig() {
+		reloadConfig();
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+		
+		staffMazeSize = getConfig().getInt("staff");
+		vipMazeSize = getConfig().getInt("vip");
+		normalMazeSize = getConfig().getInt("normal");
+	}
+	
 	public static TangledMain getPlugin() {
 		return plugin;
 	}
@@ -72,6 +84,18 @@ public class TangledMain extends JavaPlugin {
 	
 	public MazeBuilder getMazeBuilder() {
 		return mBuilder;
+	}
+
+	public int getStaffMazeSize() {
+		return staffMazeSize;
+	}
+
+	public int getVipMazeSize() {
+		return vipMazeSize;
+	}
+
+	public int getNormalMazeSize() {
+		return normalMazeSize;
 	}
 
 	public static ItemStack getWand() {
@@ -128,11 +152,5 @@ public class TangledMain extends JavaPlugin {
 		
 		int select = rnd.nextInt(enchants.length);
 		return enchants[select];
-	}
-	
-	private void loadConfig() {
-		reloadConfig();
-		getConfig().options().copyDefaults(true);
-		saveConfig();
 	}
 }

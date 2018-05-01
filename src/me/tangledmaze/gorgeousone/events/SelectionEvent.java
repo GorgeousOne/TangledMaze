@@ -16,6 +16,8 @@ public abstract class SelectionEvent extends Event implements Cancellable {
 	protected Block clickedBlock;
 	protected BukkitRunnable thread;
 	
+	protected String cancelMessage;
+	
 	public SelectionEvent(Player p, Block clickedBlock) {
 		this.p = p;
 		this.clickedBlock = clickedBlock;
@@ -31,10 +33,15 @@ public abstract class SelectionEvent extends Event implements Cancellable {
 	public boolean isCancelled() {
 		return isCancelled;
 	}
-
+	
 	@Override
-	public void setCancelled(boolean arg0) {
-		isCancelled = arg0;
+	public void setCancelled(boolean b) {
+		isCancelled = b;
+	}
+	
+	public void setCancelled(boolean b, String cancelMessage) {
+		isCancelled = b;
+		this.cancelMessage = cancelMessage;
 	}
 	
 	public Player getPlayer() {

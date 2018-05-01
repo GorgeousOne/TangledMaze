@@ -15,6 +15,7 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
 
 public class SelectionResizeEvent extends SelectionEvent {
 
@@ -53,6 +54,19 @@ public class SelectionResizeEvent extends SelectionEvent {
 			
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
+		}
+		
+		int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
+		
+		if(p.hasPermission(Constants.staffPerm))
+			maxMazeSize = TangledMain.getPlugin().getStaffMazeSize();
+		else if(p.hasPermission(Constants.vipPerm))
+			maxMazeSize = TangledMain.getPlugin().getVipMazeSize();
+		
+		if(maxMazeSize >= 0 && shape.size() > maxMazeSize) {
+			setCancelled(true);
+			p.sendMessage(ChatColor.RED + "This selection would be " + (shape.size() - maxMazeSize)
+					+ " blocks greater that the amount of blocks you are allowed to use for a maze at once (" + maxMazeSize + " blocks).");
 		}
 		
 		BukkitRunnable event = new BukkitRunnable() {

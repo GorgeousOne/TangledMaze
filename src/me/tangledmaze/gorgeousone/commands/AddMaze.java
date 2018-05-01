@@ -25,6 +25,12 @@ public class AddMaze {
 			return;
 		}
 		
+		if(!mHandler.hasMaze(p)) {
+			p.sendMessage(ChatColor.RED + "Please start a maze first.");
+			p.sendMessage("/tangledmaze start");
+			return;
+		}
+		
 		if(!sHandler.hasSelection(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 			p.sendMessage("/tangledmaze wand");
@@ -32,13 +38,11 @@ public class AddMaze {
 		}
 		
 		try {
-			mHandler.addSelectionToMaze(p, sHandler.getSelection(p));
-			p.sendMessage(Constants.prefix + "Added selection to maze.");
-			
+			mHandler.addSelectionToMaze(mHandler.getMaze(p), sHandler.getSelection(p));
+//				p.sendMessage(Constants.prefix + "Added selection to maze.");
+				
 		}catch (Exception e) {
 			if(e instanceof NullPointerException) {
-				p.sendMessage(ChatColor.RED + "Start a maze first.");
-				p.sendMessage("/tangledmaze start");
 				
 			}else if(e instanceof IllegalArgumentException)
 				p.sendMessage(ChatColor.RED + "Finish your selection first.");

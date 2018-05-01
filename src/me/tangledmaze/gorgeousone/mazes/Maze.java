@@ -392,11 +392,11 @@ public class Maze {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void addExit(Block b) {
+	public boolean addExit(Block b) {
 		Location newExit = b.getLocation();
 		
 		if(!borderContains(newExit) || !isHighlighted(b))
-			return;
+			return false;
 
 		//if the clicked point is already an exit remove it
 		for(int i = 0; i < exits.size(); i++)
@@ -410,7 +410,7 @@ public class Maze {
 				}
 				
 				exits.remove(i);
-				return;
+				return false;
 			}
 				
 		boolean isSealing = false;
@@ -426,7 +426,7 @@ public class Maze {
 		//return if the point cant be an exit
 		if(p != null && !isSealing) {
 			Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
-			return;
+			return false;
 		}
 		
 		//downgrade the last main exit to a normal exit (visually)
@@ -437,6 +437,8 @@ public class Maze {
 		
 		if(p != null)
 			Utils.sendBlockLater(p, newExit, Constants.MAZE_MAIN_EXIT);
+		
+		return true;
 	}
 	
 	private void addFill(Location point) {

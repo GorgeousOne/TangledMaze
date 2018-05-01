@@ -41,7 +41,7 @@ public class BlockChangeListener implements Listener {
 //	BlockPlaceEvent,
 //	BlockRedstoneEvent,
 //	PlayerInteractEvent
-//	this are theoretically all events that need to be listened to in order to detect block changes and updates. i don't wanna do this
+//	this are theoretically all events that need to be listened to in order to detect block changes and updates. i don't want to do this. and i wont do this until this plugin brings in money
 	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {

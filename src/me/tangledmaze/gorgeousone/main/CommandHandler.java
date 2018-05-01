@@ -151,10 +151,10 @@ public class CommandHandler implements CommandExecutor {
 	}
 	
 	private void sendCommandHelp(Player p, int page) {
-		if(page < 0 || page > 8)
+		if(page < 0 || page > pageLinks.length+1)
 			page = 1;
 		
-		p.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + page + "/8");
+		p.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + page + "/" + (pageLinks.length+1));
 		p.sendMessage("");
 		
 		switch (page) {
@@ -170,36 +170,37 @@ public class CommandHandler implements CommandExecutor {
 		case 2:
 			p.sendMessage(ChatColor.YELLOW + "Wand Command");
 			p.sendMessage(ChatColor.GREEN + "This commands hands you over a selection wand. This mighty tool of immeasurable power can be used to create glorious mazes.");
-			p.sendMessage(ChatColor.GREEN + "Ok how does it work:");
 			p.sendMessage(ChatColor.GREEN + "With the wand you can create selections, which are the very first idea of a maze. Just click 2 blocks anywhere and in the rectangle between them a selection will be created. "
-					+ "Click any other two blocks and a new selection will be created.");
+					+ "Click any other two blocks and a new selection will be created. To resize it just click on a corner of you selection.");
 			p.sendMessage(ChatColor.GREEN + "If you are sure about where you want to begin your maze's ground plot use the commad " + ChatColor.DARK_GREEN + "\"start\"" + ChatColor.GREEN + ".");
 			break;
 		//start
 		case 3:
 			p.sendMessage(ChatColor.YELLOW + "Start Command");
 			p.sendMessage(ChatColor.GREEN + "When you are done creating a selection use this command to create the raw ground plot of your maze.");
-			p.sendMessage(ChatColor.GREEN + "To edit it further you can use the add/cut command and the brush tool.");
+			p.sendMessage(ChatColor.GREEN + "To edit it further you can use the add/cut command or the brush tool.");
 			break;
 		//undo
 		case 4:
 			p.sendMessage(ChatColor.YELLOW + "Undo Command");
+			p.sendMessage(ChatColor.GREEN + "If you think the last thing you edited does not look that good use this command to undo it.");
+			p.sendMessage(ChatColor.GREEN + "It will works up to 10 times in a row but you cannot change anything on a built maze.");
 			break;
 		//discard
 		case 5:
 			p.sendMessage(ChatColor.YELLOW + "Discard Command");
-			p.sendMessage(ChatColor.GREEN + "If you have created a ground plot for a maze you don't want to work with anymore use this command to delete it.");
-			p.sendMessage(ChatColor.GREEN + "It will also remove any existing selection of yours.");
+			p.sendMessage(ChatColor.GREEN + "If you have created a ground plot for a maze you don't want to continue anymore use this command to delete it.");
+			p.sendMessage(ChatColor.GREEN + "It will also remove any existing selection of yours!");
 			break;
 		//select
 		case 6:
 			p.sendMessage(ChatColor.YELLOW + "Select Command");
-			p.sendMessage(ChatColor.GREEN + "With this command you can choose which tool you want to use for editing your maze's ground plot");
+			p.sendMessage(ChatColor.GREEN + "With this command you can choose which tool you want to use for editing your maze's ground plot.");
 			p.sendMessage(ChatColor.GREEN + "You have the choice between the following tools:");
 			p.sendMessage("");
 			
 			p.sendMessage(ChatColor.DARK_GREEN + "rectangle");
-			p.sendMessage(ChatColor.GREEN + "Your selections set with a selection wand will form rectangles.");
+			p.sendMessage(ChatColor.GREEN + "Your selections set with a wand will form rectangles.");
 			
 			p.sendMessage(ChatColor.DARK_GREEN + "ellipse");
 			p.sendMessage(ChatColor.GREEN + "Your selections will form ellipses.");
@@ -209,29 +210,28 @@ public class CommandHandler implements CommandExecutor {
 			
 			p.sendMessage(ChatColor.DARK_GREEN + "exit");
 			p.sendMessage(ChatColor.GREEN + "By clicking on a maze's outline you can select exits, where gaps will be left when building the maze.");
-			
-			p.sendMessage("");
-			p.sendMessage(ChatColor.GREEN + "All these actions are undoable with the command " + ChatColor.DARK_GREEN + "\"undo\"" + ChatColor.GREEN + ".");
 			break;
 		//add + cut
 		case 7:
 			p.sendMessage(ChatColor.YELLOW + "Add/Cut Command");
-			p.sendMessage(ChatColor.GREEN + "If you have a ground plot for a maze and already selected a new selection you can use these 2 commands to either add the selection to your maze or to cut it away.");
-			p.sendMessage(ChatColor.GREEN + "If you want to undo a mistake you can use the command" + ChatColor.DARK_GREEN + "\"undo\"" + ChatColor.GREEN + ".");
+			p.sendMessage(ChatColor.GREEN + "You can use this comand to add or cut away further selection from the ground plot of your maze.");
+			p.sendMessage(ChatColor.GREEN + "If you want to undo anything you can use the command" + ChatColor.DARK_GREEN + "\"undo\"" + ChatColor.GREEN + ".");
 			break;
 		//height
 		case 8:
 			p.sendMessage(ChatColor.YELLOW + "Height Command");
 			p.sendMessage(ChatColor.GREEN + "With this command you can decide how tall the walls of your maze should be built.");
-			p.sendMessage(ChatColor.GREEN + "The default height is 3 blocks and values between 1 and 20 will be accepted (which already would be extra ordinary to my mind).");
+			p.sendMessage(ChatColor.GREEN + "The default height is 3 blocks and it can be set up to 20 (which already would be extra ordinary to my mind).");
 			break;
 		//build
 		case 9:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
-			p.sendMessage(ChatColor.GREEN + "This command will finally build your maze up. You are in the postion to choose which type of blocks should be used here:");
-			p.sendMessage(ChatColor.GREEN + "After " + ChatColor.DARK_GREEN + "\"/tangledmaze build\"" + ChatColor.GREEN + " just type the names of the blocks you want to use and plus \":\" and the needed data value.");
+			p.sendMessage(ChatColor.GREEN + "This command will finally build your maze up. You can choose which type of blocks should be used therefore:");
+			p.sendMessage(ChatColor.GREEN + "After " + ChatColor.DARK_GREEN + "\"/tangledmaze build\"" + ChatColor.GREEN + " just type the names of the blocks you want to use plus \":\" and the needed data value.");
 			p.sendMessage(ChatColor.GREEN + "Depending on the size of you maze and the power of the server the time to finish can vary.");
-			p.sendMessage(ChatColor.DARK_GREEN + "Warning: " + ChatColor.YELLOW + "This command cannot be undone, so be careful where you build your mazes!");
+			p.sendMessage(ChatColor.GREEN + "If you leave the server before you mazes gets built your work will be discarded.");
+			p.sendMessage(ChatColor.DARK_GREEN + "A finished maze also cannot be undone!");
+			break;
 		default:
 			break;
 		}

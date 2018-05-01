@@ -93,25 +93,18 @@ public class MazeHandler {
 		maze.setWallHeight(mazeHeights.get(uuid));
 	}
 	
-	public void addSelectionToMaze(Player p, RectSelection selection) throws Exception {
-		if(!mazes.containsKey(p.getUniqueId()))
-			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
-		
+	public void addSelectionToMaze(Maze maze, RectSelection selection) throws Exception {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		Maze maze = mazes.get(p.getUniqueId());
-		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getAddition(selection.getShape())));
+		MazeShapeEvent shaping = new MazeShapeEvent(maze, maze.getAddition(selection.getShape()));
+		Bukkit.getPluginManager().callEvent(shaping);
 	}
 	
-	public void cutSelctionFromMaze(Player p, RectSelection selection)  throws Exception {
-		if(!mazes.containsKey(p.getUniqueId()))
-			throw new NullPointerException("Could not find a maze created by " + p.getName() + ".");
-		
+	public void cutSelctionFromMaze(Maze maze, RectSelection selection) throws Exception {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		Maze maze = mazes.get(p.getUniqueId());
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, maze.getSubtraction(selection.getShape())));
 	}
 	

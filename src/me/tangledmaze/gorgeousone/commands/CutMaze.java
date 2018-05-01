@@ -25,6 +25,12 @@ public class CutMaze {
 			return;
 		}
 		
+		if(!mHandler.hasMaze(p)) {
+			p.sendMessage(ChatColor.RED + "Please start a maze first.");
+			p.sendMessage("/tangledmaze start");
+			return;
+		}
+		
 		if(!sHandler.hasSelection(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 			p.sendMessage("/tangledmaze wand");
@@ -32,16 +38,11 @@ public class CutMaze {
 		}
 		
 		try {
-			mHandler.cutSelctionFromMaze(p, sHandler.getSelection(p));
-			sHandler.deselectSelection(p);
-			p.sendMessage(Constants.prefix + "Subtracted area from maze.");
+			mHandler.cutSelctionFromMaze(mHandler.getMaze(p), sHandler.getSelection(p));
+//			p.sendMessage(Constants.prefix + "Subtracted area from maze.");
 			
 		}catch (Exception e) {
-			if(e instanceof NullPointerException) {
-				p.sendMessage(ChatColor.RED + "Please start a maze first.");
-				p.sendMessage("/tangledmaze start");
-				
-			}else if(e instanceof IllegalArgumentException)
+			if(e instanceof IllegalArgumentException)
 				p.sendMessage(ChatColor.RED + "Please finish your selection first.");
 		}
 	}

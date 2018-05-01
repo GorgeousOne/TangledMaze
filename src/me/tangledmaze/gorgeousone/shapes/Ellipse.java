@@ -17,7 +17,9 @@ public class Ellipse implements Shape {
 	private ArrayList<Location> vertices;
 	private HashMap<Chunk, ArrayList<Location>> borderChunks, fillChunks;
 	private Vector mid;
-	private double radiusX, radiusZ, aspect;
+	private double radiusX, radiusZ, proportion;
+	
+	int size;
 	
 	public Ellipse(ArrayList<Location> vertices) {
 		if(vertices.size() < 4)
@@ -31,12 +33,13 @@ public class Ellipse implements Shape {
 		
 		radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2;
 		radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2;
-		aspect = 1d * radiusZ / radiusX;
+		proportion = 1d * radiusZ / radiusX;
 		
 		mid = new Vector(
 				vertices.get(0).getX() + radiusX, 0,
 				vertices.get(0).getZ() + radiusZ);
 
+		size = 0;
 		calcFillAndBorder();
 	}
 	
@@ -56,30 +59,37 @@ public class Ellipse implements Shape {
 		return fillChunks;
 	}
 	
+	@Override
+	public int size() {
+		return size;
+	}
+	
+	@Override
 	public boolean contains(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
 		
 		Vector point2 = point.toVector();
-		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
+		point2.setX((point2.getX() - mid.getX()) * proportion + mid.getX());
 		point2.setY(0);
 		
 		return mid.distance(point2) <= radiusZ - 0.25;
 	}
 	
+	@Override
 	public boolean borderContains(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
 		
 		Vector point2 = point.toVector();
-		point2.setX((point2.getX() - mid.getX()) * aspect + mid.getX());
+		point2.setX((point2.getX() - mid.getX()) * proportion + mid.getX());
 		point2.setY(0);
 		
 		if(mid.distance(point2) > radiusZ - 0.25)
 			return false;
 		
 		for(Vector dir : Utils.directions()) {
-			Vector neighbour = point2.clone().add(dir.clone().setX(aspect * dir.getX()));
+			Vector neighbour = point2.clone().add(dir.clone().setX(proportion * dir.getX()));
 			
 			if(mid.distance(neighbour) > radiusZ - 0.25)
 				return true;
@@ -87,7 +97,7 @@ public class Ellipse implements Shape {
 		
 		return false;
 	}
-	
+
 	private void addFill(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -95,6 +105,8 @@ public class Ellipse implements Shape {
 			fillChunks.get(c).add(point);
 		else
 			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+		
+		size++;
 	}
 	
 	private void addBorder(Location point) {
@@ -120,12 +132,16 @@ public class Ellipse implements Shape {
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
 		
+		//iterate over the rectangle of the vertices equally to rectangle shape
 		for(double x = -radiusX; x < radiusX; x++)
 			for(double z = -radiusZ; z < radiusZ; z++) {
 				
-				iter = new Vector(aspect * (x+0.5), 0, z+0.5);
+				//calculate the iterator compensating the deformation of the ellipses, so the distance to the mid is like in a circle
+				iter = new Vector(proportion * (x+0.5), 0, z+0.5);
 				Location point = new Location(world, posX + radiusX + x, maxY, posZ + radiusZ + z);
 				
+				//add all blocks that are inside the circle/ellipse, if their iterator is inside the radius
+
 				//using radius-0: the circle looks edged
 				//using radius-1/2: only one block sticks out at the edges
 				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
@@ -134,8 +150,9 @@ public class Ellipse implements Shape {
 				else
 					continue;
 				
+				//check for border by looking for neighbors blocks that aren't in radius distance
 				for(Vector dir : Utils.directions()) {
-					Vector neighbour = iter.clone().add(dir.clone().setX(aspect * dir.getX()));
+					Vector neighbour = iter.clone().add(dir.clone().setX(proportion * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
 						addBorder(Utils.nearestSurface(point));
