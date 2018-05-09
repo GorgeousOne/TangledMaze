@@ -138,7 +138,7 @@ public class TangledMain extends JavaPlugin {
 			"Difficult Handling II",
 			"Would Recommend It X/X",
 			"Unbreaking ∞",
-			"Powerful X",
+			"Overpowered X",
 			"Tangly III",
 			"Wow I",
 			"Ignore WorldGuard V",

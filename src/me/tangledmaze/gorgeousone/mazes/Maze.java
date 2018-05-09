@@ -28,7 +28,7 @@ public class Maze {
 	private ArrayList<Location> exits;
 	private ArrayList<Entry<Material, Byte>> wallComposition;
 	
-	private int size, wallHeight;
+	private int size, borderSize, wallHeight;
 	
 	public Maze(Shape baseShape, Player editor) {
 		p = editor;
@@ -40,6 +40,8 @@ public class Maze {
 		exits        = new ArrayList<>();
 		
 		size = 0;
+		borderSize = 0;
+		
 		wallHeight = 3;
 		
 		for(Chunk c : baseShape.getFill().keySet()) {
@@ -47,8 +49,10 @@ public class Maze {
 			size += baseShape.getFill().get(c).size();
 		}
 		
-		for(Chunk c : baseShape.getBorder().keySet())
+		for(Chunk c : baseShape.getBorder().keySet()) {
 			borderChunks.put(c, baseShape.getBorder().get(c));
+			borderSize += baseShape.getBorder().get(c).size();
+		}
 	}
 	
 	public Player getPlayer() {
@@ -61,6 +65,10 @@ public class Maze {
 	
 	public int size() {
 		return size;
+	}
+	
+	public int borderSize() {
+		return borderSize;
 	}
 	
 	public int getWallHeight() {
@@ -99,6 +107,19 @@ public class Maze {
 	public void process(MazeAction action) {
 		history.pushAction(action);
 
+		for(Location point : action.getRemovedExits()) {
+			//upgrade the previous exit to the main exit
+			if(p != null && exits.indexOf(point) == 0 && exits.size() > 1)
+				p.sendBlockChange(exits.get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+			
+			exits.remove(point);
+		}
+		
+		//hide exits first in case there is still borde runder it
+		if(p != null)
+			for(Location point : action.getRemovedExits())
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
 		for(Location point : action.getRemovedFill())
 			removeFill(point);
 	
@@ -110,29 +131,8 @@ public class Maze {
 
 		for(Location point : action.getAddedBorder())
 			addBorder(point);
-
-		for(Location point : action.getRemovedExits()) {
-			//upgrade the previous exit to the main exit
-			if(p != null && exits.indexOf(point) == 0 && exits.size() > 1)
-				p.sendBlockChange(exits.get(1), Constants.MAZE_MAIN_EXIT, point.getBlock().getData());
-			
-			exits.remove(point);
-		}
-		
-		if(p != null) {
-			for(Location point : action.getRemovedBorder())
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-			
-			for(Location point : action.getAddedBorder())
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-			
-			for(Location point : action.getRemovedExits())
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-		}
-		
 	}
 	
-	@SuppressWarnings("deprecation")
 	public boolean undoLast() {
 		if(history.isEmpty())
 			return false;
@@ -151,20 +151,10 @@ public class Maze {
 		for(Location point : action.getAddedBorder())
 			removeBorder(point);
 		
-		
-		if(p != null) {
-			for(Location point : action.getRemovedBorder())
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-			
-			for(Location point : action.getAddedBorder())
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-		}
-		
 		return true;
 	}
 
 	public MazeAction getAddition(Shape s) {
-		
 		ArrayList<Location>
 			addedFill     = new ArrayList<>(),
 			addedBorder   = new ArrayList<>(),
@@ -273,11 +263,11 @@ public class Maze {
 			for(int i = currentChunk.size()-1; i >= 0; i--) {
 				Location point = currentChunk.get(i);
 				
-				//continue if the point isn't even in the shape
+				//continue if the border point isn't even in the cutting shape
 				if(!s.contains(point))
 					continue;
 				
-				//if the point is inside the shapes border, look up if it is connected to actual fill blocks
+				//if the point is inside the shapes border, look up if it touches actual fill blocks (otherwise corners get removed)
 				if(s.borderContains(point)) {
 					for(Vector dir : Utils.directions()) {
 						Location point2 = point.clone().add(dir);
@@ -304,7 +294,8 @@ public class Maze {
 	public MazeAction reduce(Block b) {
 		Location point = b.getLocation();
 		
-		if(!borderContains(point) || !isHighlighted(b))
+		//can't remove what isn't part of the border
+		if(!isHighlighted(b))
 			return null;
 		
 		ArrayList<Location>
@@ -320,73 +311,202 @@ public class Maze {
 				removedBorder,
 				removedExits);
 		
+		//remove clicked block from maze
+		removedFill.add(point);
+		removedBorder.add(point);
+
+		//remove any exit on this block
+		if(exits.contains(point))
+			removedExits.add(point);
+
 		ArrayList<Location> neighbors = new ArrayList<>();
+		
 		boolean	isExternalBorder = false,
 				isSealingBorder = false;
-
-		//check if this block closes the shape somehow
-		for(Vector dir : Utils.directions()) {
-			Location point2 = point.clone().add(dir);
+		
+		ArrayList<Vector> directions = Utils.directions();
+		Location point2;
+		
+		//check if this block closes the shape somehow (also diagonally)
+		for(Vector dir : directions) {
+			point2 = point.clone().add(dir);
 			
-			if(!contains(point2))
+			//that is true if it touches a block outside the maze 
+			if(!contains(point2)) {
 				isExternalBorder = true;
+				continue;
 			
-			//if yes these neighbor blocks have to be stored
-			else if(!borderContains(point2)) {
+			//but if the other block is a fill block, it will have to replace the block in the border
+			}else if(!borderContains(point2)) {
 				isSealingBorder = true;
 				neighbors.add(point2);
+				continue;
+			}
+		}
+		
+		//if it seals the shape the neighbor blocks have to replace it
+		if(isExternalBorder && isSealingBorder)
+			for(Location point3 : neighbors)
+				addedBorder.add(Utils.nearestSurface(point3));
+		
+		//remove exits that can't exist any further bc the lack of contact
+		for(Vector dir : directions) {
+			point2 = point.clone().add(dir);
+			
+			if(exitsContain(point2)) {
+				Location point3;
+
+				boolean touchesFill = false,
+						touchesOutside = false;
+				
+				//check if the point is touching fill and the outside of the maze
+				for(Vector dir2 : Utils.cardinalDirs()) {
+					point3 = point.clone().add(dir2);
+					
+					if(contains(point3) && !removedFill.contains(point3))
+						if(!borderContains(point2) || removedBorder.contains(point3))
+							touchesFill = true;
+					else
+						touchesOutside = true;
+				}
+				
+				if(!touchesFill || !touchesOutside)
+					removedExits.add(point2);
+			}
+		}
+		
+		boolean standsOut;
+		
+		//detect outstanding neighbor borders of the block (in cardinal directions)
+		for(Vector dir : Utils.cardinalDirs()) {
+			point2 = point.clone().add(dir);
+
+			if(!borderContains(point2))
+				continue;
+
+			Location point3;
+			standsOut = true;
+
+			//check if the neighbor is touching fill-only blocks of the maze
+			for(Vector dir2 : directions) {
+				point3 = point2.clone().add(dir2);
+				
+				//fill only is also dependent on border that will be added
+				if(contains(point3) && !borderContains(point3) && !addedBorder.contains(point3)) {
+					standsOut = false;
+					break;
+				}
+			}
+
+			//remove the neighbor if it still stands out
+			if(standsOut) {
+				removedFill.add(point2);
+				removedBorder.add(point2);
 			}
 		}
 
-		removedFill.add(point);
-		removedBorder.add(point);
-		
-		//remove the exit if there is one as well ath this point
-		if(exits.contains(point))
-			removedExits.add(point);
-		
-		//if it seals the shape neighbor blocks have to replace it
-		if(isExternalBorder && isSealingBorder)
-			for(Location point2 : neighbors)
-				addedBorder.add(Utils.nearestSurface(point2));
-		
 		return action;
 	}
 	
 	public MazeAction enlarge(Block b) {
 		Location point = b.getLocation();
 		
-		if(!borderContains(point) || !isHighlighted(b))
+		//can't remove what is not part of the border
+		if(!isHighlighted(b))
 			return null;
 		
 		ArrayList<Location>
-			addFill       = new ArrayList<>(),
+			addedFill       = new ArrayList<>(),
 			removedBorder = new ArrayList<>(),
 			addedBorder   = new ArrayList<>(),
 			removedExits  = new ArrayList<>();
 		
 		MazeAction action = new MazeAction(
-				addFill,
+				addedFill,
 				new ArrayList<>(),
 				addedBorder,
 				removedBorder,
 				removedExits);
 		
 		removedBorder.add(point);
-
-		//add all uninvolved neighbors as border (and fill)
-		for(Vector dir : Utils.directions()) {
-			Location point2 = Utils.nearestSurface(point.clone().add(dir));
-			
-			if(!contains(point2)) {
-				addFill.add(point2);
-				addedBorder.add(point2);
-			}
-		}
-
+		
 		//if there is an exit on this point remove it
 		if(exits.contains(point))
 			removedExits.add(point);
+
+		ArrayList<Vector>
+			directions = Utils.directions(),
+			cardinalDirs = Utils.cardinalDirs();
+		
+		Location point2;
+		
+		//look for neighbors that can replace this border block
+		for(Vector dir : directions) {
+			point2 = point.clone().add(dir);
+			
+			//add all non-maze neighbors as border (and fill)
+			if(!contains(point2)) {
+				addedFill.add(Utils.nearestSurface(point2));
+				addedBorder.add(Utils.nearestSurface(point2));
+				continue;
+			}
+			
+			//remove neighbor exits that are now no usable anymore
+			if(exits.contains(point2) && !canBeExit(point2))
+				removedExits.add(point2);
+		}
+		
+		//remove exits that can't exist any further bc the lack of contact
+		for(Vector dir : directions) {
+			point2 = point.clone().add(dir);
+			
+			if(exitsContain(point2)) {
+				Location point3;
+
+				boolean touchesFill = false,
+						touchesOutside = false;
+				
+				//check if the point is touching fill and the outside of the maze
+				for(Vector dir2 : Utils.cardinalDirs()) {
+					point3 = point.clone().add(dir2);
+					
+					if(contains(point3) || !addedFill.contains(point3))
+						if(!borderContains(point2) && !addedBorder.contains(point3) || removedBorder.contains(point3))
+							touchesFill = true;
+					else
+						touchesOutside = true;
+				}
+				
+				if(!touchesFill || !touchesOutside)
+					removedExits.add(point2);
+			}
+		}
+		boolean standsOut;
+		
+		//look for neighbors, that are now standing out (inside the maze)
+		for(Vector dir : cardinalDirs) {
+			point2 = point.clone().add(dir);
+			
+			if(!borderContains(point2))
+				continue;
+			
+			Location point3;
+			standsOut = true;
+			
+			//check if the neighbors are connected to other border parts (in cardinal directions)
+			for(Vector dir2 : cardinalDirs) {
+				point3 = point2.clone().add(dir2);
+				
+				if(borderContains(point3) && !removedBorder.contains(point3) || addedBorder.contains(point3)) {
+					standsOut = false;
+					break;
+				}
+			}
+
+			//if they are totally without connection 
+			if(standsOut)
+				removedBorder.add(point2);
+		}
 		
 		return action;
 	}
@@ -395,7 +515,7 @@ public class Maze {
 	public boolean addExit(Block b) {
 		Location newExit = b.getLocation();
 		
-		if(!borderContains(newExit) || !isHighlighted(b))
+		if(!isHighlighted(b))
 			return false;
 
 		//if the clicked point is already an exit remove it
@@ -410,22 +530,30 @@ public class Maze {
 				}
 				
 				exits.remove(i);
-				return false;
+				return true;
 			}
-				
-		boolean isSealing = false;
 		
-		//check if the point is touching inner maze
+		Location point2;
+
+		boolean touchesFill = false,
+				touchesOutside = false;
+		
+		//check if the point is touching fill and the outside of the maze
 		for(Vector dir : Utils.cardinalDirs()) {
-			Location point2 = newExit.clone().add(dir);
+			point2 = newExit.clone().add(dir);
 			
-			if(contains(point2) && !borderContains(point2))
-				isSealing = true;
+			if(contains(point2))
+				if(!borderContains(point2))
+				touchesFill = true;
+				
+			else
+				touchesOutside = true;
 		}
 		
-		//return if the point cant be an exit
-		if(p != null && !isSealing) {
-			Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
+		//return if the point can't be an exit
+		if(!touchesFill || !touchesOutside) {
+			if(p != null)
+				Utils.sendBlockLater(p, newExit, Constants.MAZE_BORDER);
 			return false;
 		}
 		
@@ -441,6 +569,27 @@ public class Maze {
 		return true;
 	}
 	
+	private boolean canBeExit(Location point) {
+		Location point2;
+
+		boolean touchesFill = false,
+				touchesOutside = false;
+		
+		//check if the point is touching fill and the outside of the maze
+		for(Vector dir : Utils.cardinalDirs()) {
+			point2 = point.clone().add(dir);
+			
+			if(contains(point2))
+				if(!borderContains(point2))
+				touchesFill = true;
+				
+			else
+				touchesOutside = true;
+		}
+		
+		return touchesFill && touchesOutside;
+	}
+	
 	private void addFill(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -452,6 +601,7 @@ public class Maze {
 		size++;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void addBorder(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -459,6 +609,11 @@ public class Maze {
 			borderChunks.get(c).add(Utils.nearestSurface(point));
 		else
 			borderChunks.put(c, new ArrayList<>(Arrays.asList(Utils.nearestSurface(point))));
+		
+		borderSize++;
+
+		if(p != null)
+			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 	}
 	
 	private void removeFill(Location point) {
@@ -475,6 +630,7 @@ public class Maze {
 			}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void removeBorder(Location point) {
 		Chunk c = point.getChunk();
 		
@@ -484,6 +640,11 @@ public class Maze {
 			   point2.getBlockZ() == point.getBlockZ()) {
 				
 				borderChunks.get(c).remove(point2);
+				borderSize--;
+				
+				if(p != null)
+					p.sendBlockChange(point2, point2.getBlock().getType(), point.getBlock().getData());
+				
 				break;
 			}
 	}
@@ -528,6 +689,16 @@ public class Maze {
 		
 		return false;
 	}
+	
+	public boolean exitsContain(Location point) {
+		for(Location point2 : exits)
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
+				return true;
+		
+		return false;
+	}
+	
 	
 	public void recalc(Location point) {
 		if(!borderContains(point))

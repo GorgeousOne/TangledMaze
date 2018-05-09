@@ -52,6 +52,11 @@ public class SelectionHandler {
 	public void reload() {
 		for(RectSelection selection : selections.values())
 			hide(selection);
+		
+		selectionTypes.clear();
+		selections.clear();
+		resizingSelections.clear();
+		selectionVisibilities.clear();
 	}
 	
 	public void handleInteraction(Player p, Block b, Action a) {
@@ -234,5 +239,17 @@ public class SelectionHandler {
 		selectionTypes.remove(uuid);
 		selections.remove(uuid);
 		resizingSelections.remove(uuid);
+	}
+
+	public void resetTool(Player p) {
+		UUID uuid = p.getUniqueId();
+		
+		if(!selectionTypes.containsKey(uuid))
+			return;
+
+		Class<? extends Shape> selectionType = selectionTypes.get(uuid);
+		
+		if(selectionType != Rectangle.class && selectionType != Ellipse.class)
+			selectionTypes.put(uuid, Rectangle.class);
 	}
 }

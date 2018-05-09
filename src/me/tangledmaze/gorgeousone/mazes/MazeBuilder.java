@@ -195,13 +195,11 @@ public class MazeBuilder {
 		pathGenerator.runTaskAsynchronously(TangledMain.getPlugin());
 	}
 	
-	private int i;
-	
 	public void showMaze(Maze maze, int[][] mazeMap, int[][] mazeYMap, int shiftX, int shiftZ) {
-		i = 0;
 		
 		ArrayList<Vector> directions = Utils.directions();
 		ArrayList<Entry<Material, Byte>> composition = maze.getWallComposition();
+		
 		Random rnd = new Random();
 		int wallHeight = maze.getWallHeight();
 		
@@ -234,9 +232,6 @@ public class MazeBuilder {
 				maxY = pointY+wallHeight >= neighborMaxY+2 ? pointY: neighborMaxY+2-wallHeight;
 				
 				for(int i = pointY+1; i <= maxY + wallHeight; i++) {
-					if(i > pointY + 2*wallHeight)
-						break;
-					
 					Block b = (new Location(maze.getWorld(), x+shiftX, i, z+shiftZ)).getBlock();
 					
 					if(Utils.canBeReplaced(b.getType()))
@@ -244,34 +239,26 @@ public class MazeBuilder {
 				}
 			}
 		}
-						
+
 		BukkitRunnable builder = new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				
 				long timer = System.currentTimeMillis();
-				int counter = 0;
-
-				for(int i = MazeBuilder.this.i; i < placables.size(); i++) {
-					Block b = placables.get(i);
+				
+				while(!placables.isEmpty()) {
+					Block b = placables.get(rnd.nextInt(placables.size()));
+					placables.remove(b);
 					
 					Entry<Material, Byte> rndBlockType = composition.get(rnd.nextInt(composition.size()));
 					b.setType(rndBlockType.getKey());
 					b.setData(rndBlockType.getValue());
-
-					counter++;
-
-					if(System.currentTimeMillis() - timer >= 10) {
-						System.out.println("stopped after " + (System.currentTimeMillis() - timer) + "ms. " + counter + " coords set.");
-						MazeBuilder.this.i = i;
-						counter = 0;
+					
+					if(System.currentTimeMillis() - timer >= 10)
 						return;
-					}
 				}
 						
-				System.out.println("--- Maze finished ---");
-				System.out.println(i);
 				this.cancel();
 				
 				if(maze.getPlayer() != null)

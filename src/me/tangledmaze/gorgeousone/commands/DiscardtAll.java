@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
-import me.tangledmaze.gorgeousone.shapes.Ellipse;
-import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class DiscardtAll {
@@ -28,10 +26,7 @@ public class DiscardtAll {
 		
 		sHandler.deselectSelection(p);
 		mHandler.deselctMaze(p);
-		
-		if(sHandler.getSelectionType(p) != Rectangle.class ||
-		   sHandler.getSelectionType(p) != Ellipse.class)
-			sHandler.setSelectionType(p, Rectangle.class);
+		sHandler.resetTool(p);
 
 		p.sendMessage(Constants.prefix + "Deselected your selection and your maze.");
 	}

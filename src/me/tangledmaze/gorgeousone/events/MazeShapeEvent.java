@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeAction;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import net.md_5.bungee.api.ChatColor;
@@ -22,7 +23,7 @@ public class MazeShapeEvent extends Event implements Cancellable {
 	private Maze maze;
 	private MazeAction action;
 	private SelectionHandler sHandler;
-	private SelectionHandler mHandler;
+	private MazeHandler mHandler;
 	
 	private String cancelMessage;
 	
@@ -30,6 +31,7 @@ public class MazeShapeEvent extends Event implements Cancellable {
 		this.maze = maze;
 		this.action = action;
 		this.sHandler = TangledMain.getPlugin().getSelectionHandler();
+		this.mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		if(maze.getPlayer() != null) {
 			Player p = maze.getPlayer();
@@ -62,7 +64,8 @@ public class MazeShapeEvent extends Event implements Cancellable {
 					
 					if(maze.size() == 0) {
 						p.sendMessage(Constants.prefix + "Now you erased your whole maze. You will have to start a new one.");
-						mHandler.remove(p);
+						mHandler.deselctMaze(p);
+						sHandler.resetTool(p);
 					}
 				}
 			}
