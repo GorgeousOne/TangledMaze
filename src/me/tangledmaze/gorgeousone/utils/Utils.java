@@ -14,6 +14,12 @@ import me.tangledmaze.gorgeousone.main.TangledMain;
 
 public abstract class Utils {
 	
+	private static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
+			new Vector( 1, 0,  0),
+			new Vector( 0, 0,  1),
+			new Vector(-1, 0,  0),
+			new Vector( 0, 0, -1)));
+
 	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
@@ -23,16 +29,11 @@ public abstract class Utils {
 			new Vector(-1, 0, -1),
 			new Vector( 0, 0, -1),
 			new Vector( 1, 0, -1)));
-	
-	private static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
-			new Vector( 1, 0,  0),
-			new Vector( 0, 0,  1),
-			new Vector(-1, 0,  0),
-			new Vector( 0, 0, -1)));
 
 	private static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.ACACIA_DOOR,
 			Material.ACTIVATOR_RAIL,
+			Material.ANVIL,
 			Material.BIRCH_DOOR,
 			Material.BREWING_STAND,
 			Material.BROWN_MUSHROOM,
@@ -72,6 +73,7 @@ public abstract class Utils {
 			Material.SKULL,
 			Material.SPRUCE_DOOR,
 			Material.SNOW,
+			Material.STONE_SLAB2,
 			Material.STANDING_BANNER,	
 			Material.STONE_BUTTON,
 			Material.STONE_PLATE,
@@ -96,6 +98,7 @@ public abstract class Utils {
 			Material.CACTUS,
 			Material.CARPET,
 			Material.CARROT,
+			Material.COCOA,
 			Material.DEAD_BUSH,
 			Material.DOUBLE_PLANT,
 			Material.FIRE,
@@ -107,77 +110,61 @@ public abstract class Utils {
 			Material.RED_ROSE,
 			Material.SAPLING,
 			Material.SNOW,
-			Material.SUGAR_CANE_BLOCK,
-			Material.VINE,
 			Material.WATER_LILY,
 			Material.WHEAT,
-			Material.WEB,
 			Material.YELLOW_FLOWER));
 	
-//	private static ArrayList<Material> NON_BUILD_SOLIDS = new ArrayList<>(Arrays.asList(
-//			Material.ACACIA_DOOR,
-//			Material.ACTIVATOR_RAIL,
-//			Material.BIRCH_DOOR,
-//			Material.BREWING_STAND,
-//			Material.BROWN_MUSHROOM,
-//			Material.CARPET,
-//			Material.CARROT,
-//			Material.DARK_OAK_DOOR,
-//			Material.DAYLIGHT_DETECTOR,
-//			Material.DEAD_BUSH,
-//			Material.DETECTOR_RAIL,
-//			Material.DOUBLE_PLANT,
-//			Material.ENDER_CHEST,
-//			Material.FIRE,
-//			Material.FLOWER_POT,
-//			Material.GOLD_PLATE,
-//			Material.IRON_DOOR,
-//			Material.IRON_PLATE,
-//			Material.JUNGLE_DOOR,
-//			Material.LADDER,
-//			Material.LEVER,
-//			Material.LONG_GRASS,
-//			Material.MELON_STEM,
-//			Material.PISTON_MOVING_PIECE,
-//			Material.POTATO,
-//			Material.POWERED_RAIL,
-//			Material.PUMPKIN_STEM,
-//			Material.RAILS,
-//			Material.RED_MUSHROOM,
-//			Material.RED_ROSE,
-//			Material.REDSTONE_TORCH_OFF,
-//			Material.REDSTONE_TORCH_ON,
-//			Material.REDSTONE_WIRE,
-//			Material.SAPLING,
-//			Material.SIGN_POST,
-//			Material.SKULL,
-//			Material.SPRUCE_DOOR,
-//			Material.SNOW,
-//			Material.STANDING_BANNER,	
-//			Material.STONE_BUTTON,
-//			Material.STONE_PLATE,
-//			Material.SUGAR_CANE_BLOCK,
-//			Material.TORCH,
-//			Material.TRAPPED_CHEST,
-//			Material.TRIPWIRE,
-//			Material.TRIPWIRE_HOOK,
-//			Material.VINE,
-//			Material.WALL_BANNER,
-//			Material.WALL_SIGN,
-//			Material.WATER_LILY,
-//			Material.WHEAT,
-//			Material.WOOD_PLATE,
-//			Material.WOOD_BUTTON,
-//			Material.WOODEN_DOOR,
-//			Material.WEB,
-//			Material.YELLOW_FLOWER));
-	
+	private static ArrayList<Material> HEIGHT_1_SOLIDS = new ArrayList<>(Arrays.asList(
+			Material.ACTIVATOR_RAIL,
+			Material.BROWN_MUSHROOM,
+			Material.CARROT,
+			Material.DEAD_BUSH,
+			Material.DETECTOR_RAIL,
+			Material.FIRE,
+			Material.FLOWER_POT,
+			Material.GOLD_PLATE,
+			Material.IRON_PLATE,
+			Material.LEVER,
+			Material.LONG_GRASS,
+			Material.MELON_STEM,
+			Material.POTATO,
+			Material.POWERED_RAIL,
+			Material.PUMPKIN_STEM,
+			Material.RAILS,
+			Material.RED_MUSHROOM,
+			Material.RED_ROSE,
+			Material.REDSTONE_TORCH_OFF,
+			Material.REDSTONE_TORCH_ON,
+			Material.REDSTONE_WIRE,
+			Material.SAPLING,
+			Material.SIGN_POST,
+			Material.SKULL,
+			Material.SNOW,
+			Material.STANDING_BANNER,
+			Material.STONE_BUTTON,
+			Material.STONE_PLATE,
+			Material.TORCH,
+			Material.TRIPWIRE,
+			Material.TRIPWIRE_HOOK,
+			Material.VINE,
+			Material.WALL_BANNER,
+			Material.WALL_SIGN,
+			Material.WATER_LILY,
+			Material.WHEAT,
+			Material.WOOD_PLATE,
+			Material.WOOD_BUTTON,
+			Material.YELLOW_FLOWER));
+
 	public static boolean isLikeGround(Material m) {
 		return m.isSolid() && !NOT_GROUND_SOLIDS.contains(m);
 	}
 	
 	public static boolean canBeReplaced(Material m) {
 		return !m.isSolid() || REPLACABLE_SOLIDS.contains(m); 
+	}
+	
+	public static boolean limitedToHeight1(Material m) {
+		return HEIGHT_1_SOLIDS.contains(m);
 	}
 	
 	@SuppressWarnings("unchecked")

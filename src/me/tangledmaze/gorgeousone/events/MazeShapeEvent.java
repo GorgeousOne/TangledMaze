@@ -17,7 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class MazeShapeEvent extends Event implements Cancellable {
 
-	protected static final HandlerList handlers = new HandlerList();
+	protected final HandlerList handlers = new HandlerList();
 	protected boolean isCancelled;
 	
 	private Maze maze;
@@ -33,8 +33,8 @@ public class MazeShapeEvent extends Event implements Cancellable {
 		this.sHandler = TangledMain.getPlugin().getSelectionHandler();
 		this.mHandler = TangledMain.getPlugin().getMazeHandler();
 		
-		if(maze.getPlayer() != null) {
-			Player p = maze.getPlayer();
+		if(maze.getOwner() != null) {
+			Player p = maze.getOwner();
 
 			int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
 			
@@ -53,13 +53,14 @@ public class MazeShapeEvent extends Event implements Cancellable {
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
 			public void run() {
-				Player p = maze.getPlayer();
+				Player p = maze.getOwner();
 
 				if(isCancelled)
 					p.sendMessage(cancelMessage);
 				
 				else {
-					sHandler.deselectSelection(maze.getPlayer());
+					sHandler.deselectSelection(maze.getOwner());
+					mHandler.showMazeAction(p, maze, action);
 					maze.process(action);
 					
 					if(maze.size() == 0) {

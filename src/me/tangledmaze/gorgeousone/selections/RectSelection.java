@@ -20,8 +20,8 @@ public class RectSelection {
 	private ArrayList<Location> vertices;
 	private boolean isComplete;
 	
-	public RectSelection(Block firstVertex, Player editor) {
-		this.p = editor;
+	public RectSelection(Block firstVertex, Player p) {
+		this.p = p;
 		world = firstVertex.getWorld();
 		vertices = new ArrayList<>();
 		isComplete = false;

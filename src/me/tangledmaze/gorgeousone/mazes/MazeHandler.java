@@ -6,11 +6,14 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.utils.Constants;
+import me.tangledmaze.gorgeousone.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
 
 public class MazeHandler {
 	
@@ -48,8 +51,8 @@ public class MazeHandler {
 	public void setMazeHeight(Player p, int height) {
 		mazeHeights.put(p.getUniqueId(), height);
 		
-		if(mazes.containsKey(p.getUniqueId()))
-			mazes.get(p.getUniqueId()).setWallHeight(height);
+		if(hasMaze(p))
+			getMaze(p).setWallHeight(height);
 	}
 	
 	public Integer getMazeHeight(Player p) {
@@ -58,20 +61,18 @@ public class MazeHandler {
 
 	public void deselctMaze(Player p) {
 		if(hasMaze(p)) {
-			UUID uuid = p.getUniqueId();
+			Maze maze = getMaze(p);
 			
-			hide(mazes.get(uuid));
-			mazeVisibilities.remove(mazes.get(uuid));
-			mazes.remove(uuid);
+			hide(maze);
+			mazeVisibilities.remove(maze);
+			mazes.remove(p.getUniqueId());
 		}
 	}
 	
 	public void remove(Player p) {
-		UUID uuid = p.getUniqueId();
-		
-		mazeVisibilities.remove(mazes.get(uuid));
-		mazeHeights.remove(uuid);
-		mazes.remove(uuid);
+		mazeVisibilities.remove(getMaze(p));
+		mazeHeights.remove(p.getUniqueId());
+		mazes.remove(p.getUniqueId());
 	}
 	
 	public void startMaze(Player p, RectSelection selection) {
@@ -80,8 +81,8 @@ public class MazeHandler {
 		
 		UUID uuid = p.getUniqueId();
 
-		if(mazes.containsKey(uuid))
-			hide(mazes.get(uuid));
+		if(hasMaze(p))
+			hide(getMaze(p));
 		
 		Maze maze = new Maze(selection.getShape(), p);
 		mazes.put(uuid, maze);
@@ -109,7 +110,7 @@ public class MazeHandler {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		MazeAction action = maze.getSubtraction(selection.getShape());
+		MazeAction action = maze.getDeletion(selection.getShape());
 		
 		if(action.getRemovedFill().size() == 0)
 			throw new IllegalArgumentException("The passed selection does not intersect the maze properly.");
@@ -119,7 +120,7 @@ public class MazeHandler {
 	
 	@SuppressWarnings("deprecation")
 	public void show(Maze maze) {
-		Player p = maze.getPlayer();
+		Player p = maze.getOwner();
 		
 		if(p == null)
 			return;
@@ -139,7 +140,7 @@ public class MazeHandler {
 	
 	@SuppressWarnings("deprecation")
 	public void hide(Maze maze) {
-		Player p = maze.getPlayer();
+		Player p = maze.getOwner();
 		
 		if( p == null)
 			return;
@@ -150,4 +151,62 @@ public class MazeHandler {
 			for(Location point : chunk)
 				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
+	
+	@SuppressWarnings("deprecation")
+	public void showMazeAction(Player p, Maze maze, MazeAction action) {
+		
+		for(Location point : action.getRemovedExits()) {
+			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+			if(maze.getExits().indexOf(point) == 0 && maze.getExits().size() > 1)
+				p.sendBlockChange(maze.getExits().get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+		}
+		
+		for(Location point : action.getAddedBorder())
+			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+		for(Location point : action.getRemovedBorder())
+			p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+	}
+
+	public void addExitToMaze(Player p, Block b) {
+		if(!hasMaze(p))
+			return;
+		
+		Maze maze = getMaze(p);
+
+		//test if the clicked block is maze border
+		if(!maze.isHighlighted(b) && Math.random() < 1/3d) {
+			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
+			return;
+		}
+		
+		Location loc = b.getLocation();
+		
+		//test if the clicked border block touches the inside as well as the outside of the maze
+		if(!maze.canBeExit(loc)) {
+			Utils.sendBlockLater(p, loc, Constants.MAZE_BORDER);
+			return;
+		}
+
+		ArrayList<Location> exits = maze.getExits();
+
+		//remove any existing exit at this block
+		if(exits.contains(loc)) {
+			Utils.sendBlockLater(p, loc, Constants.MAZE_BORDER);
+			
+			if(exits.indexOf(loc) == 0 && exits.size() > 1)
+				Utils.sendBlockLater(p, exits.get(1), Constants.MAZE_MAIN_EXIT);
+			
+			maze.removeExit(loc);
+		
+		//add an exit to free border blocks
+		}else {
+			if(!exits.isEmpty())
+				Utils.sendBlockLater(p, exits.get(0), Constants.MAZE_EXIT);
+			
+			Utils.sendBlockLater(p, loc, Constants.MAZE_MAIN_EXIT);
+			maze.addExit(loc);
+		}
+	}		
 }

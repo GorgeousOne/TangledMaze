@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class SelectionEvent extends Event implements Cancellable {
 
-	protected static final HandlerList handlers = new HandlerList();
+	protected final HandlerList handlers = new HandlerList();
 	protected boolean isCancelled;
 	
 	protected Player p;

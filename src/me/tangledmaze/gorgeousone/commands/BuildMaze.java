@@ -88,7 +88,7 @@ public class BuildMaze {
 				try {
 					data = Byte.parseByte(blockType.split(":")[1]);
 				} catch (NumberFormatException e) {
-					p.sendMessage(ChatColor.RED + "\"" + blockType + "\" is wierd...");
+					p.sendMessage(ChatColor.RED + "\"" + blockType + "\" seems wierd...");
 					return;
 				}
 				
@@ -102,14 +102,13 @@ public class BuildMaze {
 			}
 			
 			if(!Utils.isLikeGround(material)) {
-				p.sendMessage(ChatColor.RED + "It could be difficult to build a maze out of \"" + blockType + "\".");
-				p.sendMessage(ChatColor.YELLOW + "This might not be reasonable and if so it will be fixed"); //TODO
+				p.sendMessage(Constants.prefix + "It could be difficult to build a maze out of \"" + blockType + "\".");
 				return;
 			}
 
 			composition.add(new Entry<Material, Byte>(material, data));
 		}
-		
+
 		//----------------------------------------------------------------------------------------------------------------
 		
 		mHandler.getMaze(p).setWallComposition(composition);

@@ -93,15 +93,10 @@ public class SelectionHandler {
 					Utils.sendBlockLater(p, b.getLocation(), Constants.MAZE_BORDER);
 			
 			}else if(Math.random() < 1/3d)
-				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not a maze's outline...");
+				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
 			
-		}else if(type.equals(ExitSetter.class)) {
-			if(!mHandler.hasMaze(p))
-				return;
-			
-			if(!mHandler.getMaze(p).addExit(b) && Math.random() < 1/3d)
-				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
-		}
+		}else if(type.equals(ExitSetter.class))
+			mHandler.addExitToMaze(p, b);
 	}
 	
 	private void selectRect(Player p, Block b) {

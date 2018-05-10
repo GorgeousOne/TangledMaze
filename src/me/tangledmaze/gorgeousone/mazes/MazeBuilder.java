@@ -35,7 +35,7 @@ public class MazeBuilder {
 	
 	public boolean isInQueue(Player p) {
 		for(Maze maze : mazeQueue)
-			if(p.equals(maze.getPlayer()))
+			if(p.equals(maze.getOwner()))
 				return true;
 		return false;
 	}
@@ -203,8 +203,8 @@ public class MazeBuilder {
 		Random rnd = new Random();
 		int wallHeight = maze.getWallHeight();
 		
-		ArrayList<Block> placables = new ArrayList<>();
-		int pointY, neighborMaxY, maxY;
+		ArrayList<Block> placeables = new ArrayList<>();
+		int pointY, maxY;
 		
 		for(int x = 0; x < mazeMap.length; x++) {
 			for(int z = 0; z < mazeMap[0].length; z++) {
@@ -215,6 +215,7 @@ public class MazeBuilder {
 				pointY = mazeYMap[x][z];
 
 				ArrayList<Integer> neighborYs = new ArrayList<>();
+				neighborYs.add(pointY);
 				
 				for(Vector dir : directions) {
 					int x2 = x + dir.getBlockX(),
@@ -227,15 +228,13 @@ public class MazeBuilder {
 					neighborYs.add(mazeYMap[x + dir.getBlockX()][z + dir.getBlockZ()]);
 				}
 				
-				neighborMaxY = Utils.getMax(neighborYs);
-				//make sure that the wall of this point ands at least 2 blocks above the neighbors ground
-				maxY = pointY+wallHeight >= neighborMaxY+2 ? pointY: neighborMaxY+2-wallHeight;
+				maxY = Utils.getMax(neighborYs);
 				
 				for(int i = pointY+1; i <= maxY + wallHeight; i++) {
 					Block b = (new Location(maze.getWorld(), x+shiftX, i, z+shiftZ)).getBlock();
 					
 					if(Utils.canBeReplaced(b.getType()))
-						placables.add(b);
+						placeables.add(b);
 				}
 			}
 		}
@@ -246,12 +245,14 @@ public class MazeBuilder {
 			public void run() {
 				
 				long timer = System.currentTimeMillis();
+				Entry<Material, Byte> rndBlockType;
 				
-				while(!placables.isEmpty()) {
-					Block b = placables.get(rnd.nextInt(placables.size()));
-					placables.remove(b);
+				while(!placeables.isEmpty()) {
 					
-					Entry<Material, Byte> rndBlockType = composition.get(rnd.nextInt(composition.size()));
+					Block b = placeables.get(0);
+					placeables.remove(b);
+					
+					rndBlockType = composition.get(rnd.nextInt(composition.size()));
 					b.setType(rndBlockType.getKey());
 					b.setData(rndBlockType.getValue());
 					
@@ -261,8 +262,8 @@ public class MazeBuilder {
 						
 				this.cancel();
 				
-				if(maze.getPlayer() != null)
-					maze.getPlayer().sendMessage(Constants.prefix + "Your maze has been finished!");
+				if(maze.getOwner() != null)
+					maze.getOwner().sendMessage(Constants.prefix + "Your maze has been finished!");
 				
 				mazeQueue.remove(maze);
 				buildNextMaze();				

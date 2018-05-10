@@ -43,6 +43,11 @@ public class Ellipse implements Shape {
 		calcFillAndBorder();
 	}
 	
+	@Override
+	public World getWorld() {
+		return world;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Location> getVertices() {
