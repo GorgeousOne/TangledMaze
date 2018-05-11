@@ -12,11 +12,18 @@ commands:
 permissions:
   tm.build:
     description: Have the ability to build mazes.
-  tm.build.vip:
-    description: Have the avility to build quiet big mazes.
-  tm.build.staff:
-    description: Have the ability to build mazes of unlimited size, or whatever is set up in the config.
-    default: OP
-  tm.getwand:
-    description: Be able to get a selection wand by using /tangledmaze wand.
+    
+    children:
+      tm.build.vip:
+        description: Have the avility to build quiet big mazes.
+        default: false
+      tm.build.staff:
+        description: Have the ability to build mazes of unlimited size, or whatever is set up in the config.
+        default: OP
+      tm.build.getwand:
+        description: Be able to get a selection wand by using /tangledmaze wand.
+        default: OP
+        
+  tm.mazetp:
+    description: Be able to teleport yourself back to your maze in case you lost it.
     default: OP

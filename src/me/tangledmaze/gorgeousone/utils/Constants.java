@@ -7,10 +7,11 @@ public class Constants {
 	
 	public static final String
 			insufficientPerms = ChatColor.RED + "You do not have the Permission for this command.",
-			buildPerm = "tm.build",
-			vipPerm   = "tm.build.vip",
-			staffPerm = "tm.build.staff",
-			wandPerm  = "tm.getwand";
+			buildPerm  = "tm.build",
+			vipPerm    = "tm.build.vip",
+			staffPerm  = "tm.build.staff",
+			wandPerm   = "tm.build.getwand",
+			mazeTpPerm = "tm.mazetp";
 	
 	public static final String prefix =
 			ChatColor.DARK_GREEN + "["  +

@@ -19,8 +19,8 @@ import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Maze {
 	
-	private Player owner;
 	private World world;
+	private Player owner;
 	
 	private ActionHistory history;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
@@ -30,8 +30,9 @@ public class Maze {
 	private int size, borderSize, wallHeight;
 	
 	public Maze(Shape baseShape, Player owner) {
-		this.owner = owner;
 		world = baseShape.getWorld();
+
+		this.owner = owner;
 		
 		history = new ActionHistory();
 		fillChunks   = new HashMap<>();
@@ -54,12 +55,13 @@ public class Maze {
 		}
 	}
 	
-	public Player getOwner() {
-		return owner;
-	}
-	
+	//getters
 	public World getWorld() {
 		return world;
+	}
+	
+	public Player getOwner() {
+		return owner;
 	}
 	
 	public int size() {
@@ -95,6 +97,7 @@ public class Maze {
 		return wallComposition;
 	}
 
+	//setters
 	public void addExit(Location point) {
 		if(!canBeExit(point))
 			return;

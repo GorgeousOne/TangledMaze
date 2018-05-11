@@ -7,11 +7,11 @@ import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
-public class Undo {
+public class UndoAction {
 
 	private MazeHandler mHandler;
 	
-	public Undo() {
+	public UndoAction() {
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	

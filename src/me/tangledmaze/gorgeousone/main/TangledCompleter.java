@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import me.tangledmaze.gorgeousone.utils.Constants;
+
 public class TangledCompleter implements TabCompleter {
 	
 	private ArrayList<String> subCmds, selectionTypes;
@@ -35,6 +37,7 @@ public class TangledCompleter implements TabCompleter {
 		
 		if(!(sender instanceof Player))
 			return null;
+		
 		if(!cmd.getName().equalsIgnoreCase("tangledmaze"))
 			return null;
 
@@ -45,15 +48,27 @@ public class TangledCompleter implements TabCompleter {
 		
 		ArrayList<String> options = new ArrayList<>();
 		
+		argumentswitch:
 		switch (args.length) {
 		case 1:
-			if(args[0].equals(""))
+			if(args[0].equals("")) {
 				options.addAll(subCmds);
-			else
+				
+				if(p.hasPermission(Constants.mazeTpPerm))
+					options.add("teleport");
+				
+			}else {
 				for(String command : subCmds)
-					if(command.startsWith(args[0].toLowerCase()))
+					if(command.startsWith(args[0].toLowerCase())) {
 						options.add(command);
+						break argumentswitch;
+					}
+				
+				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.mazeTpPerm))
+					options.add("teleport");
+			}
 			break;
+			
 		case 2:
 			if(args[0].equalsIgnoreCase("select"))
 				options.addAll(selectionTypes);

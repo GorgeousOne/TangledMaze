@@ -55,6 +55,8 @@ public abstract class Utils {
 			Material.IRON_PLATE,
 			Material.JUNGLE_DOOR,
 			Material.LADDER,
+			Material.LEAVES,
+			Material.LEAVES_2,
 			Material.LEVER,
 			Material.LONG_GRASS,
 			Material.MELON_STEM,

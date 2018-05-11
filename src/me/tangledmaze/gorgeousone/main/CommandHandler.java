@@ -20,11 +20,12 @@ public class CommandHandler implements CommandExecutor {
 	private StartMaze startCommand;
 	private DiscardtAll discardCommand;
 	private SelectTool selectCommand;
-	private AddMaze addCommand;
-	private CutMaze cutCommand;
-	private Undo undoCommand;
+	private AddToMaze addCommand;
+	private CutFromMaze cutCommand;
+	private UndoAction undoCommand;
 	private SetMazeHeight heigthCommand;
 	private BuildMaze buildCommand;
+	private TpToMaze tpCommand;
 	
 	//contents of the first help page
 	private RawMessage[] pageLinks;
@@ -33,15 +34,16 @@ public class CommandHandler implements CommandExecutor {
 		startCommand   = new StartMaze();
 		discardCommand = new DiscardtAll();
 		selectCommand  = new SelectTool();
-		addCommand     = new AddMaze();
-		cutCommand     = new CutMaze();
-		undoCommand    = new Undo();
+		addCommand     = new AddToMaze();
+		cutCommand     = new CutFromMaze();
+		undoCommand    = new UndoAction();
 		heigthCommand  = new SetMazeHeight();
 		buildCommand   = new BuildMaze();
+		tpCommand      = new TpToMaze();
 		
-		pageLinks = new RawMessage[8];
+		pageLinks = new RawMessage[9];
 		
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < pageLinks.length; i++) {
 			pageLinks[i] = new RawMessage();
 			pageLinks[i].add(" page " + (i+2) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
 		}
@@ -53,7 +55,8 @@ public class CommandHandler implements CommandExecutor {
 		pageLinks[4].add("add/cut").color(Color.YELLOW);
 		pageLinks[5].add("undo").color(Color.YELLOW);
 		pageLinks[6].add("height <integer>").color(Color.YELLOW);
-		pageLinks[7].add("build <block type 1> ... <block type n>").color(Color.YELLOW);
+		pageLinks[7].add("teleport").color(Color.YELLOW);
+		pageLinks[8].add("build <block type 1> ... <block type n>").color(Color.YELLOW);
 	}
 	
 	@Override
@@ -124,6 +127,11 @@ public class CommandHandler implements CommandExecutor {
 						materials.add(args[i]);
 				
 				buildCommand.execute(p, materials);
+				break;
+			
+			case "teleport":
+			case "tp":
+				tpCommand.execute(p);
 				break;
 				
 			case "help":
@@ -240,8 +248,14 @@ public class CommandHandler implements CommandExecutor {
 			p.sendMessage(ChatColor.GREEN + "With this command you can decide how tall the walls of your maze should be built.");
 			p.sendMessage(ChatColor.GREEN + "The default height is 3 blocks and it can be set up to 20 (which already would be extra ordinary to my mind).");
 			break;
-		//build
+		//teleport
 		case 9:
+			p.sendMessage(ChatColor.YELLOW + "Teleport Command");
+			p.sendMessage(ChatColor.GREEN + "In case you ever forgot where you started to build your maze you can use this command to teleport back to it.");
+			p.sendMessage(ChatColor.GREEN + "(Under the condition you have the permission for it.)");
+			break;
+		//build
+		case 10:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
 			p.sendMessage(ChatColor.GREEN + "This command will finally build up your maze. You have to choose which type of blocks should be used therefore.");
 			p.sendMessage(ChatColor.GREEN + "After the command type in a kind block and it's data value (if not 0). An example would be "
