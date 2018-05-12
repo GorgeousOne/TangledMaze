@@ -95,7 +95,7 @@ public class CommandHandler implements CommandExecutor {
 				if(args.length >= 2)
 					selectCommand.execute(p, args[1]);
 				else
-					sendCommandHelp(p, 2);
+					sendCommandHelp(p, 5);
 				break;
 				
 			case "add":
@@ -122,9 +122,13 @@ public class CommandHandler implements CommandExecutor {
 			case "build":
 				ArrayList<String> materials = new ArrayList<>();
 				
-				if(args.length >= 2)
-					for (int i = 1; i < args.length; i++)
-						materials.add(args[i]);
+				if(args.length < 2) {
+					sendCommandHelp(p, 10);
+					break;
+				}
+				
+				for (int i = 1; i < args.length; i++)
+					materials.add(args[i]);
 				
 				buildCommand.execute(p, materials);
 				break;

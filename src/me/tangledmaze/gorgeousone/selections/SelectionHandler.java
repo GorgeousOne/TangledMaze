@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -196,22 +197,35 @@ public class SelectionHandler {
 			return;
 		
 		selectionVisibilities.put(selection, false);
-
+		
 		if(selection.isComplete()) {
-			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
-				for(Location point : chunk)
-					if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(point.getBlock()))
-						p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-					else
-						p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-			
+			HashMap<Chunk, ArrayList<Location>> border = selection.getShape().getBorder();
+
+			for(Chunk c : border.keySet())
+				for(Location point : border.get(c))
+					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 		}
 		
 		for(Location vertex : selection.getVertices())
-			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(vertex.getBlock()))
-				p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
-			else
-				p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+		
+		if(mHandler.hasMaze(p) && mHandler.isVisible(mHandler.getMaze(p))) {
+			Maze maze = mHandler.getMaze(p);
+			
+			if(selection.isComplete()) {
+				HashMap<Chunk, ArrayList<Location>> border = selection.getShape().getBorder();
+
+				for(Chunk c : border.keySet())
+					if(maze.getBorder().containsKey(c))
+						for(Location point : border.get(c))
+							if(maze.isHighlighted(point.getBlock()))
+								p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			}
+			
+			for(Location vertex : selection.getVertices())
+				if(maze.isHighlighted(vertex.getBlock()))
+					p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
+		}
 	}
 	
 	public void deselectSelection(Player p) {

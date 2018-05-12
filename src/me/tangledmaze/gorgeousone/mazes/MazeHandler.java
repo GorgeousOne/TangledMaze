@@ -86,7 +86,7 @@ public class MazeHandler {
 		
 		Maze maze = new Maze(selection.getShape(), p);
 		mazes.put(uuid, maze);
-		mazeVisibilities.put(maze, false);
+		show(maze);
 		
 		if(!mazeHeights.containsKey(uuid))
 			mazeHeights.put(uuid, 3);
@@ -124,7 +124,7 @@ public class MazeHandler {
 		
 		if(p == null)
 			return;
-		
+
 		mazeVisibilities.put(maze, true);
 		
 		for(ArrayList<Location> chunk : maze.getBorder().values())
@@ -144,7 +144,7 @@ public class MazeHandler {
 		
 		if( p == null)
 			return;
-		
+
 		mazeVisibilities.put(maze, false);
 		
 		for(ArrayList<Location> chunk : maze.getBorder().values())
@@ -154,6 +154,9 @@ public class MazeHandler {
 	
 	@SuppressWarnings("deprecation")
 	public void showMazeAction(Player p, Maze maze, MazeAction action) {
+
+		if(!isVisible(maze))
+			return;
 		
 		for(Location point : action.getRemovedExits()) {
 			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);

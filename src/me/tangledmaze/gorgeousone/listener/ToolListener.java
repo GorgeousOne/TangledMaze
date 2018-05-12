@@ -73,7 +73,7 @@ public class ToolListener implements Listener {
 		
 		ItemStack item = e.getItem();
 		
-		if(item == null || !TangledMain.isSelectionWand(item))
+		if(!TangledMain.isSelectionWand(item))
 			return;
 		
 		e.setCancelled(true);

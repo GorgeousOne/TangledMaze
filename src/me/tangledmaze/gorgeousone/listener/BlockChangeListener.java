@@ -1,6 +1,5 @@
 package me.tangledmaze.gorgeousone.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,7 +49,6 @@ public class BlockChangeListener implements Listener {
 	
 	@EventHandler
 	public void onBlockExplode(EntityExplodeEvent e) {
-		Bukkit.broadcastMessage("boom");
 		
 		for(Block b : e.blockList())
 			if(Utils.isLikeGround(b.getType()))
@@ -86,8 +84,6 @@ public class BlockChangeListener implements Listener {
 
 	@EventHandler
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
-		Bukkit.broadcastMessage("change");
-		
 		if(!Utils.isLikeGround(e.getBlock().getType()) &&  Utils.isLikeGround(e.getTo()))
 			update(e.getBlock().getLocation().add(0, -1, 0), e);
 			
@@ -101,7 +97,7 @@ public class BlockChangeListener implements Listener {
 		if(e.getAction() != Action.LEFT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 		
-		ItemStack item = e.getItem();
+		ItemStack item = e.getPlayer().getInventory().getItemInHand();
 		
 		if(TangledMain.isSelectionWand(item))
 			return;
@@ -130,7 +126,7 @@ public class BlockChangeListener implements Listener {
 					
 				for(Maze maze : mHandler.getMazes())
 					if(maze.contains(point)) {
-						if(maze.isHighlighted(point.getBlock()))
+						if(mHandler.isVisible(maze) && maze.isHighlighted(point.getBlock()))
 							mHandler.hide(maze);
 
 						maze.recalc(point);
@@ -139,7 +135,7 @@ public class BlockChangeListener implements Listener {
 				
 				for(RectSelection selection : sHandler.getSelections()) {
 					if(selection.contains(point)) {
-						if(selection.isHighlighted(point.getBlock()))
+						if(sHandler.isVisible(selection) && selection.isHighlighted(point.getBlock()))
 							sHandler.hide(selection);
 						
 						selection.recalc(point);

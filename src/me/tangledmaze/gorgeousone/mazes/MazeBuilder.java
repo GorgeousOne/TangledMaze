@@ -42,7 +42,9 @@ public class MazeBuilder {
 	
 	public int enqueueMaze(Maze maze) {
 		mazeQueue.add(maze);
-		mHandler.hide(maze);
+		
+		if(mHandler.isVisible(maze))
+			mHandler.hide(maze);
 		
 		if(mazeQueue.size() == 1)
 			buildNextMaze();
