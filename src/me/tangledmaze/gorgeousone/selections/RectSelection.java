@@ -141,13 +141,23 @@ public class RectSelection {
 	}
 	
 	public void recalc(Location point) {
-		if(shape.borderContains(point)) {
-			shape.recalc(point);
+		if(!point.getWorld().equals(world))
+			return;
 		
-			if(isVertex(point.getBlock())) {
-				int index = indexOfVertex(point.getBlock());
-				vertices.set(index, Utils.nearestSurface(point));
-			}	
+		if(!shape.getFill().containsKey(point.getChunk()))
+			return;
+			
+		ArrayList<Location>	fill = shape.getFill().get(point.getChunk());
+		
+		if(fill.contains(point)) {
+			
+			Location newPoint = Utils.nearestSurface(point);
+			fill.set(fill.indexOf(point), newPoint);
+			
+			if(borderContains(point)) {
+				ArrayList<Location>	border = shape.getBorder().get(point.getChunk());
+				border.set(border.indexOf(point), newPoint);
+			}
 		}
-	}		
+	}
 }

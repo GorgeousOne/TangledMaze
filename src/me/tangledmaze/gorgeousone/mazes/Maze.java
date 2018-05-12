@@ -571,6 +571,9 @@ public class Maze {
 	}
 	
 	public boolean contains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Chunk c = point.getChunk();
 		
 		if(!fillChunks.containsKey(c))
@@ -585,6 +588,9 @@ public class Maze {
 	}
 	
 	public boolean borderContains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Chunk c = point.getChunk();
 		
 		if(!borderChunks.containsKey(c))
@@ -599,6 +605,9 @@ public class Maze {
 	}
 	
 	public boolean isHighlighted(Block b) {
+		if(!b.getWorld().equals(world))
+			return false;
+		
 		Chunk c = b.getChunk();
 		
 		if(!borderChunks.containsKey(c))
@@ -612,6 +621,9 @@ public class Maze {
 	}
 	
 	public boolean exitsContain(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		for(Location point2 : exits)
 			if(point2.getBlockX() == point.getBlockX() &&
 			   point2.getBlockZ() == point.getBlockZ())
@@ -621,6 +633,9 @@ public class Maze {
 	}
 	
 	public boolean canBeExit(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
 		Location point2;
 
 		boolean touchesFill = false,
@@ -642,10 +657,23 @@ public class Maze {
 	}
 
 	public void recalc(Location point) {
-		if(!borderContains(point))
+		if(!point.getWorld().equals(world))
 			return;
 		
-		removeBorder(point);
-		addBorder(Utils.nearestSurface(point));
+		if(!fillChunks.containsKey(point.getChunk()))
+			return;
+			
+		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
+		
+		if(fill.contains(point)) {
+			
+			Location newPoint = Utils.nearestSurface(point);
+			fill.set(fill.indexOf(point), newPoint);
+			
+			if(borderContains(point)) {
+				ArrayList<Location>	border = borderChunks.get(point.getChunk());
+				border.set(border.indexOf(point), newPoint);
+			}
+		}
 	}
 }

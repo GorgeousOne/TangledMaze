@@ -176,8 +176,9 @@ public class MazeHandler {
 		Maze maze = getMaze(p);
 
 		//test if the clicked block is maze border
-		if(!maze.isHighlighted(b) && Math.random() < 1/3d) {
-			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
+		if(!maze.isHighlighted(b)) {
+			if(Math.random() < 1/3d)
+				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
 			return;
 		}
 		

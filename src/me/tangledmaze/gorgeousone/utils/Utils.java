@@ -89,8 +89,9 @@ public abstract class Utils {
 			Material.WALL_SIGN,
 			Material.WATER_LILY,
 			Material.WHEAT,
-			Material.WOOD_PLATE,
 			Material.WOOD_BUTTON,
+			Material.WOOD_PLATE,
+			Material.WOOD_STEP,
 			Material.WOODEN_DOOR,
 			Material.WEB,
 			Material.YELLOW_FLOWER));
@@ -116,16 +117,24 @@ public abstract class Utils {
 			Material.WHEAT,
 			Material.YELLOW_FLOWER));
 	
-	private static ArrayList<Material> HEIGHT_1_SOLIDS = new ArrayList<>(Arrays.asList(
+	private static ArrayList<Material> NON_BUILD_SOLIDS = new ArrayList<>(Arrays.asList(
+			Material.ACACIA_DOOR,
 			Material.ACTIVATOR_RAIL,
+			Material.BIRCH_DOOR,
 			Material.BROWN_MUSHROOM,
+			Material.CACTUS,
 			Material.CARROT,
+			Material.COCOA,
+			Material.DARK_OAK_DOOR,
 			Material.DEAD_BUSH,
 			Material.DETECTOR_RAIL,
-			Material.FIRE,
+			Material.DOUBLE_PLANT,
 			Material.FLOWER_POT,
 			Material.GOLD_PLATE,
+			Material.IRON_DOOR,
 			Material.IRON_PLATE,
+			Material.JUNGLE_DOOR,
+			Material.LADDER,
 			Material.LEVER,
 			Material.LONG_GRASS,
 			Material.MELON_STEM,
@@ -141,10 +150,12 @@ public abstract class Utils {
 			Material.SAPLING,
 			Material.SIGN_POST,
 			Material.SKULL,
+			Material.SPRUCE_DOOR,
 			Material.SNOW,
-			Material.STANDING_BANNER,
+			Material.STANDING_BANNER,	
 			Material.STONE_BUTTON,
 			Material.STONE_PLATE,
+			Material.SUGAR_CANE_BLOCK,
 			Material.TORCH,
 			Material.TRIPWIRE,
 			Material.TRIPWIRE_HOOK,
@@ -155,8 +166,9 @@ public abstract class Utils {
 			Material.WHEAT,
 			Material.WOOD_PLATE,
 			Material.WOOD_BUTTON,
+			Material.WOODEN_DOOR,
 			Material.YELLOW_FLOWER));
-
+	
 	public static boolean isLikeGround(Material m) {
 		return m.isSolid() && !NOT_GROUND_SOLIDS.contains(m);
 	}
@@ -164,9 +176,9 @@ public abstract class Utils {
 	public static boolean canBeReplaced(Material m) {
 		return !m.isSolid() || REPLACABLE_SOLIDS.contains(m); 
 	}
-	
-	public static boolean limitedToHeight1(Material m) {
-		return HEIGHT_1_SOLIDS.contains(m);
+
+	public static boolean canBeBuiltWith(Material m) {
+		return !m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
 	}
 	
 	@SuppressWarnings("unchecked")

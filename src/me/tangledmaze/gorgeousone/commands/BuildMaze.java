@@ -101,7 +101,7 @@ public class BuildMaze {
 				return;
 			}
 			
-			if(!Utils.isLikeGround(material)) {
+			if(!Utils.canBeBuiltWith(material)) {
 				p.sendMessage(Constants.prefix + "It could be difficult to build a maze out of \"" + blockType + "\".");
 				return;
 			}
