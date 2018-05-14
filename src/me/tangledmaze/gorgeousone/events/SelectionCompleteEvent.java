@@ -62,7 +62,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 			@Override
 			public void run() {
 				
-				if(isCancelled())
+				if(isCancelled && true)
 					p.sendMessage(cancelMessage);
 				
 				//set the shape of the selection to this new shape

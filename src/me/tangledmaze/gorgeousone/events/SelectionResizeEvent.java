@@ -73,7 +73,7 @@ public class SelectionResizeEvent extends SelectionEvent {
 			@Override
 			public void run() {
 				
-				if(!isCancelled()) {
+				if(!isCancelled) {
 					//set the shape of the selection to the new shape
 					sHandler.hide(selection);
 					selection.setShape(shape);

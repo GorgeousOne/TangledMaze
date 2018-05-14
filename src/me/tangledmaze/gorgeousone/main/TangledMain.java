@@ -13,9 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.tangledmaze.gorgeousone.listener.PlayerVanishListener;
-import me.tangledmaze.gorgeousone.listener.ToolListener;
-import me.tangledmaze.gorgeousone.listener.BlockChangeListener;
+import me.tangledmaze.gorgeousone.listener.*;
 import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -45,10 +43,13 @@ public class TangledMain extends JavaPlugin {
 		sHandler = new SelectionHandler();
 		
 		PluginManager pm = getServer().getPluginManager();
+		BlockChangeListener bl = new BlockChangeListener();
 		
-		pm.registerEvents(new ToolListener(), this);
+		new ToolListener(bl);
+		
+		pm.registerEvents(new ToolListener(bl), this);
+//		pm.registerEvents(bl, this);
 		pm.registerEvents(new PlayerVanishListener(), this);
-		pm.registerEvents(new BlockChangeListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandHandler());
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());

@@ -178,7 +178,7 @@ public abstract class Utils {
 	}
 
 	public static boolean canBeBuiltWith(Material m) {
-		return !m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
+		return m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -26,10 +26,8 @@ public class MazeBuilder {
 		EXIT = 4;
 	
 	private ArrayList<Maze> mazeQueue;
-	private MazeHandler mHandler;
 	
 	public MazeBuilder() {
-		mHandler = TangledMain.getPlugin().getMazeHandler();
 		mazeQueue = new ArrayList<>();
 	}
 	
@@ -42,9 +40,6 @@ public class MazeBuilder {
 	
 	public int enqueueMaze(Maze maze) {
 		mazeQueue.add(maze);
-		
-		if(mHandler.isVisible(maze))
-			mHandler.hide(maze);
 		
 		if(mazeQueue.size() == 1)
 			buildNextMaze();

@@ -142,7 +142,7 @@ public class MazeHandler {
 	public void hide(Maze maze) {
 		Player p = maze.getOwner();
 		
-		if( p == null)
+		if(p == null)
 			return;
 
 		mazeVisibilities.put(maze, false);

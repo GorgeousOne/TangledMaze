@@ -2,9 +2,12 @@ package me.tangledmaze.gorgeousone.listener;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,18 +28,21 @@ import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
+@SuppressWarnings("deprecation")
 public class ToolListener implements Listener {
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
+	private BlockChangeListener blockListener;
 	
 	private HashMap<Player, Long> times;
 	private BukkitRunnable timer;
 	private static final int expiration = 10*1000;
 	
-	public ToolListener() {
+	public ToolListener(BlockChangeListener bl) {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
+		blockListener = bl;
 		
 		times = new HashMap<>();
 		timer = new BukkitRunnable() {
@@ -65,7 +72,13 @@ public class ToolListener implements Listener {
 	@EventHandler
 	public void inInteract(PlayerInteractEvent e) {
 		
+		try {
+			if(e.getHand() != EquipmentSlot.HAND)
+				return;
+		} catch (NoSuchMethodError e2) {}
+		
 		Player p = e.getPlayer();
+		Block b = e.getClickedBlock();
 		
 		if(e.getAction() != Action.LEFT_CLICK_BLOCK &&
 		   e.getAction() != Action.RIGHT_CLICK_BLOCK)
@@ -73,17 +86,33 @@ public class ToolListener implements Listener {
 		
 		ItemStack item = e.getItem();
 		
-		if(!TangledMain.isSelectionWand(item))
+		//clicking with selection wand
+		if(TangledMain.isSelectionWand(item)) {
+			e.setCancelled(true);
+	
+			if(!p.hasPermission(Constants.buildPerm)) {
+				destroyTool(p, item);
+				return;
+			}
+			
+			sHandler.handleInteraction(p, b, e.getAction());
 			return;
+			
+		//clicking with inflammable objects on TNT
+		}else if(item != null)
+			if(item.getType() == Material.FLINT_AND_STEEL || item.getType() == Material.FIREBALL) {
+				blockListener.update(b.getLocation(), e);
+				return;
+			}
 		
-		e.setCancelled(true);
-
-		if(!p.hasPermission(Constants.buildPerm)) {
-			destroyTool(p, item);
-			return;
+		//just clicking somehow
+		if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(b))
+				mHandler.hide(mHandler.getMaze(p));
+			
+			if(sHandler.hasSelection(p) && sHandler.getSelection(p).isHighlighted(b))
+				sHandler.hide(sHandler.getSelection(p));
 		}
-		
-		sHandler.handleInteraction(p, e.getClickedBlock(), e.getAction());
 	}
 	
 	@EventHandler
@@ -132,14 +161,14 @@ public class ToolListener implements Listener {
 	
 	private void destroyTool(Player p, ItemStack tool) {
 		p.getInventory().remove(tool);
-		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
+		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool... it broke apart.");
 
 		p.damage(0);
 		p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
 		
-		//TODO is there any better way?
-		try {
-			p.getWorld().playSound( p.getLocation(), Sound.ITEM_BREAK, 1f, 1f);
-		} catch (NoSuchFieldError e) {}
+		if(Bukkit.getVersion().contains("1.8"))
+			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ITEM_BREAK"), 1f, 1f);
+		else
+			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
 	}
 }

@@ -1,6 +1,5 @@
 package me.tangledmaze.gorgeousone.events;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -44,7 +43,6 @@ public class MazeShapeEvent extends Event implements Cancellable {
 				maxMazeSize = TangledMain.getPlugin().getVipMazeSize();
 			
 			if(maxMazeSize >= 0 && maze.size() + action.getAddedFill().size() > maxMazeSize) {
-				Bukkit.broadcastMessage(maze.size() + "; " + action.getAddedFill().size() + "; " + maxMazeSize);
 				setCancelled(true, ChatColor.RED + "Your maze would become " + (maze.size() + action.getAddedFill().size() - maxMazeSize)
 						+ " blocks greater that the amount of blocks you are allowed to use at once (" + maxMazeSize + " blocks).");
 			}
