@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.main;
+package me.tangledmaze.gorgeousone.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,9 @@ import me.tangledmaze.gorgeousone.utils.Constants;
 public class TangledCompleter implements TabCompleter {
 	
 	private ArrayList<String> subCmds, selectionTypes;
+	
 	public TangledCompleter() {
+		
 		subCmds = new ArrayList<>(Arrays.asList(
 				"wand",
 				"select",

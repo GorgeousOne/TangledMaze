@@ -2,7 +2,7 @@ name: TangledMaze
 version: 1.0.0
 authors: [GorgeousOne, Spthiel]
 
-main: me.tangledmaze.gorgeousone.main.TangledMain
+main: me.tangledmaze.gorgeousone.core.TangledMain
 
 commands:
   tangledmaze:

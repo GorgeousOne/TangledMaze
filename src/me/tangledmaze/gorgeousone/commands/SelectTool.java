@@ -2,7 +2,7 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
@@ -39,7 +39,7 @@ public class SelectTool {
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 
 			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
-				sHandler.deselectSelection(p);
+				sHandler.discardSelection(p);
 			break;
 			
 		case "ellipse":
@@ -51,7 +51,7 @@ public class SelectTool {
 			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 
 			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
-				sHandler.deselectSelection(p);
+				sHandler.discardSelection(p);
 			break;
 		
 		case "brush":
@@ -63,7 +63,7 @@ public class SelectTool {
 				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
 				
 				if(sHandler.hasSelection(p))
-					sHandler.deselectSelection(p);
+					sHandler.discardSelection(p);
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
@@ -80,7 +80,7 @@ public class SelectTool {
 				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
 				
 				if(sHandler.hasSelection(p))
-					sHandler.deselectSelection(p);
+					sHandler.discardSelection(p);
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The exit setting tool can only be used on mazes.");

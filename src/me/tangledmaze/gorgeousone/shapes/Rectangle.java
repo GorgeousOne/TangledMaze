@@ -29,9 +29,8 @@ public class Rectangle implements Shape {
 		fillChunks   = new HashMap<>();
 		borderChunks = new HashMap<>();
 	
-		size =
-			(vertices.get(1).getBlockX() - vertices.get(0).getBlockX() + 1) *
-			(vertices.get(1).getBlockX() - vertices.get(0).getBlockX() + 1);
+		size = (vertices.get(2).getBlockX() - vertices.get(0).getBlockX() + 1) *
+			   (vertices.get(2).getBlockZ() - vertices.get(0).getBlockZ() + 1);
 				
  		calcFillAndBorder();
 	}

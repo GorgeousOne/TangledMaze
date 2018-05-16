@@ -30,8 +30,8 @@ public class Maze {
 	private int size, borderSize, wallHeight;
 	
 	public Maze(Shape baseShape, Player owner) {
-		world = baseShape.getWorld();
 
+		world = baseShape.getWorld();
 		this.owner = owner;
 		
 		history = new ActionHistory();
@@ -97,6 +97,10 @@ public class Maze {
 		return wallComposition;
 	}
 
+	public ActionHistory getActionHistory() {
+		return history;
+	}
+	
 	//setters
 	public void addExit(Location point) {
 		if(!canBeExit(point))
@@ -119,8 +123,10 @@ public class Maze {
 		wallComposition = composition;
 	}
 	
-	public void process(MazeAction action) {
-		history.pushAction(action);
+	public void processAction(MazeAction action, boolean saveToHistory) {
+		
+		if(saveToHistory)
+			history.pushAction(action);
 
 		for(Location point : action.getRemovedFill())
 			removeFill(point);
@@ -133,27 +139,6 @@ public class Maze {
 
 		for(Location point : action.getAddedBorder())
 			addBorder(point);
-	}
-	
-	public boolean undoLast() {
-		if(history.isEmpty())
-			return false;
-		
-		MazeAction action = history.popLastAction();
-		
-		for(Location point : action.getRemovedFill())
-			addFill(point);
-	
-		for(Location point : action.getRemovedBorder())
-			addBorder(point);
-	
-		for(Location point : action.getAddedFill())
-			removeFill(point);
-
-		for(Location point : action.getAddedBorder())
-			removeBorder(point);
-		
-		return true;
 	}
 
 	public MazeAction getAddition(Shape s) {
@@ -303,7 +288,7 @@ public class Maze {
 		Location point = b.getLocation();
 		
 		//can't remove what isn't part of the border
-		if(!isHighlighted(b))
+		if(!isBorder(b))
 			return null;
 		
 		ArrayList<Location>
@@ -420,7 +405,7 @@ public class Maze {
 		Location point = b.getLocation();
 		
 		//can't remove what is not part of the border
-		if(!isHighlighted(b))
+		if(!isBorder(b))
 			return null;
 		
 		ArrayList<Location>
@@ -604,7 +589,25 @@ public class Maze {
 		return false;
 	}
 	
-	public boolean isHighlighted(Block b) {
+	public boolean isFill(Block b) {
+		if(!b.getWorld().equals(world))
+			return false;
+		
+		Chunk c = b.getChunk();
+		
+		if(!fillChunks.containsKey(c))
+			return false;
+		
+		Location point = b.getLocation();
+		
+		for(Location point2 : fillChunks.get(c))
+			if(point.equals(point2))
+				return true;
+		
+		return false;
+	}
+	
+	public boolean isBorder(Block b) {
 		if(!b.getWorld().equals(world))
 			return false;
 		
@@ -613,8 +616,10 @@ public class Maze {
 		if(!borderChunks.containsKey(c))
 			return false;
 		
-		for(Location point : borderChunks.get(c))
-			if(point.getBlock().equals(b))
+		Location point = b.getLocation();
+		
+		for(Location point2 : borderChunks.get(c))
+			if(point.equals(point2))
 				return true;
 		
 		return false;

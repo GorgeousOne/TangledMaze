@@ -12,11 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.plugin.PluginManager;
 
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionCompleteEvent;
 import me.tangledmaze.gorgeousone.events.SelectionResizeEvent;
 import me.tangledmaze.gorgeousone.events.SelectionStartEvent;
-import me.tangledmaze.gorgeousone.main.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
@@ -49,10 +49,13 @@ public class SelectionHandler {
 		selectionVisibilities = new HashMap<>();
 	}
 	
-	//hides all selections before reloading since they will be deleted anyway.
+	/**
+	 * Hides all selections for a reload. They will also be deleted afterwards.
+	 */
 	public void reload() {
 		for(RectSelection selection : selections.values())
-			hide(selection);
+			if(isVisible(selection))
+				hide(selection);
 		
 		selectionTypes.clear();
 		selections.clear();
@@ -156,6 +159,9 @@ public class SelectionHandler {
 		selectionVisibilities.put(selection, false);
 	}
 
+	/**
+	 * @return the selection type a player chose with "/tangledmaze select" or by default the rectangle class.
+	 */
 	public Class<? extends Shape> getSelectionType(Player p) {
 		if(!p.isOnline() || !p.hasPermission(Constants.buildPerm))
 			return null;
@@ -163,14 +169,23 @@ public class SelectionHandler {
 		return selectionTypes.containsKey(p.getUniqueId()) ? selectionTypes.get(p.getUniqueId()) : Rectangle.class;
 	}
 	
+	/**
+	 * Sets the selection type for a player that will be used when he clicks on the ground with a selection wand.
+	 */
 	public void setSelectionType(Player p, Class<? extends Shape> type) {
 		selectionTypes.put(p.getUniqueId(), type);
 	}
 	
+	/**
+	 * @return if a specific selection is displayed to the player who is creating it.
+	 */
 	public boolean isVisible(RectSelection selection) {
 		return selectionVisibilities.get(selection);
 	}
 	
+	/**
+	 * Displays the border of a selection to the player who is creating it. A visibility check with <b>isVisible(RectSelection);</b> is recommended before.
+	 */
 	@SuppressWarnings("deprecation")
 	public void show(RectSelection selection) {
 		Player p = selection.getPlayer();
@@ -189,6 +204,9 @@ public class SelectionHandler {
 			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 	}
 
+	/**
+	 * Hides a selection from the player who is creating it. A visibility check with <b>isVisible(RectSelection);</b> is recommended before.
+	 */
 	@SuppressWarnings("deprecation")
 	public void hide(RectSelection selection) {
 		Player p = selection.getPlayer();
@@ -218,17 +236,17 @@ public class SelectionHandler {
 				for(Chunk c : border.keySet())
 					if(maze.getBorder().containsKey(c))
 						for(Location point : border.get(c))
-							if(maze.isHighlighted(point.getBlock()))
+							if(maze.isBorder(point.getBlock()))
 								p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 			}
 			
 			for(Location vertex : selection.getVertices())
-				if(maze.isHighlighted(vertex.getBlock()))
+				if(maze.isBorder(vertex.getBlock()))
 					p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
 		}
 	}
 	
-	public void deselectSelection(Player p) {
+	public void discardSelection(Player p) {
 		UUID uuid = p.getUniqueId();
 		
 		if(selections.containsKey(uuid)) {
@@ -240,7 +258,10 @@ public class SelectionHandler {
 			selections.remove(uuid);
 		}
 	}
-	
+
+	/**
+	 * Removes all held data to a player in this object.
+	 */
 	public void remove(Player p) {
 		UUID uuid = p.getUniqueId();
 		
@@ -250,6 +271,9 @@ public class SelectionHandler {
 		resizingSelections.remove(uuid);
 	}
 
+	/**
+	 * Resets the selection type of a player to an actual shape (rectangle / ellipse).<br>
+	 */
 	public void resetTool(Player p) {
 		UUID uuid = p.getUniqueId();
 		

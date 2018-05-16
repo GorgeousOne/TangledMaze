@@ -38,4 +38,24 @@ public class MazeAction {
 	public ArrayList<Location> getRemovedExits() {
 		return  removedExits;
 	}
+	
+	public MazeAction reverse() {
+		ArrayList<Location> temp = new ArrayList<Location>(addedFill);
+		
+		addedFill.clear();
+		addedFill.addAll(removedFill);
+		removedFill.clear();
+		removedFill.addAll(temp);
+		
+		temp = new ArrayList<>(addedBorder);
+		
+		addedBorder.clear();
+		addedBorder.addAll(removedBorder);
+		removedBorder.clear();
+		removedBorder.addAll(temp);
+		
+		getRemovedExits().clear();
+		
+		return this;
+	}
 }

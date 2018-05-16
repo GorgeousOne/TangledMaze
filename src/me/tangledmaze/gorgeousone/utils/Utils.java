@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 
 public abstract class Utils {
 	

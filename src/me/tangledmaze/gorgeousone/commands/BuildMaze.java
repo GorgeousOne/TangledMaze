@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
@@ -112,7 +112,7 @@ public class BuildMaze {
 		//----------------------------------------------------------------------------------------------------------------
 		
 		mHandler.getMaze(p).setWallComposition(composition);
-		mHandler.deselctMaze(p);
+		mHandler.discardMaze(p);
 		
 		int queuePosition = mBuilder.enqueueMaze(maze);
 

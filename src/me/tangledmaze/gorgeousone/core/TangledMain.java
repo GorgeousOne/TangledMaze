@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.main;
+package me.tangledmaze.gorgeousone.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +45,8 @@ public class TangledMain extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		BlockChangeListener bl = new BlockChangeListener();
 		
-		new ToolListener(bl);
-		
+		pm.registerEvents(bl, this);
 		pm.registerEvents(new ToolListener(bl), this);
-//		pm.registerEvents(bl, this);
 		pm.registerEvents(new PlayerVanishListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandHandler());

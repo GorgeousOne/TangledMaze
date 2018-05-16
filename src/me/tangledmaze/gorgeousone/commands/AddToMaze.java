@@ -2,7 +2,7 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -48,7 +48,7 @@ public class AddToMaze {
 		try {
 			mHandler.addSelectionToMaze(mHandler.getMaze(p), sHandler.getSelection(p));
 		}catch (IllegalArgumentException e) {
-			p.sendMessage(ChatColor.RED + "Your selection does not seem to be connected to your maze directly.");
+			p.sendMessage(ChatColor.RED + "Your selection does not seem to touch your maze directly (outline on outline).");
 		}
 	}
 }

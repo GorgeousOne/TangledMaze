@@ -2,7 +2,7 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -32,7 +32,7 @@ public class StartMaze {
 		}
 		
 		RectSelection selection = sHandler.getSelection(p);
-		sHandler.deselectSelection(p);
+		sHandler.discardSelection(p);
 
 		try {
 			mHandler.startMaze(p, selection);

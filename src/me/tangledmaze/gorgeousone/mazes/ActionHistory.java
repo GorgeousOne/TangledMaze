@@ -24,7 +24,7 @@ public class ActionHistory {
 	public MazeAction popLastAction() {
 		return actions.pop();
 	}
-	
+
 	public void clear() {
 		actions.clear();
 	}

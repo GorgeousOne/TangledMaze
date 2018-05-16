@@ -3,7 +3,7 @@ package me.tangledmaze.gorgeousone.commands;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;

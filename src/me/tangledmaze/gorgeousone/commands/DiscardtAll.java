@@ -2,7 +2,7 @@ package me.tangledmaze.gorgeousone.commands;
 
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
@@ -24,8 +24,8 @@ public class DiscardtAll {
 			return;
 		}
 		
-		sHandler.deselectSelection(p);
-		mHandler.deselctMaze(p);
+		sHandler.discardSelection(p);
+		mHandler.discardMaze(p);
 		sHandler.resetTool(p);
 
 		p.sendMessage(Constants.prefix + "Deselected your selection and your maze.");

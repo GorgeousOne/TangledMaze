@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Entry;
 import me.tangledmaze.gorgeousone.utils.Utils;

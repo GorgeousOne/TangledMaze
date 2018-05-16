@@ -1,9 +1,11 @@
 package me.tangledmaze.gorgeousone.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
+import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
@@ -29,8 +31,18 @@ public class UndoAction {
 		
 		Maze maze = mHandler.getMaze(p);
 		
-		//inform the player if there could be undone something
-		if(maze.undoLast())
+		if(maze.getActionHistory().isEmpty()) {
+			
+			if(Math.random() < 1/3d)
+				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to be undone...");
+			
+		}else {
+			MazeAction action = maze.getActionHistory().popLastAction().reverse();
+			
+			maze.processAction(action, false);
+			mHandler.showMazeAction(p, maze, action);
+			
 			p.sendMessage(Constants.prefix + "Undid last action.");
+		}
 	}
 }

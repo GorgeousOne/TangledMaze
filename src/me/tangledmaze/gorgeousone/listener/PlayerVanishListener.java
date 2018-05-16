@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
@@ -40,7 +40,7 @@ public class PlayerVanishListener implements Listener {
 		Player p = e.getPlayer();
 			
 		if(p.hasPermission(Constants.buildPerm)) {
-			mHandler.deselctMaze(e.getPlayer());
+			mHandler.discardMaze(e.getPlayer());
 			sHandler.remove(p);
 		}
 	}

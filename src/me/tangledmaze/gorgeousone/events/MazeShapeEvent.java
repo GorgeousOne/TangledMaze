@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
@@ -57,13 +57,13 @@ public class MazeShapeEvent extends Event implements Cancellable {
 					p.sendMessage(cancelMessage);
 				
 				else {
-					sHandler.deselectSelection(maze.getOwner());
+					sHandler.discardSelection(maze.getOwner());
 					mHandler.showMazeAction(p, maze, action);
-					maze.process(action);
+					maze.processAction(action, true);
 					
 					if(maze.size() == 0) {
 						p.sendMessage(Constants.prefix + "Now you erased your whole maze. You will have to start a new one.");
-						mHandler.deselctMaze(p);
+						mHandler.discardMaze(p);
 						sHandler.resetTool(p);
 					}
 				}

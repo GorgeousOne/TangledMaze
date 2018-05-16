@@ -23,7 +23,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
@@ -40,6 +40,7 @@ public class ToolListener implements Listener {
 	private static final int expiration = 10*1000;
 	
 	public ToolListener(BlockChangeListener bl) {
+		
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		blockListener = bl;
@@ -69,14 +70,17 @@ public class ToolListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	@EventHandler
-	public void inInteract(PlayerInteractEvent e) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onInteract(PlayerInteractEvent e) {
+
+		if(e.isCancelled())
+			return;
 		
 		try {
 			if(e.getHand() != EquipmentSlot.HAND)
 				return;
 		} catch (NoSuchMethodError e2) {}
-		
+
 		Player p = e.getPlayer();
 		Block b = e.getClickedBlock();
 		
@@ -107,7 +111,7 @@ public class ToolListener implements Listener {
 		
 		//just clicking somehow
 		if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isHighlighted(b))
+			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isBorder(b))
 				mHandler.hide(mHandler.getMaze(p));
 			
 			if(sHandler.hasSelection(p) && sHandler.getSelection(p).isHighlighted(b))
@@ -117,6 +121,7 @@ public class ToolListener implements Listener {
 	
 	@EventHandler
 	public void onSlotSwitch(PlayerItemHeldEvent e) {
+		
 		Player p = e.getPlayer();
 		Inventory i = p.getInventory();
 		
@@ -135,8 +140,9 @@ public class ToolListener implements Listener {
 			times.put(p, System.currentTimeMillis());
 	}
 	
-	@EventHandler (priority = EventPriority.LOW)
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPickUp(PlayerPickupItemEvent e) {
+
 		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
@@ -149,8 +155,9 @@ public class ToolListener implements Listener {
 		}
 	}
 	
-	@EventHandler (priority = EventPriority.LOW)
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onDrop(PlayerDropItemEvent e) {
+		
 		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItemDrop().getItemStack())) {
 			Player p = e.getPlayer();
 
@@ -160,6 +167,7 @@ public class ToolListener implements Listener {
 	}
 	
 	private void destroyTool(Player p, ItemStack tool) {
+		
 		p.getInventory().remove(tool);
 		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool... it broke apart.");
 

@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
@@ -89,7 +89,7 @@ public class BlockChangeListener implements Listener {
 				
 				for(Maze maze : mHandler.getMazes())
 					if(maze.contains(point)) {
-						if(mHandler.isVisible(maze) && maze.isHighlighted(point.getBlock()))
+						if(mHandler.isVisible(maze) && maze.isBorder(point.getBlock()))
 							mHandler.hide(maze);
 
 						maze.recalc(point);

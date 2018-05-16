@@ -3,13 +3,17 @@ package me.tangledmaze.gorgeousone.events;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.tangledmaze.gorgeousone.main.TangledMain;
+import me.tangledmaze.gorgeousone.core.TangledMain;
+import me.tangledmaze.gorgeousone.mazes.Maze;
+import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Shape;
@@ -20,6 +24,8 @@ import net.md_5.bungee.api.ChatColor;
 public class SelectionResizeEvent extends SelectionEvent {
 
 	private SelectionHandler sHandler;
+	private MazeHandler mHandler;
+	
 	private RectSelection selection;
 	private Shape shape;
 	
@@ -28,6 +34,8 @@ public class SelectionResizeEvent extends SelectionEvent {
 		super(p, clickedBlock);
 		
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
+		mHandler = TangledMain.getPlugin().getMazeHandler();
+		
 		selection = sHandler.getSelection(p);
 		
 		//return if the vertex would be at its old xz coord
@@ -64,16 +72,34 @@ public class SelectionResizeEvent extends SelectionEvent {
 			maxMazeSize = TangledMain.getPlugin().getVipMazeSize();
 		
 		if(maxMazeSize >= 0 && shape.size() > maxMazeSize) {
-			setCancelled(true);
-			p.sendMessage(ChatColor.RED + "This selection would be " + (shape.size() - maxMazeSize)
+			setCancelled(true, cancelMessage = ChatColor.RED + "This selection would be " + (shape.size() - maxMazeSize)
 					+ " blocks greater that the amount of blocks you are allowed to use for a maze at once (" + maxMazeSize + " blocks).");
 		}
 		
+		HashMap<Chunk, ArrayList<Location>> shapeFill = shape.getFill();
+		
+		for(Maze maze : mHandler.getMazes()) {
+			if(p.equals(maze.getOwner()))
+				continue;
+			
+			for(Chunk c : shapeFill.keySet())
+				for(Location point : shapeFill.get(c))
+					
+					if(maze.isFill(point.getBlock())) {
+						this.cancelMessage = ChatColor.RED + "You cannot create your selection here. It would intersect the maze of someone else.";
+						setCancelled(true);
+						break;
+					}
+		}
+			
 		BukkitRunnable event = new BukkitRunnable() {
 			@Override
 			public void run() {
 				
-				if(!isCancelled) {
+				if(isCancelled)
+					p.sendMessage(cancelMessage);
+				
+				else {
 					//set the shape of the selection to the new shape
 					sHandler.hide(selection);
 					selection.setShape(shape);

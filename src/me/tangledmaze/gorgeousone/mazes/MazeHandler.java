@@ -27,9 +27,13 @@ public class MazeHandler {
 		mazeVisibilities = new HashMap<>();
 	}
 	
+	/**
+	 * Hides all mazes for a reload. They will be deleted afterwards.
+	 */
 	public void reload() {
 		for(Maze maze : mazes.values())
-			hide(maze);
+			if(isVisible(maze))
+				hide(maze);
 	}
 	
 	public ArrayList<Maze> getMazes() {
@@ -44,6 +48,9 @@ public class MazeHandler {
 		return mazes.get(p.getUniqueId());
 	}
 	
+	/**
+	 * @return if a maze is displayed to it's owner.
+	 */
 	public boolean isVisible(Maze maze) {
 		return mazeVisibilities.get(maze);
 	}
@@ -59,7 +66,7 @@ public class MazeHandler {
 		return mazeHeights.get(p.getUniqueId());
 	}
 
-	public void deselctMaze(Player p) {
+	public void discardMaze(Player p) {
 		if(hasMaze(p)) {
 			Maze maze = getMaze(p);
 			
@@ -69,6 +76,7 @@ public class MazeHandler {
 		}
 	}
 	
+	//removes all held data to a player in this object.
 	public void remove(Player p) {
 		mazeVisibilities.remove(getMaze(p));
 		mazeHeights.remove(p.getUniqueId());
@@ -99,10 +107,10 @@ public class MazeHandler {
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 
 		MazeAction action = maze.getAddition(selection.getShape());
-		
+
 		if(action.getAddedFill().size() == selection.getShape().size())
 			throw new IllegalArgumentException("The passed selection does not intersect the maze properly.");
-			
+		
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, action));
 	}
 	
@@ -118,60 +126,6 @@ public class MazeHandler {
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, action));
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void show(Maze maze) {
-		Player p = maze.getOwner();
-		
-		if(p == null)
-			return;
-
-		mazeVisibilities.put(maze, true);
-		
-		for(ArrayList<Location> chunk : maze.getBorder().values())
-			for(Location point : chunk)
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-		
-		for(Location exit : maze.getExits())
-			p.sendBlockChange(exit, Constants.MAZE_EXIT, (byte) 0);
-		
-		if(!maze.getExits().isEmpty())
-			p.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void hide(Maze maze) {
-		Player p = maze.getOwner();
-		
-		if(p == null)
-			return;
-
-		mazeVisibilities.put(maze, false);
-		
-		for(ArrayList<Location> chunk : maze.getBorder().values())
-			for(Location point : chunk)
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void showMazeAction(Player p, Maze maze, MazeAction action) {
-
-		if(!isVisible(maze))
-			return;
-		
-		for(Location point : action.getRemovedExits()) {
-			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-		
-			if(maze.getExits().indexOf(point) == 0 && maze.getExits().size() > 1)
-				p.sendBlockChange(maze.getExits().get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
-		}
-		
-		for(Location point : action.getAddedBorder())
-			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
-		
-		for(Location point : action.getRemovedBorder())
-			p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
-	}
-
 	public void addExitToMaze(Player p, Block b) {
 		if(!hasMaze(p))
 			return;
@@ -179,7 +133,7 @@ public class MazeHandler {
 		Maze maze = getMaze(p);
 
 		//test if the clicked block is maze border
-		if(!maze.isHighlighted(b)) {
+		if(!maze.isBorder(b)) {
 			if(Math.random() < 1/3d)
 				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "You can't place an exit here...");
 			return;
@@ -213,4 +167,64 @@ public class MazeHandler {
 			maze.addExit(loc);
 		}
 	}		
+	
+	/**
+	 * Displays the border of a maze to it's owner. A visibility check with <b>isVisible(Maze);</b> is recommended before.
+	 */
+	@SuppressWarnings("deprecation")
+	public void show(Maze maze) {
+		Player p = maze.getOwner();
+		
+		if(p == null)
+			return;
+
+		mazeVisibilities.put(maze, true);
+		
+		for(ArrayList<Location> chunk : maze.getBorder().values())
+			for(Location point : chunk)
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+		for(Location exit : maze.getExits())
+			p.sendBlockChange(exit, Constants.MAZE_EXIT, (byte) 0);
+		
+		if(!maze.getExits().isEmpty())
+			p.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
+	}
+	
+	/**
+	 * Hides a maze from the player who is creating it. A visibility check with <b>isVisible(Maze);</b> is recommended before.
+	 */
+	@SuppressWarnings("deprecation")
+	public void hide(Maze maze) {
+		Player p = maze.getOwner();
+		
+		if(p == null)
+			return;
+
+		mazeVisibilities.put(maze, false);
+		
+		for(ArrayList<Location> chunk : maze.getBorder().values())
+			for(Location point : chunk)
+				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void showMazeAction(Player p, Maze maze, MazeAction action) {
+
+		if(!isVisible(maze))
+			return;
+		
+		for(Location point : action.getRemovedExits()) {
+			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+			if(maze.getExits().indexOf(point) == 0 && maze.getExits().size() > 1)
+				p.sendBlockChange(maze.getExits().get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+		}
+		
+		for(Location point : action.getAddedBorder())
+			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+		
+		for(Location point : action.getRemovedBorder())
+			p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+	}
 }

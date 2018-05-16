@@ -1,4 +1,4 @@
-package me.tangledmaze.gorgeousone.main;
+package me.tangledmaze.gorgeousone.core;
 
 import java.util.ArrayList;
 
@@ -31,6 +31,7 @@ public class CommandHandler implements CommandExecutor {
 	private RawMessage[] pageLinks;
 
 	public CommandHandler() {
+		
 		startCommand   = new StartMaze();
 		discardCommand = new DiscardtAll();
 		selectCommand  = new SelectTool();
@@ -61,6 +62,7 @@ public class CommandHandler implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender commandSender, Command command, String name, String[] args) {
+		
 		if (commandSender instanceof ConsoleCommandSender)
 			return true;
 		
@@ -163,6 +165,7 @@ public class CommandHandler implements CommandExecutor {
 	}
 	
 	private void sendCommandHelp(Player p, int page) {
+		
 		if(page < 0 || page > pageLinks.length+1)
 			page = 1;
 		
