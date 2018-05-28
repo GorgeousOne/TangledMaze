@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
@@ -15,7 +16,6 @@ import me.tangledmaze.gorgeousone.shapes.Brush;
 import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.utils.Constants;
-import me.tangledmaze.gorgeousone.utils.Entry;
 import me.tangledmaze.gorgeousone.utils.NMSProvider;
 import me.tangledmaze.gorgeousone.utils.Utils;
 
@@ -31,6 +31,7 @@ public class BuildMaze {
 		mBuilder  = TangledMain.getPlugin().getMazeBuilder();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void execute(Player p, ArrayList<String> blockTypes) {
 		
 		if(!p.hasPermission(Constants.buildPerm)) {
@@ -76,7 +77,7 @@ public class BuildMaze {
 			return;
 		}
 		
-		ArrayList<Entry<Material, Byte>> composition = new ArrayList<>();
+		ArrayList<MaterialData> composition = new ArrayList<>();
 		
 		for(String blockType : blockTypes) {
 			Material material;
@@ -106,7 +107,7 @@ public class BuildMaze {
 				return;
 			}
 
-			composition.add(new Entry<Material, Byte>(material, data));
+			composition.add(new MaterialData(material, data));
 		}
 
 		//----------------------------------------------------------------------------------------------------------------

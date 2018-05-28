@@ -75,7 +75,6 @@ public abstract class Utils {
 			Material.SKULL,
 			Material.SPRUCE_DOOR,
 			Material.SNOW,
-			Material.STONE_SLAB2,
 			Material.STANDING_BANNER,	
 			Material.STONE_BUTTON,
 			Material.STONE_PLATE,
@@ -91,7 +90,6 @@ public abstract class Utils {
 			Material.WHEAT,
 			Material.WOOD_BUTTON,
 			Material.WOOD_PLATE,
-			Material.WOOD_STEP,
 			Material.WOODEN_DOOR,
 			Material.WEB,
 			Material.YELLOW_FLOWER));
