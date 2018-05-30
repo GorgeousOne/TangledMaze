@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -118,22 +118,29 @@ public class MazeBuilder {
 			for(Location point : chunk)
 				mazeMap[point.getBlockX() - mazeMinX][point.getBlockZ() - mazeMinZ] = WALL;
 		
+		
+		Vector start = null;
+		int pathWidth = currentMaze.getDimensions().getBlockX();
+		
 		//mark exits in mazeMap as available for paths again
 		for(Location exit : currentMaze.getExits()) {
-			mazeMap[exit.getBlockX() - mazeMinX][exit.getBlockZ() - mazeMinZ] = EXIT;
 			
-			for(Vector dir : Utils.cardinalDirs()) {
-				Location exit2 = exit.clone().add(dir);
-				
-				//mark the maze fill in front of the exit as well, so it stays in touch with the paths in any case
-				if(currentMaze.contains(exit2) && !currentMaze.borderContains(exit2)) {
-					mazeMap[exit2.getBlockX() - mazeMinX][exit2.getBlockZ() - mazeMinZ] = EXIT;
-					break;
-				}
-			}
+			MazePath startEnd = new MazePath(
+					exit.getBlockX() - mazeMinX - (pathWidth-1)/2,
+					exit.getBlockZ() - mazeMinZ - (pathWidth-1)/2,
+					pathWidth,
+					pathWidth);
+			
+			for(Vector point : startEnd.getFill())
+				if(point.getBlockX() >= 0 && point.getBlockX() < mazeMap.length ||
+				   point.getBlockZ() >= 0 && point.getBlockZ() < mazeMap[0].length)
+					mazeMap[point.getBlockX()][point.getBlockZ()] = EXIT;
+			
+			//if we are iterating over the first and main exit set it to start
+			if(start == null)
+				start = startEnd.getCorner();
 		}
-		
-		Vector start = currentMaze.getExits().get(0).toVector().add(new Vector(-mazeMinX, 0, -mazeMinZ));
+
 		generatePaths(start);
 	}
 	
@@ -147,14 +154,13 @@ public class MazeBuilder {
 				openEnds.add(start);
 				
 				int pathLength = 0;
-				boolean isFirstLoop = true;
 				
 				ArrayList<Vector> directions = Utils.cardinalDirs();
 				Vector lastEnd;
 				
 				int
-					pathWidth = 1,
-					wallWidth = 1;
+					pathWidth = currentMaze.getDimensions().getBlockX(),
+					wallWidth = currentMaze.getDimensions().getBlockZ();
 				
 				mazefilling:
 				while(!openEnds.isEmpty()) {
@@ -194,19 +200,7 @@ public class MazeBuilder {
 							   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
 								continue directionsloop;
 						}
-						Bukkit.broadcastMessage("hey");
 
-						if(isFirstLoop) {
-							Bukkit.broadcastMessage("a new one");
-							
-							for(Vector point : path.getFill())
-								mazeMap[point.getBlockX()][point.getBlockZ()] = PATH;
-
-							isFirstLoop = false;
-							openEnds.add(path.getCorner());
-							break directionsloop;
-						}
-						
 						for(Vector point : newEnd.getFill()) {
 							
 							if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
@@ -218,7 +212,6 @@ public class MazeBuilder {
 							   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
 								continue directionsloop;
 						}
-						Bukkit.broadcastMessage("unstoppable");
 
 						for(Vector point : path.getFill())
 							mazeMap[point.getBlockX()][  point.getBlockZ()] = PATH;
@@ -233,7 +226,6 @@ public class MazeBuilder {
 					openEnds.remove(lastEnd);
 					pathLength = 0;
 				}
-				Bukkit.broadcastMessage("that was great");
 				MazeBuilder.this.buildMaze();
 			}
 		};
@@ -245,7 +237,7 @@ public class MazeBuilder {
 		ArrayList<Vector> directions = Utils.directions();
 		ArrayList<MaterialData> composition = currentMaze.getWallComposition();
 		
-		int wallHeight = currentMaze.getWallHeight();
+		int wallHeight = currentMaze.getDimensions().getBlockY();
 		
 		ArrayList<Block> placeables = new ArrayList<>();
 		int pointY, maxY;
@@ -295,14 +287,17 @@ public class MazeBuilder {
 				
 				while(!placeables.isEmpty()) {
 					
-					Block b = placeables.get(0);
-					placeables.remove(b);
+					BlockState state = placeables.get(0).getState();
+					placeables.remove(0);
 					
 					rndMatData = composition.get(rnd.nextInt(composition.size()));
-					b.setType(rndMatData.getItemType());
-					b.setData(rndMatData.getData());
+					state.setType(rndMatData.getItemType());
+					state.setRawData(rndMatData.getData());
 					
-					if(System.currentTimeMillis() - timer >= 10)
+					state.update(true, true);
+					
+					//idk... half a tick of every... is that ok? can i take all 50 ms?
+					if(System.currentTimeMillis() - timer >= 40)
 						return;
 				}
 				
@@ -315,6 +310,6 @@ public class MazeBuilder {
 				prepareNextMaze();
 			}
 		};
-		builder.runTaskTimer(TangledMain.getPlugin(), 0, 2);
+		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
 	}
 }

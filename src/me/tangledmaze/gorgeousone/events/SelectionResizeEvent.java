@@ -5,11 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
@@ -19,7 +19,6 @@ import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
-import net.md_5.bungee.api.ChatColor;
 
 public class SelectionResizeEvent extends SelectionEvent {
 
@@ -40,7 +39,7 @@ public class SelectionResizeEvent extends SelectionEvent {
 		
 		//return if the vertex would be at its old xz coord
 		if(selection.isVertex(clickedBlock)) {
-			Utils.sendBlockLater(p, vertex.getLocation(), Constants.SELECTION_CORNER);
+			Utils.sendBlockDelayed(p, vertex.getLocation(), Constants.SELECTION_CORNER);
 			return;
 		}
 		
@@ -91,23 +90,16 @@ public class SelectionResizeEvent extends SelectionEvent {
 						break;
 					}
 		}
-			
-		BukkitRunnable event = new BukkitRunnable() {
-			@Override
-			public void run() {
-				
-				if(isCancelled)
-					p.sendMessage(cancelMessage);
-				
-				else {
-					//set the shape of the selection to the new shape
-					sHandler.hide(selection);
-					selection.setShape(shape);
-					sHandler.show(selection);
-				}
-			}
-		};
-		event.runTask(TangledMain.getPlugin());
+		
+		if(isCancelled)
+			p.sendMessage(cancelMessage);
+		
+		else {
+			//set the shape of the selection to the new shape
+			sHandler.hide(selection);
+			selection.setShape(shape);
+			sHandler.show(selection);
+		}
 	}
 	
 	public Player getPlayer() {

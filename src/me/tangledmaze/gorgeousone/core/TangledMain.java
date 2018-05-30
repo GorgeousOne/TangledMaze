@@ -117,7 +117,7 @@ public class TangledMain extends JavaPlugin {
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
 		lore.add(ChatColor.GREEN + "The tool to create mazes.");
-		lore.add(ChatColor.GREEN + "Use left click to start a selection.");
+		lore.add(ChatColor.GREEN + "Click on the ground to start a selection.");
 		
 		meta.setLore(lore);
 		wand.setItemMeta(meta);

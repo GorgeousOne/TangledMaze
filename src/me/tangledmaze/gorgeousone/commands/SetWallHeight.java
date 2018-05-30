@@ -7,11 +7,11 @@ import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import net.md_5.bungee.api.ChatColor;
 
-public class SetMazeHeight {
+public class SetWallHeight {
 
 	private MazeHandler mHandler;
 	
-	public SetMazeHeight() {
+	public SetWallHeight() {
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 	}
 	
@@ -21,27 +21,28 @@ public class SetMazeHeight {
 			p.sendMessage(Constants.insufficientPerms);
 			return;
 		}
-
+		
 		int mazeHeight = 0;
 		
 		try {
 			mazeHeight = Integer.parseInt(arg0);
 		} catch (NumberFormatException e) {
-			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" could not be identified as an integer.");
+			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
 			return;
 		}
 		
 		if(mazeHeight < 1) {
-			p.sendMessage(ChatColor.RED + "A maze cannot be flatter than 1 block.");
+			p.sendMessage(ChatColor.RED + "A wall cannot be flatter than 1 block.");
 			return;
 		}
 		
 		if(mazeHeight > 20) {
-			p.sendMessage(Constants.prefix + "For reasons of safety we do not recommend to build mazes taller than 20 blocks.");
+			p.sendMessage(Constants.prefix + "In the interests of the noighbours upstairs the wall height is limited to 20 blocks. "
+					+ "I am sure they will thank you in return.");
 			return;
 		}
 		
-		mHandler.setMazeHeight(p, mazeHeight);
-		p.sendMessage(Constants.prefix + "Set maze building height to " + mazeHeight + ".");
+		mHandler.setMazeWallHeight(p, mazeHeight);
+		p.sendMessage(Constants.prefix + "Set wall height to " + mazeHeight + ".");
 	}
 }

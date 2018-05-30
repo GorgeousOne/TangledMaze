@@ -23,7 +23,9 @@ public class CommandHandler implements CommandExecutor {
 	private AddToMaze addCommand;
 	private CutFromMaze cutCommand;
 	private UndoAction undoCommand;
-	private SetMazeHeight heigthCommand;
+	private SetPathWidth pathWidthCommand;
+	private SetWallHeight wallHeightCommand;
+	private SetWallWidth wallWidthCommand;
 	private BuildMaze buildCommand;
 	private TpToMaze tpCommand;
 	
@@ -32,15 +34,17 @@ public class CommandHandler implements CommandExecutor {
 
 	public CommandHandler() {
 		
-		startCommand   = new StartMaze();
-		discardCommand = new DiscardtAll();
-		selectCommand  = new SelectTool();
-		addCommand     = new AddToMaze();
-		cutCommand     = new CutFromMaze();
-		undoCommand    = new UndoAction();
-		heigthCommand  = new SetMazeHeight();
-		buildCommand   = new BuildMaze();
-		tpCommand      = new TpToMaze();
+		startCommand      = new StartMaze();
+		discardCommand    = new DiscardtAll();
+		selectCommand     = new SelectTool();
+		addCommand        = new AddToMaze();
+		cutCommand        = new CutFromMaze();
+		undoCommand       = new UndoAction();
+		pathWidthCommand  = new SetPathWidth();
+		wallHeightCommand = new SetWallHeight();
+		wallWidthCommand  = new SetWallWidth();
+		buildCommand      = new BuildMaze();
+		tpCommand         = new TpToMaze();
 		
 		pageLinks = new RawMessage[9];
 		
@@ -55,7 +59,7 @@ public class CommandHandler implements CommandExecutor {
 		pageLinks[3].add("select <tool type>").color(Color.YELLOW);
 		pageLinks[4].add("add/cut").color(Color.YELLOW);
 		pageLinks[5].add("undo").color(Color.YELLOW);
-		pageLinks[6].add("height <integer>").color(Color.YELLOW);
+		pageLinks[6].add("wallheight <integer>").color(Color.YELLOW);
 		pageLinks[7].add("teleport").color(Color.YELLOW);
 		pageLinks[8].add("build <block type 1> ... <block type n>").color(Color.YELLOW);
 	}
@@ -113,19 +117,33 @@ public class CommandHandler implements CommandExecutor {
 			case "undo":
 				undoCommand.execute(p);
 				break;
-				
-			case "height":
+			
+			case "pathwidth":
 				if(args.length >= 2)
-					heigthCommand.execute(p, args[1]);
+					pathWidthCommand.execute(p, args[1]);
 				else
-					sendCommandHelp(p, 2);
+					sendCommandHelp(p, 8);
+				break;
+			
+			case "wallheight":
+				if(args.length >= 2)
+					wallHeightCommand.execute(p, args[1]);
+				else
+					sendCommandHelp(p, 8);
+				break;
+				
+			case "wallwidth":
+				if(args.length >= 2)
+					wallWidthCommand.execute(p, args[1]);
+				else
+					sendCommandHelp(p, 8);
 				break;
 				
 			case "build":
 				ArrayList<String> materials = new ArrayList<>();
 				
 				if(args.length < 2) {
-					sendCommandHelp(p, 10);
+					sendCommandHelp(p, 9);
 					break;
 				}
 				
@@ -153,7 +171,7 @@ public class CommandHandler implements CommandExecutor {
 						
 					} catch (NumberFormatException e) {
 						p.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + args[1] + "/cheese cake");
-						p.sendMessage(ChatColor.YELLOW + "Do you really think page " + ChatColor.DARK_GREEN + args[1] + ChatColor.YELLOW + " could exist?");
+						p.sendMessage(ChatColor.YELLOW + "Well sadly this is not any secret page you discovered by accident, better luck next time.");
 						return true;
 					}
 				}
@@ -251,18 +269,12 @@ public class CommandHandler implements CommandExecutor {
 			break;
 		//height
 		case 8:
-			p.sendMessage(ChatColor.YELLOW + "Height Command");
+			p.sendMessage(ChatColor.YELLOW + "Wall Height Command");
 			p.sendMessage(ChatColor.GREEN + "With this command you can decide how tall the walls of your maze should be built.");
 			p.sendMessage(ChatColor.GREEN + "The default height is 3 blocks and it can be set up to 20 (which already would be extra ordinary to my mind).");
 			break;
-		//teleport
-		case 9:
-			p.sendMessage(ChatColor.YELLOW + "Teleport Command");
-			p.sendMessage(ChatColor.GREEN + "In case you ever forgot where you started to build your maze you can use this command to teleport back to it.");
-			p.sendMessage(ChatColor.GREEN + "(Under the condition you have the permission for it.)");
-			break;
 		//build
-		case 10:
+		case 9:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
 			p.sendMessage(ChatColor.GREEN + "This command will finally build up your maze. You have to choose which type of blocks should be used therefore.");
 			p.sendMessage(ChatColor.GREEN + "After the command type in a kind block and it's data value (if not 0). An example would be "
@@ -270,6 +282,12 @@ public class CommandHandler implements CommandExecutor {
 			p.sendMessage(ChatColor.GREEN + "Depending on the size of your maze and the power of the server the time to finish can vary.");
 			p.sendMessage(ChatColor.GREEN + "If you leave the server before you mazes gets built your work will be discarded.");
 			p.sendMessage(ChatColor.GREEN + "A finished maze cannot be edited any further.");
+			break;
+		//teleport
+		case 10:
+			p.sendMessage(ChatColor.YELLOW + "Teleport Command");
+			p.sendMessage(ChatColor.GREEN + "In case you ever forgot where you started to build your maze you can use this command to teleport back to it.");
+			p.sendMessage(ChatColor.GREEN + "(Under the condition you have the permission for it.)");
 			break;
 		default:
 			break;

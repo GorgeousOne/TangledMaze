@@ -46,7 +46,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 		ArrayList<Location> vertices = Utils.calcRectangleVertices(v0, v1);
 
 		try {
-			//create a new shape with the the shape type the selection handler saves
+			//create a new shape with the the shape type the selection handler saved
 			Constructor<? extends Shape> con = sHandler.getSelectionType(p).getConstructor(ArrayList.class);
 			shape = con.newInstance(vertices);
 			
@@ -62,8 +62,8 @@ public class SelectionCompleteEvent extends SelectionEvent {
 			maxMazeSize = TangledMain.getPlugin().getVipMazeSize();
 		
 		if(maxMazeSize >= 0 && shape.size() > maxMazeSize) {
-			setCancelled(true, ChatColor.RED + "This selection would be " + (shape.size() - maxMazeSize)
-					+ " blocks greater that the amount of blocks you are allowed to use for a maze at once (" + maxMazeSize + " blocks).");
+			setCancelled(true, ChatColor.RED + "Already this selection would be " + (shape.size() - maxMazeSize)
+					+ " blocks greater than the amount of blocks you are allowed to use for a maze (" + maxMazeSize + " blocks).");
 		}
 		
 		HashMap<Chunk, ArrayList<Location>> shapeFill = shape.getFill();

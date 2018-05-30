@@ -70,12 +70,9 @@ public class ToolListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onInteract(PlayerInteractEvent e) {
 
-		if(e.isCancelled())
-			return;
-		
 		try {
 			if(e.getHand() != EquipmentSlot.HAND)
 				return;
@@ -119,7 +116,7 @@ public class ToolListener implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSlotSwitch(PlayerItemHeldEvent e) {
 		
 		Player p = e.getPlayer();
@@ -140,10 +137,10 @@ public class ToolListener implements Listener {
 			times.put(p, System.currentTimeMillis());
 	}
 	
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPickUp(PlayerPickupItemEvent e) {
 
-		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItem().getItemStack())) {
+		if(TangledMain.isSelectionWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
 				times.remove(p);
@@ -155,10 +152,10 @@ public class ToolListener implements Listener {
 		}
 	}
 	
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onDrop(PlayerDropItemEvent e) {
 		
-		if(!e.isCancelled() && TangledMain.isSelectionWand(e.getItemDrop().getItemStack())) {
+		if(TangledMain.isSelectionWand(e.getItemDrop().getItemStack())) {
 			Player p = e.getPlayer();
 
 			if(sHandler.hasSelection(p) || mHandler.hasMaze(p))

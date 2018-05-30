@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
@@ -94,7 +95,7 @@ public class SelectionHandler {
 				pm.callEvent(brushing);
 				
 				if(brushing.isCancelled())	//TODO wait a tick?
-					Utils.sendBlockLater(p, b.getLocation(), Constants.MAZE_BORDER);
+					Utils.sendBlockDelayed(p, b.getLocation(), Constants.MAZE_BORDER);
 			
 			}else if(Math.random() < 1/3d)
 				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
@@ -192,16 +193,22 @@ public class SelectionHandler {
 		
 		if(p == null)
 			return;
-		
-		selectionVisibilities.put(selection, true);
-		
-		if(selection.isComplete())
-			for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
-				for(Location point : chunk)
-					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
-		
-		for(Location vertex : selection.getVertices())
-			p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+
+		BukkitRunnable r = new BukkitRunnable() {
+			@Override
+			public void run() {
+				selectionVisibilities.put(selection, true);
+				
+				if(selection.isComplete())
+					for(ArrayList<Location> chunk : selection.getShape().getBorder().values())
+						for(Location point : chunk)
+							p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+				
+				for(Location vertex : selection.getVertices())
+					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+			}
+		};
+		r.runTask(TangledMain.getPlugin());
 	}
 
 	/**

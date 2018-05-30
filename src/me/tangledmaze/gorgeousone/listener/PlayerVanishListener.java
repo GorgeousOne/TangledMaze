@@ -2,6 +2,7 @@ package me.tangledmaze.gorgeousone.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -35,7 +36,7 @@ public class PlayerVanishListener implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onChangeWorld(PlayerChangedWorldEvent e) {
 		Player p = e.getPlayer();
 			

@@ -189,7 +189,7 @@ public abstract class Utils {
 		return (ArrayList<Vector>) CARDINAL_DIRS.clone(); 
 	}
 	
-	public static void sendBlockLater(Player p, Location loc, Material mat) {
+	public static void sendBlockDelayed(Player p, Location loc, Material mat) {
 		BukkitRunnable r = new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override

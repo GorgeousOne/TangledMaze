@@ -1,10 +1,10 @@
 package me.tangledmaze.gorgeousone.events;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
@@ -12,7 +12,6 @@ import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
-import net.md_5.bungee.api.ChatColor;
 
 public class MazeShapeEvent extends Event implements Cancellable {
 
@@ -48,28 +47,22 @@ public class MazeShapeEvent extends Event implements Cancellable {
 			}
 		}
 		
-		BukkitRunnable event = new BukkitRunnable() {
-			@Override
-			public void run() {
-				Player p = maze.getOwner();
-
-				if(isCancelled)
-					p.sendMessage(cancelMessage);
-				
-				else {
-					sHandler.discardSelection(maze.getOwner());
-					mHandler.showMazeAction(p, maze, action);
-					maze.processAction(action, true);
-					
-					if(maze.size() == 0) {
-						p.sendMessage(Constants.prefix + "Now you erased your whole maze. You will have to start a new one.");
-						mHandler.discardMaze(p);
-						sHandler.resetTool(p);
-					}
-				}
+		Player p = maze.getOwner();
+		
+		if(isCancelled)
+			p.sendMessage(cancelMessage);
+		
+		else {
+			sHandler.discardSelection(maze.getOwner());
+			mHandler.showMazeAction(p, maze, action);
+			maze.processAction(action, true);
+			
+			if(maze.size() == 0) {
+				p.sendMessage(Constants.prefix + "Now you erased your whole maze. You will have to start a new one.");
+				mHandler.discardMaze(p);
+				sHandler.resetTool(p);
 			}
-		};
-		event.runTask(TangledMain.getPlugin());
+		}
 	}
 	
 	@Override

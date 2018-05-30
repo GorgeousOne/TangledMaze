@@ -13,18 +13,20 @@ import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class TangledCompleter implements TabCompleter {
 	
-	private ArrayList<String> subCmds, selectionTypes;
+	private ArrayList<String> buildPermCmds, selectionTypes;
 	
 	public TangledCompleter() {
 		
-		subCmds = new ArrayList<>(Arrays.asList(
+		buildPermCmds = new ArrayList<>(Arrays.asList(
 				"wand",
-				"select",
 				"start",
-				"height",
+				"discard",
+				"select",
 				"add",
 				"cut",
-				"discard",
+				"pathwidth",
+				"wallheight",
+				"wallwidth",
 				"build"));
 		
 		selectionTypes = new ArrayList<>(Arrays.asList(
@@ -54,13 +56,13 @@ public class TangledCompleter implements TabCompleter {
 		switch (args.length) {
 		case 1:
 			if(args[0].equals("")) {
-				options.addAll(subCmds);
+				options.addAll(buildPermCmds);
 				
 				if(p.hasPermission(Constants.mazeTpPerm))
 					options.add("teleport");
 				
 			}else {
-				for(String command : subCmds)
+				for(String command : buildPermCmds)
 					if(command.startsWith(args[0].toLowerCase())) {
 						options.add(command);
 						break argumentswitch;

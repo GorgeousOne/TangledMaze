@@ -24,9 +24,11 @@ public class Maze {
 	private ActionHistory history;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Location> exits;
-	private ArrayList<MaterialData> wallComposition;
 	
-	private int size, borderSize, wallHeight;
+	private int size, borderSize;
+	
+	private ArrayList<MaterialData> wallComposition;
+	private Vector dimensions;
 	
 	public Maze(Shape baseShape, Player owner) {
 
@@ -41,7 +43,7 @@ public class Maze {
 		size = 0;
 		borderSize = 0;
 		
-		wallHeight = 3;
+		dimensions = new Vector(1, 3, 1);
 		
 		for(Chunk c : baseShape.getFill().keySet()) {
 			fillChunks.put(c, baseShape.getFill().get(c));
@@ -71,10 +73,6 @@ public class Maze {
 		return borderSize;
 	}
 	
-	public int getWallHeight() {
-		return wallHeight;
-	}
-	
 	public ArrayList<Chunk> getChunks() {
 		return new ArrayList<Chunk>(fillChunks.keySet());
 	}
@@ -90,6 +88,10 @@ public class Maze {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Location> getExits() {
 		return (ArrayList<Location>) exits.clone();
+	}
+	
+	public Vector getDimensions() {
+		return dimensions.clone();
 	}
 	
 	public ArrayList<MaterialData> getWallComposition() {
@@ -114,8 +116,19 @@ public class Maze {
 		exits.remove(point);
 	}
 	
+	public void setPathWidth(int width) {
+		dimensions.setX(Math.max(1, width));
+		owner.sendMessage("can confirm x");
+	}
+	
 	public void setWallHeight(int height) {
-		wallHeight = height;
+		dimensions.setY(Math.max(1, height));
+		owner.sendMessage("can confirm y");
+	}
+	
+	public void setWallWidth(int width) {
+		dimensions.setZ(Math.max(1, width));
+		owner.sendMessage("can confirm z");
 	}
 	
 	public void setWallComposition(ArrayList<MaterialData> composition) {
