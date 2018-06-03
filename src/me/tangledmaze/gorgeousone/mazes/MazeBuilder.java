@@ -30,6 +30,7 @@ public class MazeBuilder {
 	
 	private int[][] mazeMap, heightMap;
 	private int mazeMinX, mazeMinZ;
+	private Vector start;
 	
 	public MazeBuilder() {
 		mazeQueue = new ArrayList<>();
@@ -37,7 +38,7 @@ public class MazeBuilder {
 	
 	public boolean isInQueue(Player p) {
 		for(Maze maze : mazeQueue)
-			if(p.equals(maze.getOwner()))
+			if(p.equals(maze.getPlayer()))
 				return true;
 		return false;
 	}
@@ -56,12 +57,7 @@ public class MazeBuilder {
 	}
 	
 	public void discard(Maze maze) {
-		for(Maze maze2 : mazeQueue) {
-			if(maze2.equals(maze)) {
-				mazeQueue.remove(maze);
-				return;
-			}
-		}
+		mazeQueue.remove(maze);
 	}
 	
 	private void prepareNextMaze() {
@@ -70,6 +66,21 @@ public class MazeBuilder {
 			return;
 		
 		currentMaze = mazeQueue.get(0);
+		
+		createMazeMaps();
+		generateExits();
+		generatePaths();
+		buildMaze();
+		
+		if(currentMaze.getPlayer() != null)
+			currentMaze.getPlayer().sendMessage(Constants.prefix + "Your maze has been finished!");
+		
+		mazeQueue.remove(currentMaze);
+		prepareNextMaze();
+	}
+	
+	private void createMazeMaps() {
+		
 		ArrayList<Chunk> chunks = currentMaze.getChunks();
 		
 		//select a probably random chunk from the maze's chunk list
@@ -117,119 +128,191 @@ public class MazeBuilder {
 		for(ArrayList<Location> chunk : currentMaze.getBorder().values())
 			for(Location point : chunk)
 				mazeMap[point.getBlockX() - mazeMinX][point.getBlockZ() - mazeMinZ] = WALL;
+	}
+	
+	private void generateExits() {
+		start = null;
 		
+		int pathWidth = currentMaze.getDimensions().getBlockX(),
+			wallWidth = currentMaze.getDimensions().getBlockZ();
 		
-		Vector start = null;
-		int pathWidth = currentMaze.getDimensions().getBlockX();
+		int
+			defOffsetX = 0,
+			defOffsetZ = 0;
 		
 		//mark exits in mazeMap as available for paths again
 		for(Location exit : currentMaze.getExits()) {
 			
-			MazePath startEnd = new MazePath(
-					exit.getBlockX() - mazeMinX - (pathWidth-1)/2,
-					exit.getBlockZ() - mazeMinZ - (pathWidth-1)/2,
-					pathWidth,
-					pathWidth);
-			
-			for(Vector point : startEnd.getFill())
-				if(point.getBlockX() >= 0 && point.getBlockX() < mazeMap.length ||
-				   point.getBlockZ() >= 0 && point.getBlockZ() < mazeMap[0].length)
-					mazeMap[point.getBlockX()][point.getBlockZ()] = EXIT;
-			
-			//if we are iterating over the first and main exit set it to start
-			if(start == null)
-				start = startEnd.getCorner();
-		}
+			for(Vector dir : Utils.cardinalDirs()) {
+				Location exit2 = exit.clone().add(new Vector(-mazeMinX, 0, -mazeMinZ)).add(dir);
+				
+				if(exit2.getBlockX() < 0 || exit2.getBlockX() >= mazeMap.length ||
+				   exit2.getBlockZ() < 0 || exit2.getBlockZ() >= mazeMap[0].length)
+					continue;
+				
+				if(mazeMap[exit2.getBlockX()][exit2.getBlockZ()] == UNDEFINED) {
+					
+					int
+						endX = exit.getBlockX() - mazeMinX,
+						endZ = exit.getBlockZ() - mazeMinZ;
+						
+					//make width for exit always "grow" inside the maze
+					if(dir.getBlockX() < 0)
+						endX -= pathWidth-1;
+					//center exit as good as possible on outline (horizontally)
+					if(dir.getBlockX() == 0)
+						endX -= (pathWidth-1) / 2;
+	
+					if(dir.getBlockZ() < 0)
+						endZ -= pathWidth-1;
+					if(dir.getBlockZ() == 0)
+						endZ -= (pathWidth-1) / 2;
+					
+					int offsetX = endX - defOffsetX,
+						offsetZ = endZ - defOffsetZ;
+					
+					if(offsetX < 0)
+						offsetX += (pathWidth + wallWidth);
+					if(offsetZ < 0)
+						offsetZ += (pathWidth + wallWidth);
+					
+					offsetX %= (pathWidth + wallWidth);
+					offsetZ %= (pathWidth + wallWidth);
+					
+					int extraX = 0,
+						extraZ = 0;
 
-		generatePaths(start);
+					int exitType = EXIT;
+					
+					//true in the first loop for the main exit 
+					if(start == null) {
+						start = new Vector(
+								endX + dir.getBlockX() * pathWidth, 0,
+								endZ + dir.getBlockZ() * pathWidth);
+					
+						defOffsetX = offsetX + dir.getBlockX()*pathWidth;
+						defOffsetZ = offsetZ + dir.getBlockZ()*pathWidth;
+
+						if(defOffsetX < 0)
+							defOffsetX += (pathWidth + wallWidth);
+						if(defOffsetZ < 0)
+							defOffsetZ += (pathWidth + wallWidth);
+						
+						defOffsetX %= (pathWidth + wallWidth);
+						defOffsetZ %= (pathWidth + wallWidth);
+						
+						if(dir.getBlockX() != 0)
+							extraX = pathWidth;
+						else
+							extraZ = pathWidth;
+						
+						exitType = PATH;
+						
+					}else {
+						if(offsetX == 0)
+							offsetX = pathWidth + wallWidth;
+						if(offsetZ == 0)
+							offsetZ = pathWidth + wallWidth;
+						
+						if(dir.getBlockX() != 0)
+							extraX = offsetX;
+						else
+							extraZ = offsetZ;
+					}
+				
+					MazePath firstEnd = new MazePath(
+							endX - (dir.getX() < 0 ? extraX : 0),
+							endZ - (dir.getZ() < 0 ? extraZ : 0),
+							pathWidth + extraX,
+							pathWidth + extraZ);
+
+					for(Vector point : firstEnd.getFill())
+						if(point.getBlockX() >= 0 && point.getBlockX() < mazeMap.length ||
+						   point.getBlockZ() >= 0 && point.getBlockZ() < mazeMap[0].length)
+							mazeMap[point.getBlockX()][point.getBlockZ()] = exitType;
+				}
+			}
+		}
 	}
 	
-	private void generatePaths(Vector start) {
-		BukkitRunnable pathGenerator = new BukkitRunnable() {
-			@Override
-			public void run() {
-				
-				Random rnd = new Random();
-				ArrayList<Vector> openEnds = new ArrayList<>();
-				openEnds.add(start);
-				
-				int pathLength = 0;
-				
-				ArrayList<Vector> directions = Utils.cardinalDirs();
-				Vector lastEnd;
-				
-				int
-					pathWidth = currentMaze.getDimensions().getBlockX(),
-					wallWidth = currentMaze.getDimensions().getBlockZ();
-				
-				mazefilling:
-				while(!openEnds.isEmpty()) {
-					
-					if(pathLength < 3)
-						lastEnd = openEnds.get(openEnds.size()-1);
-					else {
-						lastEnd = openEnds.get(rnd.nextInt(openEnds.size()));
-						pathLength = 0;
-					}
-					
-					Collections.shuffle(directions);
-					
-					directionsloop:
-					for(Vector dir : directions) {
-						
-						MazePath
-							path = new MazePath(
-								lastEnd.getBlockX() + (dir.getX() > 0 ? pathWidth : 0) - (dir.getX() < 0 ? wallWidth : 0),
-								lastEnd.getBlockZ() + (dir.getZ() > 0 ? pathWidth : 0) - (dir.getZ() < 0 ? wallWidth : 0),
-								(dir.getX() == 0 ? pathWidth : wallWidth),
-								(dir.getZ() == 0 ? pathWidth : wallWidth)),
-								
-							newEnd = new MazePath(
-								lastEnd.getBlockX() + dir.getBlockX() * (pathWidth + wallWidth),
-								lastEnd.getBlockZ() + dir.getBlockZ() * (pathWidth + wallWidth),
-								pathWidth,
-								pathWidth);
-						
-						for(Vector point : path.getFill()) {
-							if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
-							   point.getBlockZ() < 0 || point.getBlockZ() >= mazeMap[0].length)
-								continue directionsloop;
-							
-							
-							if(mazeMap[point.getBlockX()][point.getBlockZ()] != UNDEFINED &&
-							   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
-								continue directionsloop;
-						}
-
-						for(Vector point : newEnd.getFill()) {
-							
-							if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
-							   point.getBlockZ() < 0 || point.getBlockZ() >= mazeMap[0].length)
-								continue directionsloop;
-	
-
-							if(mazeMap[point.getBlockX()][point.getBlockZ()] != UNDEFINED &&
-							   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
-								continue directionsloop;
-						}
-
-						for(Vector point : path.getFill())
-							mazeMap[point.getBlockX()][  point.getBlockZ()] = PATH;
-						for(Vector point : newEnd.getFill())
-							mazeMap[point.getBlockX()][point.getBlockZ()] = PATH;
-						
-						openEnds.add(newEnd.getCorner());
-						pathLength++;
-						continue mazefilling;
-					}
-
-					openEnds.remove(lastEnd);
-					pathLength = 0;
-				}
-				MazeBuilder.this.buildMaze();
+	private void generatePaths() {
+		Random rnd = new Random();
+		ArrayList<Vector> openEnds = new ArrayList<>();
+		openEnds.add(start);
+		
+		int pathLength = 0;
+		
+		ArrayList<Vector> directions = Utils.cardinalDirs();
+		Vector lastEnd;
+		
+		int
+			pathWidth = currentMaze.getDimensions().getBlockX(),
+			wallWidth = currentMaze.getDimensions().getBlockZ();
+		
+		mazefilling:
+		while(!openEnds.isEmpty()) {
+			
+			if(pathLength < 3)
+				lastEnd = openEnds.get(openEnds.size()-1);
+			else {
+				lastEnd = openEnds.get(rnd.nextInt(openEnds.size()));
+				pathLength = 0;
 			}
-		};
-		pathGenerator.runTaskAsynchronously(TangledMain.getPlugin());
+			
+			Collections.shuffle(directions);
+			
+			directionsloop:
+			for(Vector dir : directions) {
+				
+				MazePath
+					path = new MazePath(
+						lastEnd.getBlockX() + (dir.getX() > 0 ? pathWidth : 0) - (dir.getX() < 0 ? wallWidth : 0),
+						lastEnd.getBlockZ() + (dir.getZ() > 0 ? pathWidth : 0) - (dir.getZ() < 0 ? wallWidth : 0),
+						(dir.getX() == 0 ? pathWidth : wallWidth),
+						(dir.getZ() == 0 ? pathWidth : wallWidth)),
+						
+					newEnd = new MazePath(
+						lastEnd.getBlockX() + dir.getBlockX() * (pathWidth + wallWidth),
+						lastEnd.getBlockZ() + dir.getBlockZ() * (pathWidth + wallWidth),
+						pathWidth,
+						pathWidth);
+				
+				for(Vector point : path.getFill()) {
+					if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
+					   point.getBlockZ() < 0 || point.getBlockZ() >= mazeMap[0].length)
+						continue directionsloop;
+					
+					
+					if(mazeMap[point.getBlockX()][point.getBlockZ()] != UNDEFINED &&
+					   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
+						continue directionsloop;
+				}
+
+				for(Vector point : newEnd.getFill()) {
+					
+					if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
+					   point.getBlockZ() < 0 || point.getBlockZ() >= mazeMap[0].length)
+						continue directionsloop;
+
+
+					if(mazeMap[point.getBlockX()][point.getBlockZ()] != UNDEFINED &&
+					   mazeMap[point.getBlockX()][point.getBlockZ()] != EXIT)
+						continue directionsloop;
+				}
+
+				for(Vector point : path.getFill())
+					mazeMap[point.getBlockX()][  point.getBlockZ()] = PATH;
+				for(Vector point : newEnd.getFill())
+					mazeMap[point.getBlockX()][point.getBlockZ()] = PATH;
+				
+				openEnds.add(newEnd.getCorner());
+				pathLength++;
+				continue mazefilling;
+			}
+
+			openEnds.remove(lastEnd);
+			pathLength = 0;
+		}
 	}
 	
 	private void buildMaze() {
@@ -293,21 +376,13 @@ public class MazeBuilder {
 					rndMatData = composition.get(rnd.nextInt(composition.size()));
 					state.setType(rndMatData.getItemType());
 					state.setRawData(rndMatData.getData());
+					state.update(true, false);
 					
-					state.update(true, true);
-					
-					//idk... half a tick of every... is that ok? can i take all 50 ms?
 					if(System.currentTimeMillis() - timer >= 40)
 						return;
 				}
 				
 				this.cancel();
-				
-				if(currentMaze.getOwner() != null)
-					currentMaze.getOwner().sendMessage(Constants.prefix + "Your maze has been finished!");
-				
-				mazeQueue.remove(0);
-				prepareNextMaze();
 			}
 		};
 		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);

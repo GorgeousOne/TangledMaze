@@ -69,7 +69,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 		HashMap<Chunk, ArrayList<Location>> shapeFill = shape.getFill();
 		
 		for(Maze maze : mHandler.getMazes()) {
-			if(p.equals(maze.getOwner()))
+			if(p.equals(maze.getPlayer()))
 				continue;
 			
 			for(Chunk c : shapeFill.keySet())

@@ -19,7 +19,7 @@ import me.tangledmaze.gorgeousone.utils.Utils;
 public class Maze {
 	
 	private World world;
-	private Player owner;
+	private Player p;
 	
 	private ActionHistory history;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
@@ -33,7 +33,7 @@ public class Maze {
 	public Maze(Shape baseShape, Player owner) {
 
 		world = baseShape.getWorld();
-		this.owner = owner;
+		this.p = owner;
 		
 		history = new ActionHistory();
 		fillChunks   = new HashMap<>();
@@ -61,8 +61,8 @@ public class Maze {
 		return world;
 	}
 	
-	public Player getOwner() {
-		return owner;
+	public Player getPlayer() {
+		return p;
 	}
 	
 	public int size() {
@@ -118,17 +118,14 @@ public class Maze {
 	
 	public void setPathWidth(int width) {
 		dimensions.setX(Math.max(1, width));
-		owner.sendMessage("can confirm x");
 	}
 	
 	public void setWallHeight(int height) {
 		dimensions.setY(Math.max(1, height));
-		owner.sendMessage("can confirm y");
 	}
 	
 	public void setWallWidth(int width) {
 		dimensions.setZ(Math.max(1, width));
-		owner.sendMessage("can confirm z");
 	}
 	
 	public void setWallComposition(ArrayList<MaterialData> composition) {
@@ -330,11 +327,10 @@ public class Maze {
 				isSealingBorder = false;
 		
 		ArrayList<Vector> directions = Utils.directions();
-		Location point2;
 		
 		//check if this block closes the shape somehow (also diagonally)
 		for(Vector dir : directions) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			//that is true if it touches a block outside the maze 
 			if(!contains(point2)) {
@@ -356,7 +352,7 @@ public class Maze {
 		
 		//remove exits that can't exist any further bc the lack of contact
 		for(Vector dir : directions) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			if(exitsContain(point2)) {
 				Location point3;
@@ -384,7 +380,7 @@ public class Maze {
 		
 		//detect outstanding neighbor borders of the block (in cardinal directions)
 		for(Vector dir : Utils.cardinalDirs()) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 
 			if(!borderContains(point2))
 				continue;
@@ -443,11 +439,9 @@ public class Maze {
 			directions = Utils.directions(),
 			cardinalDirs = Utils.cardinalDirs();
 		
-		Location point2;
-		
 		//look for neighbors that can replace this border block
 		for(Vector dir : directions) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			//add all non-maze neighbors as border (and fill)
 			if(!contains(point2)) {
@@ -463,7 +457,7 @@ public class Maze {
 		
 		//remove exits that can't exist any further bc the lack of contact
 		for(Vector dir : directions) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			if(exitsContain(point2)) {
 				Location point3;
@@ -491,7 +485,7 @@ public class Maze {
 		
 		//look for neighbors, that are now standing out (inside the maze)
 		for(Vector dir : cardinalDirs) {
-			point2 = Utils.nearestSurface(point.clone().add(dir));
+			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			if(!borderContains(point2))
 				continue;

@@ -31,8 +31,8 @@ public class MazeShapeEvent extends Event implements Cancellable {
 		this.sHandler = TangledMain.getPlugin().getSelectionHandler();
 		this.mHandler = TangledMain.getPlugin().getMazeHandler();
 		
-		if(maze.getOwner() != null) {
-			Player p = maze.getOwner();
+		if(maze.getPlayer() != null) {
+			Player p = maze.getPlayer();
 
 			int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
 			
@@ -47,13 +47,13 @@ public class MazeShapeEvent extends Event implements Cancellable {
 			}
 		}
 		
-		Player p = maze.getOwner();
+		Player p = maze.getPlayer();
 		
 		if(isCancelled)
 			p.sendMessage(cancelMessage);
 		
 		else {
-			sHandler.discardSelection(maze.getOwner());
+			sHandler.discardSelection(maze.getPlayer());
 			mHandler.showMazeAction(p, maze, action);
 			maze.processAction(action, true);
 			

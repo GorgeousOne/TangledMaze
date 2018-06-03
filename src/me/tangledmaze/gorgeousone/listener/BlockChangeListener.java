@@ -93,9 +93,6 @@ public class BlockChangeListener implements Listener {
 			@Override
 			public void run() {
 				
-				if(event.isCancelled())
-					return;
-				
 				for(Maze maze : mHandler.getMazes())
 					if(maze.contains(point)) {
 						if(mHandler.isVisible(maze) && maze.isBorder(point.getBlock()))

@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -18,13 +20,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
+import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
+import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
@@ -161,6 +166,34 @@ public class ToolListener implements Listener {
 			if(sHandler.hasSelection(p) || mHandler.hasMaze(p))
 				times.put(p, System.currentTimeMillis());
 		}
+	}
+	
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		
+		Chunk c = e.getChunk();
+		
+		for(Maze maze : mHandler.getMazes())
+			if(mHandler.isVisible(maze) && maze.getBorder().containsKey(c)) {
+				Player p = maze.getPlayer();
+
+				if(p == null)
+					continue;
+
+				for(Location point : maze.getBorder().get(c))
+					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
+			}
+		
+		for(RectSelection selection : sHandler.getSelections())
+			if(sHandler.isVisible(selection) && selection.isComplete() && selection.getShape().getBorder().containsKey(c)) {
+				Player p = selection.getPlayer();
+
+				if(p == null)
+					continue;
+				
+				for(Location point : selection.getShape().getBorder().get(c))
+					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
+			}
 	}
 	
 	private void destroyTool(Player p, ItemStack tool) {

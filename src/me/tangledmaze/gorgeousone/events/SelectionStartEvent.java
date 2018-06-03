@@ -22,7 +22,7 @@ public class SelectionStartEvent extends SelectionEvent {
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
 		for(Maze maze : mHandler.getMazes()) {
-			if(p.equals(maze.getOwner()))
+			if(p.equals(maze.getPlayer()))
 				continue;
 			
 			if(maze.isFill(clickedBlock)) {

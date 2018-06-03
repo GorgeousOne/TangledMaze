@@ -112,9 +112,12 @@ public class MazeHandler {
 		show(maze);
 		
 		if(!mazeDimensions.containsKey(uuid))
-			mazeDimensions.put(uuid, new Vector(1, 3, 1));
+			mazeDimensions.put(uuid, new Vector(3, 1, 3));
 		
-		maze.setWallHeight(mazeDimensions.get(uuid).getBlockY());
+		Vector dimesions = mazeDimensions.get(uuid);
+		maze.setPathWidth(dimesions.getBlockX());
+		maze.setWallHeight(dimesions.getBlockY());
+		maze.setWallWidth(dimesions.getBlockZ());
 	}
 	
 	public void addSelectionToMaze(Maze maze, RectSelection selection) {
@@ -188,7 +191,7 @@ public class MazeHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public void show(Maze maze) {
-		Player p = maze.getOwner();
+		Player p = maze.getPlayer();
 		
 		if(p == null)
 			return;
@@ -211,7 +214,7 @@ public class MazeHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public void hide(Maze maze) {
-		Player p = maze.getOwner();
+		Player p = maze.getPlayer();
 		
 		if(p == null)
 			return;
