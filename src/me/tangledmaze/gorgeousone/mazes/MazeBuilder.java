@@ -158,15 +158,21 @@ public class MazeBuilder {
 						
 					//make width for exit always "grow" inside the maze
 					if(dir.getBlockX() < 0)
-						endX -= pathWidth-1;
+						endX -= pathWidth - 1;
 					//center exit as good as possible on outline (horizontally)
 					if(dir.getBlockX() == 0)
-						endX -= (pathWidth-1) / 2;
-	
+						if(pathWidth % 2 == 0)
+							endX -= (pathWidth + dir.getBlockZ()) / 2;
+						else
+							endX -= (pathWidth - 1) / 2;
+					
 					if(dir.getBlockZ() < 0)
 						endZ -= pathWidth-1;
 					if(dir.getBlockZ() == 0)
-						endZ -= (pathWidth-1) / 2;
+						if(pathWidth % 2 == 0)
+							endZ -= (pathWidth - dir.getBlockX()) / 2;
+						else
+							endZ -= (pathWidth - 1) / 2;
 					
 					int offsetX = endX - defOffsetX,
 						offsetZ = endZ - defOffsetZ;
