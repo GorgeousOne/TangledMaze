@@ -1,6 +1,6 @@
 # TangledMaze
 
-This spigot plugin shall provide tools & commands to create 2D selections and fill them with random generated mazes.
+A spigot plugin with tools & commands to create random generated mazes with custom shapes.
 
 
 goals:
@@ -16,7 +16,7 @@ goals:
 - limiting a maze's size with different permissions and customizable thresholds in the config ✔
 - an exit setting tool for choosing where gaps will be left in the border of a maze ✔
 
-- choosing the height of the maze's walls ✔
+- a command for setting wall height, wall width and path width of a maze ✔
 - a command to generate the maze with a custom composition of blocks ✔
 - a teleport commmand to the maze in case you lost it ✔
 
