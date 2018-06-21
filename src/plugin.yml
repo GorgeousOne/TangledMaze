@@ -6,6 +6,7 @@ main: me.tangledmaze.gorgeousone.core.TangledMain
 
 commands:
   tangledmaze:
+    usage: /tangledmaze help
     description: Main command for several subcommands wand, select, merge, cut, deselect, start, build.
     aliases: [tm, maze]
 

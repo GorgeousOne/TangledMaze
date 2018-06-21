@@ -14,7 +14,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.tangledmaze.gorgeousone.listener.*;
-import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
@@ -25,7 +24,6 @@ public class TangledMain extends JavaPlugin {
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
-	private MazeBuilder mBuilder;
 	
 	private int staffMazeSize, vipMazeSize, normalMazeSize;
 	
@@ -39,7 +37,6 @@ public class TangledMain extends JavaPlugin {
 		initWand();
 		
 		mHandler = new MazeHandler();
-		mBuilder  = new MazeBuilder();
 		sHandler = new SelectionHandler();
 		
 		PluginManager pm = getServer().getPluginManager();
@@ -81,10 +78,6 @@ public class TangledMain extends JavaPlugin {
 		return mHandler;
 	}
 	
-	public MazeBuilder getMazeBuilder() {
-		return mBuilder;
-	}
-
 	public int getStaffMazeSize() {
 		return staffMazeSize;
 	}

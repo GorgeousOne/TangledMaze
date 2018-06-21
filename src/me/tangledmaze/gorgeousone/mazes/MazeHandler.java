@@ -1,5 +1,7 @@
 package me.tangledmaze.gorgeousone.mazes;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -11,6 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
+import me.tangledmaze.gorgeousone.mazes.generators.BlockGenerator;
+import me.tangledmaze.gorgeousone.mazes.generators.ExitGenerator;
+import me.tangledmaze.gorgeousone.mazes.generators.MazeMap;
+import me.tangledmaze.gorgeousone.mazes.generators.PathGenerator;
 import me.tangledmaze.gorgeousone.selections.RectSelection;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
@@ -22,14 +28,34 @@ public class MazeHandler {
 	private HashMap<UUID, Vector> mazeDimensions;
 	private HashMap<Maze, Boolean> mazeVisibilities;
 	
+	private ArrayList<Maze> buildQueue;
+	private Maze currentlyBuiltMaze;
+	private ActionListener buildCallback;
+	
 	public MazeHandler() {
 		mazes            = new HashMap<>();
 		mazeDimensions   = new HashMap<>();
 		mazeVisibilities = new HashMap<>();
+		
+		buildQueue = new ArrayList<>();
+		
+		buildCallback = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(currentlyBuiltMaze.getPlayer() != null)
+					currentlyBuiltMaze.getPlayer().sendMessage(Constants.prefix + "Your maze has been finished!");
+				
+				buildQueue.remove(currentlyBuiltMaze);
+				
+				if(!buildQueue.isEmpty())
+					buildMaze(buildQueue.get(0));
+			}
+		};
 	}
 	
 	/**
-	 * Hides all mazes for a reload. They will be deleted afterwards.
+	 * Hides all mazes for a reload.
 	 */
 	public void reload() {
 		for(Maze maze : mazes.values())
@@ -185,6 +211,43 @@ public class MazeHandler {
 			maze.addExit(loc);
 		}
 	}		
+	
+	public int joinBuildQueue(Maze maze) {
+		if(buildQueue.contains(maze))
+			return -1;
+		
+		buildQueue.add(maze);
+		discardMaze(maze.getPlayer());
+		
+		if(buildQueue.size() == 1)
+			buildMaze(maze);
+		
+		return buildQueue.indexOf(maze);
+	}
+	
+	public void leaveBuildQueue(Maze maze) {
+		buildQueue.remove(maze);
+	}
+	
+	public boolean isInQueue(Player p) {
+		for(Maze maze : buildQueue)
+			if(p.equals(maze.getPlayer()))
+				return true;
+		return false;
+	}
+	
+	public void buildMaze(Maze maze) {
+		if(buildQueue.isEmpty())
+			return;
+		
+		currentlyBuiltMaze = maze;
+		hide(maze);
+		
+		MazeMap map = new MazeMap(maze);
+		map.setStart(ExitGenerator.generateExits(map));
+		PathGenerator.generatePaths(map);
+		BlockGenerator.generateBlocks(map, buildCallback);
+	}
 	
 	/**
 	 * Displays the border of a maze to it's owner. A visibility check with <b>isVisible(Maze);</b> is recommended before.

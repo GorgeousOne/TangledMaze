@@ -174,8 +174,10 @@ public class CommandHandler implements CommandExecutor {
 				}
 				sendCommandHelp(p, 1);
 				break;
+				
+			default:
+				return false;
 		}
-			
 		return true;
 	}
 	

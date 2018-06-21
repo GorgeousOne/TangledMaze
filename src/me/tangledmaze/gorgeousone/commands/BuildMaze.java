@@ -9,7 +9,6 @@ import org.bukkit.material.MaterialData;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
-import me.tangledmaze.gorgeousone.mazes.MazeBuilder;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.shapes.Brush;
@@ -23,12 +22,10 @@ public class BuildMaze {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
-	private MazeBuilder mBuilder;
 	
 	public BuildMaze() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
-		mBuilder  = TangledMain.getPlugin().getMazeBuilder();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -39,7 +36,7 @@ public class BuildMaze {
 			return;
 		}
 		
-		if(mBuilder.isInQueue(p))
+		if(mHandler.isInQueue(p))
 			p.sendMessage(Constants.prefix + "There already is a maze in the queue you built. Please wait until it gets finsihed before submitting a new one.");
 		
 		if(!mHandler.hasMaze(p)) {
@@ -113,7 +110,7 @@ public class BuildMaze {
 		mHandler.getMaze(p).setWallComposition(composition);
 		//----------------------------------------------------------------------------------------------------------------
 		
-		int queuePosition = mBuilder.enqueueMaze(maze);
+		int queuePosition = mHandler.joinBuildQueue(maze);
 
 		if(queuePosition >= 0) {
 			mHandler.discardMaze(p);

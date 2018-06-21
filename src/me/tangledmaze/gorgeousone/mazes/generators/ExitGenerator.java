@@ -8,7 +8,14 @@ import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class ExitGenerator {
 
-	public static Vector generateExits(Maze maze, int[][] mazeMap, int mazeMinX, int mazeMinZ) {
+	public static Vector generateExits(MazeMap map) {
+		
+		Maze maze = map.getMaze();
+		
+		int[][] shapeMap = map.getShapeMap();
+		
+		int mazeMinX = map.getMinX(),
+			mazeMinZ = map.getMinZ();
 		
 		Vector pathStart = null;
 		
@@ -23,11 +30,11 @@ public class ExitGenerator {
 			for(Vector dir : Utils.cardinalDirs()) {
 				Location exit2 = exit.clone().add(new Vector(-mazeMinX, 0, -mazeMinZ)).add(dir);
 				
-				if(exit2.getBlockX() < 0 || exit2.getBlockX() >= mazeMap.length ||
-				   exit2.getBlockZ() < 0 || exit2.getBlockZ() >= mazeMap[0].length)
+				if(exit2.getBlockX() < 0 || exit2.getBlockX() >= shapeMap.length ||
+				   exit2.getBlockZ() < 0 || exit2.getBlockZ() >= shapeMap[0].length)
 					continue;
 				
-				if(mazeMap[exit2.getBlockX()][exit2.getBlockZ()] == MazePath.UNDEFINED) {
+				if(shapeMap[exit2.getBlockX()][exit2.getBlockZ()] == MazePath.UNDEFINED) {
 					
 					int facingX = dir.getBlockX(),
 						facingZ = dir.getBlockZ();
@@ -95,9 +102,9 @@ public class ExitGenerator {
 					}
 					
 					for(Vector point : exitRect.getFill())
-						if(point.getBlockX() >= 0 || point.getBlockX() < mazeMap.length ||
-						   point.getBlockZ() >= 0 || point.getBlockZ() < mazeMap[0].length)
-							mazeMap[point.getBlockX()][point.getBlockZ()] = fillType;
+						if(point.getBlockX() >= 0 || point.getBlockX() < shapeMap.length ||
+						   point.getBlockZ() >= 0 || point.getBlockZ() < shapeMap[0].length)
+							shapeMap[point.getBlockX()][point.getBlockZ()] = fillType;
 				}
 			}
 		}

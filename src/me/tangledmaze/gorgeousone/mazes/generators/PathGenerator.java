@@ -11,19 +11,23 @@ import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class PathGenerator {
 
-	public static void generatePaths(Maze maze, int[][] mazeMap, Vector start) {
+	public static void generatePaths(MazeMap map) {
 		
-		Random rnd = new Random();
+		Maze    maze = map.getMaze();
+		int[][] shapeMap = map.getShapeMap();
+		Vector  start = map.getStart();
+		
 		ArrayList<Vector> directions = Utils.cardinalDirs();
-		
 		ArrayList<Vector> openEnds = new ArrayList<>();
+
 		openEnds.add(start);
-		
+		Vector lastEnd;
+
 		int	pathLength = 0,
 			pathWidth  = maze.getDimensions().getBlockX(),
 			wallWidth  = maze.getDimensions().getBlockZ();
-		
-		Vector lastEnd;
+
+		Random rnd = new Random();
 
 		while(!openEnds.isEmpty()) {
 			
@@ -57,14 +61,14 @@ public class PathGenerator {
 				boolean pathNotAvailable = false;
 				
 				for(Vector point : path.getFill()) {
-					if(point.getBlockX() < 0 || point.getBlockX() >= mazeMap.length ||
-					   point.getBlockZ() < 0 || point.getBlockZ() >= mazeMap[0].length) {
+					if(point.getBlockX() < 0 || point.getBlockX() >= shapeMap.length ||
+					   point.getBlockZ() < 0 || point.getBlockZ() >= shapeMap[0].length) {
 						pathNotAvailable = true;
 						break;
 					}
 					
-					if(mazeMap[point.getBlockX()][point.getBlockZ()] != MazePath.UNDEFINED &&
-					   mazeMap[point.getBlockX()][point.getBlockZ()] != MazePath.EXIT) {
+					if(shapeMap[point.getBlockX()][point.getBlockZ()] != MazePath.UNDEFINED &&
+					   shapeMap[point.getBlockX()][point.getBlockZ()] != MazePath.EXIT) {
 						pathNotAvailable = true;
 						break;
 					}
@@ -74,7 +78,7 @@ public class PathGenerator {
 					continue;
 
 				for(Vector point : path.getFill())
-					mazeMap[point.getBlockX()][  point.getBlockZ()] = MazePath.PATH;
+					shapeMap[point.getBlockX()][  point.getBlockZ()] = MazePath.PATH;
 				
 				openEnds.add(path.getEnd());
 				pathLength++;
