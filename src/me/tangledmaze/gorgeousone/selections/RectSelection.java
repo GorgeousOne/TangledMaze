@@ -37,8 +37,16 @@ public class RectSelection {
 		return p;
 	}
 	
+	public boolean isComplete() {
+		return isComplete;
+	}
+	
 	public ArrayList<Location> getVertices() {
 		return vertices;
+	}
+
+	public Shape getShape() {
+		return shape;
 	}
 	
 	public int getWidth() {
@@ -53,35 +61,13 @@ public class RectSelection {
 		return vertices.get(2).getBlockZ() - vertices.get(0).getBlockZ() + 1;
 	}
 	
-	public Shape getShape() {
-		return shape;
-	}
-	
 	public void setShape(Shape s) {
 		this.shape = s;
 		this.vertices = s.getVertices();
 		isComplete = true;
 	}
 	
-//	public void moveVertexTo(Block vertex, Block newVertex) {
-//		if(!isComplete() || !isVertex(vertex) || !newVertex.getWorld().equals(world))
-//			return;
-//		
-//		int index = indexOfVertex(vertex);
-//		Location opposite = vertices.get((index+2) % 4);
-//		
-//		calcVertices(newVertex.getLocation(), opposite);
-//
-//		try {
-//			Constructor<? extends Shape> con = shapeType.getConstructor(ArrayList.class);
-//			shape = con.newInstance(vertices);
-//			
-//		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
-	public boolean contains(Location point) {
+	public boolean frames(Location point) {
 		if(isComplete())
 			return point.getBlockX() >= vertices.get(0).getX() && point.getBlockX() <= vertices.get(2).getX() &&
 				   point.getBlockZ() >= vertices.get(0).getZ() && point.getBlockZ() <= vertices.get(2).getZ();
@@ -89,16 +75,9 @@ public class RectSelection {
 			return point.getBlockX() == vertices.get(0).getX() && point.getBlockZ() == vertices.get(0).getZ(); 
 	}
 	
-	public boolean borderContains(Location point) {
-		if(!isComplete())
-			return false;
-		
-		return shape.borderContains(point);
-	}
-	
 	public boolean isHighlighted(Block b) {
 		Chunk c = b.getChunk();
-		
+
 		if(isComplete) {
 			if(!shape.getBorder().containsKey(c))
 				return false;
@@ -116,7 +95,7 @@ public class RectSelection {
 	}
 	
 	public boolean isVertex(Block b) {
-		if(!isComplete())
+		if(!isComplete)
 			return false;
 
 		for(Location vertex : vertices)
@@ -124,9 +103,9 @@ public class RectSelection {
 				return true;
 		return false;
 	}
-
+	
 	public int indexOfVertex(Block b) {
-		if(!isComplete() || !b.getWorld().equals(world))
+		if(!isComplete || !b.getWorld().equals(world))
 			return -1;
 		
 		for(Location vertex : vertices)
@@ -136,28 +115,24 @@ public class RectSelection {
 		return -1;
 	}
 	
-	public boolean isComplete() {
-		return isComplete;
-	}
-	
 	public void recalc(Location point) {
 		if(!point.getWorld().equals(world))
 			return;
-		
-		if(!shape.getFill().containsKey(point.getChunk()))
+
+		if(isVertex(point.getBlock()))
+			vertices.set(indexOfVertex(point.getBlock()), Utils.nearestSurface(point));
+			
+		if(!isComplete || !shape.contains(point))
 			return;
 			
 		ArrayList<Location>	fill = shape.getFill().get(point.getChunk());
 		
-		if(fill.contains(point)) {
-			
-			Location newPoint = Utils.nearestSurface(point);
-			fill.set(fill.indexOf(point), newPoint);
-			
-			if(borderContains(point)) {
-				ArrayList<Location>	border = shape.getBorder().get(point.getChunk());
-				border.set(border.indexOf(point), newPoint);
-			}
+		Location newPoint = Utils.nearestSurface(point);
+		fill.set(fill.indexOf(point), newPoint);
+		
+		if(shape.borderContains(point)) {
+			ArrayList<Location>	border = shape.getBorder().get(point.getChunk());
+			border.set(border.indexOf(point), newPoint);
 		}
 	}
 }

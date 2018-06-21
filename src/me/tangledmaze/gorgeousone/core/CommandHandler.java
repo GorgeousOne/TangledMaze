@@ -124,16 +124,16 @@ public class CommandHandler implements CommandExecutor {
 					sendCommandHelp(p, 8);
 				break;
 			
-			case "wallheight":
-				if(args.length >= 2)
-					wallHeightCommand.execute(p, args[1]);
-				else
-					sendCommandHelp(p, 8);
-				break;
-				
 			case "wallwidth":
 				if(args.length >= 2)
 					wallWidthCommand.execute(p, args[1]);
+				else
+					sendCommandHelp(p, 8);
+				break;
+			
+			case "wallheight":
+				if(args.length >= 2)
+					wallHeightCommand.execute(p, args[1]);
 				else
 					sendCommandHelp(p, 8);
 				break;

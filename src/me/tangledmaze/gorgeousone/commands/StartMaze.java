@@ -33,7 +33,7 @@ public class StartMaze {
 		
 		RectSelection selection = sHandler.getSelection(p);
 		sHandler.discardSelection(p);
-
+		
 		try {
 			mHandler.startMaze(p, selection);
 			p.sendMessage(Constants.prefix + "Started a maze from selection.");

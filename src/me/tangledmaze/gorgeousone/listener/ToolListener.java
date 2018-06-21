@@ -192,7 +192,10 @@ public class ToolListener implements Listener {
 					continue;
 				
 				for(Location point : selection.getShape().getBorder().get(c))
-					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
+					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+				
+				for(Location vertex : selection.getVertices())
+					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 			}
 	}
 	

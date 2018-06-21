@@ -103,7 +103,7 @@ public class BlockChangeListener implements Listener {
 					}
 				
 				for(RectSelection selection : sHandler.getSelections()) {
-					if(selection.contains(point)) {
+					if(selection.frames(point)) {
 						if(sHandler.isVisible(selection) && selection.isHighlighted(point.getBlock()))
 							sHandler.hide(selection);
 						

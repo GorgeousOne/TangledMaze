@@ -110,20 +110,24 @@ public class BuildMaze {
 			composition.add(new MaterialData(material, data));
 		}
 
-		//----------------------------------------------------------------------------------------------------------------
-		
 		mHandler.getMaze(p).setWallComposition(composition);
-		mHandler.discardMaze(p);
+		//----------------------------------------------------------------------------------------------------------------
 		
 		int queuePosition = mBuilder.enqueueMaze(maze);
 
-		if(queuePosition != 0) {
-			p.sendMessage(Constants.prefix + "Your maze has been queued. Position in queue: " + queuePosition);
-			p.sendMessage(Constants.prefix + "If you leave the server before it gets built your work will be discarded!");
-		}
-		
-		if(sHandler.getSelectionType(p) == Brush.class ||
-		   sHandler.getSelectionType(p) == ExitSetter.class)
-			sHandler.setSelectionType(p, Rectangle.class);
+		if(queuePosition >= 0) {
+			mHandler.discardMaze(p);
+
+			if(sHandler.getSelectionType(p) == Brush.class ||
+			   sHandler.getSelectionType(p) == ExitSetter.class)
+				sHandler.setSelectionType(p, Rectangle.class);
+
+			if(queuePosition > 0) {
+				p.sendMessage(Constants.prefix + "Your maze has been queued. Position in queue: " + queuePosition);
+				p.sendMessage(Constants.prefix + "If you leave the server before it gets built your work will be discarded!");
+			}
+			
+		}else
+			p.sendMessage(Constants.prefix + "You already queued a maze to be built. Please wait until that one gets finished before queuing an new one.");
 	}
 }

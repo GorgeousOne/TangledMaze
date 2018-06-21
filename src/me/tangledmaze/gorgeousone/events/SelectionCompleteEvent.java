@@ -9,7 +9,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
@@ -82,22 +81,15 @@ public class SelectionCompleteEvent extends SelectionEvent {
 					}
 		}
 		
-		BukkitRunnable event = new BukkitRunnable() {
-			@Override
-			public void run() {
-				
-				if(isCancelled && true)
-					p.sendMessage(cancelMessage);
-				
-				//set the shape of the selection to this new shape
-				else {
-					sHandler.hide(selection);
-					selection.setShape(shape);
-					sHandler.show(selection);
-				}
-			}
-		};
-		event.runTask(TangledMain.getPlugin());
+		if(isCancelled)
+			p.sendMessage(cancelMessage);
+		
+		//set the shape of the selection to this new shape
+		else {
+			sHandler.hide(selection);
+			selection.setShape(shape);
+			sHandler.show(selection);
+		}
 	}
 	
 	public Player getPlayer() {

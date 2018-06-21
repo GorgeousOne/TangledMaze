@@ -112,7 +112,7 @@ public class MazeHandler {
 		show(maze);
 		
 		if(!mazeDimensions.containsKey(uuid))
-			mazeDimensions.put(uuid, new Vector(3, 1, 3));
+			mazeDimensions.put(uuid, new Vector(1, 3, 1));
 		
 		Vector dimesions = mazeDimensions.get(uuid);
 		maze.setPathWidth(dimesions.getBlockX());
