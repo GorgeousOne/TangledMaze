@@ -206,21 +206,21 @@ public class CommandHandler implements CommandExecutor {
 					+ "This command hands you over a mighty selection wand. Use it consideretely! "
 					+ "Click two blocks and a selection will appear with the the equipped shape (rectangle or ellipse). "
 					+ "By clicking and dragging a blue corner you can resize you selection. "
-					+ "For a new selection just click any oter two blocks");
+					+ "For a new selection just click any other two blocks");
 			break;
 		//start
 		case 3:
 			p.sendMessage(ChatColor.YELLOW + "Start Command");
 			p.sendMessage(ChatColor.GREEN
 					+ "With this command you transform yout selection into a maze's ground plot. "
-					+ "Now you can add other selections or cut things away:");
+					+ "Only now you can add other selections or cut things away.");
 			pageLinks[6].send(p);
 			break;
 		//discard
 		case 4:
 			p.sendMessage(ChatColor.YELLOW + "Discard Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "If you have a ground plot for a maze you don't want to continue anymore use this command to delete it. "
+					+ "If you have a ground plot for a maze you don't want to continue building use this command to delete it. "
 					+ "It will also remove any existing selection of yours!");
 			break;
 		//select
@@ -238,29 +238,29 @@ public class CommandHandler implements CommandExecutor {
 			p.sendMessage(ChatColor.GREEN + "Your selections will form ellipses.");
 			
 			p.sendMessage(ChatColor.DARK_GREEN + "brush");
-			p.sendMessage(ChatColor.GREEN + "By clicking on a maze's outline with this tool you can brush away the outline at that specific block.");
+			p.sendMessage(ChatColor.GREEN
+					+ "Left click on your maze's outline to reduce it at that block. "
+					+ "Right click on your maze's outline to expand it at that block.");
 			
 			p.sendMessage(ChatColor.DARK_GREEN + "exit");
-			p.sendMessage(ChatColor.GREEN + "By clicking on a maze's outline you can select exits, where gaps for entering will be left when building the maze.");
-			
-			p.sendMessage("");
-			p.sendMessage(ChatColor.DARK_GREEN + "For more information on how to shape a maze with an selection see:");
-			pageLinks[4].send(p);
+			p.sendMessage(ChatColor.GREEN
+					+ "Click on your maze's outline to mark where gaps shall be left. "
+					+ "Click on an marking a second time to delete it. "
+					+ "The diamond exit indicates where the path generating algorithm will begin building.");
 			break;
-			//teleport
+			
+		//teleport
 		case 10:
 			p.sendMessage(ChatColor.YELLOW + "Teleport Command");
-			p.sendMessage(ChatColor.GREEN + "In case you ever forgot where you started to build your maze you can use this command to teleport back to it.");
-			p.sendMessage(ChatColor.GREEN + "(Under the condition you have the permission for it.)");
+			p.sendMessage(ChatColor.GREEN + "Teleports you back to your maze (if you have the permission for that.)");
 			break;
 
 		//add + cut
 		case 6:
 			p.sendMessage(ChatColor.YELLOW + "Add/Cut Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "You can use this comand to add or cut away further selections from the ground plot of your maze. "
-					+ "Maze parts not connected to the part with the main exit (diamond block) will only be filled with walls. "
-					+ "(just don't)");
+					+ "Adds or cuts away your selection from your ground plot. This only works with slections touching your maze. "
+					+ "If you cut off parts of your maze from the main part (with diamond exit) there won't be generated any paths (just don't).");
 			
 			p.sendMessage("");
 			p.sendMessage(ChatColor.DARK_GREEN + "For undoing one of an action use:");
@@ -270,25 +270,25 @@ public class CommandHandler implements CommandExecutor {
 		case 7:
 			p.sendMessage(ChatColor.YELLOW + "Undo Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "If you are unhappy with any editing on your groundplot this command can undo it. "
-					+ "Only the last 10 actions will be stored.");
+					+ "Undoes the last action performed on you maze like a brush / addition / cut away. "
+					+ "Only the last 10 actions will be available for undoing.");
 			break;
 		//height
 		case 8:
-			p.sendMessage(ChatColor.YELLOW + "Path/Wall Width, Wall Height Command");
+			p.sendMessage(ChatColor.YELLOW + "Path/Wallwidth & Wallheight Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "With these three commands you can customize how the maze will be generated. "
-					+ "Path and wall width are limited to 10, wall height can gu up to 20.");
+					+ "Three commands for customization of the pathgeneration. " 
+					+ "Path and wall width are limited to 10 blocks, wall height can be up to 20.");
 			break;
 		//build
 		case 9:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
-			p.sendMessage(ChatColor.GREEN + "This command will finally build up your maze. You have to choose which type of blocks should be used therefore.");
-			p.sendMessage(ChatColor.GREEN + "After the command type in a kind block and it's data value (if not 0). An example would be "
-					+ ChatColor.DARK_GREEN + "\"quartz_block:1\" " + ChatColor.GREEN + "(Which is chiseled quartz).");
-			p.sendMessage(ChatColor.GREEN + "Depending on the size of your maze and the power of the server the time to finish can vary.");
-			p.sendMessage(ChatColor.GREEN + "If you leave the server before you mazes gets built your work will be discarded.");
-			p.sendMessage(ChatColor.GREEN + "A finished maze cannot be edited any further.");
+			p.sendMessage(ChatColor.GREEN + "Builds your maze with the with a mixture of blocks you provide. " 
+					+ "After the command's name enter type of blocks and their data value (if neccessary), for example: ");
+			p.sendMessage(ChatColor.DARK_GREEN + "\"quartz_block:1\" " + ChatColor.GREEN + "(chiseled quartz block).");
+			p.sendMessage(ChatColor.GREEN
+					+ "If you leave the server before you mazes starts to get built your work will be discarded. "
+					+ "A finished maze cannot be edited any further.");
 
 		default:
 			return;

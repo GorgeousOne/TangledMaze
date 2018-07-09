@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.util.Vector;
 
-public class MazePath {
+public class MazeSegment {
 	
 	public static final int
 		UNDEFINED = 1,
@@ -15,7 +15,7 @@ public class MazePath {
 	private Vector relativeMin, start, end;
 	private int facingX, facingZ, deltaX, deltaZ;
 	
-	public MazePath(int startX, int startZ, int facingX, int facingZ, int length, int width, boolean isExit) {
+	public MazeSegment(int startX, int startZ, int facingX, int facingZ, int length, int width, boolean isExit) {
 		
 		this.facingX = facingX;
 		this.facingZ = facingZ;

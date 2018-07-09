@@ -119,20 +119,23 @@ public class RectSelection {
 		if(!point.getWorld().equals(world))
 			return;
 
-		if(isVertex(point.getBlock()))
-			vertices.set(indexOfVertex(point.getBlock()), Utils.nearestSurface(point));
-			
-		if(!isComplete || !shape.contains(point))
-			return;
-			
-		ArrayList<Location>	fill = shape.getFill().get(point.getChunk());
-		
 		Location newPoint = Utils.nearestSurface(point);
-		fill.set(fill.indexOf(point), newPoint);
+
+		if(isVertex(point.getBlock()))
+			vertices.set(indexOfVertex(point.getBlock()), newPoint);
+			
+		if(!isComplete)
+			return;
 		
-		if(shape.borderContains(point)) {
+		ArrayList<Location>	fill = shape.getFill().get(point.getChunk());
+
+		if(fill.contains(point)) {
+
+			fill.set(fill.indexOf(point), newPoint);
 			ArrayList<Location>	border = shape.getBorder().get(point.getChunk());
-			border.set(border.indexOf(point), newPoint);
+
+			if(shape.borderContains(point))
+				border.set(border.indexOf(point), newPoint);
 		}
 	}
 }

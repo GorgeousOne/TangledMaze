@@ -49,7 +49,7 @@ public class PathGenerator {
 				int pathX = lastEnd.getBlockX() + dirX * pathWidth,
 					pathZ = lastEnd.getBlockZ() + dirZ * pathWidth;
 				
-				MazePath path = new MazePath(
+				MazeSegment pathSegment = new MazeSegment(
 						pathX,
 						pathZ,
 						dirX,
@@ -60,15 +60,15 @@ public class PathGenerator {
 						
 				boolean pathNotAvailable = false;
 				
-				for(Vector point : path.getFill()) {
+				for(Vector point : pathSegment.getFill()) {
 					if(point.getBlockX() < 0 || point.getBlockX() >= shapeMap.length ||
 					   point.getBlockZ() < 0 || point.getBlockZ() >= shapeMap[0].length) {
 						pathNotAvailable = true;
 						break;
 					}
 					
-					if(shapeMap[point.getBlockX()][point.getBlockZ()] != MazePath.UNDEFINED &&
-					   shapeMap[point.getBlockX()][point.getBlockZ()] != MazePath.EXIT) {
+					if(shapeMap[point.getBlockX()][point.getBlockZ()] != MazeSegment.UNDEFINED &&
+					   shapeMap[point.getBlockX()][point.getBlockZ()] != MazeSegment.EXIT) {
 						pathNotAvailable = true;
 						break;
 					}
@@ -77,10 +77,10 @@ public class PathGenerator {
 				if(pathNotAvailable)
 					continue;
 
-				for(Vector point : path.getFill())
-					shapeMap[point.getBlockX()][  point.getBlockZ()] = MazePath.PATH;
+				for(Vector point : pathSegment.getFill())
+					shapeMap[point.getBlockX()][  point.getBlockZ()] = MazeSegment.PATH;
 				
-				openEnds.add(path.getEnd());
+				openEnds.add(pathSegment.getEnd());
 				pathLength++;
 				allDirectionsBlocked = false;
 				break;

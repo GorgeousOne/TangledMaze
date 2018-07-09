@@ -58,14 +58,14 @@ public class MazeMap {
 		//mark the maze's area in mazeMap as undefined area (open for path or walls), the will stay untouched
 		for(ArrayList<Location> chunk : maze.getFill().values())
 			for(Location point : chunk) {
-				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazePath.UNDEFINED;
+				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeSegment.UNDEFINED;
 				heightMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = point.getBlockY();
 			}
 		
 		//mark the border in mazeMap as reserved for walls
 		for(ArrayList<Location> chunk : maze.getBorder().values())
 			for(Location point : chunk)
-				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazePath.WALL;
+				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeSegment.WALL;
 	}
 	
 	public Maze getMaze() {

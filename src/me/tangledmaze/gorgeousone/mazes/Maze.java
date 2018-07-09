@@ -2,6 +2,7 @@ package me.tangledmaze.gorgeousone.mazes;
 
 import java.util.ArrayList;
 
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -680,11 +681,11 @@ public class Maze {
 			
 			Location newPoint = Utils.nearestSurface(point);
 			fill.set(fill.indexOf(point), newPoint);
-			
-			if(borderContains(point)) {
-				ArrayList<Location>	border = borderChunks.get(point.getChunk());
+
+			ArrayList<Location>	border = borderChunks.get(point.getChunk());
+
+			if(border.contains(point))
 				border.set(border.indexOf(point), newPoint);
-			}
 		}
 	}
 }

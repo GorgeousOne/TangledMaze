@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+//not in use yet. will be integrated if I implement PolySelection
 public abstract class Selection {
 
 	private World world;
@@ -38,6 +39,4 @@ public abstract class Selection {
 	public boolean contains(Location point) {
 		return false;
 	}
-	
-	
 }

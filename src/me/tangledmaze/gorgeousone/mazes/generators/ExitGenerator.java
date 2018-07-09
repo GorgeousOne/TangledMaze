@@ -34,7 +34,7 @@ public class ExitGenerator {
 				   exit2.getBlockZ() < 0 || exit2.getBlockZ() >= shapeMap[0].length)
 					continue;
 				
-				if(shapeMap[exit2.getBlockX()][exit2.getBlockZ()] == MazePath.UNDEFINED) {
+				if(shapeMap[exit2.getBlockX()][exit2.getBlockZ()] == MazeSegment.UNDEFINED) {
 					
 					int facingX = dir.getBlockX(),
 						facingZ = dir.getBlockZ();
@@ -42,12 +42,12 @@ public class ExitGenerator {
 					int exitX = exit.getBlockX() - mazeMinX,
 						exitZ = exit.getBlockZ() - mazeMinZ;
 					
-					MazePath exitRect;
-					int fillType = MazePath.EXIT;
+					MazeSegment exitSegment;
+					int fillType = MazeSegment.EXIT;
 
 					if(pathStart == null) {
 						
-						exitRect = new MazePath(
+						exitSegment = new MazeSegment(
 							exitX,
 							exitZ,
 							facingX,
@@ -57,17 +57,17 @@ public class ExitGenerator {
 							true);
 						
 						//make the main exit out of path so the path generator wont intersect it anyhow
-						fillType = MazePath.PATH;
-						pathStart = exitRect.getEnd();
+						fillType = MazeSegment.PATH;
+						pathStart = exitSegment.getEnd();
 						
 						pathGridOffsetX = pathStart.getBlockX() % (pathWidth + wallWidth);
 						pathGridOffsetZ = pathStart.getBlockZ() % (pathWidth + wallWidth);
 						
-						pathStart = exitRect.getEnd();
+						pathStart = exitSegment.getEnd();
 						
 					}else {
 
-						exitRect = new MazePath(
+						exitSegment = new MazeSegment(
 							exitX,
 							exitZ,
 							facingX,
@@ -79,9 +79,9 @@ public class ExitGenerator {
 						int exitOffset;
 						
 						if(facingX != 0)
-							exitOffset = exitRect.getStart().getBlockX() - pathGridOffsetX;
+							exitOffset = exitSegment.getStart().getBlockX() - pathGridOffsetX;
 						else
-							exitOffset = exitRect.getStart().getBlockZ() - pathGridOffsetZ;
+							exitOffset = exitSegment.getStart().getBlockZ() - pathGridOffsetZ;
 						
 						//get rid off negative values...
 						if(exitOffset <= 0)
@@ -98,12 +98,12 @@ public class ExitGenerator {
 								exitOffset += pathWidth + wallWidth;
 						}
 						
-						exitRect.expand(exitOffset);
+						exitSegment.expand(exitOffset);
 					}
 					
-					for(Vector point : exitRect.getFill())
-						if(point.getBlockX() >= 0 || point.getBlockX() < shapeMap.length ||
-						   point.getBlockZ() >= 0 || point.getBlockZ() < shapeMap[0].length)
+					for(Vector point : exitSegment.getFill())
+						if(point.getBlockX() >= 0 && point.getBlockX() < shapeMap.length &&
+						   point.getBlockZ() >= 0 && point.getBlockZ() < shapeMap[0].length)
 							shapeMap[point.getBlockX()][point.getBlockZ()] = fillType;
 				}
 			}

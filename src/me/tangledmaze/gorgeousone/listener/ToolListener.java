@@ -74,7 +74,8 @@ public class ToolListener implements Listener {
 		if(TangledMain.isSelectionWand(e.getItem()))
 			e.setCancelled(true);
 	}
-
+	
+	//destroys tools in hands of players without permissions and hides selections/mazes when clicked on border
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onInteract(PlayerInteractEvent e) {
 

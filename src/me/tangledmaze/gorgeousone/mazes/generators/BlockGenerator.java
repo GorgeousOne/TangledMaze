@@ -37,7 +37,7 @@ public class BlockGenerator {
 		for(int x = 0; x < shapeMap.length; x++) {
 			for(int z = 0; z < shapeMap[0].length; z++) {
 				
-				if(shapeMap[x][z] != MazePath.WALL && shapeMap[x][z] != MazePath.UNDEFINED)
+				if(shapeMap[x][z] != MazeSegment.WALL && shapeMap[x][z] != MazeSegment.UNDEFINED)
 					continue;
 				
 				pointY = heightMap[x][z];
