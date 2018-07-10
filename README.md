@@ -1,6 +1,6 @@
 # TangledMaze
 
-A spigot plugin with tools & commands to create random generated mazes with custom shapes.
+A spigot plugin with tools & commands to create random generated. Includes customizable shapes, adaption to terrain, so literally everything you need!
 
 
 goals:
@@ -20,4 +20,4 @@ goals:
 - a command to generate the maze with a custom composition of blocks ✔
 - a teleport commmand to the maze in case you lost it ✔
 
-- party commands to work on a maze together ❓
+- triangular selections ❓
