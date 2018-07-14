@@ -203,16 +203,16 @@ public class CommandHandler implements CommandExecutor {
 		case 2:
 			p.sendMessage(ChatColor.YELLOW + "Wand Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "This command hands you over a mighty selection wand. Use it consideretely! "
-					+ "Click two blocks and a selection will appear with the the equipped shape (rectangle or ellipse). "
-					+ "By clicking and dragging a blue corner you can resize you selection. "
+					+ "This command hands you over a mighty selection wand. Use it considerately! "
+					+ "Click two blocks and a selection will appear with the equipped shape (rectangle or ellipse). "
+					+ "By clicking and dragging a blue corner you can resize your selection. "
 					+ "For a new selection just click any other two blocks");
 			break;
 		//start
 		case 3:
 			p.sendMessage(ChatColor.YELLOW + "Start Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "With this command you transform yout selection into a maze's ground plot. "
+					+ "With this command you transform your selection into a maze's ground plot. "
 					+ "Only now you can add other selections or cut things away.");
 			pageLinks[6].send(p);
 			break;
@@ -245,7 +245,7 @@ public class CommandHandler implements CommandExecutor {
 			p.sendMessage(ChatColor.DARK_GREEN + "exit");
 			p.sendMessage(ChatColor.GREEN
 					+ "Click on your maze's outline to mark where gaps shall be left. "
-					+ "Click on an marking a second time to delete it. "
+					+ "Click on a marking a second time to delete it. "
 					+ "The diamond exit indicates where the path generating algorithm will begin building.");
 			break;
 			
@@ -259,7 +259,7 @@ public class CommandHandler implements CommandExecutor {
 		case 6:
 			p.sendMessage(ChatColor.YELLOW + "Add/Cut Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "Adds or cuts away your selection from your ground plot. This only works with slections touching your maze. "
+					+ "Adds or cuts away your selection from your ground plot. This only works with selections touching your maze. "
 					+ "If you cut off parts of your maze from the main part (with diamond exit) there won't be generated any paths (just don't).");
 			
 			p.sendMessage("");
@@ -277,14 +277,14 @@ public class CommandHandler implements CommandExecutor {
 		case 8:
 			p.sendMessage(ChatColor.YELLOW + "Path/Wallwidth & Wallheight Command");
 			p.sendMessage(ChatColor.GREEN
-					+ "Three commands for customization of the pathgeneration. " 
+					+ "Three commands for customization of the pathg eneration. " 
 					+ "Path and wall width are limited to 10 blocks, wall height can be up to 20.");
 			break;
 		//build
 		case 9:
 			p.sendMessage(ChatColor.YELLOW + "Build Command");
 			p.sendMessage(ChatColor.GREEN + "Builds your maze with the with a mixture of blocks you provide. " 
-					+ "After the command's name enter type of blocks and their data value (if neccessary), for example: ");
+					+ "After the command's name enter type of blocks and their data value (if necessary), for example: ");
 			p.sendMessage(ChatColor.DARK_GREEN + "\"quartz_block:1\" " + ChatColor.GREEN + "(chiseled quartz block).");
 			p.sendMessage(ChatColor.GREEN
 					+ "If you leave the server before you mazes starts to get built your work will be discarded. "

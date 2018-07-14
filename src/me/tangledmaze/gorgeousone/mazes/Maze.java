@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import me.tangledmaze.gorgeousone.shapes.Shape;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Maze {
@@ -31,7 +31,7 @@ public class Maze {
 	private ArrayList<MaterialData> wallComposition;
 	private Vector dimensions;
 	
-	public Maze(Shape baseShape, Player owner) {
+	public Maze(ShapeSelection baseShape, Player owner) {
 
 		world = baseShape.getWorld();
 		this.p = owner;
@@ -151,7 +151,7 @@ public class Maze {
 			addBorder(point);
 	}
 
-	public MazeAction getAddition(Shape s) {
+	public MazeAction getAddition(ShapeSelection s) {
 		ArrayList<Location>
 			addedFill     = new ArrayList<>(),
 			addedBorder   = new ArrayList<>(),
@@ -191,7 +191,6 @@ public class Maze {
 			
 			ArrayList<Location> currentChunk = borderChunks.get(c);
 			
-			borderloop:
 			for(int i = currentChunk.size()-1; i >= 0; i--) {
 				Location point = currentChunk.get(i);
 				
@@ -201,12 +200,20 @@ public class Maze {
 				
 				//if the point is inside the shapes border look up if is connected to blocks outside of the maze
 				if(s.borderContains(point)) {
+
+					boolean isImportantAsVertex = false;
+
 					for(Vector dir : Utils.directions()) {
 						Location point2 = point.clone().add(dir);
 						
-						if(!contains(point2) && !s.contains(point2))
-							continue borderloop;
+						if(!contains(point2) && !s.contains(point2)) {
+							isImportantAsVertex = true;
+							break;
+						}
 					}
+					
+					if(isImportantAsVertex)
+						continue;
 				}
 				
 				//otherwise remove the block
@@ -222,7 +229,7 @@ public class Maze {
 		return addition;
 	}
 	
-	public MazeAction getDeletion(Shape s) {
+	public MazeAction getDeletion(ShapeSelection s) {
 		
 		ArrayList<Location>
 			addedFill   = new ArrayList<>(),

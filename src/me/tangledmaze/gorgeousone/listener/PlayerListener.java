@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.tangledmaze.gorgeousone.core.TangledMain;
@@ -12,14 +13,19 @@ import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
-public class PlayerVanishListener implements Listener {
+public class PlayerListener implements Listener {
 	
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	public PlayerVanishListener() {
+	public PlayerListener() {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		//TODO create selection
 	}
 	
 	@EventHandler

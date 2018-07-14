@@ -19,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Utils;
 
@@ -102,7 +102,7 @@ public class BlockChangeListener implements Listener {
 						break;
 					}
 				
-				for(RectSelection selection : sHandler.getSelections()) {
+				for(ShapeSelection selection : sHandler.getShapeSelections()) {
 					if(selection.frames(point)) {
 						if(sHandler.isVisible(selection) && selection.isHighlighted(point.getBlock()))
 							sHandler.hide(selection);

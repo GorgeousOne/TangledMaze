@@ -1,10 +1,9 @@
 package me.tangledmaze.gorgeousone.events;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -13,19 +12,21 @@ import org.bukkit.entity.Player;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.selections.ToolType;
+import me.tangledmaze.gorgeousone.shapes.Ellipse;
+import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
-import net.md_5.bungee.api.ChatColor;
 
 public class SelectionCompleteEvent extends SelectionEvent {
 
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	private RectSelection selection;
+	private ShapeSelection selection;
 	private Shape shape;
 	
 	public SelectionCompleteEvent(Player p, Block clickedBlock) {
@@ -34,7 +35,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
 		mHandler = TangledMain.getPlugin().getMazeHandler();
 		
-		selection = sHandler.getSelection(p);
+		selection = (ShapeSelection) sHandler.getSelection(p);
 		
 		//save the given locations as the first 2 corners of the selection.
 		Location
@@ -43,15 +44,6 @@ public class SelectionCompleteEvent extends SelectionEvent {
 		
 		//get the vertices for the shape
 		ArrayList<Location> vertices = Utils.calcRectangleVertices(v0, v1);
-
-		try {
-			//create a new shape with the the shape type the selection handler saved
-			Constructor<? extends Shape> con = sHandler.getSelectionType(p).getConstructor(ArrayList.class);
-			shape = con.newInstance(vertices);
-			
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
 		
 		int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
 		
@@ -75,7 +67,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 				for(Location point : shapeFill.get(c))
 					
 					if(maze.isFill(point.getBlock())) {
-						this.cancelMessage = ChatColor.RED + "You cannot create your selection here. It would intersect the maze of someone else.";
+						cancelMessage = ChatColor.RED + "You cannot create your selection here. It would intersect the maze of someone else.";
 						setCancelled(true);
 						break;
 					}
@@ -96,7 +88,7 @@ public class SelectionCompleteEvent extends SelectionEvent {
 		return selection.getPlayer();
 	}
 	
-	public RectSelection getSelection() {
+	public ShapeSelection getSelection() {
 		return selection;
 	}
 	

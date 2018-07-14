@@ -11,6 +11,7 @@ import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeAction;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
 public class MazeShapeEvent extends Event implements Cancellable {
@@ -49,10 +50,11 @@ public class MazeShapeEvent extends Event implements Cancellable {
 		
 		Player p = maze.getPlayer();
 		
-		if(isCancelled)
+		if(isCancelled) {
 			p.sendMessage(cancelMessage);
-		
-		else {
+//			Utils.sendBlockDelayed(p, b.getLocation(), Constants.MAZE_BORDER);	TODO somehow make the block border again
+			
+		}else {
 			sHandler.discardSelection(maze.getPlayer());
 			mHandler.showMazeAction(p, maze, action);
 			maze.processAction(action, true);
@@ -60,7 +62,7 @@ public class MazeShapeEvent extends Event implements Cancellable {
 			if(maze.size() == 0) {
 				p.sendMessage(Constants.prefix + "Now you erased your whole maze. You will have to start a new one.");
 				mHandler.discardMaze(p);
-				sHandler.resetTool(p);
+				sHandler.setSelection(p, new ShapeSelection(p));
 			}
 		}
 	}

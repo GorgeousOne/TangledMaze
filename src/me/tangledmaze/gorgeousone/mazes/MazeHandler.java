@@ -12,12 +12,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.events.MazeShapeEvent;
 import me.tangledmaze.gorgeousone.mazes.generators.BlockGenerator;
 import me.tangledmaze.gorgeousone.mazes.generators.ExitGenerator;
 import me.tangledmaze.gorgeousone.mazes.generators.MazeMap;
 import me.tangledmaze.gorgeousone.mazes.generators.PathGenerator;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
@@ -75,6 +76,17 @@ public class MazeHandler {
 		return mazes.get(p.getUniqueId());
 	}
 	
+	public int getMaxMazeSize(Player p) {
+		
+		int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
+		
+		if(p.hasPermission(Constants.staffPerm))
+			maxMazeSize = TangledMain.getPlugin().getStaffMazeSize();
+		else if(p.hasPermission(Constants.vipPerm))
+			maxMazeSize = TangledMain.getPlugin().getVipMazeSize();
+		
+		return maxMazeSize;
+	}
 	/**
 	 * @return if a maze is displayed to it's owner.
 	 */
@@ -124,7 +136,7 @@ public class MazeHandler {
 		mazes.remove(p.getUniqueId());
 	}
 	
-	public void startMaze(Player p, RectSelection selection) {
+	public void startMaze(Player p, ShapeSelection selection) {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
@@ -133,7 +145,7 @@ public class MazeHandler {
 		if(hasMaze(p))
 			hide(getMaze(p));
 		
-		Maze maze = new Maze(selection.getShape(), p);
+		Maze maze = new Maze(selection, p);
 		mazes.put(uuid, maze);
 		show(maze);
 		
@@ -146,23 +158,23 @@ public class MazeHandler {
 		maze.setWallWidth(dimesions.getBlockZ());
 	}
 	
-	public void addSelectionToMaze(Maze maze, RectSelection selection) {
+	public void addSelectionToMaze(Maze maze, ShapeSelection selection) {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 
-		MazeAction action = maze.getAddition(selection.getShape());
+		MazeAction action = maze.getAddition(selection);
 
-		if(action.getAddedFill().size() == selection.getShape().size())
+		if(action.getAddedFill().size() == selection.size())
 			throw new IllegalArgumentException("The passed selection does not intersect the maze properly.");
 		
 		Bukkit.getPluginManager().callEvent(new MazeShapeEvent(maze, action));
 	}
 	
-	public void cutSelctionFromMaze(Maze maze, RectSelection selection) {
+	public void cutSelctionFromMaze(Maze maze, ShapeSelection selection) {
 		if(!selection.isComplete())
 			throw new IllegalArgumentException("The passed selection is incomplete.");
 		
-		MazeAction action = maze.getDeletion(selection.getShape());
+		MazeAction action = maze.getDeletion(selection);
 		
 		if(action.getRemovedFill().size() == 0)
 			throw new IllegalArgumentException("The passed selection does not intersect the maze properly.");

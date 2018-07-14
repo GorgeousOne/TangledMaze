@@ -11,12 +11,8 @@ import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
-import me.tangledmaze.gorgeousone.shapes.Brush;
-import me.tangledmaze.gorgeousone.shapes.ExitSetter;
-import me.tangledmaze.gorgeousone.shapes.Rectangle;
-import me.tangledmaze.gorgeousone.utils.Constants;
-import me.tangledmaze.gorgeousone.utils.NMSProvider;
-import me.tangledmaze.gorgeousone.utils.Utils;
+import me.tangledmaze.gorgeousone.selections.ToolType;
+import me.tangledmaze.gorgeousone.utils.*;
 
 public class BuildMaze {
 
@@ -41,7 +37,7 @@ public class BuildMaze {
 		
 		if(!mHandler.hasMaze(p)) {
 			
-			if(!sHandler.hasSelection(p)) {
+			if(!sHandler.hasShapeSelection(p)) {
 				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 				p.sendMessage("/tangledmaze start");
 				return;	
@@ -81,7 +77,7 @@ public class BuildMaze {
 			byte data = 0;
 			
 			if(blockType.contains(":")) {
-				material = NMSProvider.getMaterial(blockType.split(":")[0]);
+				material = NmsProvider.getMaterial(blockType.split(":")[0]);
 				
 				try {
 					data = Byte.parseByte(blockType.split(":")[1]);
@@ -91,7 +87,7 @@ public class BuildMaze {
 				}
 				
 			}else
-				material = NMSProvider.getMaterial(blockType);
+				material = NmsProvider.getMaterial(blockType);
 			
 			
 			if(material == Material.AIR && !blockType.equalsIgnoreCase("air")) {
@@ -115,9 +111,9 @@ public class BuildMaze {
 		if(queuePosition >= 0) {
 			mHandler.discardMaze(p);
 
-			if(sHandler.getSelectionType(p) == Brush.class ||
-			   sHandler.getSelectionType(p) == ExitSetter.class)
-				sHandler.setSelectionType(p, Rectangle.class);
+			if(sHandler.getSelectionType(p) == ToolType.RECTANGLE ||
+			   sHandler.getSelectionType(p) == ToolType.ELLIPSE)
+				sHandler.setSelectionType(p, ToolType.RECTANGLE );
 
 			if(queuePosition > 0) {
 				p.sendMessage(Constants.prefix + "Your maze has been queued. Position in queue: " + queuePosition);

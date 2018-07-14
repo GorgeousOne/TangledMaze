@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -223,6 +222,16 @@ public abstract class Utils {
 		return loc;
 	}
 	
+	public static int getMin(ArrayList<Integer> ints) {
+		int min = 0;
+		
+		for(int i : ints)
+			if(i < min)
+				min = i;
+		
+		return min;
+	}
+	
 	public static int getMax(ArrayList<Integer> ints) {
 		int max = 0;
 		
@@ -231,25 +240,5 @@ public abstract class Utils {
 				max = i;
 		
 		return max;
-	}
-	
-	public static ArrayList<Location> calcRectangleVertices(Location p0, Location p1) {
-		ArrayList<Location> vertices = new ArrayList<>();
-		World w = p0.getWorld();
-		
-		int maxY = Math.max(p0.getBlockY(), p1.getBlockY());
-		
-		int minX = Math.min(p0.getBlockX(), p1.getBlockX()),
-			minZ = Math.min(p0.getBlockZ(), p1.getBlockZ()),
-			maxX = Math.max(p0.getBlockX(), p1.getBlockX()),
-			maxZ = Math.max(p0.getBlockZ(), p1.getBlockZ());
-		
-		vertices = new ArrayList<>(Arrays.asList(
-				Utils.nearestSurface(new Location(w, minX, maxY, minZ)),
-				Utils.nearestSurface(new Location(w, maxX, maxY, minZ)),
-				Utils.nearestSurface(new Location(w, maxX, maxY, maxZ)),
-				Utils.nearestSurface(new Location(w, minX, maxY, maxZ))));
-		
-		return vertices;
 	}
 }

@@ -1,7 +1,5 @@
 package me.tangledmaze.gorgeousone.events;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,8 +12,11 @@ import org.bukkit.entity.Player;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
+import me.tangledmaze.gorgeousone.selections.ToolType;
+import me.tangledmaze.gorgeousone.shapes.Ellipse;
+import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.shapes.Shape;
 import me.tangledmaze.gorgeousone.utils.Constants;
 import me.tangledmaze.gorgeousone.utils.Utils;
@@ -25,11 +26,11 @@ public class SelectionResizeEvent extends SelectionEvent {
 	private SelectionHandler sHandler;
 	private MazeHandler mHandler;
 	
-	private RectSelection selection;
+	private ShapeSelection selection;
 	private Shape shape;
 	
 
-	public SelectionResizeEvent(Player p, Block vertex, Block clickedBlock) {
+	public SelectionResizeEvent(Player p, Block vertex, Block clickedBlock, ToolType type) {
 		super(p, clickedBlock);
 		
 		sHandler = TangledMain.getPlugin().getSelectionHandler();
@@ -52,16 +53,18 @@ public class SelectionResizeEvent extends SelectionEvent {
 			p1 = selection.getVertices().get((index+2) % 4);
 		
 		//get the new vertices for the shape
-		ArrayList<Location> vertices = Utils.calcRectangleVertices(p0, p1);
+		ArrayList<Location> vertices = ShapeSelection.calcRectangleVertices(p0, p1);
 
-		try {
-			//create a shape with the new vertices
-			Constructor<? extends Shape> con = sHandler.getSelectionType(p).getConstructor(ArrayList.class);
-			shape = con.newInstance(vertices);
-			
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		switch(type) {
+		case RECTANGLE:
+			shape = new Rectangle(vertices);
+			break;
+		case ELLIPSE:
+			shape = new Ellipse(vertices);
+			break;
+		default:
+			throw new IllegalArgumentException("Cannot create shape from tool type " + type);
+	}
 		
 		int maxMazeSize = TangledMain.getPlugin().getNormalMazeSize();
 		
@@ -106,7 +109,7 @@ public class SelectionResizeEvent extends SelectionEvent {
 		return selection.getPlayer();
 	}
 	
-	public RectSelection getSelection() {
+	public ShapeSelection getSelection() {
 		return selection;
 	}
 	

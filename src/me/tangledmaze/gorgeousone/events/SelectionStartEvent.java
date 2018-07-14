@@ -7,7 +7,8 @@ import org.bukkit.entity.Player;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
+import me.tangledmaze.gorgeousone.shapes.Rectangle;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 
 public class SelectionStartEvent extends SelectionEvent {
@@ -38,7 +39,8 @@ public class SelectionStartEvent extends SelectionEvent {
 		else {
 			sHandler.discardSelection(p);
 			
-			RectSelection selection = new RectSelection(clickedBlock, p);
+			ShapeSelection selection = new ShapeSelection(p, new Rectangle());
+			selection.interact(clickedBlock, null);
 			sHandler.setSelection(p, selection);
 			sHandler.show(selection);
 		}

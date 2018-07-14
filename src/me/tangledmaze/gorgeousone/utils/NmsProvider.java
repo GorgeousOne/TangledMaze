@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public class NMSProvider {
+public class NmsProvider {
 
     private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
 

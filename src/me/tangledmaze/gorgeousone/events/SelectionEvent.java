@@ -23,6 +23,14 @@ public abstract class SelectionEvent extends Event implements Cancellable {
 		this.clickedBlock = clickedBlock;
 		isCancelled = false;
 	}
+
+	public Player getPlayer() {
+		return p;
+	}
+	
+	public Block getClickedBlock() {
+		return clickedBlock;
+	}
 	
 	@Override
 	public HandlerList getHandlers() {
@@ -42,13 +50,5 @@ public abstract class SelectionEvent extends Event implements Cancellable {
 	public void setCancelled(boolean b, String cancelMessage) {
 		isCancelled = b;
 		this.cancelMessage = cancelMessage;
-	}
-	
-	public Player getPlayer() {
-		return p;
-	}
-	
-	public Block getClickedBlock() {
-		return clickedBlock;
 	}
 }

@@ -6,73 +6,36 @@ import java.util.HashMap;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import me.tangledmaze.gorgeousone.utils.Utils;
 
 public class Ellipse implements Shape {
 	
-	private World world;
-	private ArrayList<Location> vertices;
-	private HashMap<Chunk, ArrayList<Location>> borderChunks, fillChunks;
-	private Vector mid;
-	private double radiusX, radiusZ, proportion;
-	
-	int size;
-	
-	public Ellipse(ArrayList<Location> vertices) {
-		if(vertices.size() < 4)
-			throw new IllegalArgumentException("A rectangle neeeds 4 vertices to be determined.");
-		
-		this.vertices = vertices;
-		world = vertices.get(0).getWorld();
-
-		borderChunks = new HashMap<>();
-		fillChunks   = new HashMap<>();
-		
-		radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2;
-		radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2;
-		proportion = 1d * radiusZ / radiusX;
-		
-		mid = new Vector(
-				vertices.get(0).getX() + radiusX, 0,
-				vertices.get(0).getZ() + radiusZ);
-
-		size = 0;
-		calcFillAndBorder();
-	}
-	
-	@Override
-	public World getWorld() {
-		return world;
-	}
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Location> getVertices() {
-		return (ArrayList<Location>) vertices.clone();
+		return null;
 	}
 	
-	@Override
-	public HashMap<Chunk, ArrayList<Location>> getBorder() {
-		return borderChunks;
-	}
+//	@Override
+//	public int size(ArrayList<Location> vertices) {
+//		return 0; //TODO
+//	}
 	
 	@Override
-	public HashMap<Chunk, ArrayList<Location>> getFill() {
-		return fillChunks;
-	}
-	
-	@Override
-	public int size() {
-		return size;
-	}
-	
-	@Override
-	public boolean contains(Location point) {
-		if(!point.getWorld().equals(world))
-			return false;
+	public boolean contains(ArrayList<Location> vertices, Location point) {
+		
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("An ellipse neeeds 4 vertices to be determined.");
+		
+		double
+			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,
+			radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2,
+			proportion = 1d * radiusZ / radiusX;
+		
+		Vector mid = new Vector(
+				vertices.get(0).getX() + radiusX, 0,
+				vertices.get(0).getZ() + radiusZ);
 		
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * proportion + mid.getX());
@@ -82,9 +45,19 @@ public class Ellipse implements Shape {
 	}
 	
 	@Override
-	public boolean borderContains(Location point) {
-		if(!point.getWorld().equals(world))
-			return false;
+	public boolean borderContains(ArrayList<Location> vertices, Location point) {
+		
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("An ellipse neeeds 4 vertices to be determined.");
+		
+		double
+			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,
+			radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2,
+			proportion = 1d * radiusZ / radiusX;
+		
+		Vector mid = new Vector(
+				vertices.get(0).getX() + radiusX, 0,
+				vertices.get(0).getZ() + radiusZ);
 		
 		Vector point2 = point.toVector();
 		point2.setX((point2.getX() - mid.getX()) * proportion + mid.getX());
@@ -102,28 +75,39 @@ public class Ellipse implements Shape {
 		
 		return false;
 	}
-
-	private void addFill(Location point) {
+	
+	private void addFill(HashMap<Chunk, ArrayList<Location>> fill, Location point) {
 		Chunk c = point.getChunk();
 		
-		if(fillChunks.containsKey(c))
-			fillChunks.get(c).add(point);
+		if(fill.containsKey(c))
+			fill.get(c).add(point);
 		else
-			fillChunks.put(c, new ArrayList<>(Arrays.asList(point)));
-		
-		size++;
+			fill.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
-	private void addBorder(Location point) {
+	private void addBorder(HashMap<Chunk, ArrayList<Location>> border, Location point) {
 		Chunk c = point.getChunk();
 
-		if(borderChunks.containsKey(c))
-			borderChunks.get(c).add(point);
+		if(border.containsKey(c))
+			border.get(c).add(point);
 		else
-			borderChunks.put(c, new ArrayList<>(Arrays.asList(point)));
+			border.put(c, new ArrayList<>(Arrays.asList(point)));
 	}
 	
-	private void calcFillAndBorder() {
+	@Override
+	public void calcFillAndBorder(
+			ArrayList<Location> vertices,
+			HashMap<Chunk, ArrayList<Location>> fill,
+			HashMap<Chunk, ArrayList<Location>> border) {
+		
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("An ellipse neeeds 4 vertices to be determined.");
+		
+		double
+			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,
+			radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2,
+			proportion = 1d * radiusZ / radiusX;
+		
 		int posX = vertices.get(0).getBlockX(),
 			posZ = vertices.get(0).getBlockZ();
 		
@@ -132,26 +116,27 @@ public class Ellipse implements Shape {
 		for(Location point : vertices)
 			verticesYs.add(point.getBlockY());
 		
+		//calculate maximum Y to start surface iteration from there?
 		int maxY = Utils.getMax(verticesYs);
 		
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
 		
 		//iterate over the rectangle of the vertices equally to rectangle shape
-		for(double x = -radiusX; x < radiusX; x++)
+		for(double x = -radiusX; x < radiusX; x++) {
 			for(double z = -radiusZ; z < radiusZ; z++) {
 				
-				//calculate the iterator compensating the deformation of the ellipses, so the distance to the mid is like in a circle
+				//calculate the iterator compensating the deformation of the ellipses, so the radius behaves like in a circle
 				iter = new Vector(proportion * (x+0.5), 0, z+0.5);
-				Location point = new Location(world, posX + radiusX + x, maxY, posZ + radiusZ + z);
+				Location point = new Location(vertices.get(0).getWorld(), posX + radiusX + x, maxY, posZ + radiusZ + z);
 				
 				//add all blocks that are inside the circle/ellipse, if their iterator is inside the radius
 
-				//using radius-0: the circle looks edged
-				//using radius-1/2: only one block sticks out at the edges
-				// -> radius - 0.25 is the perfect compromise that makes the circle look smooth
+				/* using radius: the circle looks edged,
+				 * using radius-1/2: single blocks stick out at most smooth parts,
+				 * so radius - 0.25 is the perfect compromise that makes the circle look smooth */
 				if(midPoint.distance(iter) <= radiusZ - 0.25)
-					addFill(Utils.nearestSurface(point));
+					addFill(fill, Utils.nearestSurface(point));
 				else
 					continue;
 				
@@ -160,24 +145,11 @@ public class Ellipse implements Shape {
 					Vector neighbour = iter.clone().add(dir.clone().setX(proportion * dir.getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
-						addBorder(Utils.nearestSurface(point));
+						addBorder(border, Utils.nearestSurface(point));
 						break;
 					}
 				}
 			}
-	}
-	
-	public void recalc(Location point) {
-		Chunk c = point.getChunk();
-		
-		if(!borderChunks.containsKey(c))
-			return;
-
-		for(Location point2 : borderChunks.get(c))
-			if(point2.getX() == point.getX() &&
-			   point2.getZ() == point.getZ()) {
-				point2.setY(Utils.nearestSurface(point).getY());
-				break;
-			}
+		}
 	}
 }

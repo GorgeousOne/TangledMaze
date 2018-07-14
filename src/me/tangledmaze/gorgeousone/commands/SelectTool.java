@@ -5,11 +5,8 @@ import org.bukkit.entity.Player;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
-import me.tangledmaze.gorgeousone.shapes.Brush;
-import me.tangledmaze.gorgeousone.shapes.Ellipse;
-import me.tangledmaze.gorgeousone.shapes.Rectangle;
+import me.tangledmaze.gorgeousone.selections.ToolType;
 import me.tangledmaze.gorgeousone.utils.Constants;
-import me.tangledmaze.gorgeousone.shapes.ExitSetter;
 
 public class SelectTool {
 
@@ -32,37 +29,37 @@ public class SelectTool {
 		case "rectangle":
 		case "rect":
 		case "square":
-			if(sHandler.getSelectionType(p) == Rectangle.class)
+			if(sHandler.getSelectionType(p) == ToolType.RECTANGLE)
 				break;
 			
-			sHandler.setSelectionType(p, Rectangle.class);
+			sHandler.setSelectionType(p, ToolType.RECTANGLE);
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 
-			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
+			if(sHandler.hasShapeSelection(p) && !sHandler.getSelection(p).isComplete())
 				sHandler.discardSelection(p);
 			break;
 			
 		case "ellipse":
 		case "circle":
-			if(sHandler.getSelectionType(p) == Ellipse.class)
+			if(sHandler.getSelectionType(p) == ToolType.ELLIPSE )
 				break;
 			
-			sHandler.setSelectionType(p, Ellipse.class);
+			sHandler.setSelectionType(p, ToolType.ELLIPSE);
 			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 
-			if(sHandler.hasSelection(p) && !sHandler.getSelection(p).isComplete())
+			if(sHandler.hasShapeSelection(p) && !sHandler.getSelection(p).isComplete())
 				sHandler.discardSelection(p);
 			break;
 		
 		case "brush":
-			if(sHandler.getSelectionType(p) == Brush.class)
+			if(sHandler.getSelectionType(p) == ToolType.BRUSH)
 				break;
 			
 			if(mHandler.hasMaze(p)) {
-				sHandler.setSelectionType(p, Brush.class);
+				sHandler.setSelectionType(p, ToolType.BRUSH);
 				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
 				
-				if(sHandler.hasSelection(p))
+				if(sHandler.hasShapeSelection(p))
 					sHandler.discardSelection(p);
 			
 			}else {
@@ -72,14 +69,14 @@ public class SelectTool {
 			break;
 			
 		case "exit":
-			if(sHandler.getSelectionType(p) == ExitSetter.class)
+			if(sHandler.getSelectionType(p) == ToolType.EXIT_SETTER)
 				break;
 			
 			if(mHandler.hasMaze(p)) {
-				sHandler.setSelectionType(p, ExitSetter.class);
+				sHandler.setSelectionType(p, ToolType.EXIT_SETTER);
 				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
 				
-				if(sHandler.hasSelection(p))
+				if(sHandler.hasShapeSelection(p))
 					sHandler.discardSelection(p);
 			
 			}else {

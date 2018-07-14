@@ -29,7 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.tangledmaze.gorgeousone.core.TangledMain;
 import me.tangledmaze.gorgeousone.mazes.Maze;
 import me.tangledmaze.gorgeousone.mazes.MazeHandler;
-import me.tangledmaze.gorgeousone.selections.RectSelection;
+import me.tangledmaze.gorgeousone.selections.ShapeSelection;
 import me.tangledmaze.gorgeousone.selections.SelectionHandler;
 import me.tangledmaze.gorgeousone.utils.Constants;
 
@@ -58,9 +58,10 @@ public class ToolListener implements Listener {
 					
 					if(System.currentTimeMillis() - times.get(p) >= expiration) {
 						times.remove(p);
-								
-						if(sHandler.hasSelection(p))
-							sHandler.hide(sHandler.getSelection(p));
+						
+						//TODO
+						if(sHandler.hasShapeSelection(p))
+							sHandler.hide((ShapeSelection) sHandler.getSelection(p));
 						if(mHandler.hasMaze(p))
 							mHandler.hide(mHandler.getMaze(p));
 					}
@@ -106,19 +107,21 @@ public class ToolListener implements Listener {
 			return;
 			
 		//clicking with inflammable objects on TNT
-		}else if(item != null)
+		}else if(item != null) {
 			if(item.getType() == Material.FLINT_AND_STEEL || item.getType() == Material.FIREBALL) {
 				blockListener.update(b.getLocation(), e);
 				return;
 			}
+		}
 		
 		//just clicking somehow
 		if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if(mHandler.hasMaze(p) && mHandler.getMaze(p).isBorder(b))
 				mHandler.hide(mHandler.getMaze(p));
 			
-			if(sHandler.hasSelection(p) && sHandler.getSelection(p).isHighlighted(b))
-				sHandler.hide(sHandler.getSelection(p));
+			//TODO
+			if(sHandler.hasShapeSelection(p) && ((ShapeSelection) sHandler.getSelection(p)).isHighlighted(b))
+				sHandler.hide((ShapeSelection) sHandler.getSelection(p));
 		}
 	}
 	
@@ -136,8 +139,9 @@ public class ToolListener implements Listener {
 				
 			if(mHandler.hasMaze(p) && !mHandler.isVisible(mHandler.getMaze(p)))
 				mHandler.show(mHandler.getMaze(p));
-			if(sHandler.hasSelection(p) && !sHandler.isVisible(sHandler.getSelection(p)))
-				sHandler.show(sHandler.getSelection(p));
+			//TODO
+			if(sHandler.hasShapeSelection(p) && !sHandler.isVisible((ShapeSelection) sHandler.getSelection(p)))
+				sHandler.show((ShapeSelection) sHandler.getSelection(p));
 		
 		}else if(TangledMain.isSelectionWand(previousItem))			
 			times.put(p, System.currentTimeMillis());
@@ -153,8 +157,8 @@ public class ToolListener implements Listener {
 			
 			if(mHandler.hasMaze(p) && !mHandler.isVisible(mHandler.getMaze(p)))
 				mHandler.show(mHandler.getMaze(p));
-			if(sHandler.hasSelection(p) && !sHandler.isVisible(sHandler.getSelection(p)))
-				sHandler.show(sHandler.getSelection(p));
+			if(sHandler.hasShapeSelection(p) && !sHandler.isVisible((ShapeSelection) sHandler.getSelection(p)))
+				sHandler.show((ShapeSelection) sHandler.getSelection(p));
 		}
 	}
 	
@@ -164,7 +168,7 @@ public class ToolListener implements Listener {
 		if(TangledMain.isSelectionWand(e.getItemDrop().getItemStack())) {
 			Player p = e.getPlayer();
 
-			if(sHandler.hasSelection(p) || mHandler.hasMaze(p))
+			if(sHandler.hasShapeSelection(p) || mHandler.hasMaze(p))
 				times.put(p, System.currentTimeMillis());
 		}
 	}
@@ -185,14 +189,15 @@ public class ToolListener implements Listener {
 					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
 			}
 		
-		for(RectSelection selection : sHandler.getSelections())
-			if(sHandler.isVisible(selection) && selection.isComplete() && selection.getShape().getBorder().containsKey(c)) {
+		//TODO
+		for(ShapeSelection selection : sHandler.getShapeSelections())
+			if(sHandler.isVisible(selection) && selection.isComplete() && selection.getBorder().containsKey(c)) {
 				Player p = selection.getPlayer();
 
 				if(p == null)
 					continue;
 				
-				for(Location point : selection.getShape().getBorder().get(c))
+				for(Location point : selection.getBorder().get(c))
 					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
 				
 				for(Location vertex : selection.getVertices())

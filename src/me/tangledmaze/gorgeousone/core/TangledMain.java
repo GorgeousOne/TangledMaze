@@ -44,7 +44,7 @@ public class TangledMain extends JavaPlugin {
 		
 		pm.registerEvents(bl, this);
 		pm.registerEvents(new ToolListener(bl), this);
-		pm.registerEvents(new PlayerVanishListener(), this);
+		pm.registerEvents(new PlayerListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandHandler());
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
