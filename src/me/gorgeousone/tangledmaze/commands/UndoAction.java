@@ -3,10 +3,10 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class UndoAction {
 

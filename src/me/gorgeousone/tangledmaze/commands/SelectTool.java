@@ -2,10 +2,10 @@ package me.gorgeousone.tangledmaze.commands;
 
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.*;
 import me.gorgeousone.tangledmaze.shapes.*;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class SelectTool {
 
@@ -23,7 +23,9 @@ public class SelectTool {
 			if(SelectionHandler.hasShapeSel(p) && SelectionHandler.getShapeSel(p).getShape() instanceof Rectangle)
 				break;
 			
-			SelectionHandler.resetSelection(p);
+			if(SelectionHandler.hasShapeSel(p))
+				SelectionHandler.getShapeSel(p).reset();
+			
 			SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 
@@ -34,7 +36,9 @@ public class SelectTool {
 			if(SelectionHandler.hasShapeSel(p) && ((ShapeSelection) SelectionHandler.getSelection(p)).getShape().getClass() == Rectangle.class)
 				break;
 			
-			SelectionHandler.resetSelection(p);
+			if(SelectionHandler.hasShapeSel(p))
+				SelectionHandler.getShapeSel(p).reset();
+			
 			SelectionHandler.setSelection(p, new ShapeSelection(p, new Ellipse()));
 			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 
@@ -59,7 +63,10 @@ public class SelectTool {
 //				break;	TODO
 			
 			if(MazeHandler.hasMaze(p)) {
-				SelectionHandler.resetSelection(p);
+				
+				if(SelectionHandler.hasShapeSel(p))
+					SelectionHandler.getShapeSel(p).reset();
+				
 				SelectionHandler.setSelection(p, new ExitSetterSelection(p));
 				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
 			

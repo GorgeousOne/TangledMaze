@@ -75,32 +75,28 @@ public class ShapeSelection extends Selection {
 	public void interact(Block b, Action a) {
 		
 		if(b.getWorld() != world) {
-			
 			reset();
 			world = b.getWorld();
 			Renderer.showSelection(this);
 
 		}else if(vertices.isEmpty()) {
-			
 			vertices.add(Utils.nearestSurface(b.getLocation()));
 
 		}else if(vertices.size() == 1) {
-			
 			completeShape(b);
 			
 		}else {
 
 			if(isResizing) {
-
 				resizeShape(b);
 			
 			}else if(isVertex(b)) {
-			
 				indexOfResizedVertex = indexOfVertex(b);
 				isResizing = true;
 				return;
 				
 			}else {
+				Renderer.hideShape(this, true);
 				reset();
 				vertices.add(Utils.nearestSurface(b.getLocation()));
 			}
@@ -141,8 +137,6 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public void reset() {
-		Renderer.hideShape(this, true);
-		
 		fillChunks.clear();
 		borderChunks.clear();
 		vertices.clear();

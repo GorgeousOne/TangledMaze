@@ -7,7 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
-import me.gorgeousone.tangledmaze.core.Constants;
+import me.gorgeousone.tangledmaze.utils.Constants;
 import me.gorgeousone.tangledmaze.utils.NmsProvider;
 import me.gorgeousone.tangledmaze.utils.Utils;
 

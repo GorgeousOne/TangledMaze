@@ -3,10 +3,13 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Constants;
+import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.mazes.Maze;
+import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class AddToMaze {
 
@@ -29,17 +32,25 @@ public class AddToMaze {
 			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShapeSel(p);
+		ShapeSelection shape = SelectionHandler.getShapeSel(p);
 		
-		if(!selection.isComplete()) {
+		if(!shape.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
 			return;
 		}
 		
-		try {
-//			SelectionHandler.addSelectionToMaze(MazeHandler.getMaze(p), selection);
-		}catch (IllegalArgumentException e) {
+		Maze maze = MazeHandler.getMaze(p);
+		MazeAction action = maze.getAddition(shape);
+		
+		if(action.getAddedFill().size() == shape.size()) {
 			p.sendMessage(ChatColor.RED + "Your selection does not seem to touch your maze directly (outline on outline).");
+			return;
 		}
+
+		Renderer.hideShape(shape, true);
+		shape.reset();
+		
+		maze.processAction(action, true);
+		Renderer.showMazeAction(maze, action);
 	}
 }

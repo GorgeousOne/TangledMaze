@@ -13,9 +13,9 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class WandListener implements Listener{
 	

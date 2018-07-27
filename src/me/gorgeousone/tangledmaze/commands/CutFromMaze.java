@@ -3,10 +3,13 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Constants;
+import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.mazes.Maze;
+import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class CutFromMaze {
 
@@ -29,17 +32,25 @@ public class CutFromMaze {
 			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShapeSel(p);
+		ShapeSelection shape = SelectionHandler.getShapeSel(p);
 
-		if(!selection.isComplete()) {
+		if(!shape.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
 			return;
 		}
 		
-		try {
-//			MazeHandler.cutSelctionFromMaze(MazeHandler.getMaze(p), selection);
-		}catch (Exception e) {
-			p.sendMessage(ChatColor.RED + "Your selection does not seems to intersect to your maze in any way.");
+		Maze maze = MazeHandler.getMaze(p);
+		MazeAction action = maze.getDeletion(shape);
+		
+		if(action.getRemovedFill().size() == 0) {
+			p.sendMessage(ChatColor.RED + "Your selection does not seem to intersect your maze directly (outline inside borders).");
+			return;
 		}
+
+		Renderer.hideShape(shape, true);
+		shape.reset();
+		
+		maze.processAction(action, true);
+		Renderer.showMazeAction(maze, action);
 	}
 }

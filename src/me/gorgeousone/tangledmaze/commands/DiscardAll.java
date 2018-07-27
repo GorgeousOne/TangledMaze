@@ -2,10 +2,10 @@ package me.gorgeousone.tangledmaze.commands;
 
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
 import me.gorgeousone.tangledmaze.shapes.Rectangle;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class DiscardAll {
 	

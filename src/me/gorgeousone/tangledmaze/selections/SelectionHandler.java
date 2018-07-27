@@ -37,7 +37,10 @@ public abstract class SelectionHandler {
 			Renderer.registerShape((ShapeSelection) shape);
 	}
 	
-	public static void resetSelection(Player p) {
-		
+	public static void removeSelection(Player p) {
+		if(hasShapeSel(p))
+			Renderer.unregisterShape(getShapeSel(p));
+
+		selections.remove(p.getUniqueId());
 	}
 }

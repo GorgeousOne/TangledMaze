@@ -14,13 +14,13 @@ import me.gorgeousone.tangledmaze.core.TangledMain;
 
 public abstract class Utils {
 	
-	private static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
+	public final static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 0, 0,  1),
 			new Vector(-1, 0,  0),
 			new Vector( 0, 0, -1)));
 
-	private static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
+	public final static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
 			new Vector( 0, 0,  1),
@@ -30,7 +30,7 @@ public abstract class Utils {
 			new Vector( 0, 0, -1),
 			new Vector( 1, 0, -1)));
 
-	private static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
+	private final static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.ACACIA_DOOR,
 			Material.ACTIVATOR_RAIL,
 			Material.ANVIL,
@@ -87,11 +87,11 @@ public abstract class Utils {
 			Material.WALL_BANNER,
 			Material.WALL_SIGN,
 			Material.WATER_LILY,
+			Material.WEB,
 			Material.WHEAT,
 			Material.WOOD_BUTTON,
 			Material.WOOD_PLATE,
 			Material.WOODEN_DOOR,
-			Material.WEB,
 			Material.YELLOW_FLOWER));
 	
 	private static ArrayList<Material> REPLACABLE_SOLIDS = new ArrayList<>(Arrays.asList(
@@ -180,11 +180,6 @@ public abstract class Utils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Vector> directions() {
-		return (ArrayList<Vector>) DIRECTIONS.clone();
-	}
-
-	@SuppressWarnings("unchecked")
 	public static ArrayList<Vector> cardinalDirs() {
 		return (ArrayList<Vector>) CARDINAL_DIRS.clone(); 
 	}
@@ -223,16 +218,6 @@ public abstract class Utils {
 		return loc;
 	}
 	
-//	public static int getMin(ArrayList<Integer> ints) { TODO check relevance
-//		int min = 0;
-//		
-//		for(int i : ints)
-//			if(i < min)
-//				min = i;
-//		
-//		return min;
-//	}
-	
 	public static int getMaxY(ArrayList<Location> locs) {
 		int max = 0;
 		
@@ -262,4 +247,6 @@ public abstract class Utils {
 		
 		return vertices;
 	}
+	
+	
 }

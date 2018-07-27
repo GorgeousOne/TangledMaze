@@ -1,19 +1,22 @@
 package me.gorgeousone.tangledmaze.selections;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
 public abstract class Selection {
 	
-	protected Player builder;
+	private UUID player;
 
 	public Selection(Player builder) {
-		this.builder = builder;
+		this.player = builder.getUniqueId();
 	}
 	
 	public Player getPlayer() {
-		return builder;
+		return Bukkit.getPlayer(player);
 	}
 	
 	public abstract void interact(Block clickedBlock, Action interactAction);

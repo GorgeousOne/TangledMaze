@@ -6,13 +6,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
-import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.mazes.WallComposer;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
 import me.gorgeousone.tangledmaze.shapes.Rectangle;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 
 public class BuildMaze {

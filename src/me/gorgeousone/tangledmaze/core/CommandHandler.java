@@ -13,6 +13,7 @@ import me.gorgeousone.tangledmaze.commands.*;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
+import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class CommandHandler implements CommandExecutor {
 	

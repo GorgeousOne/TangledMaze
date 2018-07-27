@@ -49,7 +49,7 @@ public class TangledMain extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		Renderer.unregister();
+		Renderer.reload();
 		super.onDisable();
 	}
 	

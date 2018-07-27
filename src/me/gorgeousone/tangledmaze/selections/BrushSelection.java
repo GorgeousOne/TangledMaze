@@ -17,7 +17,7 @@ public class BrushSelection extends Selection {
 	
 	public void interact(Block b, Action a) {
 
-		Maze maze = MazeHandler.getMaze(builder);
+		Maze maze = MazeHandler.getMaze(getPlayer());
 		MazeAction brush = null;
 		
 		//get affected blocks of shaping as a MazeAction
@@ -33,6 +33,6 @@ public class BrushSelection extends Selection {
 //			Bukkit.getPluginManager().callEvent(brushing);
 			
 		}else if(Math.random() < 1/3d)
-			builder.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
+			getPlayer().sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
 	}
 }

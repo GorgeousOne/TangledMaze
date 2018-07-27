@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.shapes;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

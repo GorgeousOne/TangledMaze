@@ -8,15 +8,12 @@ public class MazeAction {
 	
 	private ArrayList<Location> addedFill, removedFill, addedBorder, removedBorder, removedExits;
 	
-	public MazeAction(ArrayList<Location> addedFill,   ArrayList<Location> removedFill,
-					  ArrayList<Location> addedBorder, ArrayList<Location> removedBorder,
-					  ArrayList<Location> removedExits) {
-		
-		this.addedFill     = addedFill;
-		this.addedBorder   = addedBorder;
-		this.removedFill   = removedFill;
-		this.removedBorder = removedBorder;
-		this.removedExits  = removedExits;
+	public MazeAction() {
+		addedFill     = new ArrayList<>();
+		addedBorder   = new ArrayList<>();
+		removedFill   = new ArrayList<>();
+		removedBorder = new ArrayList<>();
+		removedExits  = new ArrayList<>();
 	}
 	
 	public ArrayList<Location> getAddedFill() {
@@ -37,6 +34,26 @@ public class MazeAction {
 	
 	public ArrayList<Location> getRemovedExits() {
 		return  removedExits;
+	}
+	
+	public void addFill(Location l) {
+		addedFill.add(l);
+	}
+	
+	public void removeFill(Location l) {
+		removedFill.add(l);
+	}
+	
+	public void addBorder(Location l) {
+		addedBorder.add(l);
+	}
+	
+	public void removeBorder(Location l) {
+		removedBorder.add(l);
+	}
+	
+	public void removeExit(Location l) {
+		removedExits.add(l);
 	}
 	
 	public MazeAction invert() {

@@ -25,14 +25,7 @@ public abstract class MazeHandler {
 	}
 	
 	public static void removeMaze(Player p) {
+		Renderer.unregisterMaze(getMaze(p));
 		mazes.remove(p.getUniqueId());
 	}
-	
-	
-	//removes all held data to a player in this object.
-//	public void remove(Player p) {
-//		mazeVisibilities.remove(getMaze(p));
-//		mazeDimensions.remove(p.getUniqueId());
-//		mazes.remove(p.getUniqueId());
-//	}
 }
