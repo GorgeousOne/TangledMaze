@@ -30,7 +30,7 @@ public class UndoAction {
 				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to be undone...");
 			
 		}else {
-			MazeAction action = maze.getActionHistory().popLastAction().reverse();
+			MazeAction action = maze.getActionHistory().popLastAction().invert();
 			
 			maze.processAction(action, false);
 			p.sendMessage(Constants.prefix + "Undid last action.");

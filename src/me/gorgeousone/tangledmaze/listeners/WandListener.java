@@ -16,8 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import me.gorgeousone.tangledmaze.core.Constants;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
-import me.gorgeousone.tangledmaze.shapes.Rectangle;
 
 public class WandListener implements Listener{
 	
@@ -56,14 +54,10 @@ public class WandListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack wand = e.getItem();
 		
-		
 		if(!p.hasPermission(Constants.buildPerm)) {
 			destroyTool(p, wand);
 			return;
 		}
-		
-		if(!SelectionHandler.hasSelection(p))
-			SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
 		
 		SelectionHandler.getSelection(p).interact(e.getClickedBlock(), a);
 	}

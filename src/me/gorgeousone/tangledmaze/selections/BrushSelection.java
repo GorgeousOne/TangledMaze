@@ -11,14 +11,13 @@ import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 
 public class BrushSelection extends Selection {
 	
-	public BrushSelection(Player p) {
-		super(p);
+	public BrushSelection(Player builder) {
+		super(builder);
 	}		
-	
 	
 	public void interact(Block b, Action a) {
 
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(builder);
 		MazeAction brush = null;
 		
 		//get affected blocks of shaping as a MazeAction
@@ -34,6 +33,6 @@ public class BrushSelection extends Selection {
 //			Bukkit.getPluginManager().callEvent(brushing);
 			
 		}else if(Math.random() < 1/3d)
-			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
+			builder.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
 	}
 }

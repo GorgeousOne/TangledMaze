@@ -30,11 +30,11 @@ public abstract class SelectionHandler {
 		return sel instanceof ShapeSelection? (ShapeSelection) sel : null;
 	}
 	
-	public static void setSelection(Player p, Selection s) {
-		selections.put(p.getUniqueId(), s);
+	public static void setSelection(Player p, Selection shape) {
+		selections.put(p.getUniqueId(), shape);
 		
-		if(s instanceof ShapeSelection)
-			Renderer.registerShape((ShapeSelection) s);
+		if(shape instanceof ShapeSelection)
+			Renderer.registerShape((ShapeSelection) shape);
 	}
 	
 	public static void resetSelection(Player p) {

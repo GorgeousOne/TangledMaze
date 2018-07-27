@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -224,22 +223,22 @@ public abstract class Utils {
 		return loc;
 	}
 	
-	public static int getMin(ArrayList<Integer> ints) {
-		int min = 0;
-		
-		for(int i : ints)
-			if(i < min)
-				min = i;
-		
-		return min;
-	}
+//	public static int getMin(ArrayList<Integer> ints) { TODO check relevance
+//		int min = 0;
+//		
+//		for(int i : ints)
+//			if(i < min)
+//				min = i;
+//		
+//		return min;
+//	}
 	
-	public static int getMax(ArrayList<Integer> ints) {
+	public static int getMaxY(ArrayList<Location> locs) {
 		int max = 0;
 		
-		for(int i : ints)
-			if(i > max)
-				max = i;
+		for(Location loc : locs)
+			if(loc.getBlockY() > max)
+				max = loc.getBlockY();
 		
 		return max;
 	}

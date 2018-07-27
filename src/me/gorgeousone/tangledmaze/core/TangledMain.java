@@ -40,11 +40,19 @@ public class TangledMain extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		plugin = this;
+		
 		createWand();
 		loadConfig();
 		registerListeners();
 	}
-
+	
+	@Override
+	public void onDisable() {
+		Renderer.unregister();
+		super.onDisable();
+	}
+	
 	public static TangledMain getPlugin() {
 		return plugin;
 	}

@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Renderer;
+
 public abstract class MazeHandler {
 	
 	private static HashMap<UUID, Maze> mazes = new HashMap<>();
@@ -17,8 +19,9 @@ public abstract class MazeHandler {
 		return mazes.get(p.getUniqueId());
 	}
 	
-	public static void setMaze(Player p, Maze m) {
-		
+	public static void setMaze(Player p, Maze maze) {
+		mazes.put(p.getUniqueId(), maze);
+		Renderer.registerMaze(maze);
 	}
 	
 	public static void removeMaze(Player p) {

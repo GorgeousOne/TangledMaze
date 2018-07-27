@@ -18,7 +18,7 @@ public class MazeAction {
 		this.removedBorder = removedBorder;
 		this.removedExits  = removedExits;
 	}
-
+	
 	public ArrayList<Location> getAddedFill() {
 		return addedFill;
 	}
@@ -39,7 +39,7 @@ public class MazeAction {
 		return  removedExits;
 	}
 	
-	public MazeAction reverse() {
+	public MazeAction invert() {
 		ArrayList<Location> temp = new ArrayList<Location>(addedFill);
 		
 		addedFill.clear();

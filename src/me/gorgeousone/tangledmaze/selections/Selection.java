@@ -6,15 +6,15 @@ import org.bukkit.event.block.Action;
 
 public abstract class Selection {
 	
-	protected Player p;
+	protected Player builder;
 
-	public Selection(Player p) {
-		this.p = p;
+	public Selection(Player builder) {
+		this.builder = builder;
 	}
 	
 	public Player getPlayer() {
-		return p;
+		return builder;
 	}
 	
-	public abstract void interact(Block b, Action a);
+	public abstract void interact(Block clickedBlock, Action interactAction);
 }

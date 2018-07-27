@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Constants;
-import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
@@ -23,11 +22,11 @@ public class StartMaze {
 			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShapeSel(p);
-		SelectionHandler.resetSelection(p);
 		
 		try {
-			MazeHandler.setMaze(p, new Maze(selection, p));
+			ShapeSelection selection = SelectionHandler.getShapeSel(p);
+			MazeHandler.getMaze(p).setShape(selection);
+			selection.reset();
 			p.sendMessage(Constants.prefix + "Started a maze from selection.");
 			
 		} catch (IllegalArgumentException e) {

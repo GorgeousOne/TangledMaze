@@ -3,9 +3,9 @@ package me.gorgeousone.tangledmaze.selections;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -15,55 +15,40 @@ import me.gorgeousone.tangledmaze.shapes.Shape;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class ShapeSelection extends Selection {
+
+	private World world;
+	private Shape shape;
 	
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Location> vertices;
+	private int size, borderSize;
 	
-	private boolean isComplete;
+	private boolean isComplete, isResizing;
+	private int indexOfResizedVertex;
 	
-	private Shape shape;
 	
-	public ShapeSelection(Player p, Shape s) {
-		super(p);
+	public ShapeSelection(Player builder, Shape shapeType) {
+		super(builder);
 		
-		shape = s;
+		if(builder != null)
+			world = builder.getWorld();
+		
+		shape = shapeType;
 		
 		vertices = new ArrayList<>();
 		fillChunks   = new HashMap<>();
-		borderChunks = new HashMap<>();	
+		borderChunks = new HashMap<>();
+		
 		isComplete = false;
+		isResizing = false;
 	}
-
-	@Override
-	public void interact(Block b, Action a) {
-		
-		int vertexCount = vertices.size();
-		
-		if(vertexCount == 0 || vertexCount < shape.requieredVertices()-1) {
-			
-			vertices.add(Utils.nearestSurface(b.getLocation()));
-		
-		}else if(vertexCount == shape.requieredVertices()-1) {
-			
-			p.sendMessage("hello!");
-			vertices.add(Utils.nearestSurface(b.getLocation()));
-			shape.calcFillAndBorderAndPerhapsVertices(vertices, fillChunks, borderChunks);
-			isComplete = true;
-			
-			for(Location l : vertices)
-				Bukkit.broadcastMessage(l.toVector().toString());
-			
-			Renderer.showSelection(this);
-			
-		}else if (vertexCount == shape.requieredVertices()){
-			
-			fillChunks.clear();
-			borderChunks.clear();
-			vertices.clear();
-			isComplete = false;
-			
-			shape.calcFillAndBorderAndPerhapsVertices(vertices, fillChunks, borderChunks);
-		}
+	
+	public World getWorld() {
+		return world;
+	}
+	
+	public Shape getShape() {
+		return shape;
 	}
 	
 	public boolean isComplete() {
@@ -78,15 +63,154 @@ public class ShapeSelection extends Selection {
 		return borderChunks;
 	}
 	
-	public Shape getShape() {
-		return shape;
-	}
-
 	public int size() {
-		return 0;
+		return size;
 	}
 
+	public int borderSize() {
+		return borderSize;
+	}
+	
+	@Override
+	public void interact(Block b, Action a) {
+		
+		if(b.getWorld() != world) {
+			
+			reset();
+			world = b.getWorld();
+			Renderer.showSelection(this);
+
+		}else if(vertices.isEmpty()) {
+			
+			vertices.add(Utils.nearestSurface(b.getLocation()));
+
+		}else if(vertices.size() == 1) {
+			
+			completeShape(b);
+			
+		}else {
+
+			if(isResizing) {
+
+				resizeShape(b);
+			
+			}else if(isVertex(b)) {
+			
+				indexOfResizedVertex = indexOfVertex(b);
+				isResizing = true;
+				return;
+				
+			}else {
+				reset();
+				vertices.add(Utils.nearestSurface(b.getLocation()));
+			}
+		}
+		
+		Renderer.showSelection(this);
+	}
+	
+	private void completeShape(Block b) {
+		
+		vertices.add(Utils.nearestSurface(b.getLocation()));
+		shape.calcFillAndBorder(vertices, fillChunks, borderChunks);
+		isComplete = true;
+		
+		for(ArrayList<Location> chunk : fillChunks.values())
+			size += chunk.size();
+		
+		for(ArrayList<Location> chunk : borderChunks.values())
+			borderSize += chunk.size();
+	}
+	
+	private void resizeShape(Block b) {
+		
+		Renderer.hideShape(this, true);
+		Location oppositeVertex = vertices.get((indexOfResizedVertex+2) % 4);
+		
+		vertices.clear();
+		vertices.add(oppositeVertex);
+		vertices.add(Utils.nearestSurface(b.getLocation()));
+		
+		size = 0;
+		borderSize = 0;
+		fillChunks.clear();
+		borderChunks.clear();
+		
+		isResizing = false;
+		completeShape(b);
+	}
+	
+	public void reset() {
+		Renderer.hideShape(this, true);
+		
+		fillChunks.clear();
+		borderChunks.clear();
+		vertices.clear();
+		isComplete = false;
+		size = 0;
+		borderSize = 0;
+	}
+	
 	public ArrayList<Location> getVertices() {
 		return vertices;
+	}
+	
+	public boolean isVertex(Block b) {
+		if(!isComplete)
+			return false;
+
+		for(Location vertex : vertices) {
+			if(vertex.equals(b.getLocation()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public int indexOfVertex(Block b) {
+		if(!isComplete || !b.getWorld().equals(world))
+			return -1;
+		
+		for(Location vertex : vertices) {
+			if(b.getX() == vertex.getX() &&
+			   b.getZ() == vertex.getZ())
+				return vertices.indexOf(vertex);
+		}
+		
+		return -1;
+	}
+
+	public boolean contains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
+		Chunk chunk = point.getChunk();
+		
+		if(!fillChunks.containsKey(chunk))
+			return false;
+		
+		for(Location point2 : fillChunks.get(chunk)) {
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
+				return true;
+		}
+		return false;
+	}
+
+	public boolean borderContains(Location point) {
+		if(!point.getWorld().equals(world))
+			return false;
+		
+		Chunk chunk = point.getChunk();
+		
+		if(!borderChunks.containsKey(chunk))
+			return false;
+		
+		for(Location point2 : borderChunks.get(chunk)) {
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
+				return true;
+		}
+		return false;
 	}
 }

@@ -13,11 +13,6 @@ import me.gorgeousone.tangledmaze.utils.Utils;
 public class Ellipse implements Shape {
 	
 	@Override
-	public int requieredVertices() {
-		return 2;
-	}
-	
-	@Override
 	public boolean contains(ArrayList<Location> vertices, Location point) {
 		
 		if(vertices.size() < 4)
@@ -90,7 +85,7 @@ public class Ellipse implements Shape {
 	}
 	
 	@Override
-	public void calcFillAndBorderAndPerhapsVertices(
+	public void calcFillAndBorder(
 			ArrayList<Location> vertices,
 			HashMap<Chunk, ArrayList<Location>> fill,
 			HashMap<Chunk, ArrayList<Location>> border) {
@@ -108,13 +103,8 @@ public class Ellipse implements Shape {
 		int posX = vertices.get(0).getBlockX(),
 			posZ = vertices.get(0).getBlockZ();
 		
-		ArrayList<Integer> verticesYs = new ArrayList<>();
-		
-		for(Location point : vertices)
-			verticesYs.add(point.getBlockY());
-		
 		//calculate maximum Y to start surface iteration from there?
-		int maxY = Utils.getMax(verticesYs);
+		int maxY = Utils.getMaxY(vertices);
 		
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
