@@ -29,7 +29,7 @@ public class BuildMaze {
 //			return;
 //		}
 		
-		if(!MazeHandler.hasMaze(p)) {
+		if(!MazeHandler.getMaze(p).isStarted()) {
 			
 			if(!SelectionHandler.hasShapeSel(p)) {
 				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
@@ -45,19 +45,18 @@ public class BuildMaze {
 		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.size() == maze.borderSize()) {
-			p.sendMessage(Constants.prefix + "Wth!? This maze only consists of border, it will not be built!");
+			p.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built!");
 			return;
 		}
 		
 		if(maze.getExits().isEmpty()) {
-			p.sendMessage(Constants.prefix + "This plugin's algorithm needs a start point for the maze " + 
-											 "Could you be so nice and mark (at least) one exit at the border?");
+			p.sendMessage(Constants.prefix + "Please mark (at least) one exit at the border where the algorithm can start building.");
 			p.sendMessage("/tangledmaze select exit");
 			return;
 		}
 		
 		if(serializedMaterialData.isEmpty()) {
-			p.sendMessage(ChatColor.RED + "Please specify at least one block this maze should be built of.");
+			p.sendMessage(ChatColor.RED + "Please specify (at least) one block type this maze should be built out of.");
 			p.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
 			return;
 		}

@@ -134,7 +134,7 @@ public abstract class Renderer implements Listener {
 		for(Location vertex : shape.getVertices())
 			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
 		
-		if(updateMaze && MazeHandler.hasMaze(p) && isMazeVisible(MazeHandler.getMaze(p)))
+		if(updateMaze && MazeHandler.getMaze(p).isStarted() && isMazeVisible(MazeHandler.getMaze(p)))
 			refreshMaze(p, shape, MazeHandler.getMaze(p));
 	}
 	

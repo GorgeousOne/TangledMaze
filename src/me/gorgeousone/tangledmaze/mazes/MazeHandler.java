@@ -11,10 +11,6 @@ public abstract class MazeHandler {
 	
 	private static HashMap<UUID, Maze> mazes = new HashMap<>();
 	
-	public static boolean hasMaze(Player p) {
-		return mazes.containsKey(p.getUniqueId());
-	}
-	
 	public static Maze getMaze(Player p) {
 		return mazes.get(p.getUniqueId());
 	}

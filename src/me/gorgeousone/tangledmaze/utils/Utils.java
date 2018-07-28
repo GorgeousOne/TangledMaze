@@ -20,7 +20,7 @@ public abstract class Utils {
 			new Vector(-1, 0,  0),
 			new Vector( 0, 0, -1)));
 
-	public final static ArrayList<Vector> DIRECTIONS = new ArrayList<>(Arrays.asList(
+	public final static ArrayList<Vector> ALL_DIRECTIONS = new ArrayList<>(Arrays.asList(
 			new Vector( 1, 0,  0),
 			new Vector( 1, 0,  1),
 			new Vector( 0, 0,  1),
@@ -177,11 +177,6 @@ public abstract class Utils {
 
 	public static boolean canBeBuiltWith(Material m) {
 		return m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Vector> cardinalDirs() {
-		return (ArrayList<Vector>) CARDINAL_DIRS.clone(); 
 	}
 	
 	public static void sendBlockDelayed(Player p, Location loc, Material mat) {

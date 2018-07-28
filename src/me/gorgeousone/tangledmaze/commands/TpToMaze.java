@@ -17,7 +17,7 @@ public class TpToMaze {
 			return;
 		}
 		
-		if(!MazeHandler.hasMaze(p)) {
+		if(!MazeHandler.getMaze(p).isStarted()) {
 			p.sendMessage(ChatColor.RED + "You did not create any any maze to teleport to, yet.");
 			p.sendMessage("/tangledmaze start");
 			return;

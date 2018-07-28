@@ -6,15 +6,12 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.shapes.Rectangle;
 
 public abstract class SelectionHandler {
 	
 	private static HashMap<UUID, Selection> selections = new HashMap<>();
 
-	public static boolean hasSelection(Player p) {
-		return selections.containsKey(p.getUniqueId());
-	}
-	
 	public static boolean hasShapeSel(Player p) {
 		return
 			selections.containsKey(p.getUniqueId()) &&
@@ -30,11 +27,22 @@ public abstract class SelectionHandler {
 		return sel instanceof ShapeSelection? (ShapeSelection) sel : null;
 	}
 	
-	public static void setSelection(Player p, Selection shape) {
-		selections.put(p.getUniqueId(), shape);
+	public static void setSelection(Player p, Selection sselection) {
+		selections.put(p.getUniqueId(), sselection);
 		
-		if(shape instanceof ShapeSelection)
-			Renderer.registerShape((ShapeSelection) shape);
+		if(sselection instanceof ShapeSelection)
+			Renderer.registerShape((ShapeSelection) sselection);
+	}
+	
+	public static void resetToDefaultSel(Player p) {
+		
+		
+		if(hasShapeSel(p)) {
+			getShapeSel(p).reset();
+		
+		}else {
+			setSelection(p, new ShapeSelection(p, new Rectangle()));
+		}
 	}
 	
 	public static void removeSelection(Player p) {

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -46,6 +47,16 @@ public class PlayerListener implements Listener {
 		if(p.hasPermission(Constants.buildPerm)) {
 			SelectionHandler.removeSelection(p);
 			MazeHandler.removeMaze(p);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onChangeWorld(PlayerChangedWorldEvent e) {
+		Player p = e.getPlayer();
+			
+		if(p.hasPermission(Constants.buildPerm)) {
+			MazeHandler.getMaze(p).reset();
+			SelectionHandler.resetToDefaultSel(p);
 		}
 	}
 	

@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
@@ -20,7 +19,7 @@ public class AddToMaze {
 			return;
 		}
 		
-		if(!MazeHandler.hasMaze(p)) {
+		if(!MazeHandler.getMaze(p).isStarted()) {
 			p.sendMessage(ChatColor.RED + "Please start a maze first.");
 			p.sendMessage("/tangledmaze start");
 			return;
@@ -42,15 +41,16 @@ public class AddToMaze {
 		Maze maze = MazeHandler.getMaze(p);
 		MazeAction action = maze.getAddition(shape);
 		
-		if(action.getAddedFill().size() == shape.size()) {
+		if(action.getAddedFill().size() == 0) {
+			p.sendMessage(ChatColor.RED + "Your selection is entirely covered by your maze.");
+			return;
+			
+		}else if(action.getAddedFill().size() == shape.size()) {
 			p.sendMessage(ChatColor.RED + "Your selection does not seem to touch your maze directly (outline on outline).");
 			return;
 		}
 
-		Renderer.hideShape(shape, true);
 		shape.reset();
-		
 		maze.processAction(action, true);
-		Renderer.showMazeAction(maze, action);
 	}
 }

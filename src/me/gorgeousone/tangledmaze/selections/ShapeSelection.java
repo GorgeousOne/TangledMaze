@@ -27,27 +27,29 @@ public class ShapeSelection extends Selection {
 	private int indexOfResizedVertex;
 	
 	
-	public ShapeSelection(Player builder, Shape shapeType) {
+	public ShapeSelection(Player builder, Shape type) {
 		super(builder);
 		
 		if(builder != null)
 			world = builder.getWorld();
 		
-		shape = shapeType;
+		shape = type;
 		
 		vertices = new ArrayList<>();
 		fillChunks   = new HashMap<>();
 		borderChunks = new HashMap<>();
-		
-		isComplete = false;
-		isResizing = false;
+	}
+	
+	public void setType(Shape type) {
+		reset();
+		shape = type;
 	}
 	
 	public World getWorld() {
 		return world;
 	}
 	
-	public Shape getShape() {
+	public Shape getType() {
 		return shape;
 	}
 	
@@ -137,12 +139,17 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public void reset() {
+		Renderer.hideShape(this, true);
+
 		fillChunks.clear();
 		borderChunks.clear();
 		vertices.clear();
-		isComplete = false;
+		
 		size = 0;
 		borderSize = 0;
+		
+		isComplete = false;
+		isResizing = false;
 	}
 	
 	public ArrayList<Location> getVertices() {

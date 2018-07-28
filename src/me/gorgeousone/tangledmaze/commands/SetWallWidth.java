@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
@@ -35,7 +36,11 @@ public class SetWallWidth {
 			return;
 		}
 		
-		MazeHandler.getMaze(p).setWallWidth(wallWidth);
-		p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + ".");
+		Maze maze = MazeHandler.getMaze(p);
+		
+		if(maze.getWallWidth() != wallWidth) {
+			maze.setWallHeight(wallWidth);
+			p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + ".");
+		}
 	}
 }

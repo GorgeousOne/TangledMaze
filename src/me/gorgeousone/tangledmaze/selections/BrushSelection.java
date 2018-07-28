@@ -22,17 +22,13 @@ public class BrushSelection extends Selection {
 		
 		//get affected blocks of shaping as a MazeAction
 		if(a == Action.RIGHT_CLICK_BLOCK) {
-			brush = maze.reduce(b);
+			brush = maze.getReduction(b);
 		}else
-			brush = maze.enlarge(b);
+			brush = maze.getEnlargment(b);
 		
-		//if the maze was shaped somehow, call an event
-		if(brush != null) {
-			
-//			MazeShapeEvent brushing = new MazeShapeEvent(maze, brush);
-//			Bukkit.getPluginManager().callEvent(brushing);
-			
-		}else if(Math.random() < 1/3d)
+		if(brush.getRemovedBorder().isEmpty())
 			getPlayer().sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
+		else
+			maze.processAction(brush, true);
 	}
 }

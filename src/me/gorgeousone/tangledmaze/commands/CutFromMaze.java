@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
@@ -20,7 +19,7 @@ public class CutFromMaze {
 			return;
 		}
 		
-		if(!MazeHandler.hasMaze(p)) {
+		if(!MazeHandler.getMaze(p).isStarted()) {
 			p.sendMessage(ChatColor.RED + "Please start a maze first.");
 			p.sendMessage("/tangledmaze start");
 			return;
@@ -47,10 +46,7 @@ public class CutFromMaze {
 			return;
 		}
 
-		Renderer.hideShape(shape, true);
 		shape.reset();
-		
 		maze.processAction(action, true);
-		Renderer.showMazeAction(maze, action);
 	}
 }

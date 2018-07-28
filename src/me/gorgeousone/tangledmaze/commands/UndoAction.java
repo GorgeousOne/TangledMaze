@@ -17,7 +17,7 @@ public class UndoAction {
 			return;
 		}
 
-		if(!MazeHandler.hasMaze(p)) {
+		if(!MazeHandler.getMaze(p).isStarted()) {
 			p.sendMessage(Constants.prefix + "You did not start a maze where aything can be undone.");
 			return;
 		}
@@ -25,15 +25,11 @@ public class UndoAction {
 		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.getActionHistory().isEmpty()) {
-			
-			if(Math.random() < 1/3d)
-				p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to be undone...");
+			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to be undone...");
 			
 		}else {
 			MazeAction action = maze.getActionHistory().popLastAction().invert();
-			
 			maze.processAction(action, false);
-			p.sendMessage(Constants.prefix + "Undid last action.");
 		}
 	}
 }
