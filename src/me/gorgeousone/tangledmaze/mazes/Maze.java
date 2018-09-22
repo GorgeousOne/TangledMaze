@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.utils.Constants;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class Maze {
@@ -26,6 +27,7 @@ public class Maze {
 	private ActionHistory history;
 	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
 	private ArrayList<Location> exits;
+	private ArrayList<MaterialData> wallComposition;
 	
 	private int size, borderSize;
 	private Vector dimensions;
@@ -33,15 +35,89 @@ public class Maze {
 	private boolean isStarted;
 		
 	public Maze(Player builder) {
-
-		this.player = builder.getUniqueId();
+		
+		player = builder.getUniqueId();
+		world = builder.getWorld();
+		
 		history = new ActionHistory();
-
+		
 		fillChunks = new HashMap<>();
 		borderChunks = new HashMap<>();
 		exits = new ArrayList<>();
 		
 		dimensions = new Vector(1, 3, 1);
+	}
+	
+	public Player getPlayer() {
+		return Bukkit.getPlayer(player);
+	}
+	
+	public World getWorld() {
+		return world;
+	}
+	
+	public boolean isStarted() {
+		return isStarted;
+	}
+	
+	public HashMap<Chunk, ArrayList<Location>> getFill() {
+		return fillChunks;
+	}
+	
+	public HashMap<Chunk, ArrayList<Location>> getBorder() {
+		return borderChunks;
+	}
+	
+	public ArrayList<Chunk> getChunks() {
+		return new ArrayList<>(fillChunks.keySet());
+	}
+	
+	public int size() {
+		return size;
+	}
+	
+	public int borderSize() {
+		return borderSize;
+	}
+	
+	public ArrayList<Location> getExits() {
+		return exits;
+	}
+	
+	public ActionHistory getActionHistory() {
+		return history;
+	}
+	
+	public int getPathWidth() {
+		return dimensions.getBlockX();
+	}
+	
+	public int getWallHeight() {
+		return dimensions.getBlockY();
+	}
+	
+	public int getWallWidth() {
+		return dimensions.getBlockZ();
+	}
+	
+	public ArrayList<MaterialData> getWallComposition() {
+		return wallComposition;
+	}
+	
+	public void setPathWidth(int pathWidth) {
+		dimensions.setX(Math.max(1, pathWidth));
+	}
+	
+	public void setWallHeight(int wallHeight) {
+		dimensions.setY(Math.max(1, wallHeight));
+	}
+	
+	public void setWallWidth(int wallWidth) {
+		dimensions.setZ(Math.max(1, wallWidth));
+	}
+	
+	public void setWallComposition(ArrayList<MaterialData> composition) {
+		wallComposition = composition;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -63,7 +139,6 @@ public class Maze {
 	}
 	
 	public void reset() {
-		
 		Renderer.hideMaze(this);
 		
 		fillChunks.clear();
@@ -76,69 +151,6 @@ public class Maze {
 		isStarted = false; 
 	}
 	
-	public Player getPlayer() {
-		return Bukkit.getPlayer(player);
-	}
-	
-	public boolean isStarted() {
-		return isStarted;
-	}
-	
-	public HashMap<Chunk, ArrayList<Location>> getFill() {
-		return fillChunks;
-	}
-	
-	public HashMap<Chunk, ArrayList<Location>> getBorder() {
-		return borderChunks;
-	}
-
-	public ArrayList<Chunk> getChunks() {
-		return new ArrayList<>(fillChunks.keySet());
-	}
-
-	public int size() {
-		return size;
-	}
-	
-	public int borderSize() {
-		return borderSize;
-	}
-	
-	public ArrayList<Location> getExits() {
-		return exits;
-	}
-	
-	public ActionHistory getActionHistory() {
-		return history;
-	}
-	
-	public int getPathWidth() {
-		return dimensions.getBlockX();
-	}
-
-	public int getWallHeight() {
-		return dimensions.getBlockY();
-	}
-
-	public int getWallWidth() {
-		return dimensions.getBlockZ();
-	}
-
-	public void setPathWidth(int pathWidth) {
-		dimensions.setX(Math.max(1, pathWidth));
-	}
-
-	public void setWallHeight(int wallHeight) {
-		dimensions.setY(Math.max(1, wallHeight));
-	}
-
-	public void setWallWidth(int wallWidth) {
-		dimensions.setZ(Math.max(1, wallWidth));
-	}
-	
-	public void setWallComposition(ArrayList<MaterialData> composition) {
-	}
-
 	public boolean contains(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
@@ -155,7 +167,7 @@ public class Maze {
 		}
 		return false;
 	}
-
+	
 	public boolean borderContains(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
@@ -180,7 +192,8 @@ public class Maze {
 		Chunk chunk = b.getChunk();
 		Location point = b.getLocation();
 		
-		if(!borderChunks.containsKey(chunk));
+		if(!borderChunks.containsKey(chunk))
+			return false;
 		
 		for(Location point2 : borderChunks.get(chunk))
 			if(point.equals(point2))
@@ -202,6 +215,13 @@ public class Maze {
 		return false;
 	}
 	
+	public boolean canBeExit(Location point) {
+		if(!borderContains(point))
+			return false;
+		
+		return sealsMaze(point, new MazeAction(), Utils.CARDINAL_DIRS);
+	}
+	
 	private void addFill(Location point) {
 		Chunk chunk = point.getChunk();
 		
@@ -212,7 +232,7 @@ public class Maze {
 
 		size++;
 	}
-
+	
 	private void removeFill(Location point) {
 		Chunk chunk = point.getChunk();
 		
@@ -244,7 +264,7 @@ public class Maze {
 	private void removeBorder(Location point) {
 		Chunk chunk = point.getChunk();
 		
-		for(Location point2 : borderChunks.get(chunk))
+		for(Location point2 : borderChunks.get(chunk)) {
 
 			if(point2.getBlockX() == point.getBlockX() &&
 			   point2.getBlockZ() == point.getBlockZ()) {
@@ -253,13 +273,44 @@ public class Maze {
 				borderSize--;
 				break;
 			}
+		}
 	}
 	
-	public void addExit(Location loc) {
+	public void addExit(Location point) {
 		
+		if(!canBeExit(point))
+			return;
+		
+		Location exit = Utils.nearestSurface(point);
+		
+		if(!exits.isEmpty())
+			Utils.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_EXIT);
+		
+		exits.add(exit);
+		Utils.sendBlockDelayed(getPlayer(), exit, Constants.MAZE_MAIN_EXIT);
 	}
 	
-	public void removeExit(Location loc) {
+	@SuppressWarnings("deprecation")
+	public void removeExit(Location point) {
+		
+		if(!point.getWorld().equals(world))
+			return;
+		
+		for(int i = exits.size()-1; i >= 0; i--) {
+			
+			Location exit = exits.get(i);
+			
+			if(exit.getBlockX() == point.getBlockX() &&
+			   exit.getBlockZ() == point.getBlockZ()) {
+				
+				if(exits.size() > 1 && i == exits.size()-1)
+					getPlayer().sendBlockChange(exits.get(i-1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+				
+				exits.remove(exit);
+				Utils.sendBlockDelayed(getPlayer(), exit, Constants.MAZE_BORDER);
+				return;
+			}
+		}
 		
 	}
 	
@@ -291,7 +342,7 @@ public class Maze {
 		if(!world.equals(shape.getWorld()))
 			return addition;
 		
-		addShapesStickOuts(addition, shape);
+		addProtrudingShapeParts(addition, shape);
 		
 		//return if the shapes is totally covered by the maze
 		if(addition.getAddedFill().isEmpty())
@@ -307,13 +358,13 @@ public class Maze {
 		return addition;
 	}
 	
-	private void addShapesStickOuts(MazeAction addition, ShapeSelection shape) {
+	private void addProtrudingShapeParts(MazeAction addition, ShapeSelection shape) {
 		//check for new border blocks
 		for(Chunk chunk : shape.getBorder().keySet())
 			for(Location borderPoint : shape.getBorder().get(chunk))
 				if(!contains(borderPoint))
 					addition.addBorder(borderPoint);
-
+		
 		//add new fill blocks
 		for(Chunk chunk : shape.getFill().keySet())
 			for(Location fillPoint : shape.getFill().get(chunk))
@@ -337,7 +388,7 @@ public class Maze {
 					continue;
 				
 				//if the point is inside the shapes border look up if is connected to blocks outside of the maze
-				if(shape.borderContains(borderPoint) && touchesOutside(borderPoint, shape))
+				if(shape.borderContains(borderPoint) && touchesExternalArea(borderPoint, shape))
 					continue;
 				
 				//otherwise remove the block
@@ -346,7 +397,7 @@ public class Maze {
 		}
 	}
 	
-	private boolean touchesOutside(Location point, ShapeSelection shape) {
+	private boolean touchesExternalArea(Location point, ShapeSelection shape) {
 		
 		for(Vector dir : Utils.ALL_DIRECTIONS) {
 			Location point2 = point.clone().add(dir);
@@ -354,20 +405,19 @@ public class Maze {
 			if(!contains(point2) && !shape.contains(point2))
 				return true;
 		}
-		
 		return false;
 	}
 	
 	public MazeAction getDeletion(ShapeSelection shape) {
 		
 		MazeAction deletion = new MazeAction();
-	
+		
 		if(!world.equals(shape.getWorld()))
 			return deletion;
 		
-		removeShapesOverlap(deletion, shape);
-				
-		if(deletion.getAddedBorder().isEmpty() && deletion.getAddedFill().isEmpty())
+		removeIntrudingShapeParts(deletion, shape);
+		
+		if(deletion.getAddedBorder().isEmpty() && deletion.getRemovedFill().isEmpty())
 			return deletion;
 	
 		removeIntersectingBorder(shape, deletion);
@@ -380,15 +430,15 @@ public class Maze {
 		return deletion;
 	}
 	
-	private void removeShapesOverlap(MazeAction deletion, ShapeSelection shape) {
-		////get new border points where shape is cutting into maze
+	private void removeIntrudingShapeParts(MazeAction deletion, ShapeSelection shape) {
+		//get new border points where shape is cutting into maze
 		for(ArrayList<Location> chunk : shape.getBorder().values())
 			for(Location point : chunk)
 				if(contains(point) && !borderContains(point))
 					deletion.addBorder(point);
 		
 		//remove all remaining maze fill inside the shape
-		for(ArrayList<Location> chunk : shape.getBorder().values())
+		for(ArrayList<Location> chunk : shape.getFill().values())
 			for(Location point : chunk)
 				if(contains(point) && !shape.borderContains(point))
 					deletion.removeFill(point);
@@ -403,13 +453,15 @@ public class Maze {
 			return action;
 		
 		enlargeBorder(point, action);
-		removeStickingInBorder(point, action);
+		removeIntrusiveBorder(point, action);
 		
 		return action;
 	}
 	
 	public MazeAction getReduction(Block b) {
-
+		
+		long start = System.currentTimeMillis();
+		
 		Location point = b.getLocation();
 		MazeAction action = new MazeAction();
 		
@@ -417,82 +469,50 @@ public class Maze {
 		if(!isBorder(b))
 			return action;
 		
+		action.removeBorder(point);
 		reduceBorder(point, action);
-		removeSitckingOutBorder(point, action);
+		removeProtrusiveBorder(point, action);
 		
+		Bukkit.broadcastMessage("" + (System.currentTimeMillis() - start));
 		return action;
 	}
 	
 	private void enlargeBorder(Location point, MazeAction changes) {
-		changes.removeBorder(point);
 		
-		if(!sealsMaze(point, changes, Utils.ALL_DIRECTIONS))
-			return;
+		changes.removeBorder(point);
 		
 		for(Vector dir : Utils.ALL_DIRECTIONS) {
 			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
-			if(!contains(point2))
+			if(!contains(point2)) {
+				changes.addFill(point2);
 				changes.addBorder(point2);
 			
-			if(exitsContain(point2) && !sealsMaze(point2, changes, Utils.CARDINAL_DIRS))
+			}else if(exitsContain(point2) && !sealsMaze(point2, changes, Utils.CARDINAL_DIRS))
 				changes.removeExit(point2);
 		}
 	}
 	
-	private boolean sealsMaze(Location point, MazeAction changes, ArrayList<Vector> directions) {
-		
-		boolean
-			touchesFill = false,
-			touchesOutside = false;
-		
-		for(Vector dir : directions) {
-			Location point2 = point.clone().add(dir);
-			
-			if((contains(point2) || changes.getAddedFill().contains(point2)) && !changes.getRemovedFill().contains(point2)) {
-				if(!borderContains(point2) && !changes.getAddedBorder().contains(point2))
-					touchesFill = true;
-			}else
-				touchesOutside = true;
-		}
-		
-		Bukkit.broadcastMessage("fill " + touchesFill + ", out " + touchesOutside);
-		return touchesFill && touchesOutside;
-	}
-	
-	private void removeStickingInBorder(Location point, MazeAction action) {
-		//look for neighbors, that are now standing out (inside the maze)
-		for(Vector dir : Utils.CARDINAL_DIRS) {
+	private void removeIntrusiveBorder(Location point, MazeAction changes) {
+		//look for neighbors, that are now intruding the border unnecessarily
+		for(Vector dir : Utils.ALL_DIRECTIONS) {
 			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
-			if(!borderContains(point2))
+			if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2))
 				continue;
 			
-			//if they are totally without connection 
-			if(!sealsMaze(point, action, Utils.ALL_DIRECTIONS))
-				action.removeBorder(point2);
+			if(!sealsMaze(point2, changes, Utils.ALL_DIRECTIONS))
+				changes.removeBorder(point2);
 		}
 	}
-	
-//	private boolean sticksIn(Location borderPoint, MazeAction action) {
-//		//check if the neighbors are connected to other border parts (in cardinal directions)
-//		for(Vector dir : Utils.ALL_DIRECTIONS) {
-//			Location point = borderPoint.clone().add(dir);
-//			
-//			if((contains(point) || action.getAddedFill().contains(point)) &&
-//			   (!borderContains(point) && !action)
-//				return false;
-//		}
-//		return true;
-//	}
 	
 	private void reduceBorder(Location point, MazeAction action) {
 		
-		action.removeFill(point);
-		action.removeBorder(point);
-		
-		if(exits.contains(point))
+		if(exitsContain(point))
 			action.removeExit(point);
+		
+		action.removeBorder(point);
+		action.removeFill(point);
 		
 		if(!sealsMaze(point, action, Utils.ALL_DIRECTIONS))
 			return;
@@ -508,38 +528,42 @@ public class Maze {
 		}
 	}
 	
-	private void removeSitckingOutBorder(Location point, MazeAction changes) {
+	private void removeProtrusiveBorder(Location point, MazeAction changes) {
 		//detect outstanding neighbor borders of the block (in cardinal directions)
-		for(Vector dir : Utils.CARDINAL_DIRS) {
+		for(Vector dir : Utils.ALL_DIRECTIONS) {
 			Location point2 = Utils.nearestSurface(point.clone().add(dir));
 			
 			if(!borderContains(point2))
 				continue;
 			
 			//remove the neighbor if it still stands out
-			if(sticksOut(point2, changes)) {
+			if(!sealsMaze(point2, changes, Utils.ALL_DIRECTIONS)) {
 				changes.removeBorder(point2);
 				changes.removeFill(point2);
 			}
+				
 		}
 	}
 	
-	private boolean sticksOut(Location borderPoint, MazeAction changes) {
+	public boolean sealsMaze(Location point, MazeAction changes, ArrayList<Vector> directions) {
 		
-		for(Vector dir2 : Utils.ALL_DIRECTIONS) {
-			Location point3 = borderPoint.clone().add(dir2);
+		boolean
+			touchesFill = false,
+			touchesExternal = false;
+		
+		for(Vector dir : directions) {
+			Location point2 = point.clone().add(dir);
 			
-			//fill only is also dependent on border that will be added
-			if(contains(point3) && !borderContains(point3) && !changes.getAddedBorder().contains(point3))
-				return false;
+			if((contains(point2) || Utils.listContains(changes.getAddedFill(), point2)) &&
+							  	   !Utils.listContains(changes.getRemovedFill(), point2)) {
+				
+				if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2) ||
+											   Utils.listContains(changes.getRemovedBorder(), point2))
+					touchesFill = true;
+			}else
+				touchesExternal = true;
 		}
-		return true;
-	}
-	
-	public boolean canBeExit(Location point) {
-		if(!borderContains(point))
-			return false;
 		
-		return sealsMaze(point, new MazeAction(), Utils.CARDINAL_DIRS);
+		return touchesFill && touchesExternal;
 	}
 }

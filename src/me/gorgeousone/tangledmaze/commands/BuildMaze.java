@@ -10,10 +10,7 @@ import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.mazes.WallComposer;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
-import me.gorgeousone.tangledmaze.shapes.Rectangle;
 import me.gorgeousone.tangledmaze.utils.Constants;
-
 
 public class BuildMaze {
 
@@ -24,12 +21,16 @@ public class BuildMaze {
 			return;
 		}
 		
-//		if(SelectionHandler.isInQueue(p)) {
-//			p.sendMessage(Constants.prefix + "There already is a maze in the queue you built. Please wait until it gets finsihed before submitting a new one.");
+		Maze maze = MazeHandler.getMaze(p);
+		
+//		if(BuildFactory.isMazeEnqueued(maze)) {
+//			p.sendMessage(Constants.prefix
+//					+ "There already is a maze of yours in queue to get built. "
+//					+ "Please wait until it gets finished before submitting a new one.");
 //			return;
 //		}
 		
-		if(!MazeHandler.getMaze(p).isStarted()) {
+		if(!maze.isStarted()) {
 			
 			if(!SelectionHandler.hasShapeSel(p)) {
 				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
@@ -41,8 +42,6 @@ public class BuildMaze {
 			p.sendMessage("/tangledmaze start");
 			return;
 		}
-		
-		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.size() == maze.borderSize()) {
 			p.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built!");
@@ -66,22 +65,11 @@ public class BuildMaze {
 		if(composition == null)
 			return;
 		
-		MazeHandler.getMaze(p).setWallComposition(composition);
+		maze.setWallComposition(composition);
+		MazeHandler.buildMaze(maze);
+		p.sendMessage(Constants.prefix + "Started building your maze.");
 		
-		int queuePosition = 0; // SelectionHandler.joinBuildQueue(maze);
-
-		if(queuePosition >= 0) {
-			MazeHandler.removeMaze(p);
-
-			if(!(SelectionHandler.getSelection(p) instanceof ShapeSelection))
-				SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
-
-			if(queuePosition > 0) {
-				p.sendMessage(Constants.prefix + "Your maze has been queued. Position in queue: " + queuePosition);
-				p.sendMessage(Constants.prefix + "If you leave the server before it gets built your work will be discarded!");
-			}
-			
-		}else
-			p.sendMessage(Constants.prefix + "You already queued a maze to be built. Please wait until that one gets finished before queuing an new one.");
+		SelectionHandler.resetToDefaultSel(p);
+		maze.reset();
 	}
 }

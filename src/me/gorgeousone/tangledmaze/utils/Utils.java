@@ -213,6 +213,16 @@ public abstract class Utils {
 		return loc;
 	}
 	
+	public static int getMax(ArrayList<Integer> is) {
+		int max = 0;
+		
+		for(int i : is)
+			if(i > max)
+				max = i;
+		
+		return max;
+	}
+	
 	public static int getMaxY(ArrayList<Location> locs) {
 		int max = 0;
 		
@@ -221,7 +231,7 @@ public abstract class Utils {
 				max = loc.getBlockY();
 		
 		return max;
-	}
+}
 	
 	public static ArrayList<Location> calcVertices(Location v0, Location v2) {
 		ArrayList<Location> vertices = new ArrayList<>();
@@ -243,5 +253,17 @@ public abstract class Utils {
 		return vertices;
 	}
 	
+	public static boolean listContains(ArrayList<Location> points, Location point) {
+		for(Location point2 : points) {
+			if(point2.getBlockX() == point.getBlockX() &&
+			   point2.getBlockZ() == point.getBlockZ())
+				return true;
+		}
+		return false;
+	}
 	
+//	public HashMap<Chunk, ArrayList<Location>> deepClone(HashMap<Chunk, ArrayList<Location>> map) {
+//		
+//		HashMap
+//	}
 }

@@ -27,10 +27,10 @@ public class SelectTool {
 				if(selection.getType() instanceof Rectangle)
 					break;
 				else
-					selection.setType(new Rectangle());
+					selection.setType(Shape.RECT);
 			
 			}else 
-				SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
+				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
 			
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 			break;
@@ -43,21 +43,24 @@ public class SelectTool {
 				if(selection.getType() instanceof Ellipse)
 					break;
 				else
-					selection.setType(new Ellipse());
+					selection.setType(Shape.ELLIPSE);
 			
 			}else 
-				SelectionHandler.setSelection(p, new ShapeSelection(p, new Ellipse()));
+				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.ELLIPSE));
 			
 			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 
 			break;
 		
 		case "brush":
+			
 			if(!MazeHandler.getMaze(p).isStarted()) {
 				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
 				p.sendMessage("/tangledmaze start");
 				return;
-			}
+			
+			}else if(SelectionHandler.hasShapeSel(p))
+					SelectionHandler.getShapeSel(p).reset();
 			
 			if(SelectionHandler.getSelection(p) instanceof BrushSelection)
 				break;
@@ -68,13 +71,14 @@ public class SelectTool {
 			break;
 			
 		case "exit":
+			
 			if(!MazeHandler.getMaze(p).isStarted()) {
 				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
 				p.sendMessage("/tangledmaze start");
 				return;
 			}
 			
-			if(SelectionHandler.getSelection(p) instanceof ExitSetterSelection)
+			if(SelectionHandler.getSelection(p) instanceof ExitSetter)
 				break;
 			
 			if(MazeHandler.getMaze(p).isStarted()) {
@@ -82,8 +86,8 @@ public class SelectTool {
 				if(SelectionHandler.hasShapeSel(p))
 					SelectionHandler.getShapeSel(p).reset();
 				
-				SelectionHandler.setSelection(p, new ExitSetterSelection(p));
-				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
+				SelectionHandler.setSelection(p, new ExitSetter(p));
+				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
 			
 			}else {
 				p.sendMessage(Constants.prefix + "The exit setting tool can only be used on mazes.");

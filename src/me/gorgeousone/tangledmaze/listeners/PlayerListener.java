@@ -13,7 +13,7 @@ import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
-import me.gorgeousone.tangledmaze.shapes.Rectangle;
+import me.gorgeousone.tangledmaze.shapes.Shape;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class PlayerListener implements Listener {
@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			if(p.hasPermission(Constants.buildPerm)) {
-				SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
+				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
 				MazeHandler.setMaze(p, new Maze(p));
 			}
 		}
@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
 		Player p = e.getPlayer();
 		
 		if(p.hasPermission(Constants.buildPerm)) {
-			SelectionHandler.setSelection(p, new ShapeSelection(p, new Rectangle()));
+			SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
 			MazeHandler.setMaze(p, new Maze(p));
 		}
 	}
@@ -60,13 +60,13 @@ public class PlayerListener implements Listener {
 		}
 	}
 	
-//	@EventHandler TODO delete
+//	@EventHandler
 //	public void sneak(PlayerToggleSneakEvent e) {
 //		
 //		Player p = e.getPlayer();
 //		
 //		if(p.hasPermission(Constants.buildPerm) && e.isSneaking()) {
-//			p.sendMessage("hey " + MazeHandler.getMaze(p).borderContains(p.getLocation()));
+//			p.sendMessage("hey " + MazeHandler.getMaze(p).sealsMaze(p.getLocation(), new MazeAction(), Utils));
 //		}
 //	}
 }

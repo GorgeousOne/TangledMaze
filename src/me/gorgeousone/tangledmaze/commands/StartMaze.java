@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
@@ -29,9 +30,10 @@ public class StartMaze {
 			return;
 		}
 		
-		MazeHandler.getMaze(p).setShape(selection);
-		selection.reset();
-		p.sendMessage(Constants.prefix + "Started a maze from selection.");
+		Maze maze = MazeHandler.getMaze(p);
+		maze.setShape(selection);
 		
+		p.sendMessage(Constants.prefix + "Started a maze from selection.");
+		selection.reset();
 	}
 }

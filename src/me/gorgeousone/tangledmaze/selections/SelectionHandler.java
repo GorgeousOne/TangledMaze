@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
-import me.gorgeousone.tangledmaze.shapes.Rectangle;
+import me.gorgeousone.tangledmaze.shapes.Shape;
 
 public abstract class SelectionHandler {
 	
@@ -36,12 +36,11 @@ public abstract class SelectionHandler {
 	
 	public static void resetToDefaultSel(Player p) {
 		
-		
 		if(hasShapeSel(p)) {
 			getShapeSel(p).reset();
 		
 		}else {
-			setSelection(p, new ShapeSelection(p, new Rectangle()));
+			setSelection(p, new ShapeSelection(p, Shape.RECT));
 		}
 	}
 	
