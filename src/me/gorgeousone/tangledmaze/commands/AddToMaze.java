@@ -26,8 +26,8 @@ public class AddToMaze {
 		}
 		
 		if(!SelectionHandler.hasShapeSel(p)) {
-			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
-			p.sendMessage("/tangledmaze wand");
+			p.sendMessage(ChatColor.RED + "Please select an area first.");
+			p.sendMessage("/tangledmaze select rectangle/ellipse");
 			return;
 		}
 		

@@ -14,59 +14,16 @@ import org.bukkit.util.Vector;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class BlockGenerator {
 
 	public static void generateBlocks(MazeMap map, ActionListener finishAction) {
+		buildBlocksContinuously(getAllMazeBlocks(map), map.getMaze().getWallComposition());
+	}
+	
+	private static void buildBlocksContinuously(ArrayList<Block> placeables, ArrayList<MaterialData> composition) {
 		
-		Maze maze = map.getMaze();
-
-		int mazeMinX = map.getMinX(),
-			mazeMinZ = map.getMinZ();
-		
-		int[][] shapeMap   = map.getShapeMap(),
-				heightMap = map.getHeightMap();
-		
-		ArrayList<Block> placeables = new ArrayList<>();
-
-		int wallHeight = maze.getWallHeight();
-		int pointY, maxY;
-		
-		
-		for(int x = 0; x < shapeMap.length; x++) {
-			for(int z = 0; z < shapeMap[0].length; z++) {
-				
-				if(shapeMap[x][z] != MazeSegment.WALL && shapeMap[x][z] != MazeSegment.UNDEFINED)
-					continue;
-				
-				pointY = heightMap[x][z];
-
-				ArrayList<Integer> neighborYs = new ArrayList<>();
-				neighborYs.add(pointY);
-				
-				for(Vector dir : Utils.ALL_DIRECTIONS) {
-					int x2 = x + dir.getBlockX(),
-						z2 = z + dir.getBlockZ();
-					
-					if(x2 < 0 || x2 >= shapeMap.length ||
-					   z2 < 0 || z2 >= shapeMap[0].length)
-						continue;
-					
-					neighborYs.add(heightMap[x + dir.getBlockX()][z + dir.getBlockZ()]);
-				}
-				
-				maxY = Utils.getMax(neighborYs);
-				
-				for(int i = pointY+1; i <= maxY + wallHeight; i++) {
-					Block b = new Location(maze.getWorld(), x + mazeMinX, i, z + mazeMinZ).getBlock();
-					
-					if(Utils.canBeReplaced(b.getType()))
-						placeables.add(b);
-				}
-			}
-		}
-
-		ArrayList<MaterialData> composition = maze.getWallComposition();
 		Random rnd = new Random();
 		
 		BukkitRunnable builder = new BukkitRunnable() {
@@ -87,17 +44,69 @@ public class BlockGenerator {
 					
 					placeables.remove(0);
 					
-					if(System.currentTimeMillis() - timer >= 40)
+					if(System.currentTimeMillis() - timer >= 10)
 						return;
 				}
 				
 				this.cancel();
-				
-				if(finishAction != null)
-					finishAction.actionPerformed(null);
 			}
 		};
 		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
+	}
+	
+	private static ArrayList<Block> getAllMazeBlocks(MazeMap map) {
 		
+		Maze maze = map.getMaze();
+		ArrayList<Block> placeables = new ArrayList<>();
+		
+		int mazeMinX = map.getMinX(),
+			mazeMinZ = map.getMinZ();
+
+		int wallHeight = maze.getWallHeight();
+		int pointY, maxY;
+		
+		for(int x = 0; x < map.getDimX(); x++) {
+			for(int z = 0; z < map.getDimZ(); z++) {
+				
+				Vec2 point = new Vec2(x, z);
+				
+				if(map.getType(point) != MazeSegment.WALL &&
+				   map.getType(point) != MazeSegment.UNDEFINED)
+					continue;
+				
+				pointY = map.getHeight(new Vec2(x, z));
+				maxY = getMaxY(x, pointY, z, map);
+				
+				for(int i = pointY+1; i <= maxY + wallHeight; i++) {
+					Block b = new Location(maze.getWorld(), x + mazeMinX, i, z + mazeMinZ).getBlock();
+					
+					if(Utils.canBeReplaced(b.getType()))
+						placeables.add(b);
+				}
+			}
+		}
+		
+		return placeables;
+	}
+	
+	private static int getMaxY(int x, int y, int z, MazeMap map) {
+		
+		ArrayList<Integer> neighborYs = new ArrayList<>();
+		neighborYs.add(y);
+		
+		for(Vector dir : Utils.ALL_DIRECTIONS) {
+			int x2 = x + dir.getBlockX(),
+				z2 = z + dir.getBlockZ();
+			
+			if(x2 < 0 || x2 >= map.getDimX() ||
+			   z2 < 0 || z2 >= map.getDimZ())
+				continue;
+			
+			neighborYs.add(map.getHeight(
+					new Vec2(x + dir.getBlockX(),
+								z + dir.getBlockZ())));
+		}
+		
+		return Utils.getMax(neighborYs);
 	}
 }

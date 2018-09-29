@@ -8,22 +8,20 @@ import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class PathGenerator {
 
 	public static void generatePaths(MazeMap map) {
 		
-		Maze maze        = map.getMaze();
-		int[][] shapeMap = map.getShapeMap();
-		Vector start     = map.getStart();
+		Maze maze = map.getMaze();
+		ArrayList<Vec2> openEnds = new ArrayList<>();
 		
-		ArrayList<Vector> directions = Utils.CARDINAL_DIRS;
-		ArrayList<Vector> openEnds = new ArrayList<>();
+		openEnds.add(map.getStart());
+		
+		Vec2 currentEnd;
 
-		openEnds.add(start);
-		Vector lastEnd;
-
-		int	pathLength = 0,
+		int	currentPathLength = 0,
 			pathWidth  = maze.getPathWidth(),
 			wallWidth  = maze.getWallWidth();
 
@@ -31,44 +29,42 @@ public class PathGenerator {
 
 		while(!openEnds.isEmpty()) {
 			
-			if(pathLength < 3)
-				lastEnd = openEnds.get(openEnds.size()-1);
+			if(currentPathLength < 3)
+				currentEnd = openEnds.get(openEnds.size()-1);
 			else {
-				lastEnd = openEnds.get(rnd.nextInt(openEnds.size()));
-				pathLength = 0;
+				currentEnd = openEnds.get(rnd.nextInt(openEnds.size()));
+				currentPathLength = 0;
 			}
 			
-			Collections.shuffle(directions);
+			Collections.shuffle(Utils.CARDINAL_DIRS);
 			boolean allDirectionsBlocked = true;
-
-			for(Vector dir : directions) {
+			
+			for(Vector dir : Utils.CARDINAL_DIRS) {
 				
-				int dirX = dir.getBlockX(),
-					dirZ = dir.getBlockZ();
-				
-				int pathX = lastEnd.getBlockX() + dirX * pathWidth,
-					pathZ = lastEnd.getBlockZ() + dirZ * pathWidth;
+				Vec2
+					facing = new Vec2(dir),
+					start  = new Vec2(currentEnd.getX() + facing.getX() * pathWidth,
+									  currentEnd.getZ() + facing.getZ() * pathWidth);
 				
 				MazeSegment pathSegment = new MazeSegment(
-						pathX,
-						pathZ,
-						dirX,
-						dirZ,
+						start,
+						facing,
 						pathWidth + wallWidth,
 						pathWidth,
 						false);
 						
 				boolean pathNotAvailable = false;
 				
-				for(Vector point : pathSegment.getFill()) {
-					if(point.getBlockX() < 0 || point.getBlockX() >= shapeMap.length ||
-					   point.getBlockZ() < 0 || point.getBlockZ() >= shapeMap[0].length) {
+				for(Vec2 point : pathSegment.getFill()) {
+					
+					if(point.getX() < 0 || point.getX() >= map.getDimX() ||
+					   point.getZ() < 0 || point.getZ() >= map.getDimZ()) {
 						pathNotAvailable = true;
 						break;
 					}
 					
-					if(shapeMap[point.getBlockX()][point.getBlockZ()] != MazeSegment.UNDEFINED &&
-					   shapeMap[point.getBlockX()][point.getBlockZ()] != MazeSegment.EXIT) {
+					if(map.getType(point) != MazeSegment.UNDEFINED &&
+					   map.getType(point) != MazeSegment.EXIT) {
 						pathNotAvailable = true;
 						break;
 					}
@@ -76,12 +72,12 @@ public class PathGenerator {
 
 				if(pathNotAvailable)
 					continue;
-
-				for(Vector point : pathSegment.getFill())
-					shapeMap[point.getBlockX()][  point.getBlockZ()] = MazeSegment.PATH;
+				
+				for(Vec2 point : pathSegment.getFill())
+					map.setType(point, MazeSegment.PATH);
 				
 				openEnds.add(pathSegment.getEnd());
-				pathLength++;
+				currentPathLength++;
 				allDirectionsBlocked = false;
 				break;
 			}
@@ -89,8 +85,8 @@ public class PathGenerator {
 			if(!allDirectionsBlocked)
 				continue;
 			
-			openEnds.remove(lastEnd);
-			pathLength = 0;
+			openEnds.remove(currentEnd);
+			currentPathLength = 0;
 		}
 	}
 }

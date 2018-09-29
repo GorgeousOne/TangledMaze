@@ -15,6 +15,7 @@ public class BrushSelection extends Selection {
 		super(builder);
 	}		
 	
+	@Override
 	public void interact(Block b, Action a) {
 
 		Maze maze = MazeHandler.getMaze(getPlayer());

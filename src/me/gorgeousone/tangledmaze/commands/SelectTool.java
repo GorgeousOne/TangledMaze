@@ -21,83 +21,67 @@ public class SelectTool {
 		case "rect":
 		case "square":
 			
-			if(SelectionHandler.hasShapeSel(p)) {
-				ShapeSelection selection = SelectionHandler.getShapeSel(p);
-				
-				if(selection.getType() instanceof Rectangle)
-					break;
-				else
-					selection.setType(Shape.RECT);
-			
-			}else 
-				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
-			
+			setShapeSelection(p, Shape.RECT);
 			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
 			break;
 			
 		case "ellipse":
 		case "circle":
-			if(SelectionHandler.hasShapeSel(p)) {
-				ShapeSelection selection = SelectionHandler.getShapeSel(p);
-				
-				if(selection.getType() instanceof Ellipse)
-					break;
-				else
-					selection.setType(Shape.ELLIPSE);
 			
-			}else 
-				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.ELLIPSE));
-			
-			p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
-
+			if(setShapeSelection(p, Shape.ELLIPSE))
+				p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
 			break;
 		
 		case "brush":
-			
-			if(!MazeHandler.getMaze(p).isStarted()) {
-				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
-				p.sendMessage("/tangledmaze start");
-				return;
-			
-			}else if(SelectionHandler.hasShapeSel(p))
-					SelectionHandler.getShapeSel(p).reset();
-			
-			if(SelectionHandler.getSelection(p) instanceof BrushSelection)
-				break;
-			
-			SelectionHandler.setSelection(p, new BrushSelection(p));
-			p.sendMessage(Constants.prefix + "Changed selection type to brush.");
-			
+
+			if(setMazeTool(p, new BrushSelection(p)))
+				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
 			break;
 			
 		case "exit":
 			
-			if(!MazeHandler.getMaze(p).isStarted()) {
-				p.sendMessage(Constants.prefix + "The brush tool can only be used on mazes.");
-				p.sendMessage("/tangledmaze start");
-				return;
-			}
-			
-			if(SelectionHandler.getSelection(p) instanceof ExitSetter)
-				break;
-			
-			if(MazeHandler.getMaze(p).isStarted()) {
-				
-				if(SelectionHandler.hasShapeSel(p))
-					SelectionHandler.getShapeSel(p).reset();
-				
-				SelectionHandler.setSelection(p, new ExitSetter(p));
+			if(setMazeTool(p, new ExitSetter(p)))
 				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
-			
-			}else {
-				p.sendMessage(Constants.prefix + "The exit setting tool can only be used on mazes.");
-				p.sendMessage("/tangledmaze start");
-			}
 			break;
 			
 		default:
 			p.sendMessage("/tangledmaze help 5");
 			break;
 		}
+	}
+	
+	private boolean setShapeSelection(Player p, Shape type) {
+		
+		if(!SelectionHandler.hasShapeSel(p)) {
+			SelectionHandler.setSelection(p, new ShapeSelection(p, type));
+			return true;
+		}
+		
+		ShapeSelection selection = SelectionHandler.getShapeSel(p);
+		
+		if(!selection.getType().getClass().equals(type.getClass())) {
+			selection.setType(type);
+			return true;
+		}
+	
+		return false;
+	}
+	
+	private boolean setMazeTool(Player p, Selection type) {
+
+		if(SelectionHandler.getSelection(p).getClass().equals(type.getClass()))
+			return false;
+		
+		if(!MazeHandler.getMaze(p).isStarted()) {
+			p.sendMessage(Constants.prefix + "This tool can only be used on a maze's ground plot.");
+			p.sendMessage("/tangledmaze start");
+			return false;
+		}
+		
+		if(SelectionHandler.hasShapeSel(p))
+			SelectionHandler.getShapeSel(p).reset();
+			
+		SelectionHandler.setSelection(p, type);
+		return true;
 	}
 }

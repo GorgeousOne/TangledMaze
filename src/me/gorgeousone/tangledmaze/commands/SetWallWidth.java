@@ -39,7 +39,7 @@ public class SetWallWidth {
 		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.getWallWidth() != wallWidth) {
-			maze.setWallHeight(wallWidth);
+			maze.setWallWidth(wallWidth);
 			p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + ".");
 		}
 	}

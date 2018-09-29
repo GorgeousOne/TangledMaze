@@ -45,7 +45,7 @@ public class Maze {
 		borderChunks = new HashMap<>();
 		exits = new ArrayList<>();
 		
-		dimensions = new Vector(1, 3, 1);
+		dimensions = new Vector(1, 2, 1);
 	}
 	
 	public Player getPlayer() {
@@ -82,6 +82,10 @@ public class Maze {
 	
 	public ArrayList<Location> getExits() {
 		return exits;
+	}
+	
+	public Location getMainExit() {
+		return exits.isEmpty() ? null : exits.get(exits.size()-1);
 	}
 	
 	public ActionHistory getActionHistory() {
@@ -143,6 +147,7 @@ public class Maze {
 		
 		fillChunks.clear();
 		borderChunks.clear();
+		exits.clear();
 		
 		size = 0;
 		borderSize = 0;
@@ -460,8 +465,6 @@ public class Maze {
 	
 	public MazeAction getReduction(Block b) {
 		
-		long start = System.currentTimeMillis();
-		
 		Location point = b.getLocation();
 		MazeAction action = new MazeAction();
 		
@@ -473,7 +476,6 @@ public class Maze {
 		reduceBorder(point, action);
 		removeProtrusiveBorder(point, action);
 		
-		Bukkit.broadcastMessage("" + (System.currentTimeMillis() - start));
 		return action;
 	}
 	
@@ -541,7 +543,6 @@ public class Maze {
 				changes.removeBorder(point2);
 				changes.removeFill(point2);
 			}
-				
 		}
 	}
 	
@@ -554,14 +555,13 @@ public class Maze {
 		for(Vector dir : directions) {
 			Location point2 = point.clone().add(dir);
 			
-			if((contains(point2) || Utils.listContains(changes.getAddedFill(), point2)) &&
-							  	   !Utils.listContains(changes.getRemovedFill(), point2)) {
-				
-				if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2) ||
-											   Utils.listContains(changes.getRemovedBorder(), point2))
-					touchesFill = true;
-			}else
+			if(!contains(point2) && !Utils.listContains(changes.getAddedFill(), point2) ||
+									 Utils.listContains(changes.getRemovedFill(), point2))
 				touchesExternal = true;
+
+			else if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2) ||
+												Utils.listContains(changes.getRemovedBorder(), point2))
+				touchesFill = true;
 		}
 		
 		return touchesFill && touchesExternal;

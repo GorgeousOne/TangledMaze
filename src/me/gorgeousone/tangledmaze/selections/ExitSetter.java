@@ -14,18 +14,15 @@ public class ExitSetter extends Selection {
 		super(p);
 	}
 	
+	@Override
 	public void interact(Block b, Action a) {
 		
 		Maze maze = MazeHandler.getMaze(getPlayer());
 		Location clicked = b.getLocation();
 		
-		if(maze.exitsContain(clicked)) {
-			
+		if(maze.exitsContain(clicked))
 			maze.removeExit(clicked);
-			
-		}else {
-			
+		else
 			maze.addExit(clicked);
-		}
 	}
 }

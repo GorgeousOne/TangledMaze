@@ -31,7 +31,7 @@ public class SetPathWidth {
 		}
 		
 		if(pathWidth > 10) {
-			p.sendMessage(Constants.prefix + "So that grandma can still path alone the width is limited to 10 blocks. "
+			p.sendMessage(Constants.prefix + "So grandma can still cross the path without help the width is limited to 10 blocks. "
 					+ "There will not always be a handsome guy like you around to help her.");
 			return;
 		}
@@ -39,7 +39,7 @@ public class SetPathWidth {
 		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.getPathWidth() != pathWidth) {
-			maze.setWallHeight(pathWidth);
+			maze.setPathWidth(pathWidth);
 			p.sendMessage(Constants.prefix + "Set path width to " + pathWidth + ".");
 		}
 	}

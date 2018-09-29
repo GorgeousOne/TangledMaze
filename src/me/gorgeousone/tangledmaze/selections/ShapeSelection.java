@@ -36,13 +36,25 @@ public class ShapeSelection extends Selection {
 		shape = type;
 		
 		vertices = new ArrayList<>();
-		fillChunks   = new HashMap<>();
+		fillChunks = new HashMap<>();
 		borderChunks = new HashMap<>();
 	}
 	
 	public void setType(Shape type) {
-		reset();
 		shape = type;
+		
+		if(!isComplete)
+			return;
+		
+		if(isResizing)
+			isResizing = false;
+
+		vertices.remove(3);
+		vertices.remove(1);
+		
+		Renderer.hideShape(this, true);
+		calculateShape();
+		Renderer.showSelection(this);
 	}
 	
 	public World getWorld() {
@@ -79,13 +91,13 @@ public class ShapeSelection extends Selection {
 		if(b.getWorld() != world) {
 			reset();
 			world = b.getWorld();
-			Renderer.showSelection(this);
 
 		}else if(vertices.isEmpty()) {
 			vertices.add(Utils.nearestSurface(b.getLocation()));
-
+			
 		}else if(vertices.size() == 1) {
-			completeShape(b);
+			vertices.add(Utils.nearestSurface(b.getLocation()));
+			calculateShape();
 			
 		}else {
 
@@ -107,9 +119,14 @@ public class ShapeSelection extends Selection {
 		Renderer.showSelection(this);
 	}
 	
-	private void completeShape(Block b) {
+	private void calculateShape() {
 		
-		vertices.add(Utils.nearestSurface(b.getLocation()));
+		borderChunks.clear();
+		fillChunks.clear();
+		
+		borderSize = 0;
+		size = 0;
+
 		shape.calcFillAndBorder(vertices, fillChunks, borderChunks);
 		isComplete = true;
 		
@@ -129,13 +146,8 @@ public class ShapeSelection extends Selection {
 		vertices.add(oppositeVertex);
 		vertices.add(Utils.nearestSurface(b.getLocation()));
 		
-		size = 0;
-		borderSize = 0;
-		fillChunks.clear();
-		borderChunks.clear();
-		
+		calculateShape();
 		isResizing = false;
-		completeShape(b);
 	}
 	
 	public void reset() {
