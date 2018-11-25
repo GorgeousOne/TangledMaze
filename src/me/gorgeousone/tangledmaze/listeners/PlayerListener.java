@@ -59,14 +59,4 @@ public class PlayerListener implements Listener {
 			SelectionHandler.resetToDefaultSel(p);
 		}
 	}
-	
-//	@EventHandler
-//	public void sneak(PlayerToggleSneakEvent e) {
-//		
-//		Player p = e.getPlayer();
-//		
-//		if(p.hasPermission(Constants.buildPerm) && e.isSneaking()) {
-//			p.sendMessage("hey " + MazeHandler.getMaze(p).sealsMaze(p.getLocation(), new MazeAction(), Utils));
-//		}
-//	}
 }

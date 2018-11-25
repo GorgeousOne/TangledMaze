@@ -54,7 +54,7 @@ public class ShapeSelection extends Selection {
 		
 		Renderer.hideShape(this, true);
 		calculateShape();
-		Renderer.showSelection(this);
+		Renderer.showShape(this);
 	}
 	
 	public World getWorld() {
@@ -116,7 +116,7 @@ public class ShapeSelection extends Selection {
 			}
 		}
 		
-		Renderer.showSelection(this);
+		Renderer.showShape(this);
 	}
 	
 	private void calculateShape() {
@@ -225,5 +225,43 @@ public class ShapeSelection extends Selection {
 				return true;
 		}
 		return false;
+	}
+	
+	public boolean isHighlighted(Block b) {
+		if(!b.getWorld().equals(world))
+			return false;
+		
+		Chunk chunk = b.getChunk();
+		Location point = b.getLocation();
+		
+		if(!borderChunks.containsKey(chunk))
+			return false;
+		
+		for(Location point2 : borderChunks.get(chunk))
+			if(point.equals(point2))
+				return true;
+		
+		return false;
+	}
+	
+	public void updateHeight(Location point) {
+		if(!point.getWorld().equals(world))
+			return;
+		
+		if(!fillChunks.containsKey(point.getChunk()))
+			return;
+			
+		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
+		
+		if(fill.contains(point)) {
+			
+			Location newPoint = Utils.nearestSurface(point);
+			fill.set(fill.indexOf(point), newPoint);
+
+			ArrayList<Location>	border = borderChunks.get(point.getChunk());
+
+			if(border.contains(point))
+				border.set(border.indexOf(point), newPoint);
+		}
 	}
 }

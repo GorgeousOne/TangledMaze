@@ -6,17 +6,24 @@ import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
+@SuppressWarnings("deprecation")
 public class WandListener implements Listener{
 	
 	private TangledMain plugin;
@@ -27,7 +34,7 @@ public class WandListener implements Listener{
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
-		if(plugin.isSelectionWand(e.getItem()))
+		if(plugin.isWand(e.getItem()))
 			e.setCancelled(true);
 	}
 	
@@ -45,8 +52,7 @@ public class WandListener implements Listener{
 				return;
 		} catch (NoSuchMethodError err) {}
 		
-		
-		if(!plugin.isSelectionWand(e.getItem()))
+		if(!plugin.isWand(e.getItem()))
 			return;
 		
 		e.setCancelled(true);
@@ -63,8 +69,36 @@ public class WandListener implements Listener{
 	}
 	
 	
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onSlotSwitch(PlayerItemHeldEvent e) {
+		
+		Player p = e.getPlayer();
+		ItemStack newItem = p.getInventory().getItem(e.getNewSlot());
+		
+		if(TangledMain.getPlugin().isWand(newItem)) {
+				
+			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
+				Renderer.showMaze(MazeHandler.getMaze(p));
+			
+			if(SelectionHandler.hasShape(p) && !Renderer.isShapeVisible(SelectionHandler.getShape(p)))
+				Renderer.showShape(SelectionHandler.getShape(p));
+		}
+	}
 	
-	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onPickUp(PlayerPickupItemEvent e) {
+
+		if(TangledMain.getPlugin().isWand(e.getItem().getItemStack())) {
+			Player p = e.getPlayer();
+			
+			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
+				Renderer.showMaze(MazeHandler.getMaze(p));
+			
+			if(SelectionHandler.hasShape(p) && !Renderer.isShapeVisible(SelectionHandler.getShape(p)))
+				Renderer.showShape(SelectionHandler.getShape(p));
+		}
+	}
+	
 	private void destroyTool(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);
@@ -79,4 +113,8 @@ public class WandListener implements Listener{
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
 	}
 
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		Renderer.updateChunk(e.getChunk());
+	}
 }

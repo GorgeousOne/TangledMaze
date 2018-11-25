@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.selections;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public abstract class SelectionHandler {
 	
 	private static HashMap<UUID, Selection> selections = new HashMap<>();
 
-	public static boolean hasShapeSel(Player p) {
+	public static boolean hasShape(Player p) {
 		return
 			selections.containsKey(p.getUniqueId()) &&
 			selections.get(p.getUniqueId()) instanceof ShapeSelection;
@@ -22,7 +23,11 @@ public abstract class SelectionHandler {
 		return selections.get(p.getUniqueId());
 	}
 	
-	public static ShapeSelection getShapeSel(Player p) {
+	public static ArrayList<Selection> getSelections() {
+		return new ArrayList<>(selections.values());
+	}
+	
+	public static ShapeSelection getShape(Player p) {
 		Selection sel = selections.get(p.getUniqueId());
 		return sel instanceof ShapeSelection? (ShapeSelection) sel : null;
 	}
@@ -36,8 +41,8 @@ public abstract class SelectionHandler {
 	
 	public static void resetToDefaultSel(Player p) {
 		
-		if(hasShapeSel(p)) {
-			getShapeSel(p).reset();
+		if(hasShape(p)) {
+			getShape(p).reset();
 		
 		}else {
 			setSelection(p, new ShapeSelection(p, Shape.RECT));
@@ -45,8 +50,8 @@ public abstract class SelectionHandler {
 	}
 	
 	public static void removeSelection(Player p) {
-		if(hasShapeSel(p))
-			Renderer.unregisterShape(getShapeSel(p));
+		if(hasShape(p))
+			Renderer.unregisterShape(getShape(p));
 
 		selections.remove(p.getUniqueId());
 	}

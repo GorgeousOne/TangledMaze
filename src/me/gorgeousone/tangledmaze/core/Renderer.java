@@ -57,7 +57,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static void showSelection(ShapeSelection shape) {
+	public static void showShape(ShapeSelection shape) {
 		
 		if(shape.getPlayer() == null)
 			return;
@@ -170,6 +170,42 @@ public abstract class Renderer implements Listener {
 	}
 	
 	@SuppressWarnings("deprecation")
+	public static void updateChunk(Chunk c) {
+		
+		for(Maze maze : mazeVisibilities.keySet()) {
+			
+			if(!maze.isStarted() || isMazeVisible(maze)|| maze.getBorder().containsKey(c))
+				continue;
+		
+			if(maze.getPlayer() == null)
+				return;
+			
+			Player p = maze.getPlayer();
+			
+			
+			for(Location point : maze.getBorder().get(c))
+				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
+		}
+		
+		for(ShapeSelection shape : shapeVisibilities.keySet()) {
+			
+			if(isShapeVisible(shape) && shape.isComplete() && shape.getBorder().containsKey(c)) {
+				
+				if(shape.getPlayer() == null)
+					continue;
+
+				Player p = shape.getPlayer();
+				
+				for(Location point : shape.getBorder().get(c))
+					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+				
+				for(Location vertex : shape.getVertices())
+					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
 	private static void refreshMaze(Player p, ShapeSelection shape, Maze maze) {
 
 		if(shape.isComplete()) {
@@ -180,14 +216,14 @@ public abstract class Renderer implements Listener {
 					continue;
 				
 				for(Location point : shape.getBorder().get(chunk)) {
-					if(maze.isBorder(point.getBlock()))
+					if(maze.isHighlighted(point.getBlock()))
 						maze.getPlayer().sendBlockChange(point, Constants.MAZE_BORDER , (byte) 0);
 				}
 			}
 		}
 
 		for(Location vertex : shape.getVertices())
-			if(maze.isBorder(vertex.getBlock()))
+			if(maze.isHighlighted(vertex.getBlock()))
 				p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
 	}
 }

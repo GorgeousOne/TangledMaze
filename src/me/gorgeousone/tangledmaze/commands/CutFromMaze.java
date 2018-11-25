@@ -25,13 +25,13 @@ public class CutFromMaze {
 			return;
 		}
 		
-		if(!SelectionHandler.hasShapeSel(p)) {
+		if(!SelectionHandler.hasShape(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 			p.sendMessage("/tangledmaze wand");
 			return;
 		}
 		
-		ShapeSelection shape = SelectionHandler.getShapeSel(p);
+		ShapeSelection shape = SelectionHandler.getShape(p);
 
 		if(!shape.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");

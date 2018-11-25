@@ -18,12 +18,12 @@ public class StartMaze {
 			return;
 		}
 		
-		if(!SelectionHandler.hasShapeSel(p)) {
+		if(!SelectionHandler.hasShape(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area first.");
 			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShapeSel(p);
+		ShapeSelection selection = SelectionHandler.getShape(p);
 		
 		if(!selection.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");

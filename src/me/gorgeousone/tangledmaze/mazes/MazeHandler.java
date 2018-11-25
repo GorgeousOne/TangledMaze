@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.mazes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -21,6 +22,14 @@ public abstract class MazeHandler {
 	
 	public static Maze getMaze(Player p) {
 		return mazes.get(p.getUniqueId());
+	}
+	
+	public static ArrayList<Maze> getMazes() {
+		return new ArrayList<>(mazes.values());
+	}
+	
+	public static boolean hasMaze(Player p) {
+		return mazes.containsKey(p.getUniqueId());
 	}
 	
 	public static void setMaze(Player p, Maze maze) {

@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.gorgeousone.tangledmaze.listeners.BlockChangeListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerListener;
 import me.gorgeousone.tangledmaze.listeners.WandListener;
 
@@ -69,14 +70,17 @@ public class TangledMain extends JavaPlugin {
 		return normalMazeSize;
 	}
 	
-	public boolean isSelectionWand(ItemStack item) {
+	public boolean isWand(ItemStack item) {
 		if(item == null)
 			return false;
 		
 		ItemMeta itemMeta = item.getItemMeta();
 		ItemMeta wandmeta = wand.getItemMeta();
 		
-		return item.getType() == wand.getType() && itemMeta.getDisplayName() != null && itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
+		return
+			item.getType() == wand.getType() &&
+			itemMeta.getDisplayName() != null &&
+			itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
 	}
 	
 	public ItemStack getWand() {
@@ -127,6 +131,7 @@ public class TangledMain extends JavaPlugin {
 		
 		pm.registerEvents(new WandListener(this), this);
 		pm.registerEvents(new PlayerListener(), this);
+		pm.registerEvents(new BlockChangeListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandHandler(this));
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());

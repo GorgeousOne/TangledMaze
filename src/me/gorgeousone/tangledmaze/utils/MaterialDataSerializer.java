@@ -1,11 +1,9 @@
-package me.gorgeousone.tangledmaze.mazes;
+package me.gorgeousone.tangledmaze.utils;
 
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
-
-import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class MaterialDataSerializer {
 

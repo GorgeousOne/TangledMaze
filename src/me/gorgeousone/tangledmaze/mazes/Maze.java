@@ -191,23 +191,6 @@ public class Maze {
 		return false;
 	}
 	
-	public boolean isBorder(Block b) {
-		if(!b.getWorld().equals(world))
-			return false;
-		
-		Chunk chunk = b.getChunk();
-		Location point = b.getLocation();
-		
-		if(!borderChunks.containsKey(chunk))
-			return false;
-		
-		for(Location point2 : borderChunks.get(chunk))
-			if(point.equals(point2))
-				return true;
-		
-		return false;
-	}
-	
 	public boolean exitsContain(Location point) {
 		if(!point.getWorld().equals(world))
 			return false;
@@ -226,6 +209,23 @@ public class Maze {
 			return false;
 		
 		return sealsMaze(point, new MazeAction(), Directions.cardinalValues());
+	}
+	
+	public boolean isHighlighted(Block b) {
+		if(!b.getWorld().equals(world))
+			return false;
+		
+		Chunk chunk = b.getChunk();
+		Location point = b.getLocation();
+		
+		if(!borderChunks.containsKey(chunk))
+			return false;
+		
+		for(Location point2 : borderChunks.get(chunk))
+			if(point.equals(point2))
+				return true;
+		
+		return false;
 	}
 	
 	private void addFill(Location point) {
@@ -286,7 +286,7 @@ public class Maze {
 		
 		if(!canBeExit(point)) {
 			
-			if(isBorder(point.getBlock()))
+			if(isHighlighted(point.getBlock()))
 				Utils.sendBlockDelayed(getPlayer(), point, Constants.MAZE_BORDER);
 			
 			return;
@@ -323,6 +323,27 @@ public class Maze {
 			}
 		}
 		
+	}
+	
+	public void updateHeight(Location point) {
+		if(!point.getWorld().equals(world))
+			return;
+		
+		if(!fillChunks.containsKey(point.getChunk()))
+			return;
+			
+		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
+		
+		if(fill.contains(point)) {
+			
+			Location newPoint = Utils.nearestSurface(point);
+			fill.set(fill.indexOf(point), newPoint);
+
+			ArrayList<Location>	border = borderChunks.get(point.getChunk());
+
+			if(border.contains(point))
+				border.set(border.indexOf(point), newPoint);
+		}
 	}
 	
 	public void processAction(MazeAction action, boolean saveToHistory) {
@@ -460,7 +481,7 @@ public class Maze {
 		Location point = b.getLocation();
 		MazeAction action = new MazeAction();
 		
-		if(!isBorder(b))
+		if(!isHighlighted(b))
 			return action;
 		
 		enlargeBorder(point, action);
@@ -475,7 +496,7 @@ public class Maze {
 		MazeAction action = new MazeAction();
 		
 		//can't remove what isn't part of the border
-		if(!isBorder(b))
+		if(!isHighlighted(b))
 			return action;
 		
 		action.removeBorder(point);

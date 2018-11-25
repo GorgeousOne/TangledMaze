@@ -52,12 +52,12 @@ public class SelectTool {
 	
 	private boolean setShapeSelection(Player p, Shape type) {
 		
-		if(!SelectionHandler.hasShapeSel(p)) {
+		if(!SelectionHandler.hasShape(p)) {
 			SelectionHandler.setSelection(p, new ShapeSelection(p, type));
 			return true;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShapeSel(p);
+		ShapeSelection selection = SelectionHandler.getShape(p);
 		
 		if(!selection.getType().getClass().equals(type.getClass())) {
 			selection.setType(type);
@@ -78,8 +78,8 @@ public class SelectTool {
 			return false;
 		}
 		
-		if(SelectionHandler.hasShapeSel(p))
-			SelectionHandler.getShapeSel(p).reset();
+		if(SelectionHandler.hasShape(p))
+			SelectionHandler.getShape(p).reset();
 			
 		SelectionHandler.setSelection(p, type);
 		return true;
