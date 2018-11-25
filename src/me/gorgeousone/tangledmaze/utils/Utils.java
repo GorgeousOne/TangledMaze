@@ -8,27 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
 
 public abstract class Utils {
-	
-	public final static ArrayList<Vector> CARDINAL_DIRS = new ArrayList<>(Arrays.asList(
-			new Vector( 1, 0,  0),
-			new Vector( 0, 0,  1),
-			new Vector(-1, 0,  0),
-			new Vector( 0, 0, -1)));
-
-	public final static ArrayList<Vector> ALL_DIRECTIONS = new ArrayList<>(Arrays.asList(
-			new Vector( 1, 0,  0),
-			new Vector( 1, 0,  1),
-			new Vector( 0, 0,  1),
-			new Vector(-1, 0,  1),
-			new Vector(-1, 0,  0),
-			new Vector(-1, 0, -1),
-			new Vector( 0, 0, -1),
-			new Vector( 1, 0, -1)));
 
 	private final static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
 			Material.ACACIA_DOOR,

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.mazes.generators;
+package me.gorgeousone.tangledmaze.mazes.generation;
 
 import java.util.ArrayList;
 
@@ -7,15 +7,16 @@ import org.bukkit.Location;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-public class MazeMap {
+public class BuildMap {
 	
 	private Maze maze;
 	private int minX, minZ;
-	private int[][] shapeMap, heightMap;
+	private MazeFillType[][] shapeMap;
+	private int[][] heightMap;
 	
 	private Vec2 pathStart;
 	
-	public MazeMap(Maze maze) {
+	public BuildMap(Maze maze) {
 		
 		this.maze = maze;
 		
@@ -43,7 +44,7 @@ public class MazeMap {
 		return shapeMap[0].length;
 	}
 	
-	public int getType(Vec2 point) {
+	public MazeFillType getType(Vec2 point) {
 		return shapeMap[point.getX()]
 					   [point.getZ()];
 	}
@@ -61,7 +62,7 @@ public class MazeMap {
 		this.pathStart = pathStart;
 	}
 	
-	public void setType(Vec2 point, int type) {
+	public void setType(Vec2 point, MazeFillType type) {
 		shapeMap[point.getX()]
 				[point.getZ()] = type;
 	}
@@ -99,7 +100,7 @@ public class MazeMap {
 		maxZ *= 16;
 		
 		//create two 2D-arrays, one for locations occupied by the maze, another one for the y-coordinates there
-		shapeMap  = new int[maxX - minX + 16][maxZ - minZ + 16];
+		shapeMap  = new MazeFillType[maxX - minX + 16][maxZ - minZ + 16];
 		heightMap = new int[maxX - minX + 16][maxZ - minZ + 16];
 	}
 	
@@ -107,13 +108,13 @@ public class MazeMap {
 		//mark the maze's area in mazeMap as undefined area (open for paths or walls), the rest will stay untouched
 		for(ArrayList<Location> chunk : maze.getFill().values())
 			for(Location point : chunk) {
-				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeSegment.UNDEFINED;
+				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.UNDEFINED;
 				heightMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = point.getBlockY();
 			}
 		
 		//mark the border in mazeMap as reserved for walls
 		for(ArrayList<Location> chunk : maze.getBorder().values())
 			for(Location point : chunk)
-				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeSegment.WALL;		
+				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.WALL;		
 	}
 }

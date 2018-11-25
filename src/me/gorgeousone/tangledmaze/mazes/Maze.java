@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.selections.ShapeSelection;
 import me.gorgeousone.tangledmaze.utils.Constants;
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class Maze {
@@ -224,7 +225,7 @@ public class Maze {
 		if(!borderContains(point))
 			return false;
 		
-		return sealsMaze(point, new MazeAction(), Utils.CARDINAL_DIRS);
+		return sealsMaze(point, new MazeAction(), Directions.cardinalValues());
 	}
 	
 	private void addFill(Location point) {
@@ -283,8 +284,13 @@ public class Maze {
 	
 	public void addExit(Location point) {
 		
-		if(!canBeExit(point))
+		if(!canBeExit(point)) {
+			
+			if(isBorder(point.getBlock()))
+				Utils.sendBlockDelayed(getPlayer(), point, Constants.MAZE_BORDER);
+			
 			return;
+		}
 		
 		Location exit = Utils.nearestSurface(point);
 		
@@ -404,8 +410,8 @@ public class Maze {
 	
 	private boolean touchesExternalArea(Location point, ShapeSelection shape) {
 		
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Location point2 = point.clone().add(dir);
+		for(Directions dir : Directions.values()) {
+			Location point2 = point.clone().add(dir.facing3d());
 			
 			if(!contains(point2) && !shape.contains(point2))
 				return true;
@@ -483,27 +489,27 @@ public class Maze {
 		
 		changes.removeBorder(point);
 		
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Location point2 = Utils.nearestSurface(point.clone().add(dir));
+		for(Directions dir : Directions.values()) {
+			Location point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!contains(point2)) {
 				changes.addFill(point2);
 				changes.addBorder(point2);
 			
-			}else if(exitsContain(point2) && !sealsMaze(point2, changes, Utils.CARDINAL_DIRS))
+			}else if(exitsContain(point2) && !sealsMaze(point2, changes, Directions.cardinalValues()))
 				changes.removeExit(point2);
 		}
 	}
 	
 	private void removeIntrusiveBorder(Location point, MazeAction changes) {
 		//look for neighbors, that are now intruding the border unnecessarily
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Location point2 = Utils.nearestSurface(point.clone().add(dir));
+		for(Directions dir : Directions.values()) {
+			Location point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2))
 				continue;
 			
-			if(!sealsMaze(point2, changes, Utils.ALL_DIRECTIONS))
+			if(!sealsMaze(point2, changes, Directions.values()))
 				changes.removeBorder(point2);
 		}
 	}
@@ -516,44 +522,44 @@ public class Maze {
 		action.removeBorder(point);
 		action.removeFill(point);
 		
-		if(!sealsMaze(point, action, Utils.ALL_DIRECTIONS))
+		if(!sealsMaze(point, action, Directions.values()))
 			return;
 		
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Location point2 = point.clone().add(dir);
+		for(Directions dir : Directions.values()) {
+			Location point2 = point.clone().add(dir.facing3d());
 			
 			if(contains(point2) && !borderContains(point2))
 				action.addBorder(point2);
 			
-			if(exitsContain(point2) && !sealsMaze(point2, action, Utils.CARDINAL_DIRS))
+			if(exitsContain(point2) && !sealsMaze(point2, action, Directions.cardinalValues()))
 				action.removeExit(point2);
 		}
 	}
 	
 	private void removeProtrusiveBorder(Location point, MazeAction changes) {
 		//detect outstanding neighbor borders of the block (in cardinal directions)
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Location point2 = Utils.nearestSurface(point.clone().add(dir));
+		for(Directions dir : Directions.values()) {
+			Location point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!borderContains(point2))
 				continue;
 			
 			//remove the neighbor if it still stands out
-			if(!sealsMaze(point2, changes, Utils.ALL_DIRECTIONS)) {
+			if(!sealsMaze(point2, changes, Directions.values())) {
 				changes.removeBorder(point2);
 				changes.removeFill(point2);
 			}
 		}
 	}
 	
-	public boolean sealsMaze(Location point, MazeAction changes, ArrayList<Vector> directions) {
+	public boolean sealsMaze(Location point, MazeAction changes, Directions[] directions) {
 		
 		boolean
 			touchesFill = false,
 			touchesExternal = false;
 		
-		for(Vector dir : directions) {
-			Location point2 = point.clone().add(dir);
+		for(Directions dir : directions) {
+			Location point2 = point.clone().add(dir.facing3d());
 			
 			if(!contains(point2) && !Utils.listContains(changes.getAddedFill(), point2) ||
 									 Utils.listContains(changes.getRemovedFill(), point2))

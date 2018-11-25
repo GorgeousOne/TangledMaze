@@ -57,19 +57,19 @@ public class MazeAction {
 	}
 	
 	public MazeAction invert() {
-		ArrayList<Location> temp = new ArrayList<Location>(addedFill);
+		ArrayList<Location> temporaryHolder = new ArrayList<Location>(addedFill);
 		
 		addedFill.clear();
 		addedFill.addAll(removedFill);
 		removedFill.clear();
-		removedFill.addAll(temp);
+		removedFill.addAll(temporaryHolder);
 		
-		temp = new ArrayList<>(addedBorder);
+		temporaryHolder = new ArrayList<>(addedBorder);
 		
 		addedBorder.clear();
 		addedBorder.addAll(removedBorder);
 		removedBorder.clear();
-		removedBorder.addAll(temp);
+		removedBorder.addAll(temporaryHolder);
 		
 		getRemovedExits().clear();
 		

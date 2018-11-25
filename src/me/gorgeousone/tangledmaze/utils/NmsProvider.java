@@ -14,16 +14,16 @@ public class NmsProvider {
 
     private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
-    private static final Class<?> MINECRAFT_KEY = getMCClass("net.minecraft.server.%s.MinecraftKey");
+    private static final Class<?> MINECRAFT_KEY = getMcClass("net.minecraft.server.%s.MinecraftKey");
     private static final Constructor<?> MINECRAFT_KEY_CONSTRUCTOR = getConstructor(Objects.requireNonNull(MINECRAFT_KEY), String.class);
 
-    private static final Class<?> ITEM_CLASS = getMCClass("net.minecraft.server.%s.Item");
+    private static final Class<?> ITEM_CLASS = getMcClass("net.minecraft.server.%s.Item");
     private static final Object ITEM_REGISTRY = getFieldInstance(Objects.requireNonNull(getDeclaredField(ITEM_CLASS, "REGISTRY")), null);
 
-    private static final Class<?> MINECRAFT_REGISTRY = getMCClass("net.minecraft.server.%s.RegistryMaterials");
+    private static final Class<?> MINECRAFT_REGISTRY = getMcClass("net.minecraft.server.%s.RegistryMaterials");
     private static final Method MINECRAFT_REGISTRY_GET = getDeclaredMethod(Objects.requireNonNull(MINECRAFT_REGISTRY), "get", Object.class);
 
-    private static final Class<?> CRAFTITEMSTACK = getMCClass("org.bukkit.craftbukkit.%s.inventory.CraftItemStack");
+    private static final Class<?> CRAFTITEMSTACK = getMcClass("org.bukkit.craftbukkit.%s.inventory.CraftItemStack");
     private static final Method CRAFTITEMSTACK_NEW_CRAFTSTACK = getDeclaredMethod(Objects.requireNonNull(CRAFTITEMSTACK), "asNewCraftStack", ITEM_CLASS);
 
 
@@ -39,7 +39,7 @@ public class NmsProvider {
     }
 
 
-    private static Class<?> getMCClass(String clazz){
+    private static Class<?> getMcClass(String clazz){
         try {
             return Class.forName(String.format(clazz, version));
         } catch (ClassNotFoundException e) {

@@ -8,6 +8,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class Ellipse implements Shape {
@@ -56,8 +57,8 @@ public class Ellipse implements Shape {
 		if(mid.distance(point2) > radiusZ - 0.25)
 			return false;
 		
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			Vector neighbour = point2.clone().add(dir.clone().setX(proportion * dir.getX()));
+		for(Directions dir : Directions.values()) {
+			Vector neighbour = point2.clone().add(dir.facing3d().setX(proportion * dir.facing().getX()));
 			
 			if(mid.distance(neighbour) > radiusZ - 0.25)
 				return true;
@@ -132,8 +133,8 @@ public class Ellipse implements Shape {
 					continue;
 				
 				//check for border by looking for neighbors blocks that aren't in radius distance
-				for(Vector dir : Utils.ALL_DIRECTIONS) {
-					Vector neighbour = iter.clone().add(dir.clone().setX(proportion * dir.getX()));
+				for(Directions dir : Directions.values()) {
+					Vector neighbour = iter.clone().add(dir.facing3d().setX(proportion * dir.facing().getX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
 						addBorder(border, Utils.nearestSurface(point));

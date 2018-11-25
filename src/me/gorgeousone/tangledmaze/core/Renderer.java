@@ -20,7 +20,6 @@ public abstract class Renderer implements Listener {
 	private static HashMap<ShapeSelection, Boolean> shapeVisibilities = new HashMap<>();
 	private static HashMap<Maze, Boolean> mazeVisibilities = new HashMap<>();
 	
-	
 	public static void reload() {
 		for(ShapeSelection selection : shapeVisibilities.keySet()) {
 			if(isShapeVisible(selection))
@@ -113,15 +112,11 @@ public abstract class Renderer implements Listener {
 	@SuppressWarnings("deprecation")
 	public static void hideShape(ShapeSelection shape, boolean updateMaze) {
 		
-		if(shape.getPlayer() == null ||!isShapeVisible(shape))
-			return;
-		
-		Player p = shape.getPlayer();
-		
-		if(p == null)
+		if(shape.getPlayer() == null || !isShapeVisible(shape))
 			return;
 		
 		shapeVisibilities.put(shape, false);
+		Player p = shape.getPlayer();
 		
 		if(shape.isComplete()) {
 			for(ArrayList<Location> chunk : shape.getBorder().values()) {

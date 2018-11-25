@@ -8,7 +8,7 @@ import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.mazes.WallComposer;
+import me.gorgeousone.tangledmaze.mazes.MaterialDataSerializer;
 import me.gorgeousone.tangledmaze.selections.SelectionHandler;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
@@ -22,13 +22,6 @@ public class BuildMaze {
 		}
 		
 		Maze maze = MazeHandler.getMaze(p);
-		
-//		if(BuildFactory.isMazeEnqueued(maze)) {
-//			p.sendMessage(Constants.prefix
-//					+ "There already is a maze of yours in queue to get built. "
-//					+ "Please wait until it gets finished before submitting a new one.");
-//			return;
-//		}
 		
 		if(!maze.isStarted()) {
 			
@@ -60,10 +53,14 @@ public class BuildMaze {
 			return;
 		}
 		
-		ArrayList<MaterialData> composition = WallComposer.deserializeComposition(p, serializedMaterialData);
+		ArrayList<MaterialData> composition;
 		
-		if(composition == null)
+		try {
+			composition = getWallComposition(serializedMaterialData);
+		} catch (Exception e) {
+			p.sendMessage(e.getMessage());
 			return;
+		}
 		
 		maze.setWallComposition(composition);
 		MazeHandler.buildMaze(maze);
@@ -71,5 +68,15 @@ public class BuildMaze {
 		
 		SelectionHandler.resetToDefaultSel(p);
 		maze.reset();
+	}
+	
+	private static ArrayList<MaterialData> getWallComposition(ArrayList<String> serializedMaterialData) {
+		ArrayList<MaterialData> composition = new ArrayList<>();
+		
+		for(String materialData : serializedMaterialData) {
+			composition.add(MaterialDataSerializer.deserializeMaterialData(materialData));
+		}
+		
+		return composition;
 	}
 }

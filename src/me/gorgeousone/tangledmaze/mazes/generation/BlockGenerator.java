@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.mazes.generators;
+package me.gorgeousone.tangledmaze.mazes.generation;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -9,16 +9,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.mazes.Maze;
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-
 public class BlockGenerator {
 
-	public static void generateBlocks(MazeMap map, ActionListener finishAction) {
+	public static void generateBlocks(BuildMap map, ActionListener finishAction) {
 		buildBlocksContinuously(getAllMazeBlocks(map), map.getMaze().getWallComposition());
 	}
 	
@@ -54,7 +53,7 @@ public class BlockGenerator {
 		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
 	}
 	
-	private static ArrayList<Block> getAllMazeBlocks(MazeMap map) {
+	private static ArrayList<Block> getAllMazeBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		ArrayList<Block> placeables = new ArrayList<>();
@@ -70,8 +69,8 @@ public class BlockGenerator {
 				
 				Vec2 point = new Vec2(x, z);
 				
-				if(map.getType(point) != MazeSegment.WALL &&
-				   map.getType(point) != MazeSegment.UNDEFINED)
+				if(map.getType(point) != MazeFillType.WALL &&
+				   map.getType(point) != MazeFillType.UNDEFINED)
 					continue;
 				
 				pointY = map.getHeight(new Vec2(x, z));
@@ -89,22 +88,22 @@ public class BlockGenerator {
 		return placeables;
 	}
 	
-	private static int getMaxY(int x, int y, int z, MazeMap map) {
+	private static int getMaxY(int x, int y, int z, BuildMap map) {
 		
 		ArrayList<Integer> neighborYs = new ArrayList<>();
 		neighborYs.add(y);
 		
-		for(Vector dir : Utils.ALL_DIRECTIONS) {
-			int x2 = x + dir.getBlockX(),
-				z2 = z + dir.getBlockZ();
+		for(Directions dir : Directions.values()) {
+			int x2 = x + dir.facing().getX(),
+				z2 = z + dir.facing().getZ();
 			
 			if(x2 < 0 || x2 >= map.getDimX() ||
 			   z2 < 0 || z2 >= map.getDimZ())
 				continue;
 			
 			neighborYs.add(map.getHeight(
-					new Vec2(x + dir.getBlockX(),
-								z + dir.getBlockZ())));
+					new Vec2(x + dir.facing().getX(),
+							 z + dir.facing().getZ())));
 		}
 		
 		return Utils.getMax(neighborYs);

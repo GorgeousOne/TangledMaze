@@ -1,12 +1,10 @@
-package me.gorgeousone.tangledmaze.mazes.generators;
+package me.gorgeousone.tangledmaze.mazes.generation;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
-public class MazeSegment {
+public class PathSegment {
 	
 	public static final int
 		UNDEFINED = 1,
@@ -14,18 +12,9 @@ public class MazeSegment {
 		PATH = 3,
 		EXIT = 4;
 	
-//	private Vector relativeMin, start, end;
-	private Vec2 start;
-
-	Vec2 relativeMin;
-
-	private Vec2 end;
-
-	private Vec2 facing;
-
-	Vec2 dimension;
+	private Vec2 start, end, facing, relativeMin, dimension;
 	
-	public MazeSegment(Vec2 start, Vec2 facing, int length, int width, boolean isExit) {
+	public PathSegment(Vec2 start, Vec2 facing, int length, int width, boolean isExit) {
 
 		//the segment can either face aligned to x or z axis. in positive or negative direction
 		this.start = start;
@@ -76,9 +65,7 @@ public class MazeSegment {
 		if(facing.getX() == -1 ||
 		   facing.getZ() == -1) {
 			
-			Bukkit.broadcastMessage("  expanding: " + relativeMin.toString() + " with " + expansion.toString());
 			relativeMin.add(expansion);
-			Bukkit.broadcastMessage("  result: " + relativeMin.toString());
 		}
 	}
 	
@@ -93,8 +80,9 @@ public class MazeSegment {
 			if(facing.getX() == -1) {
 				relativeMin = dStartToEnd;
 				
-				if(isExit)
+				if(isExit) {
 					move(-width+1, -width+1);
+				}
 			}
 			
 		}else {
@@ -109,35 +97,5 @@ public class MazeSegment {
 			}else if(isExit)
 				move(-width+1, 0);
 		}
-		
-//		if(facing.getX() != 0) {
-//			
-//			dimension.set(length, width);
-//			
-//			//move the end into the facing direction
-//			//this should not be confused with a maximum or minimum. the end is followed by a width-sized square ending the segment
-//			end.add(facing.getX() * (length - width), 0);
-//			
-//			if(facing.getX() == -1) {
-//				relativeMin.set(-length + width, 0);
-//
-//				if(isExit)
-//					move(-width+1, -width+1);
-//			}
-//			
-//		}else {
-//			
-//			dimension.set(width, length);
-//			end.add(0, facing.getZ() * (length - width));
-//			
-//			if(facing.getZ() == -1) {
-//				relativeMin.set(0, -length + width);
-//				
-//				if(isExit)
-//					move(0, -width+1);
-//			
-//			}else if(isExit)
-//				move(-width+1, 0);
-//		}
 	}
 }

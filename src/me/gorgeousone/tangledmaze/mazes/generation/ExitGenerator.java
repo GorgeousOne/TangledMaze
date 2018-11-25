@@ -1,19 +1,17 @@
-package me.gorgeousone.tangledmaze.mazes.generators;
+package me.gorgeousone.tangledmaze.mazes.generation;
 
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-
 public class ExitGenerator {
 	
 	private static int
 		pathGridOffsetX = 0,
 		pathGridOffsetZ = 0;
 	
-	public static void generateExits(MazeMap map) {
+	public static void generateExits(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		
@@ -45,33 +43,33 @@ public class ExitGenerator {
 //		end.getBlock().setType(Material.LAPIS_BLOCK);
 //	}
 	
-	private static void generateMainExit(Location mainExit, MazeMap map, int pathWidth, int wallWidth) {
+	private static void generateMainExit(Location mainExit, BuildMap map, int pathWidth, int wallWidth) {
 		
 		mainExit.subtract(map.getMinX(), 0, map.getMinZ());
 		
-		MazeSegment exitSegment = new MazeSegment(
+		PathSegment exit = new PathSegment(
 			new Vec2(mainExit.toVector()),
-			new Vec2(getExitsFacing(mainExit, map)),
+			getExitsFacing(mainExit, map),
 			2*pathWidth,
 			pathWidth,
 			true);
 		
-		Vec2 pathStart = exitSegment.getEnd();
+		Vec2 pathStart = exit.getEnd();
 		map.setStart(pathStart);
 		
 		pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth);
 		pathGridOffsetZ = pathStart.getZ() % (pathWidth + wallWidth);
 		
 		//make the main exit out of path so the path generator won't connect any path to it anymore
-		drawSegmentOnMap(exitSegment, map, MazeSegment.PATH);
+		drawSegmentOnMap(exit, map, MazeFillType.PATH);
 	}
 	
-	private static void generateExit(Location exit, MazeMap map, int pathWidth, int wallWidth) {
+	private static void generateExit(Location exit, BuildMap map, int pathWidth, int wallWidth) {
 		
 		exit.subtract(map.getMinX(), 0, map.getMinZ());
-		Vec2 facing = new Vec2(getExitsFacing(exit, map));
+		Vec2 facing = getExitsFacing(exit, map);
 		
-		MazeSegment exitSegment = new MazeSegment(
+		PathSegment exitSegment = new PathSegment(
 				new Vec2(exit.toVector()),
 				facing,
 				pathWidth,
@@ -103,33 +101,33 @@ public class ExitGenerator {
 		}
 		
 		exitSegment.expand(exitOffset);
-		drawSegmentOnMap(exitSegment, map, MazeSegment.EXIT);
+		drawSegmentOnMap(exitSegment, map, MazeFillType.EXIT);
 	}
 		
-	private static Vector getExitsFacing(Location exit, MazeMap map) {
+	private static Vec2 getExitsFacing(Location exit, BuildMap map) {
 		
-		for(Vector dir : Utils.CARDINAL_DIRS) {
+		for(Directions dir : Directions.cardinalValues()) {
 			
 			Vec2 nextToExit = new Vec2(exit.toVector());
-			nextToExit.add(new Vec2(dir));
+			nextToExit.add(dir.facing());
 			
 			if(nextToExit.getX() < 0 || nextToExit.getX() >= map.getDimX() ||
 			   nextToExit.getZ() < 0 || nextToExit.getZ() >= map.getDimZ())
 				continue;
 			
-			if(map.getType(nextToExit) == MazeSegment.UNDEFINED)
-				return dir.clone();
+			if(map.getType(nextToExit) == MazeFillType.UNDEFINED)
+				return dir.facing();
 		}
 		
 		return null;
 	}
 	
-	private static void drawSegmentOnMap(MazeSegment segment, MazeMap map, int segmentType) {
+	private static void drawSegmentOnMap(PathSegment segment, BuildMap map, MazeFillType type) {
 		
 		for(Vec2 point : segment.getFill()) {
 			if(point.getX() >= 0 && point.getX() < map.getDimX() &&
 			   point.getZ() >= 0 && point.getZ() < map.getDimZ())
-				map.setType(point, segmentType);
+				map.setType(point, type);
 		}
 	}
 }

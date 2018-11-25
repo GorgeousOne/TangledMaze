@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
-import me.gorgeousone.tangledmaze.mazes.generators.BlockGenerator;
-import me.gorgeousone.tangledmaze.mazes.generators.ExitGenerator;
-import me.gorgeousone.tangledmaze.mazes.generators.MazeMap;
-import me.gorgeousone.tangledmaze.mazes.generators.PathGenerator;
+import me.gorgeousone.tangledmaze.mazes.generation.BlockGenerator;
+import me.gorgeousone.tangledmaze.mazes.generation.BuildMap;
+import me.gorgeousone.tangledmaze.mazes.generation.ExitGenerator;
+import me.gorgeousone.tangledmaze.mazes.generation.PathGenerator;
 
 public abstract class MazeHandler {
 	
@@ -36,7 +36,7 @@ public abstract class MazeHandler {
 	public static void buildMaze(Maze maze) {
 		Renderer.hideMaze(maze);
 		
-		MazeMap map = new MazeMap(maze);
+		BuildMap map = new BuildMap(maze);
 		ExitGenerator.generateExits(map);
 		PathGenerator.generatePaths(map);
 		BlockGenerator.generateBlocks(map, null);
