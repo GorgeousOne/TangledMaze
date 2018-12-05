@@ -30,9 +30,11 @@ public class SetWallHeight {
 			return;
 		}
 		
-		if(wallHeight > 20) {
-			p.sendMessage(Constants.prefix + "In the interests of the noighbours upstairs the wall height is limited to 20 blocks. "
-					+ "I am sure they will thank you in return.");
+		if(wallHeight > Constants.MAX_WALL_HEIGHT) {
+			p.sendMessage(Constants.prefix
+					+ "People also thought that the tower of babel was agood idea. "
+					+ "And now look what happened back then. "
+					+ "The wall height is limited to " + Constants.MAX_WALL_HEIGHT + " blocks.");
 			return;
 		}
 		

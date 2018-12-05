@@ -23,4 +23,9 @@ public class Constants {
 			MAZE_MAIN_EXIT   = Material.DIAMOND_BLOCK,
 			SELECTION_CORNER = Material.LAPIS_BLOCK,
 			SELECTION_BORDER = Material.GOLD_BLOCK;
+	
+	public static final int
+		MAX_PATH_WIDTH = 50,
+		MAX_WALL_WIDTH = 50,
+		MAX_WALL_HEIGHT = 100;
 }

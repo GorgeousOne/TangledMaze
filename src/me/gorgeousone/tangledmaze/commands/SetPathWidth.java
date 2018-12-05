@@ -30,9 +30,11 @@ public class SetPathWidth {
 			return;
 		}
 		
-		if(pathWidth > 10) {
-			p.sendMessage(Constants.prefix + "So grandma can still cross the path without help the width is limited to 10 blocks. "
-					+ "There will not always be a handsome guy like you around to help her.");
+		if(pathWidth > Constants.MAX_PATH_WIDTH) {
+			p.sendMessage(Constants.prefix
+					+ "Grandma still wants to cross the path on her own. "
+					+ "There will not always be a handsome person like you around to help her. "
+					+ "The path width is limited to " + Constants.MAX_PATH_WIDTH + " blocks.");
 			return;
 		}
 		

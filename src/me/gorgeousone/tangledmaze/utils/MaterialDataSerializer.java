@@ -26,13 +26,13 @@ public class MaterialDataSerializer {
 		type = Material.matchMaterial(typeString);
 		
 		if(type == null) {
-			throw new IllegalArgumentException(ChatColor.RED + "\"" + typeString + "\" does not match any block type.");
+			throw new IllegalArgumentException(ChatColor.RED + "\"" + typeString + "\" does not match any block type. See the spigot (< 1.13) material name list for help.");
 		}
 		
 		try {
 			data = Byte.parseByte(dataString);
 		} catch (Exception e) {
-			throw new IllegalArgumentException(ChatColor.RED + "\"" + dataString + "\" is not a valid number");
+			throw new IllegalArgumentException(ChatColor.RED + "\"" + dataString + "\" is not a valid number.");
 		}
 		
 		if(!Utils.canBeBuiltWith(type)) {

@@ -14,10 +14,15 @@ import me.gorgeousone.tangledmaze.utils.Utils;
 public class Ellipse implements Shape {
 	
 	@Override
+	public int getVertexCount() {
+		return 2;
+	}
+	
+	@Override
 	public boolean contains(ArrayList<Location> vertices, Location point) {
 		
 		if(vertices.size() < 4)
-			throw new IllegalArgumentException("An ellipse neeeds 4 vertices to be determined.");
+			throw new IllegalArgumentException("4 vertices needed for this calculation.");
 		
 		double
 			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,
@@ -39,8 +44,7 @@ public class Ellipse implements Shape {
 	public boolean borderContains(ArrayList<Location> vertices, Location point) {
 		
 		if(vertices.size() < 4)
-			throw new IllegalArgumentException("An ellipse neeeds 4 vertices to be determined.");
-		
+			throw new IllegalArgumentException("4 vertices needed for this calculation.");		
 		double
 			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,
 			radiusZ = (vertices.get(3).getZ() - vertices.get(0).getZ() + 1) / 2,
@@ -86,19 +90,19 @@ public class Ellipse implements Shape {
 	}
 	
 	@Override
-	public void calcFillAndBorder(
+	public void createFillAndBorder(
 			ArrayList<Location> vertices,
 			HashMap<Chunk, ArrayList<Location>> fill,
 			HashMap<Chunk, ArrayList<Location>> border) {
 		
-		if(vertices.size() < 2)
-			throw new IllegalArgumentException("An ellipse neeeds 2 vertices to be determined.");
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("2 vertices needed for this calculation.");
 		
 		Location v0 = vertices.get(0),
 				 v2 = vertices.get(1);
 
 		vertices.clear();
-		vertices.addAll(Utils.calcVertices(v0, v2));
+		vertices.addAll(Utils.createRectangularVertices(v0, v2));
 		
 		double
 			radiusX = (vertices.get(1).getX() - vertices.get(0).getX() + 1) / 2,

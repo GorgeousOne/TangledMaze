@@ -40,9 +40,10 @@ public class ShapeSelection extends Selection {
 		borderChunks = new HashMap<>();
 	}
 	
-	public void setType(Shape type) {
-		shape = type;
+	public void setType(Shape shape) {
+		this.shape = shape;
 		
+		//stop code from deleting the vertex so another shape can be created with an already set vertex
 		if(!isComplete)
 			return;
 		
@@ -86,33 +87,34 @@ public class ShapeSelection extends Selection {
 	}
 	
 	@Override
-	public void interact(Block b, Action a) {
+	public void interact(Block clicked, Action action) {
 		
-		if(b.getWorld() != world) {
+		if(clicked.getWorld() != world) {
 			reset();
-			world = b.getWorld();
-
-		}else if(vertices.isEmpty()) {
-			vertices.add(Utils.nearestSurface(b.getLocation()));
+			world = clicked.getWorld();
+		}
+		
+		if(vertices.size() < shape.getVertexCount()-1) {
+			vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			
-		}else if(vertices.size() == 1) {
-			vertices.add(Utils.nearestSurface(b.getLocation()));
+		}else if(vertices.size() == shape.getVertexCount()-1) {
+			vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			calculateShape();
 			
 		}else {
 
 			if(isResizing) {
-				resizeShape(b);
+				resizeShape(clicked);
 			
-			}else if(isVertex(b)) {
-				indexOfResizedVertex = indexOfVertex(b);
+			}else if(isVertex(clicked)) {
+				indexOfResizedVertex = indexOfVertex(clicked);
 				isResizing = true;
 				return;
 				
 			}else {
 				Renderer.hideShape(this, true);
 				reset();
-				vertices.add(Utils.nearestSurface(b.getLocation()));
+				vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			}
 		}
 		
@@ -127,7 +129,7 @@ public class ShapeSelection extends Selection {
 		borderSize = 0;
 		size = 0;
 
-		shape.calcFillAndBorder(vertices, fillChunks, borderChunks);
+		shape.createFillAndBorder(vertices, fillChunks, borderChunks);
 		isComplete = true;
 		
 		for(ArrayList<Location> chunk : fillChunks.values())
@@ -151,6 +153,7 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public void reset() {
+		
 		Renderer.hideShape(this, true);
 
 		fillChunks.clear();
@@ -181,7 +184,8 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public int indexOfVertex(Block b) {
-		if(!isComplete || !b.getWorld().equals(world))
+		
+		if(!isComplete() || !b.getWorld().equals(world))
 			return -1;
 		
 		for(Location vertex : vertices) {
@@ -194,6 +198,7 @@ public class ShapeSelection extends Selection {
 	}
 
 	public boolean contains(Location point) {
+		
 		if(!point.getWorld().equals(world))
 			return false;
 		
@@ -211,7 +216,8 @@ public class ShapeSelection extends Selection {
 	}
 
 	public boolean borderContains(Location point) {
-		if(!point.getWorld().equals(world))
+		
+		if(!isComplete() || !point.getWorld().equals(world))
 			return false;
 		
 		Chunk chunk = point.getChunk();
@@ -228,7 +234,8 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public boolean isHighlighted(Block b) {
-		if(!b.getWorld().equals(world))
+		
+		if(!isComplete() ||!b.getWorld().equals(world))
 			return false;
 		
 		Chunk chunk = b.getChunk();
@@ -245,6 +252,7 @@ public class ShapeSelection extends Selection {
 	}
 	
 	public void updateHeight(Location point) {
+		
 		if(!point.getWorld().equals(world))
 			return;
 		

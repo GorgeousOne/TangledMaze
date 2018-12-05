@@ -216,7 +216,7 @@ public abstract class Utils {
 		return max;
 }
 	
-	public static ArrayList<Location> calcVertices(Location v0, Location v2) {
+	public static ArrayList<Location> createRectangularVertices(Location v0, Location v2) {
 		ArrayList<Location> vertices = new ArrayList<>();
 		World w = v0.getWorld();
 		

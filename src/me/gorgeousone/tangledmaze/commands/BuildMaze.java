@@ -27,7 +27,7 @@ public class BuildMaze {
 			
 			if(!SelectionHandler.hasShape(p)) {
 				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
-				p.sendMessage("/tangledmaze start");
+				p.sendMessage("/tangledmaze wand");
 				return;	
 			}
 			
@@ -37,7 +37,7 @@ public class BuildMaze {
 		}
 		
 		if(maze.size() == maze.borderSize()) {
-			p.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built!");
+			p.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built.");
 			return;
 		}
 		

@@ -11,9 +11,18 @@ import org.bukkit.util.Vector;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class Rectangle implements Shape {
-
+	
 	@Override
-	public boolean contains(ArrayList<Location> vertices,Location point) {
+	public int getVertexCount() {
+		return 2;
+	}
+	
+	@Override
+	public boolean contains(ArrayList<Location> vertices, Location point) {
+		
+		if(vertices.size() < 4)
+			throw new IllegalArgumentException("4 vertices needed for this calculation.");
+		
 		return point.getBlockX() >= vertices.get(0).getX() && point.getBlockX() <= vertices.get(2).getX() &&
 			   point.getBlockZ() >= vertices.get(0).getZ() && point.getBlockZ() <= vertices.get(2).getZ();
 	}
@@ -28,7 +37,7 @@ public class Rectangle implements Shape {
 	}
 	
 	@Override
-	public void calcFillAndBorder(
+	public void createFillAndBorder(
 			ArrayList<Location> vertices,
 			HashMap<Chunk, ArrayList<Location>> fill,
 			HashMap<Chunk, ArrayList<Location>> border) {
@@ -40,7 +49,7 @@ public class Rectangle implements Shape {
 				 v2 = vertices.get(1);
 
 		vertices.clear();
-		vertices.addAll(Utils.calcVertices(v0, v2));
+		vertices.addAll(Utils.createRectangularVertices(v0, v2));
 		
 		v0 = vertices.get(0);
 		v2 = vertices.get(2);

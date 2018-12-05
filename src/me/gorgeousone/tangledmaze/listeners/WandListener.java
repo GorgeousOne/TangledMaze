@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,10 +42,10 @@ public class WandListener implements Listener{
 	@EventHandler
 	public void onBlockClick(PlayerInteractEvent e) {
 		
-		Action a = e.getAction();
+		Action action = e.getAction();
 		
-		if(a != Action.LEFT_CLICK_BLOCK &&
-		   a != Action.RIGHT_CLICK_BLOCK)
+		if(action != Action.LEFT_CLICK_BLOCK &&
+		   action != Action.RIGHT_CLICK_BLOCK)
 			return;
 		
 		try {
@@ -61,11 +62,11 @@ public class WandListener implements Listener{
 		ItemStack wand = e.getItem();
 		
 		if(!p.hasPermission(Constants.buildPerm)) {
-			destroyTool(p, wand);
+			destroyWand(p, wand);
 			return;
 		}
 		
-		SelectionHandler.getSelection(p).interact(e.getClickedBlock(), a);
+		SelectionHandler.getSelection(p).interact(e.getClickedBlock(), action);
 	}
 	
 	
@@ -99,18 +100,21 @@ public class WandListener implements Listener{
 		}
 	}
 	
-	private void destroyTool(Player p, ItemStack wand) {
+	private void destroyWand(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);
-		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool... it broke apart.");
+		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
 
 		p.damage(0);
-		p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
 		
-		if(Bukkit.getVersion().contains("1.8"))
+		if(Bukkit.getVersion().contains("1.8")) {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ITEM_BREAK"), 1f, 1f);
-		else
+			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
+
+		}else {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
+			p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 1);
+		}
 	}
 
 	@EventHandler

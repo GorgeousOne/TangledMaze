@@ -30,9 +30,11 @@ public class SetWallWidth {
 			return;
 		}
 		
-		if(wallWidth > 10) {
-			p.sendMessage(Constants.prefix + "In order to not exclude Mexicans the wall thickness is limited to 10 blocks. "
-					+ "In case you are a preseident you may look for another plugin.");
+		if(wallWidth > Constants.MAX_WALL_WIDTH) {
+			p.sendMessage(Constants.prefix
+					+ "With a wall that thick you could already lock out Mexicans. "
+					+ "If you are a preseident please look out for another maze generator. "
+					+ "The wall width is litmited to " + Constants.MAX_WALL_WIDTH + " blocks. ");
 			return;
 		}
 		
