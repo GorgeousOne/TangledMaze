@@ -13,7 +13,6 @@ goals:
 
 - a brush tool for smaller changes ✔
 - an undo commmand and an action history to undo changes ✔
-- limiting a maze's size with different permissions and customizable thresholds in the config ✔
 - an exit setting tool for choosing where gaps will be left in the border of a maze ✔
 
 - a command for setting wall height, wall width and path width of a maze ✔
