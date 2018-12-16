@@ -45,13 +45,13 @@ public class BuildMap {
 	}
 	
 	public MazeFillType getType(Vec2 point) {
-		return shapeMap[point.getX()]
-					   [point.getZ()];
+		return shapeMap[point.getIntX()]
+					   [point.getIntZ()];
 	}
 	
 	public int getHeight(Vec2 point) {
-		return heightMap[point.getX()]
-						[point.getZ()];
+		return heightMap[point.getIntX()]
+						[point.getIntZ()];
 	}
 	
 	public Vec2 getStart() {
@@ -63,8 +63,8 @@ public class BuildMap {
 	}
 	
 	public void setType(Vec2 point, MazeFillType type) {
-		shapeMap[point.getX()]
-				[point.getZ()] = type;
+		shapeMap[point.getIntX()]
+				[point.getIntZ()] = type;
 	}
 	
 	private void calculateMapSize() {

@@ -43,8 +43,8 @@ public class PathSegment {
 		Vec2 min = start.clone().add(relativeMin);
 		Vec2 max = min.clone().add(dimension);
 
-		for(int x = min.getX(); x < max.getX(); x++)
-			for(int z = min.getZ(); z < max.getZ(); z++)
+		for(int x = min.getIntX(); x < max.getIntX(); x++)
+			for(int z = min.getIntZ(); z < max.getIntZ(); z++)
 				fill.add(new Vec2(x, z));
 		
 		return fill;
@@ -62,8 +62,8 @@ public class PathSegment {
 		dimension.add(expansion.getAbs());
 		end.add(expansion);
 
-		if(facing.getX() == -1 ||
-		   facing.getZ() == -1) {
+		if(facing.getIntX() == -1 ||
+		   facing.getIntZ() == -1) {
 			
 			relativeMin.add(expansion);
 		}
@@ -74,10 +74,10 @@ public class PathSegment {
 		Vec2 dStartToEnd = facing.clone().mult(length - width);
 		end.add(dStartToEnd);
 
-		if(facing.getX() != 0) {
+		if(facing.getIntX() != 0) {
 			dimension.set(length, width);
 			
-			if(facing.getX() == -1) {
+			if(facing.getIntX() == -1) {
 				relativeMin = dStartToEnd;
 				
 				if(isExit) {
@@ -88,7 +88,7 @@ public class PathSegment {
 		}else {
 			dimension.set(width, length);
 			
-			if(facing.getZ() == -1) {
+			if(facing.getIntZ() == -1) {
 				relativeMin = dStartToEnd;
 				
 				if(isExit)

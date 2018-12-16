@@ -236,7 +236,7 @@ public abstract class Utils {
 		return vertices;
 	}
 	
-	public static boolean listContains(ArrayList<Location> points, Location point) {
+	public static boolean listContainsXZ(ArrayList<Location> points, Location point) {
 		for(Location point2 : points) {
 			if(point2.getBlockX() == point.getBlockX() &&
 			   point2.getBlockZ() == point.getBlockZ())

@@ -4,14 +4,14 @@ import org.bukkit.util.Vector;
 
 public class Vec2 {
 	
-	private int x, z;
+	private float x, z;
 	
 	public Vec2() {
 		this.x = 0;
 		this.z = 0;
 	}
 	
-	public Vec2(int x, int z) {
+	public Vec2(float x, float z) {
 		this.x = x;
 		this.z = z;
 	}
@@ -20,32 +20,44 @@ public class Vec2 {
 		this.x = vec3.getBlockX();
 		this.z = vec3.getBlockZ();
 	}
-
-	public int getX() {
+	
+	public float getX() {
 		return x;
 	}
 	
-	public int getZ() {
+	public float getZ() {
 		return z;
 	}
 	
-	public Vec2 set(int x, int z) {
+	public int getIntX() {
+		return (int) x;
+	}
+	
+	public int getIntZ() {
+		return (int) z;
+	}
+	
+	public float length() {
+		return (float) Math.sqrt(x*x + z*z);
+	}
+	
+	public Vec2 set(float x, float z) {
 		this.x = x;
 		this.z = z;
 		return this;
 	}
 	
-	public Vec2 setX(int x) {
+	public Vec2 setX(float x) {
 		this.x = x;
 		return this;
 	}
 	
-	public Vec2 setZ(int z) {
+	public Vec2 setZ(float z) {
 		this.z = z;
 		return this;
 	}
 	
-	public Vec2 add(int dx, int dz) {
+	public Vec2 add(float dx, float dz) {
 		x += dx;
 		z += dz;
 		return this;
@@ -63,9 +75,20 @@ public class Vec2 {
 		return this;
 	}
 	
-	public Vec2 mult(int i) {
+	public Vec2 mult(float i) {
 		x *= i;
 		z *= i;
+		return this;
+	}
+	
+	public Vec2 cross(Vec2 vec2) {
+		x *= vec2.z;
+		z *= vec2.x;
+		return this;
+	}
+	
+	public Vec2 normalize() {
+		mult(1f / length());
 		return this;
 	}
 	

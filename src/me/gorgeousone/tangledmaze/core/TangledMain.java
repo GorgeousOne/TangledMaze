@@ -36,14 +36,14 @@ public class TangledMain extends JavaPlugin {
 	
 	private static TangledMain plugin;
 
-	private ItemStack wand;
+	private ItemStack mazeTool;
 	private int staffMazeSize, vipMazeSize, normalMazeSize;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
 		
-		createWand();
+		createMazeWand();
 		loadConfig();
 		registerListeners();
 	}
@@ -70,26 +70,27 @@ public class TangledMain extends JavaPlugin {
 		return normalMazeSize;
 	}
 	
-	public boolean isWand(ItemStack item) {
+	public boolean isMazeWand(ItemStack item) {
 		if(item == null)
 			return false;
 		
 		ItemMeta itemMeta = item.getItemMeta();
-		ItemMeta wandmeta = wand.getItemMeta();
 		
 		return
-			item.getType() == wand.getType() &&
+			item.getType() == mazeTool.getType() &&
 			itemMeta.getDisplayName() != null &&
-			itemMeta.getDisplayName().equals(wandmeta.getDisplayName());
+			itemMeta.getDisplayName().equals(mazeTool.getItemMeta().getDisplayName());
 	}
 	
-	public ItemStack getWand() {
-		ItemMeta meta = wand.getItemMeta();
+	public ItemStack getMazeWand() {
+		ItemMeta meta = mazeTool.getItemMeta();
 		List<String> lore = meta.getLore();
+
 		lore.set(0, ChatColor.GRAY + getCustomEnchantment());
 		meta.setLore(lore);
-		wand.setItemMeta(meta);
-		return wand;
+		mazeTool.setItemMeta(meta);
+
+		return mazeTool;
 	}
 	
 	private String getCustomEnchantment() {
@@ -109,21 +110,22 @@ public class TangledMain extends JavaPlugin {
 		normalMazeSize = getConfig().getInt("normal");
 	}
 	
-	private void createWand() {
-		wand = new ItemStack(Material.GOLD_SPADE);
+	private void createMazeWand() {
+		mazeTool = new ItemStack(Material.GOLD_SPADE);
 		
-		ItemMeta meta = wand.getItemMeta();
-		meta.setDisplayName(ChatColor.DARK_GREEN + "Selection Wand");
+		ItemMeta meta = mazeTool.getItemMeta();
+		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Tool");
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
-		lore.add(ChatColor.GREEN + "The tool to create mazes.");
-		lore.add(ChatColor.GREEN + "Click on the ground to start a selection.");
+		lore.add(ChatColor.GREEN + "A tool designed to create mazes.");
+		lore.add(ChatColor.GREEN + "" + ChatColor.ITALIC + "Look at it's delicate curves!");
+		lore.add(ChatColor.GREEN + "Click on the ground to start a clipboard.");
 		
 		meta.setLore(lore);
-		wand.setItemMeta(meta);
+		mazeTool.setItemMeta(meta);
 	}
 	
 	private void registerListeners() {

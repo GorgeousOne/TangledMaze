@@ -86,8 +86,8 @@ public class CommandHandler implements CommandExecutor {
 		switch (args[0].toLowerCase()) {
 			case "wand":
 				if(p.hasPermission(Constants.wandPerm)) {
-					p.getInventory().addItem(plugin.getWand());
-					p.sendMessage(Constants.prefix + "Selection wand added to your inventory.");
+					p.getInventory().addItem(plugin.getMazeWand());
+					p.sendMessage(Constants.prefix + "Maze wand added to your inventory.");
 				}else
 					p.sendMessage(Constants.insufficientPerms);
 				break;

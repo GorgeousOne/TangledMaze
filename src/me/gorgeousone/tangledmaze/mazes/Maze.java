@@ -15,7 +15,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
@@ -126,18 +126,18 @@ public class Maze {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setShape(ShapeSelection shape) {
+	public void setClip(ClippingTool clip) {
 		
 		if(size != 0)
 			Renderer.hideMaze(this);
 		
-		world = shape.getWorld();
+		world = clip.getWorld();
 		
-		fillChunks = (HashMap<Chunk, ArrayList<Location>>) shape.getFill().clone();
-		borderChunks = (HashMap<Chunk, ArrayList<Location>>) shape.getBorder().clone();
+		fillChunks = (HashMap<Chunk, ArrayList<Location>>) clip.getFill().clone();
+		borderChunks = (HashMap<Chunk, ArrayList<Location>>) clip.getBorder().clone();
 		
-		size = shape.size();
-		borderSize = shape.borderSize();
+		size = clip.size();
+		borderSize = clip.borderSize();
 		isStarted = true;
 		
 		Renderer.showMaze(this);
@@ -367,46 +367,46 @@ public class Maze {
 	}
 	
 	
-	public MazeAction getAddition(ShapeSelection shape) {
+	public MazeAction getAddition(ClippingTool clip) {
 		
 		MazeAction addition = new MazeAction();
 		
-		if(!world.equals(shape.getWorld()))
+		if(!world.equals(clip.getWorld()))
 			return addition;
 		
-		addProtrudingShapeParts(addition, shape);
+		addProtrudingClipParts(addition, clip);
 		
 		//return if the shapes is totally covered by the maze
 		if(addition.getAddedFill().isEmpty())
 			return addition;
 		
-		removeIntersectingBorder(shape, addition);
+		removeIntersectingBorder(clip, addition);
 		
 		//remove all exists inside the shape (thats the easy way)
 		for(Location exit : exits)
-			if(shape.contains(exit)) 
+			if(clip.contains(exit)) 
 				addition.removeExit(exit);
 		
 		return addition;
 	}
 	
-	private void addProtrudingShapeParts(MazeAction addition, ShapeSelection shape) {
+	private void addProtrudingClipParts(MazeAction addition, ClippingTool clip) {
 		//check for new border blocks
-		for(Chunk chunk : shape.getBorder().keySet())
-			for(Location borderPoint : shape.getBorder().get(chunk))
+		for(Chunk chunk : clip.getBorder().keySet())
+			for(Location borderPoint : clip.getBorder().get(chunk))
 				if(!contains(borderPoint))
 					addition.addBorder(borderPoint);
 		
 		//add new fill blocks
-		for(Chunk chunk : shape.getFill().keySet())
-			for(Location fillPoint : shape.getFill().get(chunk))
+		for(Chunk chunk : clip.getFill().keySet())
+			for(Location fillPoint : clip.getFill().get(chunk))
 				if(!contains(fillPoint))
 					addition.addFill(fillPoint);
 	}
 	
-	private void removeIntersectingBorder(ShapeSelection shape, MazeAction action) {
+	private void removeIntersectingBorder(ClippingTool clip, MazeAction action) {
 		
-		for(Chunk chunk : shape.getFill().keySet()) {
+		for(Chunk chunk : clip.getFill().keySet()) {
 			if(!borderChunks.containsKey(chunk))
 				continue;
 			
@@ -416,11 +416,11 @@ public class Maze {
 				Location borderPoint = currentChunk.get(i);
 				
 				//continue if the point isn't even in the shape
-				if(!shape.contains(borderPoint))
+				if(!clip.contains(borderPoint))
 					continue;
 				
 				//if the point is inside the shapes border look up if is connected to blocks outside of the maze
-				if(shape.borderContains(borderPoint) && touchesExternalArea(borderPoint, shape))
+				if(clip.borderContains(borderPoint) && touchesExternalArea(borderPoint, clip))
 					continue;
 				
 				//otherwise remove the block
@@ -429,50 +429,50 @@ public class Maze {
 		}
 	}
 	
-	private boolean touchesExternalArea(Location point, ShapeSelection shape) {
+	private boolean touchesExternalArea(Location point, ClippingTool clip) {
 		
 		for(Directions dir : Directions.values()) {
 			Location point2 = point.clone().add(dir.facing3d());
 			
-			if(!contains(point2) && !shape.contains(point2))
+			if(!contains(point2) && !clip.contains(point2))
 				return true;
 		}
 		return false;
 	}
 	
-	public MazeAction getDeletion(ShapeSelection shape) {
+	public MazeAction getDeletion(ClippingTool clip) {
 		
 		MazeAction deletion = new MazeAction();
 		
-		if(!world.equals(shape.getWorld()))
+		if(!world.equals(clip.getWorld()))
 			return deletion;
 		
-		removeIntrudingShapeParts(deletion, shape);
+		removeIntrudingClipParts(deletion, clip);
 		
 		if(deletion.getAddedBorder().isEmpty() && deletion.getRemovedFill().isEmpty())
 			return deletion;
 	
-		removeIntersectingBorder(shape, deletion);
+		removeIntersectingBorder(clip, deletion);
 		
 		//remove all exits inside the shape 
 		for(Location exit : exits)
-			if(shape.contains(exit))
+			if(clip.contains(exit))
 				deletion.removeExit(exit);
 		
 		return deletion;
 	}
 	
-	private void removeIntrudingShapeParts(MazeAction deletion, ShapeSelection shape) {
+	private void removeIntrudingClipParts(MazeAction deletion, ClippingTool clip) {
 		//get new border points where shape is cutting into maze
-		for(ArrayList<Location> chunk : shape.getBorder().values())
+		for(ArrayList<Location> chunk : clip.getBorder().values())
 			for(Location point : chunk)
 				if(contains(point) && !borderContains(point))
 					deletion.addBorder(point);
 		
 		//remove all remaining maze fill inside the shape
-		for(ArrayList<Location> chunk : shape.getFill().values())
+		for(ArrayList<Location> chunk : clip.getFill().values())
 			for(Location point : chunk)
-				if(contains(point) && !shape.borderContains(point))
+				if(contains(point) && !clip.borderContains(point))
 					deletion.removeFill(point);
 	}
 	
@@ -499,7 +499,6 @@ public class Maze {
 		if(!isHighlighted(b))
 			return action;
 		
-		action.removeBorder(point);
 		reduceBorder(point, action);
 		removeProtrusiveBorder(point, action);
 		
@@ -523,13 +522,14 @@ public class Maze {
 	}
 	
 	private void removeIntrusiveBorder(Location point, MazeAction changes) {
-		//look for neighbors, that are now intruding the border unnecessarily
+		//go through all neighbor-border around given border-point
 		for(Directions dir : Directions.values()) {
 			Location point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
-			if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2))
+			if(!borderContains(point2) && !Utils.listContainsXZ(changes.getAddedBorder(), point2))
 				continue;
 			
+			//remove if they will stick inside of mazes's shape unnecessarily when border-point is removed 
 			if(!sealsMaze(point2, changes, Directions.values()))
 				changes.removeBorder(point2);
 		}
@@ -558,14 +558,14 @@ public class Maze {
 	}
 	
 	private void removeProtrusiveBorder(Location point, MazeAction changes) {
-		//detect outstanding neighbor borders of the block (in cardinal directions)
+		//go through all neighbor-border around given border-point 
 		for(Directions dir : Directions.values()) {
 			Location point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!borderContains(point2))
 				continue;
 			
-			//remove the neighbor if it still stands out
+			//remove if they will stick out of maze's shape unnecessarily when border-point is removed 
 			if(!sealsMaze(point2, changes, Directions.values())) {
 				changes.removeBorder(point2);
 				changes.removeFill(point2);
@@ -582,12 +582,12 @@ public class Maze {
 		for(Directions dir : directions) {
 			Location point2 = point.clone().add(dir.facing3d());
 			
-			if(!contains(point2) && !Utils.listContains(changes.getAddedFill(), point2) ||
-									 Utils.listContains(changes.getRemovedFill(), point2))
+			if(!contains(point2) && !Utils.listContainsXZ(changes.getAddedFill(), point2) ||
+									 Utils.listContainsXZ(changes.getRemovedFill(), point2))
 				touchesExternal = true;
 
-			else if(!borderContains(point2) && !Utils.listContains(changes.getAddedBorder(), point2) ||
-												Utils.listContains(changes.getRemovedBorder(), point2))
+			else if(!borderContains(point2) && !Utils.listContainsXZ(changes.getAddedBorder(), point2) ||
+												Utils.listContainsXZ(changes.getRemovedBorder(), point2))
 				touchesFill = true;
 		}
 		

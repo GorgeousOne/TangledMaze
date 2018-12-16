@@ -6,8 +6,8 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class AddToMaze {
@@ -25,13 +25,13 @@ public class AddToMaze {
 			return;
 		}
 		
-		if(!SelectionHandler.hasShape(p)) {
+		if(!ToolHandler.hasClip(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area first.");
 			p.sendMessage("/tangledmaze select rectangle/ellipse");
 			return;
 		}
 		
-		ShapeSelection shape = SelectionHandler.getShape(p);
+		ClippingTool shape = ToolHandler.getClip(p);
 		
 		if(!shape.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");

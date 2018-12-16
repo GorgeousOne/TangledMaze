@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.selections;
+package me.gorgeousone.tangledmaze.tools;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -9,9 +9,9 @@ import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 
-public class BrushSelection extends Selection {
+public class BrushTool extends Tool {
 	
-	public BrushSelection(Player builder) {
+	public BrushTool(Player builder) {
 		super(builder);
 	}		
 	

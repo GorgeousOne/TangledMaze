@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 @SuppressWarnings("deprecation")
@@ -35,7 +35,7 @@ public class WandListener implements Listener{
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
-		if(plugin.isWand(e.getItem()))
+		if(plugin.isMazeWand(e.getItem()))
 			e.setCancelled(true);
 	}
 	
@@ -53,7 +53,7 @@ public class WandListener implements Listener{
 				return;
 		} catch (NoSuchMethodError err) {}
 		
-		if(!plugin.isWand(e.getItem()))
+		if(!plugin.isMazeWand(e.getItem()))
 			return;
 		
 		e.setCancelled(true);
@@ -62,11 +62,11 @@ public class WandListener implements Listener{
 		ItemStack wand = e.getItem();
 		
 		if(!p.hasPermission(Constants.buildPerm)) {
-			destroyWand(p, wand);
+			destroyMazeWand(p, wand);
 			return;
 		}
 		
-		SelectionHandler.getSelection(p).interact(e.getClickedBlock(), action);
+		ToolHandler.getTool(p).interact(e.getClickedBlock(), action);
 	}
 	
 	
@@ -76,31 +76,31 @@ public class WandListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack newItem = p.getInventory().getItem(e.getNewSlot());
 		
-		if(TangledMain.getPlugin().isWand(newItem)) {
+		if(TangledMain.getPlugin().isMazeWand(newItem)) {
 				
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
 			
-			if(SelectionHandler.hasShape(p) && !Renderer.isShapeVisible(SelectionHandler.getShape(p)))
-				Renderer.showShape(SelectionHandler.getShape(p));
+			if(ToolHandler.hasClip(p) && !Renderer.isShapeVisible(ToolHandler.getClip(p)))
+				Renderer.showClipboard(ToolHandler.getClip(p));
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPickUp(PlayerPickupItemEvent e) {
 
-		if(TangledMain.getPlugin().isWand(e.getItem().getItemStack())) {
+		if(TangledMain.getPlugin().isMazeWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
 			
-			if(SelectionHandler.hasShape(p) && !Renderer.isShapeVisible(SelectionHandler.getShape(p)))
-				Renderer.showShape(SelectionHandler.getShape(p));
+			if(ToolHandler.hasClip(p) && !Renderer.isShapeVisible(ToolHandler.getClip(p)))
+				Renderer.showClipboard(ToolHandler.getClip(p));
 		}
 	}
 	
-	private void destroyWand(Player p, ItemStack wand) {
+	private void destroyMazeWand(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);
 		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");

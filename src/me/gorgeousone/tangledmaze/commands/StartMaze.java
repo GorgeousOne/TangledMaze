@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class StartMaze {
@@ -18,12 +18,12 @@ public class StartMaze {
 			return;
 		}
 		
-		if(!SelectionHandler.hasShape(p)) {
+		if(!ToolHandler.hasClip(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area first.");
 			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShape(p);
+		ClippingTool selection = ToolHandler.getClip(p);
 		
 		if(!selection.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
@@ -31,7 +31,7 @@ public class StartMaze {
 		}
 		
 		Maze maze = MazeHandler.getMaze(p);
-		maze.setShape(selection);
+		maze.setClip(selection);
 		
 		p.sendMessage(Constants.prefix + "Started a maze from selection.");
 		selection.reset();

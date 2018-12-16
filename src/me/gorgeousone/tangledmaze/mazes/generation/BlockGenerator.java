@@ -94,16 +94,16 @@ public class BlockGenerator {
 		neighborYs.add(y);
 		
 		for(Directions dir : Directions.values()) {
-			int x2 = x + dir.facing().getX(),
-				z2 = z + dir.facing().getZ();
+			int x2 = x + dir.facing().getIntX(),
+				z2 = z + dir.facing().getIntZ();
 			
 			if(x2 < 0 || x2 >= map.getDimX() ||
 			   z2 < 0 || z2 >= map.getDimZ())
 				continue;
 			
 			neighborYs.add(map.getHeight(
-					new Vec2(x + dir.facing().getX(),
-							 z + dir.facing().getZ())));
+					new Vec2(x + dir.facing().getIntX(),
+							 z + dir.facing().getIntZ())));
 		}
 		
 		return Utils.getMax(neighborYs);

@@ -57,8 +57,8 @@ public class ExitGenerator {
 		Vec2 pathStart = exit.getEnd();
 		map.setStart(pathStart);
 		
-		pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth);
-		pathGridOffsetZ = pathStart.getZ() % (pathWidth + wallWidth);
+		pathGridOffsetX = pathStart.getIntX() % (pathWidth + wallWidth);
+		pathGridOffsetZ = pathStart.getIntZ() % (pathWidth + wallWidth);
 		
 		//make the main exit out of path so the path generator won't connect any path to it anymore
 		drawSegmentOnMap(exit, map, MazeFillType.PATH);
@@ -79,10 +79,10 @@ public class ExitGenerator {
 		int exitOffset;
 		
 		//calculate the extra length for the exit in relation to the grid / the grids's offset
-		if(facing.getX() != 0)
-			exitOffset = exitSegment.getStart().getX() - pathGridOffsetX;
+		if(facing.getIntX() != 0)
+			exitOffset = exitSegment.getStart().getIntX() - pathGridOffsetX;
 		else
-			exitOffset = exitSegment.getStart().getZ() - pathGridOffsetZ;
+			exitOffset = exitSegment.getStart().getIntZ() - pathGridOffsetZ;
 		
 		//get rid off negative values...
 		if(exitOffset <= 0)
@@ -93,7 +93,7 @@ public class ExitGenerator {
 			exitOffset %= pathWidth + wallWidth;
 		
 		//reverse offset if facing is not pointing to the offsets of the grid
-		if(facing.getX() == 1 || facing.getZ() == 1) {
+		if(facing.getIntX() == 1 || facing.getIntZ() == 1) {
 			exitOffset = (pathWidth + wallWidth) - exitOffset;
 			
 			if(exitOffset <= 0)
@@ -111,8 +111,8 @@ public class ExitGenerator {
 			Vec2 nextToExit = new Vec2(exit.toVector());
 			nextToExit.add(dir.facing());
 			
-			if(nextToExit.getX() < 0 || nextToExit.getX() >= map.getDimX() ||
-			   nextToExit.getZ() < 0 || nextToExit.getZ() >= map.getDimZ())
+			if(nextToExit.getIntX() < 0 || nextToExit.getIntX() >= map.getDimX() ||
+			   nextToExit.getIntZ() < 0 || nextToExit.getIntZ() >= map.getDimZ())
 				continue;
 			
 			if(map.getType(nextToExit) == MazeFillType.UNDEFINED)
@@ -125,8 +125,8 @@ public class ExitGenerator {
 	private static void drawSegmentOnMap(PathSegment segment, BuildMap map, MazeFillType type) {
 		
 		for(Vec2 point : segment.getFill()) {
-			if(point.getX() >= 0 && point.getX() < map.getDimX() &&
-			   point.getZ() >= 0 && point.getZ() < map.getDimZ())
+			if(point.getIntX() >= 0 && point.getIntX() < map.getDimX() &&
+			   point.getIntZ() >= 0 && point.getIntZ() < map.getDimZ())
 				map.setType(point, type);
 		}
 	}

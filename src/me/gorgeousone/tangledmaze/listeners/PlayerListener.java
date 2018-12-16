@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
 import me.gorgeousone.tangledmaze.shapes.Shape;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class PlayerListener implements Listener {
@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			if(p.hasPermission(Constants.buildPerm)) {
-				SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
+				ToolHandler.setTool(p, new ClippingTool(p, Shape.RECT));
 				MazeHandler.setMaze(p, new Maze(p));
 			}
 		}
@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
 		Player p = e.getPlayer();
 		
 		if(p.hasPermission(Constants.buildPerm)) {
-			SelectionHandler.setSelection(p, new ShapeSelection(p, Shape.RECT));
+			ToolHandler.setTool(p, new ClippingTool(p, Shape.RECT));
 			MazeHandler.setMaze(p, new Maze(p));
 		}
 	}
@@ -45,7 +45,7 @@ public class PlayerListener implements Listener {
 		Player p = e.getPlayer();
 		
 		if(p.hasPermission(Constants.buildPerm)) {
-			SelectionHandler.removeSelection(p);
+			ToolHandler.removeTool(p);
 			MazeHandler.removeMaze(p);
 		}
 	}
@@ -56,7 +56,7 @@ public class PlayerListener implements Listener {
 			
 		if(p.hasPermission(Constants.buildPerm)) {
 			MazeHandler.getMaze(p).reset();
-			SelectionHandler.resetToDefaultSel(p);
+			ToolHandler.resetToDefaultTool(p);
 		}
 	}
 }

@@ -8,7 +8,7 @@ import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
 import me.gorgeousone.tangledmaze.utils.Constants;
 import me.gorgeousone.tangledmaze.utils.MaterialDataSerializer;
 
@@ -25,7 +25,7 @@ public class BuildMaze {
 		
 		if(!maze.isStarted()) {
 			
-			if(!SelectionHandler.hasShape(p)) {
+			if(!ToolHandler.hasClip(p)) {
 				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 				p.sendMessage("/tangledmaze wand");
 				return;	
@@ -66,7 +66,7 @@ public class BuildMaze {
 		MazeHandler.buildMaze(maze);
 		p.sendMessage(Constants.prefix + "Started building your maze.");
 		
-		SelectionHandler.resetToDefaultSel(p);
+		ToolHandler.resetToDefaultTool(p);
 		maze.reset();
 	}
 	

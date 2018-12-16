@@ -3,8 +3,8 @@ package me.gorgeousone.tangledmaze.commands;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.*;
 import me.gorgeousone.tangledmaze.shapes.*;
+import me.gorgeousone.tangledmaze.tools.*;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class SelectTool {
@@ -17,31 +17,41 @@ public class SelectTool {
 		}
 		
 		switch (selectionType.toLowerCase()) {
-		case "rectangle":
 		case "rect":
-		case "square":
+		case "rectangle":
 			
-			setShapeSelection(p, Shape.RECT);
-			p.sendMessage(Constants.prefix + "Changed selection type to rectangular.");
+			try {
+				setClipShape(p, Shape.RECT);
+				p.sendMessage(Constants.prefix + "Changed cliping shape to rectangle.");
+			} catch (Exception e) {}
+			
 			break;
 			
-		case "ellipse":
 		case "circle":
 			
-			if(setShapeSelection(p, Shape.ELLIPSE))
-				p.sendMessage(Constants.prefix + "Changed selection type to elliptical.");
+			try {
+				setClipShape(p, Shape.CIRCLE);
+				p.sendMessage(Constants.prefix + "Changed cliping shape to circle.");
+			} catch (Exception e) {}
+			
 			break;
 		
 		case "brush":
-
-			if(setMazeTool(p, new BrushSelection(p)))
-				p.sendMessage(Constants.prefix + "Changed selection type to brush.");
+			
+			try {
+				setMazeTool(p, new BrushTool(p));
+				p.sendMessage(Constants.prefix + "Changed tool to brush.");
+			} catch (Exception e) {}
+			
 			break;
 			
 		case "exit":
 			
-			if(setMazeTool(p, new ExitSetter(p)))
-				p.sendMessage(Constants.prefix + "Changed selection type to exit setter.");
+			try {
+				setMazeTool(p, new ExitSettingTool(p));
+				p.sendMessage(Constants.prefix + "Changed tool to exit setter.");
+			} catch (Exception e) {}
+			
 			break;
 			
 		default:
@@ -50,26 +60,24 @@ public class SelectTool {
 		}
 	}
 	
-	private boolean setShapeSelection(Player p, Shape type) {
+	private void setClipShape(Player p, Shape type) {
 		
-		if(!SelectionHandler.hasShape(p)) {
-			SelectionHandler.setSelection(p, new ShapeSelection(p, type));
-			return true;
+		if(!ToolHandler.hasClip(p)) {
+			ToolHandler.setTool(p, new ClippingTool(p, type));
+			return;
 		}
 		
-		ShapeSelection selection = SelectionHandler.getShape(p);
+		ClippingTool clip = ToolHandler.getClip(p);
 		
-		if(!selection.getType().getClass().equals(type.getClass())) {
-			selection.setType(type);
-			return true;
-		}
-	
-		return false;
+		if(clip.getType().getClass().equals(type.getClass()))
+			throw new IllegalStateException("Tool is already selected.");
+
+		clip.setType(type);
 	}
 	
-	private boolean setMazeTool(Player p, Selection type) {
+	private boolean setMazeTool(Player p, Tool type) {
 
-		if(SelectionHandler.getSelection(p).getClass().equals(type.getClass()))
+		if(ToolHandler.getTool(p).getClass().equals(type.getClass()))
 			return false;
 		
 		if(!MazeHandler.getMaze(p).isStarted()) {
@@ -78,10 +86,10 @@ public class SelectTool {
 			return false;
 		}
 		
-		if(SelectionHandler.hasShape(p))
-			SelectionHandler.getShape(p).reset();
+		if(ToolHandler.hasClip(p))
+			ToolHandler.getClip(p).reset();
 			
-		SelectionHandler.setSelection(p, type);
+		ToolHandler.setTool(p, type);
 		return true;
 	}
 }

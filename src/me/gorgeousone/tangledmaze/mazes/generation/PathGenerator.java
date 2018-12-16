@@ -43,8 +43,8 @@ public class PathGenerator {
 				
 				Vec2
 					facing = dir.facing(),
-					start  = new Vec2(currentEnd.getX() + facing.getX() * pathWidth,
-									  currentEnd.getZ() + facing.getZ() * pathWidth);
+					start  = new Vec2(currentEnd.getIntX() + facing.getIntX() * pathWidth,
+									  currentEnd.getIntZ() + facing.getIntZ() * pathWidth);
 				
 				PathSegment path = new PathSegment(
 						start,
@@ -77,8 +77,8 @@ public class PathGenerator {
 		
 		for(Vec2 point : path.getFill()) {
 			
-			if(point.getX() < 0 || point.getX() >= map.getDimX() ||
-			   point.getZ() < 0 || point.getZ() >= map.getDimZ()) {
+			if(point.getIntX() < 0 || point.getIntX() >= map.getDimX() ||
+			   point.getIntZ() < 0 || point.getIntZ() >= map.getDimZ()) {
 				return false;
 			}
 			

@@ -62,7 +62,7 @@ public class Ellipse implements Shape {
 			return false;
 		
 		for(Directions dir : Directions.values()) {
-			Vector neighbour = point2.clone().add(dir.facing3d().setX(proportion * dir.facing().getX()));
+			Vector neighbour = point2.clone().add(dir.facing3d().setX(proportion * dir.facing().getIntX()));
 			
 			if(mid.distance(neighbour) > radiusZ - 0.25)
 				return true;
@@ -138,7 +138,7 @@ public class Ellipse implements Shape {
 				
 				//check for border by looking for neighbors blocks that aren't in radius distance
 				for(Directions dir : Directions.values()) {
-					Vector neighbour = iter.clone().add(dir.facing3d().setX(proportion * dir.facing().getX()));
+					Vector neighbour = iter.clone().add(dir.facing3d().setX(proportion * dir.facing().getIntX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
 						addBorder(border, Utils.nearestSurface(point));

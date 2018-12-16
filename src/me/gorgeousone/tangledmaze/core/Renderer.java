@@ -12,18 +12,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeAction;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public abstract class Renderer implements Listener {
 	
-	private static HashMap<ShapeSelection, Boolean> shapeVisibilities = new HashMap<>();
+	private static HashMap<ClippingTool, Boolean> shapeVisibilities = new HashMap<>();
 	private static HashMap<Maze, Boolean> mazeVisibilities = new HashMap<>();
 	
 	public static void reload() {
-		for(ShapeSelection selection : shapeVisibilities.keySet()) {
+		for(ClippingTool selection : shapeVisibilities.keySet()) {
 			if(isShapeVisible(selection))
-				hideShape(selection, false);
+				hideClipboard(selection, false);
 		}
 		
 		for(Maze maze : mazeVisibilities.keySet()) {
@@ -32,7 +32,7 @@ public abstract class Renderer implements Listener {
 		}
 	}
 	
-	public static void registerShape(ShapeSelection shape) {
+	public static void registerClip(ClippingTool shape) {
 		shapeVisibilities.put(shape, false);
 	}
 	
@@ -40,7 +40,7 @@ public abstract class Renderer implements Listener {
 		mazeVisibilities.put(maze, false);
 	}
 	
-	public static void unregisterShape(ShapeSelection shape) {
+	public static void unregisterShape(ClippingTool shape) {
 		shapeVisibilities.remove(shape);
 	}
 	
@@ -48,7 +48,7 @@ public abstract class Renderer implements Listener {
 		mazeVisibilities.remove(maze);
 	}
 	
-	public static boolean isShapeVisible(ShapeSelection shape) {
+	public static boolean isShapeVisible(ClippingTool shape) {
 		return shapeVisibilities.get(shape);
 	}
 	
@@ -57,27 +57,27 @@ public abstract class Renderer implements Listener {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static void showShape(ShapeSelection shape) {
+	public static void showClipboard(ClippingTool clipboard) {
 		
-		if(shape.getPlayer() == null)
+		if(clipboard.getPlayer() == null)
 			return;
 		
-		shapeVisibilities.put(shape, true);
-		Player p = shape.getPlayer();
+		shapeVisibilities.put(clipboard, true);
+		Player p = clipboard.getPlayer();
 		
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				
-				if(shape.isComplete()) {
-					for(ArrayList<Location> chunk : shape.getBorder().values()) {
+				if(clipboard.isComplete()) {
+					for(ArrayList<Location> chunk : clipboard.getBorder().values()) {
 						for(Location point : chunk) {
 							p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
 						}
 					}
 				}
 				
-				for(Location vertex : shape.getVertices())
+				for(Location vertex : clipboard.getVertices())
 					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 			}
 		}.runTask(TangledMain.getPlugin());
@@ -110,27 +110,27 @@ public abstract class Renderer implements Listener {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static void hideShape(ShapeSelection shape, boolean updateMaze) {
+	public static void hideClipboard(ClippingTool clipboard, boolean updateMaze) {
 		
-		if(shape.getPlayer() == null || !isShapeVisible(shape))
+		if(clipboard.getPlayer() == null || !isShapeVisible(clipboard))
 			return;
 		
-		shapeVisibilities.put(shape, false);
-		Player p = shape.getPlayer();
+		shapeVisibilities.put(clipboard, false);
+		Player p = clipboard.getPlayer();
 		
-		if(shape.isComplete()) {
-			for(ArrayList<Location> chunk : shape.getBorder().values()) {
+		if(clipboard.isComplete()) {
+			for(ArrayList<Location> chunk : clipboard.getBorder().values()) {
 				for(Location point : chunk) {
 					p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 				}
 			}
 		}
 		
-		for(Location vertex : shape.getVertices())
+		for(Location vertex : clipboard.getVertices())
 			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
 		
 		if(updateMaze && MazeHandler.getMaze(p).isStarted() && isMazeVisible(MazeHandler.getMaze(p)))
-			refreshMaze(p, shape, MazeHandler.getMaze(p));
+			refreshMaze(p, clipboard, MazeHandler.getMaze(p));
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -187,26 +187,26 @@ public abstract class Renderer implements Listener {
 				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0); 
 		}
 		
-		for(ShapeSelection shape : shapeVisibilities.keySet()) {
+		for(ClippingTool clipboard : shapeVisibilities.keySet()) {
 			
-			if(isShapeVisible(shape) && shape.isComplete() && shape.getBorder().containsKey(c)) {
+			if(isShapeVisible(clipboard) && clipboard.isComplete() && clipboard.getBorder().containsKey(c)) {
 				
-				if(shape.getPlayer() == null)
+				if(clipboard.getPlayer() == null)
 					continue;
 
-				Player p = shape.getPlayer();
+				Player p = clipboard.getPlayer();
 				
-				for(Location point : shape.getBorder().get(c))
+				for(Location point : clipboard.getBorder().get(c))
 					p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
 				
-				for(Location vertex : shape.getVertices())
+				for(Location vertex : clipboard.getVertices())
 					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 			}
 		}
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static void refreshMaze(Player p, ShapeSelection shape, Maze maze) {
+	private static void refreshMaze(Player p, ClippingTool shape, Maze maze) {
 
 		if(shape.isComplete()) {
 			

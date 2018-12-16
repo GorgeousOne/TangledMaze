@@ -20,9 +20,9 @@ import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.selections.Selection;
-import me.gorgeousone.tangledmaze.selections.SelectionHandler;
-import me.gorgeousone.tangledmaze.selections.ShapeSelection;
+import me.gorgeousone.tangledmaze.tools.Tool;
+import me.gorgeousone.tangledmaze.tools.ToolHandler;
+import me.gorgeousone.tangledmaze.tools.ClippingTool;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class BlockChangeListener implements Listener {
@@ -98,20 +98,20 @@ public class BlockChangeListener implements Listener {
 					maze.updateHeight(point);
 				}
 				
-				for(Selection selection : SelectionHandler.getSelections()) {
+				for(Tool tool : ToolHandler.getTools()) {
 					
-					if(!(selection instanceof ShapeSelection))
+					if(!(tool instanceof ClippingTool))
 						continue;
 					
-					ShapeSelection shape = (ShapeSelection) selection;
+					ClippingTool clip = (ClippingTool) tool;
 					
-					if(!shape.contains(point))
+					if(!clip.contains(point))
 						continue;
 					
-					if(Renderer.isShapeVisible(shape) && shape.isHighlighted(point.getBlock()))
-						Renderer.hideShape(shape, true);
+					if(Renderer.isShapeVisible(clip) && clip.isHighlighted(point.getBlock()))
+						Renderer.hideClipboard(clip, true);
 					
-					shape.updateHeight(point);
+					clip.updateHeight(point);
 				}
 			}
 		};

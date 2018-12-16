@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.selections;
+package me.gorgeousone.tangledmaze.tools;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -8,9 +8,9 @@ import org.bukkit.event.block.Action;
 import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 
-public class ExitSetter extends Selection {
+public class ExitSettingTool extends Tool {
 	
-	public ExitSetter(Player p) {
+	public ExitSettingTool(Player p) {
 		super(p);
 	}
 	

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.selections;
+package me.gorgeousone.tangledmaze.tools;
 
 import java.util.UUID;
 
@@ -7,11 +7,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
-public abstract class Selection {
+public abstract class Tool {
 	
 	private UUID player;
 
-	public Selection(Player builder) {
+	public Tool(Player builder) {
 		this.player = builder.getUniqueId();
 	}
 	

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.selections;
+package me.gorgeousone.tangledmaze.tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.shapes.Shape;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
-public class ShapeSelection extends Selection {
+public class ClippingTool extends Tool {
 
 	private World world;
 	private Shape shape;
@@ -27,7 +27,7 @@ public class ShapeSelection extends Selection {
 	private int indexOfResizedVertex;
 	
 	
-	public ShapeSelection(Player builder, Shape type) {
+	public ClippingTool(Player builder, Shape type) {
 		super(builder);
 		
 		if(builder != null)
@@ -53,9 +53,9 @@ public class ShapeSelection extends Selection {
 		vertices.remove(3);
 		vertices.remove(1);
 		
-		Renderer.hideShape(this, true);
+		Renderer.hideClipboard(this, true);
 		calculateShape();
-		Renderer.showShape(this);
+		Renderer.showClipboard(this);
 	}
 	
 	public World getWorld() {
@@ -112,13 +112,13 @@ public class ShapeSelection extends Selection {
 				return;
 				
 			}else {
-				Renderer.hideShape(this, true);
+				Renderer.hideClipboard(this, true);
 				reset();
 				vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			}
 		}
 		
-		Renderer.showShape(this);
+		Renderer.showClipboard(this);
 	}
 	
 	private void calculateShape() {
@@ -141,7 +141,7 @@ public class ShapeSelection extends Selection {
 	
 	private void resizeShape(Block b) {
 		
-		Renderer.hideShape(this, true);
+		Renderer.hideClipboard(this, true);
 		Location oppositeVertex = vertices.get((indexOfResizedVertex+2) % 4);
 		
 		vertices.clear();
@@ -154,7 +154,7 @@ public class ShapeSelection extends Selection {
 	
 	public void reset() {
 		
-		Renderer.hideShape(this, true);
+		Renderer.hideClipboard(this, true);
 
 		fillChunks.clear();
 		borderChunks.clear();
