@@ -62,12 +62,12 @@ public class SelectTool {
 	
 	private void setClipShape(Player p, Shape type) {
 		
-		if(!ToolHandler.hasClip(p)) {
+		if(!ToolHandler.hasClipboard(p)) {
 			ToolHandler.setTool(p, new ClippingTool(p, type));
 			return;
 		}
 		
-		ClippingTool clip = ToolHandler.getClip(p);
+		ClippingTool clip = ToolHandler.getClipboard(p);
 		
 		if(clip.getType().getClass().equals(type.getClass()))
 			throw new IllegalStateException("Tool is already selected.");
@@ -86,8 +86,8 @@ public class SelectTool {
 			return false;
 		}
 		
-		if(ToolHandler.hasClip(p))
-			ToolHandler.getClip(p).reset();
+		if(ToolHandler.hasClipboard(p))
+			ToolHandler.getClipboard(p).reset(p.getWorld());
 			
 		ToolHandler.setTool(p, type);
 		return true;

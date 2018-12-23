@@ -25,32 +25,32 @@ public class AddToMaze {
 			return;
 		}
 		
-		if(!ToolHandler.hasClip(p)) {
+		if(!ToolHandler.hasClipboard(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area first.");
 			p.sendMessage("/tangledmaze select rectangle/ellipse");
 			return;
 		}
 		
-		ClippingTool shape = ToolHandler.getClip(p);
+		ClippingTool clipboard = ToolHandler.getClipboard(p);
 		
-		if(!shape.isComplete()) {
+		if(!clipboard.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
 			return;
 		}
 		
 		Maze maze = MazeHandler.getMaze(p);
-		MazeAction action = maze.getAddition(shape);
+		MazeAction action = maze.getAddition(clipboard.getClip());
 		
 		if(action.getAddedFill().size() == 0) {
 			p.sendMessage(ChatColor.RED + "Your selection is entirely covered by your maze.");
 			return;
 			
-		}else if(action.getAddedFill().size() == shape.size()) {
+		}else if(action.getAddedFill().size() == clipboard.getClip().size()) {
 			p.sendMessage(ChatColor.RED + "Your selection does not seem to touch your maze directly (outline on outline).");
 			return;
 		}
 
-		shape.reset();
+		clipboard.reset(p.getWorld());
 		maze.processAction(action, true);
 	}
 }

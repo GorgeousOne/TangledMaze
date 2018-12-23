@@ -236,15 +236,6 @@ public abstract class Utils {
 		return vertices;
 	}
 	
-	public static boolean listContainsXZ(ArrayList<Location> points, Location point) {
-		for(Location point2 : points) {
-			if(point2.getBlockX() == point.getBlockX() &&
-			   point2.getBlockZ() == point.getBlockZ())
-				return true;
-		}
-		return false;
-	}
-	
 //	public HashMap<Chunk, ArrayList<Location>> deepClone(HashMap<Chunk, ArrayList<Location>> map) {
 //		
 //		HashMap

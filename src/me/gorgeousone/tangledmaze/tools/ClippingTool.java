@@ -1,9 +1,7 @@
 package me.gorgeousone.tangledmaze.tools;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,28 +14,28 @@ import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class ClippingTool extends Tool {
 
-	private World world;
 	private Shape shape;
 	
-	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
+	private Clip clip;
 	private ArrayList<Location> vertices;
-	private int size, borderSize;
 	
 	private boolean isComplete, isResizing;
 	private int indexOfResizedVertex;
 	
+	public ClippingTool(World world, Shape type) {
+		super(null);
+		
+		clip = new Clip(world);
+		shape = type;
+		vertices = new ArrayList<>();
+	}
 	
 	public ClippingTool(Player builder, Shape type) {
 		super(builder);
 		
-		if(builder != null)
-			world = builder.getWorld();
-		
+		clip = new Clip(builder.getWorld()); 
 		shape = type;
-		
 		vertices = new ArrayList<>();
-		fillChunks = new HashMap<>();
-		borderChunks = new HashMap<>();
 	}
 	
 	public void setType(Shape shape) {
@@ -47,9 +45,6 @@ public class ClippingTool extends Tool {
 		if(!isComplete)
 			return;
 		
-		if(isResizing)
-			isResizing = false;
-
 		vertices.remove(3);
 		vertices.remove(1);
 		
@@ -58,8 +53,9 @@ public class ClippingTool extends Tool {
 		Renderer.showClipboard(this);
 	}
 	
+	//think about cleanness
 	public World getWorld() {
-		return world;
+		return clip.getWorld();
 	}
 	
 	public Shape getType() {
@@ -70,28 +66,15 @@ public class ClippingTool extends Tool {
 		return isComplete;
 	}
 	
-	public HashMap<Chunk, ArrayList<Location>> getFill() {
-		return fillChunks;
-	}
-
-	public HashMap<Chunk, ArrayList<Location>> getBorder() {
-		return borderChunks;
-	}
-	
-	public int size() {
-		return size;
-	}
-
-	public int borderSize() {
-		return borderSize;
+	public Clip getClip() {
+		return clip;
 	}
 	
 	@Override
 	public void interact(Block clicked, Action action) {
 		
-		if(clicked.getWorld() != world) {
-			reset();
-			world = clicked.getWorld();
+		if(clicked.getWorld() != getWorld()) {
+			reset(clicked.getWorld());
 		}
 		
 		if(vertices.size() < shape.getVertexCount()-1) {
@@ -113,7 +96,7 @@ public class ClippingTool extends Tool {
 				
 			}else {
 				Renderer.hideClipboard(this, true);
-				reset();
+				reset(getWorld());
 				vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			}
 		}
@@ -123,20 +106,9 @@ public class ClippingTool extends Tool {
 	
 	private void calculateShape() {
 		
-		borderChunks.clear();
-		fillChunks.clear();
-		
-		borderSize = 0;
-		size = 0;
-
-		shape.createFillAndBorder(vertices, fillChunks, borderChunks);
+		clip = shape.createClip(vertices);
 		isComplete = true;
-		
-		for(ArrayList<Location> chunk : fillChunks.values())
-			size += chunk.size();
-		
-		for(ArrayList<Location> chunk : borderChunks.values())
-			borderSize += chunk.size();
+		isResizing = false;
 	}
 	
 	private void resizeShape(Block b) {
@@ -149,20 +121,14 @@ public class ClippingTool extends Tool {
 		vertices.add(Utils.nearestSurface(b.getLocation()));
 		
 		calculateShape();
-		isResizing = false;
 	}
 	
-	public void reset() {
+	public void reset(World world) {
 		
 		Renderer.hideClipboard(this, true);
 
-		fillChunks.clear();
-		borderChunks.clear();
+		clip = new Clip(world);
 		vertices.clear();
-		
-		size = 0;
-		borderSize = 0;
-		
 		isComplete = false;
 		isResizing = false;
 	}
@@ -185,7 +151,7 @@ public class ClippingTool extends Tool {
 	
 	public int indexOfVertex(Block b) {
 		
-		if(!isComplete() || !b.getWorld().equals(world))
+		if(!isComplete() || !b.getWorld().equals(getWorld()))
 			return -1;
 		
 		for(Location vertex : vertices) {
@@ -197,79 +163,35 @@ public class ClippingTool extends Tool {
 		return -1;
 	}
 
-	public boolean contains(Location point) {
-		
-		if(!point.getWorld().equals(world))
-			return false;
-		
-		Chunk chunk = point.getChunk();
-		
-		if(!fillChunks.containsKey(chunk))
-			return false;
-		
-		for(Location point2 : fillChunks.get(chunk)) {
-			if(point2.getBlockX() == point.getBlockX() &&
-			   point2.getBlockZ() == point.getBlockZ())
-				return true;
-		}
-		return false;
-	}
-
-	public boolean borderContains(Location point) {
-		
-		if(!isComplete() || !point.getWorld().equals(world))
-			return false;
-		
-		Chunk chunk = point.getChunk();
-		
-		if(!borderChunks.containsKey(chunk))
-			return false;
-		
-		for(Location point2 : borderChunks.get(chunk)) {
-			if(point2.getBlockX() == point.getBlockX() &&
-			   point2.getBlockZ() == point.getBlockZ())
-				return true;
-		}
-		return false;
-	}
-	
 	public boolean isHighlighted(Block b) {
 		
-		if(!isComplete() ||!b.getWorld().equals(world))
+		if(!isComplete() ||!b.getWorld().equals(getWorld()))
 			return false;
-		
-		Chunk chunk = b.getChunk();
-		Location point = b.getLocation();
-		
-		if(!borderChunks.containsKey(chunk))
-			return false;
-		
-		for(Location point2 : borderChunks.get(chunk))
-			if(point.equals(point2))
-				return true;
 		
 		return false;
+		//TODO find solution
 	}
 	
 	public void updateHeight(Location point) {
 		
-		if(!point.getWorld().equals(world))
-			return;
-		
-		if(!fillChunks.containsKey(point.getChunk()))
-			return;
-			
-		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
-		
-		if(fill.contains(point)) {
-			
-			Location newPoint = Utils.nearestSurface(point);
-			fill.set(fill.indexOf(point), newPoint);
-
-			ArrayList<Location>	border = borderChunks.get(point.getChunk());
-
-			if(border.contains(point))
-				border.set(border.indexOf(point), newPoint);
-		}
+		//TODO update
+//		if(!point.getWorld().equals(getWorld()))
+//			return;
+//		
+//		if(!fillChunks.containsKey(point.getChunk()))
+//			return;
+//			
+//		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
+//		
+//		if(fill.contains(point)) {
+//			
+//			Location newPoint = Utils.nearestSurface(point);
+//			fill.set(fill.indexOf(point), newPoint);
+//
+//			ArrayList<Location>	border = borderChunks.get(point.getChunk());
+//
+//			if(border.contains(point))
+//				border.set(border.indexOf(point), newPoint);
+//		}
 	}
 }

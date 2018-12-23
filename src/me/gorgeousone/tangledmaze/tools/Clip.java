@@ -1,21 +1,32 @@
 package me.gorgeousone.tangledmaze.tools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
+import org.bukkit.World;
+
+import me.gorgeousone.tangledmaze.utils.MazePoint;
 
 public class Clip {
-
-	private HashMap<Chunk, ArrayList<Location>> fillChunks, borderChunks;
+	
+	private World world;
+	private TreeSet<MazePoint> fill, border;
+	private ArrayList<Chunk> chunks;
+	
 	private int size, borderSize;
 	
-	public Clip() {
-		fillChunks = new HashMap<>();
-		borderChunks = new HashMap<>();
+	public Clip(World world) {
+		
+		this.world = world;
+		
+		fill = new TreeSet<>();
+		border = new TreeSet<>();
+		chunks = new ArrayList<>();
+	}
+	
+	public World getWorld() {
+		return world;
 	}
 	
 	public int size() {
@@ -26,32 +37,72 @@ public class Clip {
 		return borderSize;
 	}
 	
-	public Set<Chunk> getChunks() {
-		return fillChunks.keySet();
+	@SuppressWarnings("unchecked")
+	public ArrayList<Chunk> getChunks() {
+		return (ArrayList<Chunk>) chunks.clone();
 	}
 	
-	public HashMap<Chunk, ArrayList<Location>> getFill() {
-		return fillChunks;
+	public TreeSet<MazePoint> getFill() {
+		return fill;
 	}
 
-	public HashMap<Chunk, ArrayList<Location>> getBorder() {
-		return borderChunks;
+	public TreeSet<MazePoint> getBorder() {
+		return border;
 	}
-
-	public void addFill(Location point) {
-		Chunk chunk = point.getChunk();
+	
+	public void addFill(MazePoint point) {
 		
-		if(fillChunks.containsKey(chunk))
-			fillChunks.get(chunk).add(point);
-		else
-			fillChunks.put(chunk, new ArrayList<>(Arrays.asList(point)));
-
-		size++;
-	}
-
-	public void addBorder(Location point) {
-		this.borderChunks = borderChunks;
+		if (getWorld() != point.getWorld() &&
+			((getWorld() == null) || (!getWorld().equals(point.getWorld())))) {
+			return;
+		}
+		
+		//TODO find a way to remove empty chunks
+		if(fill.add(point)) {
+			size++;
+			chunks.add(point.getChunk());
+		}
 	}
 	
+	public boolean removeFill(MazePoint point) {
+		
+		if(fill.remove(point)) {
+			size--;
+			return true;
+		}
+		
+		return false;
+	}
 	
+	//TODO make this booleans
+	public void addBorder(MazePoint point) {
+
+		if (getWorld() != point.getWorld() &&
+			((getWorld() == null) || (!getWorld().equals(point.getWorld())))) {
+			return;
+		}
+		
+		if(border.add(point)) {
+			borderSize++;
+			chunks.add(point.getChunk());
+		}
+	}
+	
+	public boolean removeBorder(MazePoint point) {
+		
+		if(border.remove(point)) {
+			borderSize--;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean contains(MazePoint point) {
+		return fill.contains(point);
+	}
+	
+	public boolean borderContains(MazePoint point) {
+		return border.contains(point);
+	}
 }

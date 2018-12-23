@@ -13,7 +13,7 @@ public abstract class ToolHandler {
 	
 	private static HashMap<UUID, Tool> tools = new HashMap<>();
 
-	public static boolean hasClip(Player p) {
+	public static boolean hasClipboard(Player p) {
 		return
 			tools.containsKey(p.getUniqueId()) &&
 			tools.get(p.getUniqueId()) instanceof ClippingTool;
@@ -27,7 +27,7 @@ public abstract class ToolHandler {
 		return new ArrayList<>(tools.values());
 	}
 	
-	public static ClippingTool getClip(Player p) {
+	public static ClippingTool getClipboard(Player p) {
 		Tool sel = tools.get(p.getUniqueId());
 		return sel instanceof ClippingTool? (ClippingTool) sel : null;
 	}
@@ -41,8 +41,9 @@ public abstract class ToolHandler {
 	
 	public static void resetToDefaultTool(Player p) {
 		
-		if(hasClip(p)) {
-			getClip(p).reset();
+		//TODO chck practicality
+		if(hasClipboard(p)) {
+			getClipboard(p).reset(p.getWorld());
 		
 		}else {
 			setTool(p, new ClippingTool(p, Shape.RECT));
@@ -50,8 +51,8 @@ public abstract class ToolHandler {
 	}
 	
 	public static void removeTool(Player p) {
-		if(hasClip(p))
-			Renderer.unregisterShape(getClip(p));
+		if(hasClipboard(p))
+			Renderer.unregisterShape(getClipboard(p));
 
 		tools.remove(p.getUniqueId());
 	}

@@ -25,28 +25,28 @@ public class CutFromMaze {
 			return;
 		}
 		
-		if(!ToolHandler.hasClip(p)) {
+		if(!ToolHandler.hasClipboard(p)) {
 			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
 			p.sendMessage("/tangledmaze wand");
 			return;
 		}
 		
-		ClippingTool shape = ToolHandler.getClip(p);
+		ClippingTool clipboard = ToolHandler.getClipboard(p);
 
-		if(!shape.isComplete()) {
+		if(!clipboard.isComplete()) {
 			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
 			return;
 		}
 		
 		Maze maze = MazeHandler.getMaze(p);
-		MazeAction action = maze.getDeletion(shape);
+		MazeAction action = maze.getDeletion(clipboard.getClip());
 		
 		if(action.getRemovedFill().size() == 0) {
 			p.sendMessage(ChatColor.RED + "Your selection does not seem to intersect your maze directly (outline inside borders).");
 			return;
 		}
 
-		shape.reset();
 		maze.processAction(action, true);
+		clipboard.reset(clipboard.getWorld());
 	}
 }

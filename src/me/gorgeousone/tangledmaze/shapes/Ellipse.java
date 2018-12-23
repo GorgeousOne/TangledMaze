@@ -1,14 +1,13 @@
 package me.gorgeousone.tangledmaze.shapes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import me.gorgeousone.tangledmaze.tools.Clip;
 import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.MazePoint;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class Ellipse implements Shape {
@@ -71,29 +70,8 @@ public class Ellipse implements Shape {
 		return false;
 	}
 	
-	private void addFill(HashMap<Chunk, ArrayList<Location>> fill, Location point) {
-		Chunk c = point.getChunk();
-		
-		if(fill.containsKey(c))
-			fill.get(c).add(point);
-		else
-			fill.put(c, new ArrayList<>(Arrays.asList(point)));
-	}
-	
-	private void addBorder(HashMap<Chunk, ArrayList<Location>> border, Location point) {
-		Chunk c = point.getChunk();
-
-		if(border.containsKey(c))
-			border.get(c).add(point);
-		else
-			border.put(c, new ArrayList<>(Arrays.asList(point)));
-	}
-	
 	@Override
-	public void createFillAndBorder(
-			ArrayList<Location> vertices,
-			HashMap<Chunk, ArrayList<Location>> fill,
-			HashMap<Chunk, ArrayList<Location>> border) {
+	public Clip createClip(ArrayList<Location> vertices) {
 		
 		if(vertices.size() < 4)
 			throw new IllegalArgumentException("2 vertices needed for this calculation.");
@@ -118,6 +96,9 @@ public class Ellipse implements Shape {
 		Vector midPoint = new Vector(0, 0, 0);
 		Vector iter;
 		
+		//TODO overthink
+		Clip clip = new Clip(vertices.get(0).getWorld());
+		
 		//iterate over the rectangle of the vertices equally to rectangle shape
 		for(double x = -radiusX; x < radiusX; x++) {
 			for(double z = -radiusZ; z < radiusZ; z++) {
@@ -132,7 +113,7 @@ public class Ellipse implements Shape {
 				 * using radius-1/2: single blocks stick out at most smooth parts,
 				 * so radius - 0.25 is the perfect compromise that makes the circle look smooth */
 				if(midPoint.distance(iter) <= radiusZ - 0.25)
-					addFill(fill, Utils.nearestSurface(point));
+					clip.addFill(new MazePoint(Utils.nearestSurface(point)));
 				else
 					continue;
 				
@@ -141,11 +122,13 @@ public class Ellipse implements Shape {
 					Vector neighbour = iter.clone().add(dir.facing3d().setX(proportion * dir.facing().getIntX()));
 					
 					if(midPoint.distance(neighbour) > radiusZ - 0.25) {
-						addBorder(border, Utils.nearestSurface(point));
+						clip.addBorder(new MazePoint(Utils.nearestSurface(point)));
 						break;
 					}
 				}
 			}
 		}
+		
+		return clip;
 	}
 }

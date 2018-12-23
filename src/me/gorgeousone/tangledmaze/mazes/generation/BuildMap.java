@@ -3,10 +3,11 @@ package me.gorgeousone.tangledmaze.mazes.generation;
 import java.util.ArrayList;
 
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
+import me.gorgeousone.tangledmaze.utils.MazePoint;
 import me.gorgeousone.tangledmaze.utils.Vec2;
+
 public class BuildMap {
 	
 	private Maze maze;
@@ -68,8 +69,10 @@ public class BuildMap {
 	}
 	
 	private void calculateMapSize() {
+		
+		//TODO find an easier way to estimate minimum of maze;
 		//select a probably random chunk from the maze's chunk list
-		ArrayList<Chunk> chunks = maze.getChunks();
+		ArrayList<Chunk> chunks = maze.getClip().getChunks();
 		Chunk randomChunk = chunks.get(0);
 		
 		//initialize the maze's minimal and maximal coordinates with the chunk
@@ -106,15 +109,14 @@ public class BuildMap {
 	
 	private void drawBlankMazeAreaOnMap() {
 		//mark the maze's area in mazeMap as undefined area (open for paths or walls), the rest will stay untouched
-		for(ArrayList<Location> chunk : maze.getFill().values())
-			for(Location point : chunk) {
+		for(MazePoint point : maze.getClip().getFill()) {
 				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.UNDEFINED;
 				heightMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = point.getBlockY();
-			}
+		}
 		
 		//mark the border in mazeMap as reserved for walls
-		for(ArrayList<Location> chunk : maze.getBorder().values())
-			for(Location point : chunk)
-				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.WALL;		
+		for(MazePoint point : maze.getClip().getBorder()) {
+				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.WALL;
+		}
 	}
 }

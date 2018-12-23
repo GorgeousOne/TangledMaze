@@ -23,6 +23,7 @@ import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.tools.Tool;
 import me.gorgeousone.tangledmaze.tools.ToolHandler;
 import me.gorgeousone.tangledmaze.tools.ClippingTool;
+import me.gorgeousone.tangledmaze.utils.MazePoint;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class BlockChangeListener implements Listener {
@@ -82,20 +83,21 @@ public class BlockChangeListener implements Listener {
 			update(e.getBlock().getLocation(), e);
 	}
 	
-	public void update(Location point, Cancellable event) {
+	//TODO think about replaceing location with maze point
+	public void update(Location loc, Cancellable event) {
 		BukkitRunnable calculation = new BukkitRunnable() {
 			@Override
 			public void run() {
 				
 				for(Maze maze : MazeHandler.getMazes()) {
 					
-					if(!maze.contains(point))
+					if(!maze.getClip().contains(new MazePoint(loc)))
 						continue;
 					
-					if(Renderer.isMazeVisible(maze) && maze.isHighlighted(point.getBlock()))
+					if(Renderer.isMazeVisible(maze) && maze.isHighlighted(loc.getBlock()))
 						Renderer.hideMaze(maze);
 					
-					maze.updateHeight(point);
+					maze.updateHeight(loc);
 				}
 				
 				for(Tool tool : ToolHandler.getTools()) {
@@ -103,15 +105,16 @@ public class BlockChangeListener implements Listener {
 					if(!(tool instanceof ClippingTool))
 						continue;
 					
-					ClippingTool clip = (ClippingTool) tool;
+					ClippingTool clipboard = (ClippingTool) tool;
 					
-					if(!clip.contains(point))
+					//TODOcheck if contains() should be modified to Location
+					if(!clipboard.getClip().contains(new MazePoint(loc)))
 						continue;
 					
-					if(Renderer.isShapeVisible(clip) && clip.isHighlighted(point.getBlock()))
-						Renderer.hideClipboard(clip, true);
+					if(Renderer.isShapeVisible(clipboard) && clipboard.isHighlighted(loc.getBlock()))
+						Renderer.hideClipboard(clipboard, true);
 					
-					clip.updateHeight(point);
+					clipboard.updateHeight(loc);
 				}
 			}
 		};
