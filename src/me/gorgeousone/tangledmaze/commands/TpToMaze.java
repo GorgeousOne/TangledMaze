@@ -1,9 +1,7 @@
 package me.gorgeousone.tangledmaze.commands;
 
-import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.mazes.Maze;
@@ -33,8 +31,8 @@ public class TpToMaze {
 			return;
 		}
 		
-		Location target = new ArrayList<MazePoint>(maze.getClip().getBorder()).get(0).clone();
-		target.add(0.5, 1, 0.5);
+		MazePoint target = maze.getClip().getBorder().first();
+		target.add(0.5, 2, 0.5);
 		target.setDirection(p.getLocation().getDirection());
 		
 		p.teleport(target);

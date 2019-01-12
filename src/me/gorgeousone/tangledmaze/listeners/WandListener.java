@@ -81,7 +81,7 @@ public class WandListener implements Listener{
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
 			
-			if(ToolHandler.hasClipboard(p) && !Renderer.isShapeVisible(ToolHandler.getClipboard(p)))
+			if(ToolHandler.hasClipboard(p) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(p)))
 				Renderer.showClipboard(ToolHandler.getClipboard(p));
 		}
 	}
@@ -95,7 +95,7 @@ public class WandListener implements Listener{
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
 			
-			if(ToolHandler.hasClipboard(p) && !Renderer.isShapeVisible(ToolHandler.getClipboard(p)))
+			if(ToolHandler.hasClipboard(p) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(p)))
 				Renderer.showClipboard(ToolHandler.getClipboard(p));
 		}
 	}

@@ -19,7 +19,7 @@ public enum Directions {
 		this.facing = facing;
 	}
 	
-	public Vec2 facing() {
+	public Vec2 toVec2() {
 		return facing.clone();
 	}
 	

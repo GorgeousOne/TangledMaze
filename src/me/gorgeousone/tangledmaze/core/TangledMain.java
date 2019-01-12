@@ -24,7 +24,7 @@ public class TangledMain extends JavaPlugin {
 			"Selecting Thingy III",
 			"Difficult Handling II",
 			"Would Recommend It X/X",
-			"Unbreaking ∞",
+			"Unbreaking âˆž",
 			"Overpowered X",
 			"Tangly III",
 			"Wow I",
@@ -121,7 +121,7 @@ public class TangledMain extends JavaPlugin {
 		ArrayList<String> lore = new ArrayList<>();
 		lore.add("");
 		lore.add(ChatColor.GREEN + "A tool designed to create mazes.");
-		lore.add(ChatColor.GREEN + "" + ChatColor.ITALIC + "Look at it's delicate curves!");
+		lore.add(ChatColor.GREEN + "" + ChatColor.ITALIC + "Look at it's delicate curves! つ◕_◕つ");
 		lore.add(ChatColor.GREEN + "Click on the ground to start a clipboard.");
 		
 		meta.setLore(lore);

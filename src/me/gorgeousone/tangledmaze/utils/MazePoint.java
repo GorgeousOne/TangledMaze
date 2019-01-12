@@ -1,6 +1,8 @@
 package me.gorgeousone.tangledmaze.utils;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 public class MazePoint extends Location implements Comparable<Location> {
 
@@ -12,6 +14,10 @@ public class MazePoint extends Location implements Comparable<Location> {
 			loc.getBlockZ());
 	}
 
+	public MazePoint(World w, double x, double y, double z) {
+		super(w, (int) x, (int) y, (int) z);
+	}
+
 	@Override
 	public int compareTo(Location l2) {
 		
@@ -21,22 +27,44 @@ public class MazePoint extends Location implements Comparable<Location> {
 	}
 	
 	@Override
+	public MazePoint add(Vector vec) {
+		super.add(vec);
+		return this;
+	}
+	
+	@Override
+	public MazePoint subtract(Vector vec) {
+		super.subtract(vec);
+		return this;
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		
-		if (obj == null || getClass() != obj.getClass()) {
+		
+		if(obj == null || !obj.getClass().isAssignableFrom(super.getClass())) {
 			return false;
 		}
 		
 		Location other = (Location) obj;
 		
-		if (getWorld() != other.getWorld() &&
-			((getWorld() == null) || (!getWorld().equals(other.getWorld())))) {
+		if(getWorld() != other.getWorld()) {
 			return false;
 		}
 		
 		return
-			getBlockX() == other.getBlockX() ||
+			getBlockX() == other.getBlockX() &&
 			getBlockZ() == other.getBlockZ();
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + getWorld().getName() + ",x:" + getBlockX() + ",y:" + getBlockY() + ",z:" + getBlockZ() + "]";
+	}
+	
+	@Override
+	public MazePoint clone() {
+		return new MazePoint(this);
 	}
 	
 	@Override

@@ -46,7 +46,7 @@ public class CutFromMaze {
 			return;
 		}
 
+		clipboard.reset();
 		maze.processAction(action, true);
-		clipboard.reset(clipboard.getWorld());
 	}
 }

@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -173,10 +172,12 @@ public abstract class Utils {
 		r.runTask(TangledMain.getPlugin());
 	}
 	
-	public static Location nearestSurface(Location loc) {
-		Location iter = loc.clone();
+	public static MazePoint nearestSurface(Location loc) {
+	
+		MazePoint iter = new MazePoint(loc);
 		
-		if(isLikeGround(iter.getBlock().getType()))
+		if(isLikeGround(iter.getBlock().getType())) {
+		
 			while(iter.getY() <= 255) {
 				iter.add(0, 1, 0);
 				
@@ -185,59 +186,38 @@ public abstract class Utils {
 					return iter;
 				}
 			}
-		else 
+		
+		}else {
+			
 			while(iter.getY() >= 0) {
 				iter.add(0, -1, 0);
 				
-				if(isLikeGround(iter.getBlock().getType()))
+				if(isLikeGround(iter.getBlock().getType())) {
 					return iter;
+				}
 			}
+		}
 		
-		return loc;
+		return new MazePoint(loc);
 	}
 	
-	public static int getMax(ArrayList<Integer> is) {
+	public static int getMax(ArrayList<Integer> ints) {
 		int max = 0;
 		
-		for(int i : is)
+		for(int i : ints)
 			if(i > max)
 				max = i;
 		
 		return max;
 	}
 	
-	public static int getMaxY(ArrayList<Location> locs) {
+	public static int getMaxY(ArrayList<MazePoint> points) {
 		int max = 0;
 		
-		for(Location loc : locs)
-			if(loc.getBlockY() > max)
-				max = loc.getBlockY();
+		for(MazePoint point : points)
+			if(point.getBlockY() > max)
+				max = point.getBlockY();
 		
 		return max;
-}
-	
-	public static ArrayList<Location> createRectangularVertices(Location v0, Location v2) {
-		ArrayList<Location> vertices = new ArrayList<>();
-		World w = v0.getWorld();
-		
-		int maxY = Math.max(v0.getBlockY(), v2.getBlockY());
-		
-		int minX = Math.min(v0.getBlockX(), v2.getBlockX()),
-			minZ = Math.min(v0.getBlockZ(), v2.getBlockZ()),
-			maxX = Math.max(v0.getBlockX(), v2.getBlockX()),
-			maxZ = Math.max(v0.getBlockZ(), v2.getBlockZ());
-		
-		vertices = new ArrayList<>(Arrays.asList(
-				Utils.nearestSurface(new Location(w, minX, maxY, minZ)),
-				Utils.nearestSurface(new Location(w, maxX, maxY, minZ)),
-				Utils.nearestSurface(new Location(w, maxX, maxY, maxZ)),
-				Utils.nearestSurface(new Location(w, minX, maxY, maxZ))));
-		
-		return vertices;
 	}
-	
-//	public HashMap<Chunk, ArrayList<Location>> deepClone(HashMap<Chunk, ArrayList<Location>> map) {
-//		
-//		HashMap
-//	}
 }

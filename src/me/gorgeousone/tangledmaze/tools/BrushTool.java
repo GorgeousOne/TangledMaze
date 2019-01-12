@@ -25,9 +25,9 @@ public class BrushTool extends Tool {
 		if(a == Action.RIGHT_CLICK_BLOCK) {
 			brush = maze.getReduction(b);
 		}else
-			brush = maze.getEnlargment(b);
+			brush = maze.getExpansion(b);
 		
-		if(brush.getRemovedBorder().isEmpty())
+		if(brush == null)
 			getPlayer().sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
 		else
 			maze.processAction(brush, true);

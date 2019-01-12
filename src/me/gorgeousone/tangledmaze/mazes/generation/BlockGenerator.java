@@ -15,8 +15,11 @@ import me.gorgeousone.tangledmaze.mazes.Maze;
 import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-public class BlockGenerator {
 
+public final class BlockGenerator {
+
+	private BlockGenerator() {}
+	
 	public static void generateBlocks(BuildMap map, ActionListener finishAction) {
 		buildBlocksContinuously(getAllMazeBlocks(map), map.getMaze().getWallComposition());
 	}
@@ -94,16 +97,16 @@ public class BlockGenerator {
 		neighborYs.add(y);
 		
 		for(Directions dir : Directions.values()) {
-			int x2 = x + dir.facing().getIntX(),
-				z2 = z + dir.facing().getIntZ();
+			int x2 = x + dir.toVec2().getIntX(),
+				z2 = z + dir.toVec2().getIntZ();
 			
 			if(x2 < 0 || x2 >= map.getDimX() ||
 			   z2 < 0 || z2 >= map.getDimZ())
 				continue;
 			
 			neighborYs.add(map.getHeight(
-					new Vec2(x + dir.facing().getIntX(),
-							 z + dir.facing().getIntZ())));
+					new Vec2(x + dir.toVec2().getIntX(),
+							 z + dir.toVec2().getIntZ())));
 		}
 		
 		return Utils.getMax(neighborYs);

@@ -10,6 +10,7 @@ import org.bukkit.event.block.Action;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.shapes.Shape;
+import me.gorgeousone.tangledmaze.utils.MazePoint;
 import me.gorgeousone.tangledmaze.utils.Utils;
 
 public class ClippingTool extends Tool {
@@ -17,7 +18,7 @@ public class ClippingTool extends Tool {
 	private Shape shape;
 	
 	private Clip clip;
-	private ArrayList<Location> vertices;
+	private ArrayList<MazePoint> vertices;
 	
 	private boolean isComplete, isResizing;
 	private int indexOfResizedVertex;
@@ -38,21 +39,6 @@ public class ClippingTool extends Tool {
 		vertices = new ArrayList<>();
 	}
 	
-	public void setType(Shape shape) {
-		this.shape = shape;
-		
-		//stop code from deleting the vertex so another shape can be created with an already set vertex
-		if(!isComplete)
-			return;
-		
-		vertices.remove(3);
-		vertices.remove(1);
-		
-		Renderer.hideClipboard(this, true);
-		calculateShape();
-		Renderer.showClipboard(this);
-	}
-	
 	//think about cleanness
 	public World getWorld() {
 		return clip.getWorld();
@@ -70,11 +56,26 @@ public class ClippingTool extends Tool {
 		return clip;
 	}
 	
+	public void setType(Shape shape) {
+		this.shape = shape;
+		
+		//stop code from deleting the vertex so another shape can be created with an already set vertex
+		if(!isComplete)
+			return;
+		
+		vertices.remove(3);
+		vertices.remove(1);
+		
+		Renderer.hideClipboard(this, true);
+		calculateShape();
+		Renderer.showClipboard(this);
+	}
+	
 	@Override
 	public void interact(Block clicked, Action action) {
 		
 		if(clicked.getWorld() != getWorld()) {
-			reset(clicked.getWorld());
+			reset();
 		}
 		
 		if(vertices.size() < shape.getVertexCount()-1) {
@@ -96,7 +97,7 @@ public class ClippingTool extends Tool {
 				
 			}else {
 				Renderer.hideClipboard(this, true);
-				reset(getWorld());
+				reset();
 				vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			}
 		}
@@ -114,7 +115,7 @@ public class ClippingTool extends Tool {
 	private void resizeShape(Block b) {
 		
 		Renderer.hideClipboard(this, true);
-		Location oppositeVertex = vertices.get((indexOfResizedVertex+2) % 4);
+		MazePoint oppositeVertex = vertices.get((indexOfResizedVertex+2) % 4);
 		
 		vertices.clear();
 		vertices.add(oppositeVertex);
@@ -123,27 +124,27 @@ public class ClippingTool extends Tool {
 		calculateShape();
 	}
 	
-	public void reset(World world) {
+	public void reset() {
 		
 		Renderer.hideClipboard(this, true);
-
-		clip = new Clip(world);
+		
+		clip = new Clip(getPlayer() != null ? getPlayer().getWorld() : getWorld());
 		vertices.clear();
 		isComplete = false;
 		isResizing = false;
 	}
 	
-	public ArrayList<Location> getVertices() {
+	public ArrayList<MazePoint> getVertices() {
 		return vertices;
 	}
 	
 	public boolean isVertex(Block b) {
-		if(!isComplete)
-			return false;
-
-		for(Location vertex : vertices) {
-			if(vertex.equals(b.getLocation()))
+		
+		for(MazePoint vertex : vertices) {
+			
+			if(vertex.equals(b.getLocation())) {
 				return true;
+			}
 		}
 		
 		return false;
@@ -168,30 +169,31 @@ public class ClippingTool extends Tool {
 		if(!isComplete() ||!b.getWorld().equals(getWorld()))
 			return false;
 		
+		MazePoint point = new MazePoint(b.getLocation());
+		
+		if(!getClip().borderContains(point))
+			return false;
+		
+		for(MazePoint borderPoint : getClip().getBorder()) {
+			if(borderPoint.equals(point) && borderPoint.getBlockY() == point.getBlockY())
+				return true;
+		}
+		
 		return false;
-		//TODO find solution
 	}
 	
 	public void updateHeight(Location point) {
 		
-		//TODO update
-//		if(!point.getWorld().equals(getWorld()))
-//			return;
-//		
-//		if(!fillChunks.containsKey(point.getChunk()))
-//			return;
-//			
-//		ArrayList<Location>	fill = fillChunks.get(point.getChunk());
-//		
-//		if(fill.contains(point)) {
-//			
-//			Location newPoint = Utils.nearestSurface(point);
-//			fill.set(fill.indexOf(point), newPoint);
-//
-//			ArrayList<Location>	border = borderChunks.get(point.getChunk());
-//
-//			if(border.contains(point))
-//				border.set(border.indexOf(point), newPoint);
-//		}
+		MazePoint point2 = Utils.nearestSurface(point);
+		
+		if(getClip().removeFill(point2)) {
+			getClip().addFill(point2);
+		
+		}else
+			return;
+		
+		if(getClip().removeBorder(point2)) {
+			getClip().addBorder(point2);
+		}
 	}
 }

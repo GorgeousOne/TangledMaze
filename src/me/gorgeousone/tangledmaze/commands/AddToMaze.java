@@ -49,8 +49,8 @@ public class AddToMaze {
 			p.sendMessage(ChatColor.RED + "Your selection does not seem to touch your maze directly (outline on outline).");
 			return;
 		}
-
-		clipboard.reset(p.getWorld());
+		
+		clipboard.reset();
 		maze.processAction(action, true);
 	}
 }

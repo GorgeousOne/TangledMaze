@@ -8,35 +8,39 @@ import me.gorgeousone.tangledmaze.mazes.MazeHandler;
 import me.gorgeousone.tangledmaze.tools.ToolHandler;
 import me.gorgeousone.tangledmaze.tools.Clip;
 import me.gorgeousone.tangledmaze.tools.ClippingTool;
+import me.gorgeousone.tangledmaze.tools.ExitSettingTool;
 import me.gorgeousone.tangledmaze.utils.Constants;
 
 public class StartMaze {
 	
-	public void execute(Player p) {
+	public void execute(Player player) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
 		
-		if(!ToolHandler.hasClipboard(p)) {
-			p.sendMessage(ChatColor.RED + "Please select an area first.");
+		if(!ToolHandler.hasClipboard(player)) {
+			player.sendMessage(ChatColor.RED + "Please select an area first.");
 			return;
 		}
 		
-		ClippingTool clipboard = ToolHandler.getClipboard(p);
+		ClippingTool clipboard = ToolHandler.getClipboard(player);
 		
 		if(!clipboard.isComplete()) {
-			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
+			player.sendMessage(ChatColor.RED + "Please finish your selection first.");
 			return;
 		}
 		
 		Clip clip = clipboard.getClip();
-		clipboard.reset(p.getWorld());
+		clipboard.reset();
 		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		maze.setClip(clip);
 		
-		p.sendMessage(Constants.prefix + "Started a maze from selection.");
+		player.sendMessage(Constants.prefix + "Started a maze from selection.");
+		
+		//todo remoev debug
+		ToolHandler.setTool(player, new ExitSettingTool(player));
 	}
 }

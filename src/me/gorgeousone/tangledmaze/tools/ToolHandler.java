@@ -41,9 +41,9 @@ public abstract class ToolHandler {
 	
 	public static void resetToDefaultTool(Player p) {
 		
-		//TODO chck practicality
+		//TODO low - check practicality
 		if(hasClipboard(p)) {
-			getClipboard(p).reset(p.getWorld());
+			getClipboard(p).reset();
 		
 		}else {
 			setTool(p, new ClippingTool(p, Shape.RECT));

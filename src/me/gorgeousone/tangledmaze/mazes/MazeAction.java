@@ -36,24 +36,24 @@ public class MazeAction {
 		return  removedExits;
 	}
 	
-	public void addFill(MazePoint l) {
-		addedFill.add(l);
+	public void addFill(MazePoint point) {
+		addedFill.add(point);
 	}
 	
-	public void removeFill(MazePoint l) {
-		removedFill.add(l);
+	public void removeFill(MazePoint point) {
+		removedFill.add(point);
 	}
 	
-	public void addBorder(MazePoint l) {
-		addedBorder.add(l);
+	public void addBorder(MazePoint point) {
+		addedBorder.add(point);
 	}
 	
-	public void removeBorder(MazePoint l) {
-		removedBorder.add(l);
+	public void removeBorder(MazePoint point) {
+		removedBorder.add(point);
 	}
 	
-	public void removeExit(MazePoint l) {
-		removedExits.add(l);
+	public void removeExit(MazePoint point) {
+		removedExits.add(point);
 	}
 	
 	public MazeAction invert() {

@@ -83,7 +83,6 @@ public class BlockChangeListener implements Listener {
 			update(e.getBlock().getLocation(), e);
 	}
 	
-	//TODO think about replaceing location with maze point
 	public void update(Location loc, Cancellable event) {
 		BukkitRunnable calculation = new BukkitRunnable() {
 			@Override
@@ -111,7 +110,7 @@ public class BlockChangeListener implements Listener {
 					if(!clipboard.getClip().contains(new MazePoint(loc)))
 						continue;
 					
-					if(Renderer.isShapeVisible(clipboard) && clipboard.isHighlighted(loc.getBlock()))
+					if(Renderer.isClipboardVisible(clipboard) && clipboard.isHighlighted(loc.getBlock()))
 						Renderer.hideClipboard(clipboard, true);
 					
 					clipboard.updateHeight(loc);

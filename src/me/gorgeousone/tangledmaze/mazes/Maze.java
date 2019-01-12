@@ -69,7 +69,7 @@ public class Maze {
 		return exits;
 	}
 	
-	public Location getMainExit() {
+	public MazePoint getMainExit() {
 		return exits.isEmpty() ? null : exits.get(exits.size()-1);
 	}
 	
@@ -129,24 +129,18 @@ public class Maze {
 		isStarted = false; 
 	}
 	
-	public boolean exitsContain(Location point) {
-		
-		if(!point.getWorld().equals(getWorld()))
-			return false;
-		
-		for(Location point2 : exits) {
-			if(point2.getBlockX() == point.getBlockX() &&
-			   point2.getBlockZ() == point.getBlockZ())
-				return true;
-		}
-		
-		return false;
+	public boolean exitsContain(Location loc) {
+		return exits.contains(loc);
 	}
 	
+	//TODO low - check if exit is highlighted in a way (only for hooks)
 	public boolean canBeExit(Location point) {
-	
-		if(!getClip().borderContains(new MazePoint(point)))
+		
+		MazePoint newExit = new MazePoint(point);
+		
+		if(!isHighlighted(newExit.getBlock())) {
 			return false;
+		}
 		
 		return sealsMaze(point, new MazeAction(), Directions.cardinalValues());
 	}
@@ -155,13 +149,14 @@ public class Maze {
 		
 		MazePoint point = new MazePoint(b.getLocation());
 		
-		//TODO think if this binary search is worth
-		if(!getClip().contains(point))
+		if(!getClip().borderContains(point)) {
 			return false;
+		}
 		
-		for(MazePoint point2 : getClip().getBorder()) {
-			if(point2.equals(point) && point2.getBlockY() == point.getBlockY())
+		for(MazePoint borderPoint : getClip().getBorder()) {
+			if(borderPoint.equals(point) && borderPoint.getY() == point.getY()) {
 				return true;
+			}
 		}
 		
 		return false;
@@ -170,17 +165,27 @@ public class Maze {
 	public void addExit(Location point) {
 		
 		if(!canBeExit(point)) {
+			Utils.sendBlockDelayed(getPlayer(), point, Constants.MAZE_BORDER);
+			return;
+		}
+		
+		MazePoint exit = new MazePoint(point);
+		
+		if(exits.contains(exit)) {
 			
-			if(isHighlighted(point.getBlock()))
-				Utils.sendBlockDelayed(getPlayer(), point, Constants.MAZE_BORDER);
+			exits.remove(exit);
+			Utils.sendBlockDelayed(getPlayer(), exit, Constants.MAZE_BORDER);
+			
+			if(!exits.isEmpty()) {
+				Utils.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_MAIN_EXIT);
+			}
 			
 			return;
 		}
 		
-		MazePoint exit = new MazePoint(Utils.nearestSurface(point));
-		
-		if(!exits.isEmpty())
+		if(!exits.isEmpty()) {
 			Utils.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_EXIT);
+		}
 		
 		exits.add(exit);
 		Utils.sendBlockDelayed(getPlayer(), exit, Constants.MAZE_MAIN_EXIT);
@@ -212,10 +217,10 @@ public class Maze {
 	
 	public void updateHeight(Location point) {
 		
-		MazePoint point2 = new MazePoint(Utils.nearestSurface(point));
+		MazePoint point2 = Utils.nearestSurface(point);
 		
 		if(getClip().removeFill(point2)) {
-			getClip().addBorder(point2);
+			getClip().addFill(point2);
 		
 		}else
 			return;
@@ -225,18 +230,18 @@ public class Maze {
 		}
 	}
 	
-	//TODO overthink MazeActions's storing method
+	//TODO normal - overthink MazeActions's storing method
 	public void processAction(MazeAction action, boolean saveToHistory) {
 		
 		for(MazePoint point : action.getRemovedFill())
 			getClip().removeFill(point);
-	
+		
 		for(MazePoint point : action.getRemovedBorder())
 			getClip().removeBorder(point);
-	
+		
 		for(MazePoint point : action.getAddedFill())
 			getClip().addFill(point);
-
+		
 		for(MazePoint point : action.getAddedBorder())
 			getClip().addBorder(point);
 		
@@ -284,7 +289,6 @@ public class Maze {
 	
 	private void removeIntersectingBorder(Clip other, MazeAction action) {
 		
-		//TODO replace with getter method
 		for(MazePoint borderPoint : getClip().getBorder()) {
 
 			//continue if the point isn't even in the shape
@@ -342,20 +346,20 @@ public class Maze {
 				deletion.addBorder(borderPoint);
 		
 		//remove all remaining maze fill inside the shape
-		for(MazePoint point : other.getFill())
-				if(getClip().contains(point) && !other.borderContains(point))
-					deletion.removeFill(point);
+		for(MazePoint fillPoint : other.getFill())
+				if(getClip().contains(fillPoint) && !other.borderContains(fillPoint))
+					deletion.removeFill(fillPoint);
 	}
 	
-	public MazeAction getEnlargment(Block b) {
-		
-		Location point = b.getLocation();
-		MazeAction action = new MazeAction();
+	public MazeAction getExpansion(Block b) {
 		
 		if(!isHighlighted(b))
-			return action;
-		
-		enlargeBorder(point, action);
+			return null;
+
+		MazeAction action = new MazeAction();
+		MazePoint point = new MazePoint(b.getLocation());
+
+		expandBorder(point, action);
 		removeIntrusiveBorder(point, action);
 		
 		return action;
@@ -363,41 +367,41 @@ public class Maze {
 	
 	public MazeAction getReduction(Block b) {
 		
-		Location point = b.getLocation();
-		MazeAction action = new MazeAction();
-		
 		//can't remove what isn't part of the border
 		if(!isHighlighted(b))
-			return action;
+			return null;
 		
+		MazeAction action = new MazeAction();
+		MazePoint point = new MazePoint(b.getLocation());
+
 		reduceBorder(point, action);
 		removeProtrusiveBorder(point, action);
 		
 		return action;
 	}
 	
-	private void enlargeBorder(Location loc, MazeAction changes) {
-		
-		MazePoint point = new MazePoint(loc);
+	private void expandBorder(MazePoint point, MazeAction changes) {
 		
 		changes.removeBorder(point);
 		
 		for(Directions dir : Directions.values()) {
-			MazePoint point2 = new MazePoint(Utils.nearestSurface(point.clone().add(dir.facing3d())));
+			
+			MazePoint point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!getClip().contains(point2)) {
 				changes.addFill(point2);
 				changes.addBorder(point2);
-			
+				
 			}else if(exitsContain(point2) && !sealsMaze(point2, changes, Directions.cardinalValues()))
 				changes.removeExit(point2);
 		}
 	}
 	
-	private void removeIntrusiveBorder(Location point, MazeAction changes) {
+	private void removeIntrusiveBorder(MazePoint point, MazeAction changes) {
 		//go through all neighbor-border around given border-point
 		for(Directions dir : Directions.values()) {
-			MazePoint point2 = new MazePoint(Utils.nearestSurface(point.clone().add(dir.facing3d())));
+			
+			MazePoint point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!getClip().borderContains(point2) && !changes.getAddedBorder().contains(point2)) {
 				continue;
@@ -410,9 +414,7 @@ public class Maze {
 		}
 	}
 	
-	private void reduceBorder(Location loc, MazeAction action) {
-		
-		MazePoint point = new MazePoint(loc);
+	private void reduceBorder(MazePoint point, MazeAction action) {
 		
 		if(exitsContain(point))
 			action.removeExit(point);
@@ -425,7 +427,8 @@ public class Maze {
 		}
 		
 		for(Directions dir : Directions.values()) {
-			MazePoint point2 = new MazePoint(point.clone().add(dir.facing3d()));
+			
+			MazePoint point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(getClip().contains(point2) && !getClip().borderContains(point2)) {
 				action.addBorder(point2);
@@ -437,10 +440,10 @@ public class Maze {
 		}
 	}
 	
-	private void removeProtrusiveBorder(Location point, MazeAction changes) {
+	private void removeProtrusiveBorder(MazePoint point, MazeAction changes) {
 		//go through all neighbor-border around given border-point 
 		for(Directions dir : Directions.values()) {
-			MazePoint point2 = new MazePoint(Utils.nearestSurface(point.clone().add(dir.facing3d())));
+			MazePoint point2 = Utils.nearestSurface(point.clone().add(dir.facing3d()));
 			
 			if(!getClip().borderContains(point2)) {
 				continue;
@@ -461,17 +464,18 @@ public class Maze {
 			touchesExternal = false;
 		
 		for(Directions dir : directions) {
+			
 			MazePoint point2 = new MazePoint(loc.clone().add(dir.facing3d()));
 			
 			if(!getClip().contains(point2) &&
-					!changes.getAddedFill().contains(point2) ||
-					 changes.getRemovedFill().contains(point2)) {
+			   !changes.getAddedFill().contains(point2) ||
+			    changes.getRemovedFill().contains(point2)) {
 				
 				touchesExternal = true;
 
 			}else if(!getClip().borderContains(point2) &&
-					!changes.getAddedBorder().contains(point2) ||
-					 changes.getRemovedBorder().contains(point2)) {
+					 !changes.getAddedBorder().contains(point2) ||
+					  changes.getRemovedBorder().contains(point2)) {
 				
 				touchesFill = true;
 			}

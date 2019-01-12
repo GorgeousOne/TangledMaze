@@ -19,6 +19,7 @@ public class SelectTool {
 		switch (selectionType.toLowerCase()) {
 		case "rect":
 		case "rectangle":
+		case "square":
 			
 			try {
 				setClipShape(p, Shape.RECT);
@@ -28,6 +29,7 @@ public class SelectTool {
 			break;
 			
 		case "circle":
+		case "ellipse":
 			
 			try {
 				setClipShape(p, Shape.CIRCLE);
@@ -46,6 +48,7 @@ public class SelectTool {
 			break;
 			
 		case "exit":
+		case "entrance":
 			
 			try {
 				setMazeTool(p, new ExitSettingTool(p));
@@ -87,7 +90,7 @@ public class SelectTool {
 		}
 		
 		if(ToolHandler.hasClipboard(p))
-			ToolHandler.getClipboard(p).reset(p.getWorld());
+			ToolHandler.getClipboard(p).reset();
 			
 		ToolHandler.setTool(p, type);
 		return true;

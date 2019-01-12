@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.mazes.generation;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.bukkit.Chunk;
 
@@ -11,10 +11,10 @@ import me.gorgeousone.tangledmaze.utils.Vec2;
 public class BuildMap {
 	
 	private Maze maze;
-	private int minX, minZ;
 	private MazeFillType[][] shapeMap;
 	private int[][] heightMap;
 	
+	private Vec2 minimum;
 	private Vec2 pathStart;
 	
 	public BuildMap(Maze maze) {
@@ -22,7 +22,7 @@ public class BuildMap {
 		this.maze = maze;
 		
 		calculateMapSize();
-		drawBlankMazeAreaOnMap();
+		drawBlankMazeOnMap();
 	}
 	
 	public Maze getMaze() {
@@ -30,11 +30,11 @@ public class BuildMap {
 	}
 	
 	public int getMinX() {
-		return minX;
+		return minimum.getIntX();
 	}
 
 	public int getMinZ() {
-		return minZ;
+		return minimum.getIntZ();
 	}
 	
 	public int getDimX() {
@@ -68,55 +68,89 @@ public class BuildMap {
 				[point.getIntZ()] = type;
 	}
 	
-	private void calculateMapSize() {
+	public void drawSegment(PathSegment segment, MazeFillType type) {
 		
-		//TODO find an easier way to estimate minimum of maze;
-		//select a probably random chunk from the maze's chunk list
-		ArrayList<Chunk> chunks = maze.getClip().getChunks();
-		Chunk randomChunk = chunks.get(0);
-		
-		//initialize the maze's minimal and maximal coordinates with the chunk
-		minX = randomChunk.getX();
-		minZ = randomChunk.getZ();
-		
-		int
-			maxX = minX,
-			maxZ = minZ;
-		
-		//look for chunks with greater/smaller coordinates
-		for(Chunk c : chunks) {
-			if(c.getX() < minX)
-				minX = c.getX();
-			else if(c.getX() > maxX)
-				maxX = c.getX();
-
-			if(c.getZ() < minZ)
-				minZ = c.getZ();
-			else if(c.getZ() > maxZ)
-				maxZ = c.getZ();
+		for(Vec2 point : segment.getFill()) {
+			
+			if(point.getIntX() >= 0 && point.getIntX() < getDimX() &&
+			   point.getIntZ() >= 0 && point.getIntZ() < getDimZ()) {
+				
+				setType(point, type);
+			}
 		}
-		
-		//multiply with a chunk's length to get to normal location coordinates
-		minX *= 16;
-		minZ *= 16;
-		maxX *= 16;
-		maxZ *= 16;
-		
-		//create two 2D-arrays, one for locations occupied by the maze, another one for the y-coordinates there
-		shapeMap  = new MazeFillType[maxX - minX + 16][maxZ - minZ + 16];
-		heightMap = new int[maxX - minX + 16][maxZ - minZ + 16];
 	}
 	
-	private void drawBlankMazeAreaOnMap() {
-		//mark the maze's area in mazeMap as undefined area (open for paths or walls), the rest will stay untouched
-		for(MazePoint point : maze.getClip().getFill()) {
-				shapeMap [point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.UNDEFINED;
-				heightMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = point.getBlockY();
+	private void calculateMapSize() {
+		
+		HashSet<Chunk> chunks = maze.getClip().getChunks();
+		minimum = getMinPoint(chunks);
+		Vec2 max = getMaxPoin(chunks);
+		
+		shapeMap  = new MazeFillType
+			[max.getIntX() - minimum.getIntX()]
+			[max.getIntZ() - minimum.getIntZ()];
+		
+		heightMap = new int
+			[max.getIntX() - minimum.getIntX()]
+			[max.getIntZ() - minimum.getIntZ()];
+	}
+	
+	private Vec2 getMinPoint(HashSet<Chunk> chunks) {
+		
+		Vec2 minimum = null;
+		
+		for(Chunk chunk : chunks) {
+			
+			if(minimum == null) {
+				minimum = new Vec2(chunk.getX(), chunk.getZ());
+				continue;
+			}
+			
+			if(chunk.getX() < minimum.getX()) {
+				minimum.setX(chunk.getX());
+			}
+				
+			if(chunk.getZ() < minimum.getZ()) {
+				minimum.setZ(chunk.getZ());
+			}
 		}
 		
-		//mark the border in mazeMap as reserved for walls
+		return minimum.mult(16);
+	}
+	
+	private Vec2 getMaxPoin(HashSet<Chunk> chunks) {
+		
+		Vec2 maximum = null;
+		
+		for(Chunk chunk : chunks) {
+			
+			if(maximum == null) {
+				maximum = new Vec2(chunk.getX(), chunk.getZ());
+				continue;
+			}
+			
+			if(chunk.getX() > maximum.getX()) {
+				maximum.setX(chunk.getX());
+			}
+				
+			if(chunk.getZ() > maximum.getZ()) {
+				maximum.setZ(chunk.getZ());
+			}
+		}
+		
+		return maximum.add(1, 1).mult(16);
+	}
+	
+	private void drawBlankMazeOnMap() {
+		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
+		for(MazePoint point : maze.getClip().getFill()) {
+				shapeMap [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.UNDEFINED;
+				heightMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY();
+		}
+		
+		//mark the border in mazeMap as walls
 		for(MazePoint point : maze.getClip().getBorder()) {
-				shapeMap[point.getBlockX() - minX][point.getBlockZ() - minZ] = MazeFillType.WALL;
+				shapeMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.WALL;
 		}
 	}
 }

@@ -39,7 +39,7 @@ public class Plane {
 //		return getIntersection(l) != null;
 //	}
 	
-	//TODO work on it
+	//TODO highest - work on it
 //	public Vector getIntersection(Line l) {
 //		float r = (float) getOrigin().subtract(l.getOrigin()).multiply(getNormal()) / l.getDirection().multiply(getNormal());
 //		Vector intersection = l.getPoint(r);
