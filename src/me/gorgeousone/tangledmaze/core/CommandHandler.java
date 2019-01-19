@@ -9,11 +9,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.commands.*;
+import me.gorgeousone.tangledmaze.command.*;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
-import me.gorgeousone.tangledmaze.utils.Constants;
+import me.gorgeousone.tangledmaze.util.Constants;
 
 public class CommandHandler implements CommandExecutor {
 	

@@ -14,9 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.gorgeousone.tangledmaze.listeners.BlockChangeListener;
-import me.gorgeousone.tangledmaze.listeners.PlayerListener;
-import me.gorgeousone.tangledmaze.listeners.WandListener;
+import me.gorgeousone.tangledmaze.listener.BlockChangeListener;
+import me.gorgeousone.tangledmaze.listener.PlayerListener;
+import me.gorgeousone.tangledmaze.listener.WandListener;
 
 public class TangledMain extends JavaPlugin {
 	

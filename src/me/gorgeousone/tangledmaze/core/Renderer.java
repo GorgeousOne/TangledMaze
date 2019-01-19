@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.core;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -8,12 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.gorgeousone.tangledmaze.mazes.Maze;
-import me.gorgeousone.tangledmaze.mazes.MazeAction;
-import me.gorgeousone.tangledmaze.mazes.MazeHandler;
-import me.gorgeousone.tangledmaze.tools.ClippingTool;
-import me.gorgeousone.tangledmaze.utils.Constants;
-import me.gorgeousone.tangledmaze.utils.MazePoint;
+import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.maze.MazeAction;
+import me.gorgeousone.tangledmaze.maze.MazeHandler;
+import me.gorgeousone.tangledmaze.tool.ClippingTool;
+import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.MazePoint;
 
 public abstract class Renderer implements Listener {
 	
@@ -68,7 +69,7 @@ public abstract class Renderer implements Listener {
 	public static void showClipboard(ClippingTool clipboard) {
 		
 		clipVisibilities.put(clipboard, true);
-		Player p = clipboard.getPlayer();
+		Player player = clipboard.getPlayer();
 		
 		new BukkitRunnable() {
 			@Override
@@ -76,12 +77,12 @@ public abstract class Renderer implements Listener {
 				
 				if(clipboard.isComplete()) {
 					for(MazePoint point : clipboard.getClip().getBorder()) {
-						p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+						player.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
 					}
 				}
 				
 				for(Location vertex : clipboard.getVertices()) {
-					p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+					player.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 				}
 				
 			}
@@ -92,22 +93,22 @@ public abstract class Renderer implements Listener {
 	public static void showMaze(Maze maze) {
 		
 		mazeVisibilities.put(maze, true);
-		Player p = maze.getPlayer();
+		Player player = maze.getPlayer();
 		
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				
 				for(MazePoint point : maze.getClip().getBorder()) {
-					p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+					player.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 				}
 				
 				for(Location exit : maze.getExits()) {
-					p.sendBlockChange(exit, Constants.MAZE_EXIT, (byte) 0);
+					player.sendBlockChange(exit, Constants.MAZE_EXIT, (byte) 0);
 				}
 				
 				if(!maze.getExits().isEmpty()) {
-					p.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
+					player.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
 				}
 			}
 		}.runTask(TangledMain.getPlugin());
@@ -120,20 +121,20 @@ public abstract class Renderer implements Listener {
 			return;
 		
 		clipVisibilities.put(clipboard, false);
-		Player p = clipboard.getPlayer();
+		Player player = clipboard.getPlayer();
 		
 		if(clipboard.isComplete()) {
 			for(Location point : clipboard.getClip().getBorder()) {
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+				player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 			}
 		}
 		
 		for(Location vertex : clipboard.getVertices()) {
-			p.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+			player.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
 		}
 		
-		if(updateMaze && MazeHandler.getMaze(p).isStarted() && isMazeVisible(MazeHandler.getMaze(p)))
-			refreshMaze(p, clipboard, MazeHandler.getMaze(p));
+		if(updateMaze && MazeHandler.getMaze(player).isStarted() && isMazeVisible(MazeHandler.getMaze(player)))
+			refreshMaze(player, clipboard, MazeHandler.getMaze(player));
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -143,10 +144,10 @@ public abstract class Renderer implements Listener {
 			return;
 		
 		mazeVisibilities.put(maze, false);
-		Player p = maze.getPlayer();
+		Player player = maze.getPlayer();
 		
 		for(MazePoint point : maze.getClip().getBorder()) {
-				p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+			player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 		}
 	}
 
@@ -156,20 +157,20 @@ public abstract class Renderer implements Listener {
 		if(maze.getPlayer() == null)
 			return;
 		
-		Player p = maze.getPlayer();
+		Player player = maze.getPlayer();
 		
 		for(Location point : action.getRemovedExits()) {
-			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			player.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 		
 			if(maze.getExits().indexOf(point) == 0 && maze.getExits().size() > 1)
-				p.sendBlockChange(maze.getExits().get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
+				player.sendBlockChange(maze.getExits().get(1), Constants.MAZE_MAIN_EXIT, (byte) 0);
 		}
 		
 		for(Location point : action.getAddedBorder())
-			p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+			player.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 		
 		for(Location point : action.getRemovedBorder())
-			p.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
+			player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -177,14 +178,14 @@ public abstract class Renderer implements Listener {
 		
 		for(Maze maze : mazeVisibilities.keySet()) {
 			
-			if(!maze.isStarted() || !isMazeVisible(maze) || !maze.getClip().getChunks().contains(chunk))
+			if(!maze.isStarted() || !isMazeVisible(maze) || !maze.getClip().getFillChunks().contains(chunk))
 				continue;
 			
-			Player p = maze.getPlayer();
+			Player player = maze.getPlayer();
 			
 			//TODO high - maybe find chunk specific blocks that need to be updated
 			for(MazePoint point : maze.getClip().getBorder()) {
-				p.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
+				player.sendBlockChange(point, Constants.MAZE_BORDER, (byte) 0);
 			}
 		}
 		
@@ -193,33 +194,41 @@ public abstract class Renderer implements Listener {
 			if(!isClipboardVisible(clipboard) || !clipboard.isComplete())
 				continue;
 
-			Player p = clipboard.getPlayer();
+			Player player = clipboard.getPlayer();
 			
 			for(Location point : clipboard.getClip().getBorder())
-				p.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
+				player.sendBlockChange(point, Constants.SELECTION_BORDER, (byte) 0);
 			
 			for(Location vertex : clipboard.getVertices())
-				p.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
+				player.sendBlockChange(vertex, Constants.SELECTION_CORNER, (byte) 0);
 		}
 	}
 	
 	//TODO high - find fast way to iterate/compare blocks
 	@SuppressWarnings("deprecation")
-	private static void refreshMaze(Player p, ClippingTool clipboard, Maze maze) {
-
+	private static void refreshMaze(Player player, ClippingTool clipboard, Maze maze) {
+		
 		for(Location vertex : clipboard.getVertices()) {
 			if(maze.isHighlighted(vertex.getBlock())) {
-				p.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
+				player.sendBlockChange(vertex, Constants.MAZE_BORDER, (byte) 0);
 			}
 		}
-
+		
 		if(!clipboard.isComplete()) {
 			return;
 		}
+
+		HashSet<Chunk> mazeBorderChunks = maze.getClip().getBorderChunks();
 		
-		for(MazePoint borderPoint : clipboard.getClip().getBorder()) {
-			if(maze.isHighlighted(borderPoint.getBlock())) {
-				maze.getPlayer().sendBlockChange(borderPoint, Constants.MAZE_BORDER , (byte) 0);
+		for(Chunk clipBorderChunk : clipboard.getClip().getBorderChunks()) {
+			
+			if(!mazeBorderChunks.contains(clipBorderChunk))
+				return;
+			
+			for(MazePoint borderPoint : clipboard.getClip().getBorder(clipBorderChunk)) {
+				if(maze.isHighlighted(borderPoint.getBlock())) {
+					maze.getPlayer().sendBlockChange(borderPoint, Constants.MAZE_BORDER , (byte) 0);
+				}
 			}
 		}
 	}

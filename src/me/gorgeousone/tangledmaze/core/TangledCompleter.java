@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.utils.Constants;
+import me.gorgeousone.tangledmaze.util.Constants;
 
 public class TangledCompleter implements TabCompleter {
 	
