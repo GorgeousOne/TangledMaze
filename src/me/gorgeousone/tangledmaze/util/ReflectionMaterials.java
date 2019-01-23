@@ -41,7 +41,6 @@ public final class ReflectionMaterials {
 		return null;
 	}
 
-
 	private static Class<?> getMcClass(String clazz){
 		
 		try {

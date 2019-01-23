@@ -1,11 +1,12 @@
 package me.gorgeousone.tangledmaze.util;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
-public class MaterialDataSerializer {
+public class MaterialDeserializer {
 
 	@SuppressWarnings("deprecation")
 	public static MaterialData deserializeMaterialData(String materialData) {
@@ -22,11 +23,16 @@ public class MaterialDataSerializer {
 			typeString = materialData;
 			dataString = "0";
 		}
-
-		type = Material.matchMaterial(typeString);
 		
-		if(type == null) {
-			throw new IllegalArgumentException(ChatColor.RED + "\"" + typeString + "\" does not match any block type. See the spigot (< 1.13) material name list for help.");
+		if(Bukkit.getServer().getVersion().contains("1.13")) {
+			type = Material.valueOf(typeString.toUpperCase());
+		
+		}else {
+			type = ReflectionMaterials.getMaterial(typeString);
+		}
+		
+		if(type == null || type == Material.AIR && !typeString.equalsIgnoreCase("AIR")) {
+			throw new IllegalArgumentException(ChatColor.RED + "\"" + typeString + "\" does not match any block type.");
 		}
 		
 		try {

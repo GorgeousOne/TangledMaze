@@ -20,16 +20,16 @@ import org.bukkit.inventory.ItemStack;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
-import me.gorgeousone.tangledmaze.tool.ToolHandler;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 
 @SuppressWarnings("deprecation")
-public class WandListener implements Listener{
+public class ToolActionListener implements Listener{
 	
 	private TangledMain plugin;
 	
-	public WandListener(TangledMain plugin) {
+	public ToolActionListener(TangledMain plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -100,25 +100,24 @@ public class WandListener implements Listener{
 		}
 	}
 	
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		Renderer.updateChunk(e.getChunk());
+	}
+	
 	private void destroyMazeWand(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);
-		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such a mighty tool... it broke apart.");
-
+		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool, it broke apart.");
 		p.damage(0);
 		
 		if(Bukkit.getVersion().contains("1.8")) {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ITEM_BREAK"), 1f, 1f);
 			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
-
+			
 		}else {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
 			p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 1);
 		}
-	}
-
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent e) {
-		Renderer.updateChunk(e.getChunk());
 	}
 }

@@ -4,8 +4,8 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 

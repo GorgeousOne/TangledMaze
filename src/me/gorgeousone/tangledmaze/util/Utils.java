@@ -5,10 +5,6 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import me.gorgeousone.tangledmaze.core.TangledMain;
 
 public abstract class Utils {
 
@@ -159,17 +155,6 @@ public abstract class Utils {
 
 	public static boolean canBeBuiltWith(Material m) {
 		return m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
-	}
-	
-	public static void sendBlockDelayed(Player p, Location loc, Material mat) {
-		BukkitRunnable r = new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void run() {
-				p.sendBlockChange(loc, mat, (byte) 0);
-			}
-		};
-		r.runTask(TangledMain.getPlugin());
 	}
 	
 	public static MazePoint nearestSurface(Location loc) {

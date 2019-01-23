@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.tool;
+package me.gorgeousone.tangledmaze.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.shape.Shape;
+import me.gorgeousone.tangledmaze.tool.ClippingTool;
+import me.gorgeousone.tangledmaze.tool.Tool;
 
 public abstract class ToolHandler {
 	

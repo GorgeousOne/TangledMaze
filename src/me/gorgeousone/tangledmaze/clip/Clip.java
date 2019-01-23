@@ -1,5 +1,6 @@
-package me.gorgeousone.tangledmaze.shape;
+package me.gorgeousone.tangledmaze.clip;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -12,18 +13,19 @@ public class Clip {
 	
 	private World world;
 	private TreeSet<MazePoint> fill, border;
+	private HashSet<Chunk> fillChunks, borderChunks;
 	
 	private int size, borderSize;
 	
 	public Clip(World world) {
-		
-		if(world == null)
-			throw new IllegalArgumentException("World cannot be null");
-		
+
 		this.world = world;
 		
 		fill = new TreeSet<>();
 		border = new TreeSet<>();
+		
+		fillChunks = new HashSet<>();
+		borderChunks = new HashSet<>();
 	}
 	
 	public World getWorld() {
@@ -39,7 +41,7 @@ public class Clip {
 	}
 	
 	//TODO normal - evaluate the effort to calculate chunks new every time
-	public HashSet<Chunk> getFillChunks() {
+	public HashSet<Chunk> getChunks() {
 		
 		HashSet<Chunk> chunks = new HashSet<>();
 		
@@ -84,6 +86,8 @@ public class Clip {
 		}
 		
 		if(fill.add(point)) {
+			
+			fillChunks.add(point.getChunk());
 			size++;
 			return true;
 		}
@@ -94,11 +98,36 @@ public class Clip {
 	public boolean removeFill(MazePoint point) {
 		
 		if(fill.remove(point)) {
+			
+			if(getFill(point.getChunk()).isEmpty()) {
+				fillChunks.remove(point.getChunk());
+			}
+			
 			size--;
 			return true;
 		}
 		
 		return false;
+	}
+	
+	public void removeFill(Collection<MazePoint> points) {
+		
+		HashSet<Chunk> chunks = new HashSet<>();
+		
+		for(MazePoint point : points) {	
+
+			if(fill.remove(point)) {
+				chunks.add(point.getChunk());
+				size--;
+			}
+		}
+		
+		for(Chunk chunk : chunks) {
+			
+			if(getFill(chunk).isEmpty()) {
+				fillChunks.remove(chunk);
+			}
+		}
 	}
 	
 	public boolean addBorder(MazePoint point) {
@@ -108,6 +137,7 @@ public class Clip {
 		}
 		
 		if(border.add(point)) {
+			borderChunks.add(point.getChunk());
 			borderSize++;
 			return true;
 		}
@@ -118,6 +148,11 @@ public class Clip {
 	public boolean removeBorder(MazePoint point) {
 		
 		if(border.remove(point)) {
+			
+			if(getBorder(point.getChunk()).isEmpty()) {
+				borderChunks.remove(point.getChunk());
+			}
+
 			borderSize--;
 			return true;
 		}
@@ -125,6 +160,26 @@ public class Clip {
 		return false;
 	}
 	
+	public void removeBorder(Collection<MazePoint> points) {
+		
+		HashSet<Chunk> chunks = new HashSet<>();
+		
+		for(MazePoint point : points) {	
+
+			if(border.remove(point)) {
+				chunks.add(point.getChunk());
+				size--;
+			}
+		}
+		
+		for(Chunk chunk : chunks) {
+			
+			if(getBorder(chunk).isEmpty()) {
+				fillChunks.remove(chunk);
+			}
+		}
+	}
+
 	public boolean contains(MazePoint point) {
 		return fill.contains(point);
 	}

@@ -1,38 +1,39 @@
-package me.gorgeousone.tangledmaze.maze;
+package me.gorgeousone.tangledmaze.clip;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
-public class MazeAction {
+public class ClipAction {
 	
-	private ArrayList<MazePoint> addedFill, removedFill, addedBorder, removedBorder, removedExits;
+	private HashSet<MazePoint> addedFill, removedFill, addedBorder, removedBorder, removedExits;
 	
-	public MazeAction() {
-		addedFill     = new ArrayList<>();
-		addedBorder   = new ArrayList<>();
-		removedFill   = new ArrayList<>();
-		removedBorder = new ArrayList<>();
-		removedExits  = new ArrayList<>();
+	public ClipAction() {
+		addedFill     = new HashSet<>();
+		addedBorder   = new HashSet<>();
+		removedFill   = new HashSet<>();
+		removedBorder = new HashSet<>();
+		removedExits  = new HashSet<>();
 	}
 	
-	public ArrayList<MazePoint> getAddedFill() {
+	public HashSet<MazePoint> getAddedFill() {
 		return addedFill;
 	}
 
-	public ArrayList<MazePoint> getRemovedFill() {
+	public HashSet<MazePoint> getRemovedFill() {
 		return removedFill;
 	}
 
-	public ArrayList<MazePoint> getAddedBorder() {
+	public HashSet<MazePoint> getAddedBorder() {
 		return addedBorder;
 	}
 	
-	public ArrayList<MazePoint> getRemovedBorder() {
+	public HashSet<MazePoint> getRemovedBorder() {
 		return removedBorder;
 	}
 	
-	public ArrayList<MazePoint> getRemovedExits() {
+	public HashSet<MazePoint> getRemovedExits() {
 		return  removedExits;
 	}
 	
@@ -56,7 +57,7 @@ public class MazeAction {
 		removedExits.add(point);
 	}
 	
-	public MazeAction invert() {
+	public ClipAction invert() {
 		ArrayList<MazePoint> temporaryHolder = new ArrayList<MazePoint>(addedFill);
 		
 		addedFill.clear();
@@ -75,4 +76,13 @@ public class MazeAction {
 		
 		return this;
 	}
+	
+	public boolean clipWillContain(Clip clip, MazePoint point) {
+		return (clip.contains(point) || addedFill.contains(point)) && !removedFill.contains(point);
+	}
+	
+	public boolean clipBorderWillContain(Clip clip, MazePoint point) {
+		return (clip.borderContains(point) || addedBorder.contains(point)) && !removedBorder.contains(point);
+	}
+
 }

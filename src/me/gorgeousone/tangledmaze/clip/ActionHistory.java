@@ -1,10 +1,10 @@
-package me.gorgeousone.tangledmaze.maze;
+package me.gorgeousone.tangledmaze.clip;
 
 import java.util.Stack;
 
 public class ActionHistory {
 
-	private Stack<MazeAction> actions;
+	private Stack<ClipAction> actions;
 	
 	public ActionHistory() {
 		actions = new Stack<>();
@@ -14,14 +14,14 @@ public class ActionHistory {
 		return actions.isEmpty();
 	}
 	
-	public void pushAction(MazeAction action) {
+	public void pushAction(ClipAction action) {
 		actions.push(action);
 		
 		if(actions.size() > 10)
 			actions.remove(0);
 	}
 	
-	public MazeAction popLastAction() {
+	public ClipAction popLastAction() {
 		return actions.pop();
 	}
 

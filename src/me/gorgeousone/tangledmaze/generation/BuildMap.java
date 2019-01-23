@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 import org.bukkit.Chunk;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -96,7 +96,7 @@ public class BuildMap {
 	
 	private void calculateMapSize() {
 		
-		HashSet<Chunk> chunks = maze.getClip().getFillChunks();
+		HashSet<Chunk> chunks = maze.getClip().getChunks();
 		minimum = getMinPoint(chunks);
 		Vec2 max = getMaxPoin(chunks);
 		

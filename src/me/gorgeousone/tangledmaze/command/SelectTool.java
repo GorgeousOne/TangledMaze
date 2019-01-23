@@ -2,21 +2,22 @@ package me.gorgeousone.tangledmaze.command;
 
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
-import me.gorgeousone.tangledmaze.shape.*;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
+import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.*;
 import me.gorgeousone.tangledmaze.util.Constants;
 
 public class SelectTool {
 
-	public void execute(Player p, String selectionType) {
+	public void execute(Player p, String toolType) {
 		
 		if(!p.hasPermission(Constants.buildPerm)) {
 			p.sendMessage(Constants.insufficientPerms);
 			return;
 		}
 		
-		switch (selectionType.toLowerCase()) {
+		switch (toolType.toLowerCase()) {
 		case "rect":
 		case "rectangle":
 		case "square":

@@ -3,12 +3,11 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
-import me.gorgeousone.tangledmaze.shape.Clip;
+import me.gorgeousone.tangledmaze.clip.Clip;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.tool.ExitSettingTool;
-import me.gorgeousone.tangledmaze.tool.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 
 public class StartMaze {
@@ -39,8 +38,5 @@ public class StartMaze {
 		maze.setClip(clip);
 		
 		player.sendMessage(Constants.prefix + "Started a maze from selection.");
-		
-		//todo remoev debug
-		ToolHandler.setTool(player, new ExitSettingTool(player));
 	}
 }

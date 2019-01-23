@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Vec2;
 

@@ -4,8 +4,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class ExitSettingTool extends Tool {
 	
@@ -21,6 +21,7 @@ public class ExitSettingTool extends Tool {
 //		if(maze.exitsContain(clicked))
 //			maze.removeExit(clicked);
 //		else
+		
 		maze.toggleExit(clicked);
 	}
 }

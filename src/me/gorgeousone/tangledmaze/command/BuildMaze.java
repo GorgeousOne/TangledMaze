@@ -6,11 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
-import me.gorgeousone.tangledmaze.tool.ToolHandler;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.MaterialDataSerializer;
+import me.gorgeousone.tangledmaze.util.MaterialDeserializer;
 
 public class BuildMaze {
 
@@ -74,7 +74,7 @@ public class BuildMaze {
 		ArrayList<MaterialData> composition = new ArrayList<>();
 		
 		for(String materialData : serializedMaterialData) {
-			composition.add(MaterialDataSerializer.deserializeMaterialData(materialData));
+			composition.add(MaterialDeserializer.deserializeMaterialData(materialData));
 		}
 		
 		return composition;

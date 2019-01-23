@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.TangledMain;
-import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
@@ -21,14 +20,13 @@ public final class BlockGenerator {
 	private BlockGenerator() {}
 	
 	public static void generateBlocks(BuildMap map) {
-//		getMazeBlocks(map);
 		
 		BukkitRunnable async = new BukkitRunnable() {
 			@Override
 			public void run() {
 				
 				simplifyMap(map);
-				flattenMap(map);
+				flattenProtrusiveMapParts(map);
 				buildBlocksContinuously(getMazeBlocks(map));
 			}
 		};
@@ -40,8 +38,6 @@ public final class BlockGenerator {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
-			long start = System.currentTimeMillis();
-
 			@Override
 			public void run() {
 				
@@ -56,7 +52,6 @@ public final class BlockGenerator {
 						return;
 				}
 				
-				Bukkit.broadcastMessage("build time: " + (System.currentTimeMillis() - start));
 				this.cancel();
 			}
 		};
@@ -82,14 +77,14 @@ public final class BlockGenerator {
 				
 				MazeFillType type = map.getType(x, z);
 				
-				if(type != MazeFillType.WALL &&
-				   type != MazeFillType.UNDEFINED) {
+				if(type != MazeFillType.WALL) {
 					continue;
 				}
 				
-				int height = map.getHeight(x, z);
+				int height = map.getHeight(x, z),
+					maxNeighborHeight = getMaxNeighborPathHeight(x, z, map);
 				
-				for(int i = height+1; i <= height + wallHeight; i++) {
+				for(int i = height + 1; i <= Math.max(height + wallHeight, maxNeighborHeight + 2); i++) {
 					
 					BlockState block = new Location(maze.getWorld(), x + mazeMinX, i, z + mazeMinZ).getBlock().getState();
 					
@@ -126,7 +121,7 @@ public final class BlockGenerator {
 		}
 	}
 		
-	private static void flattenMap(BuildMap map) {
+	private static void flattenProtrusiveMapParts(BuildMap map) {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 		
@@ -170,10 +165,19 @@ public final class BlockGenerator {
 		}
 	}
 	
-//	private static void smoothMap(BuildMap map) {
-//		
-//		
-//	}
+	//	private static void smoothMap(BuildMap map) {
+	//		
+	//		int wallHeight = map.getMaze().getWallHeight();
+	//
+	//		for(int x = 0; x < map.getDimX(); x++) {
+	//			for(int z = 0; z < map.getDimZ(); z++) {
+	//		
+	//				if(map.getType(x, z) != MazeFillType.WALL) {
+	//					continue;
+	//				}
+	//			}
+	//		}
+	//	}
 	
 	private static int getMaxNeighborPathHeight(int x, int z, BuildMap map) {
 		
@@ -185,8 +189,9 @@ public final class BlockGenerator {
 				neighborZ = z + dir.toVec2().getIntZ();
 			
 			if(neighborX < 0 || neighborX >= map.getDimX() ||
-			   neighborZ < 0 || neighborZ >= map.getDimZ())
+			   neighborZ < 0 || neighborZ >= map.getDimZ()) {
 				continue;
+			}
 			
 			
 			if(map.getType(neighborX, neighborZ) != MazeFillType.PATH) {
@@ -196,8 +201,9 @@ public final class BlockGenerator {
 			neighborHeights.add(map.getHeight(neighborX, neighborZ));
 		}
 		
-		if(neighborHeights.isEmpty())
+		if(neighborHeights.isEmpty()) {
 			return -1;
+		}
 		
 		return Utils.getMax(neighborHeights);
 	}

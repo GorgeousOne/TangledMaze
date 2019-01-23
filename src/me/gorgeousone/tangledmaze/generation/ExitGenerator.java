@@ -2,7 +2,7 @@ package me.gorgeousone.tangledmaze.generation;
 
 import org.bukkit.Location;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Vec2;
@@ -18,7 +18,7 @@ public final class ExitGenerator {
 		int pathWidth = maze.getPathWidth(),
 			wallWidth = maze.getWallWidth();
 		
-		PathSegment mainExit = generateMainExit(
+		PathSegment mainExit = generateEntrance(
 				map,
 				maze.getMainExit().clone(),
 				pathWidth,
@@ -47,22 +47,22 @@ public final class ExitGenerator {
 		}
 	}
 	
-	private static PathSegment generateMainExit(
+	private static PathSegment generateEntrance(
 			BuildMap map,
-			MazePoint mainExit,
+			MazePoint entrance,
 			int pathWidth,
 			int wallWidth) {
 		
-		mainExit.subtract(map.getMinX(), 0, map.getMinZ());
+		entrance.subtract(map.getMinX(), 0, map.getMinZ());
 		
-		PathSegment exit = new PathSegment(
-			new Vec2(mainExit.toVector()),
-			getExitsFacing(mainExit, map).toVec2(),
-			2*pathWidth,
+		PathSegment entranceSegment = new PathSegment(
+			new Vec2(entrance.toVector()),
+			getExitsFacing(entrance, map).toVec2(),
+			wallWidth + pathWidth,
 			pathWidth,
 			true);
 		
-		return exit;
+		return entranceSegment;
 	}
 	
 	private static void generateExit(

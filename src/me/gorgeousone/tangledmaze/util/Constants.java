@@ -21,8 +21,8 @@ public class Constants {
 			MAZE_BORDER      = Material.REDSTONE_BLOCK,
 			MAZE_EXIT        = Material.EMERALD_BLOCK,
 			MAZE_MAIN_EXIT   = Material.DIAMOND_BLOCK,
-			SELECTION_CORNER = Material.LAPIS_BLOCK,
-			SELECTION_BORDER = Material.GOLD_BLOCK;
+			CLIPBOARD_CORNER = Material.LAPIS_BLOCK,
+			CLIPBOARD_BORDER = Material.GOLD_BLOCK;
 	
 	public static final int
 		MAX_PATH_WIDTH = 50,

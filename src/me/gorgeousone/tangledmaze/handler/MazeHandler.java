@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.maze;
+package me.gorgeousone.tangledmaze.handler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.BuildMap;

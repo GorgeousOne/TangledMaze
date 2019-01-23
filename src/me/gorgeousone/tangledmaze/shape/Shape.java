@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.World;
 
+import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 

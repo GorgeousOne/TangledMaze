@@ -3,11 +3,11 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeAction;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
+import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.tool.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 
 public class CutFromMaze {
@@ -26,7 +26,7 @@ public class CutFromMaze {
 		}
 		
 		if(!ToolHandler.hasClipboard(p)) {
-			p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
+			p.sendMessage(ChatColor.RED + "Please select an area with a maze wand first.");
 			p.sendMessage("/tangledmaze wand");
 			return;
 		}
@@ -34,15 +34,15 @@ public class CutFromMaze {
 		ClippingTool clipboard = ToolHandler.getClipboard(p);
 
 		if(!clipboard.isComplete()) {
-			p.sendMessage(ChatColor.RED + "Please finish your selection first.");
+			p.sendMessage(ChatColor.RED + "Please finish your clipboard first.");
 			return;
 		}
 		
 		Maze maze = MazeHandler.getMaze(p);
-		MazeAction action = maze.getDeletion(clipboard.getClip());
+		ClipAction action = maze.getDeletion(clipboard.getClip());
 		
-		if(action.getRemovedFill().size() == 0) {
-			p.sendMessage(ChatColor.RED + "Your selection does not seem to intersect your maze directly (outline inside borders).");
+		if(action == null) {
+			p.sendMessage(ChatColor.RED + "Your clipboard does not seem to intersect your maze directly.");
 			return;
 		}
 

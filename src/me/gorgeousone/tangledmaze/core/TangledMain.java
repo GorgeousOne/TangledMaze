@@ -14,9 +14,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.gorgeousone.tangledmaze.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.listener.BlockChangeListener;
 import me.gorgeousone.tangledmaze.listener.PlayerListener;
-import me.gorgeousone.tangledmaze.listener.WandListener;
+import me.gorgeousone.tangledmaze.listener.ToolActionListener;
 
 public class TangledMain extends JavaPlugin {
 	
@@ -131,7 +132,7 @@ public class TangledMain extends JavaPlugin {
 	private void registerListeners() {
 		PluginManager pm = Bukkit.getPluginManager();
 		
-		pm.registerEvents(new WandListener(this), this);
+		pm.registerEvents(new ToolActionListener(this), this);
 		pm.registerEvents(new PlayerListener(), this);
 		pm.registerEvents(new BlockChangeListener(), this);
 		

@@ -5,9 +5,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazeAction;
-import me.gorgeousone.tangledmaze.maze.MazeHandler;
+import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class BrushTool extends Tool {
 	
@@ -19,17 +19,17 @@ public class BrushTool extends Tool {
 	public void interact(Block clicked, Action interaction) {
 
 		Maze maze = MazeHandler.getMaze(getPlayer());
-		MazeAction brush = null;
+		ClipAction brushing = null;
 		
 		//get affected blocks of shaping as a MazeAction
 		if(interaction == Action.RIGHT_CLICK_BLOCK) {
-			brush = maze.getReduction(clicked);
+			brushing = maze.getErasure(clicked);
 		}else
-			brush = maze.getExpansion(clicked);
+			brushing = maze.getExpansion(clicked);
 		
-		if(brush == null)
+		if(brushing == null)
 			getPlayer().sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "This is not your maze's outline...");
 		else
-			maze.processAction(brush, true);
+			maze.processAction(brushing, true);
 	}
 }
