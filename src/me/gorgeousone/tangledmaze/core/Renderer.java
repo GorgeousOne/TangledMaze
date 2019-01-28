@@ -136,7 +136,7 @@ public abstract class Renderer implements Listener {
 			player.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
 		}
 		
-		if(updateMaze && MazeHandler.getMaze(player).isStarted() && isMazeVisible(MazeHandler.getMaze(player)))
+		if(updateMaze && MazeHandler.getMaze(player) != null && isMazeVisible(MazeHandler.getMaze(player)))
 			refreshMaze(player, clipboard, MazeHandler.getMaze(player));
 	}
 	

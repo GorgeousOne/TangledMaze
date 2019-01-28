@@ -20,10 +20,10 @@ public class PlayerListener implements Listener {
 	
 	public PlayerListener() {
 		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(p.hasPermission(Constants.buildPerm)) {
-				ToolHandler.setTool(p, new ClippingTool(p, Shape.RECT));
-				MazeHandler.setMaze(p, new Maze(p));
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(player.hasPermission(Constants.buildPerm)) {
+				ToolHandler.setTool(player, new ClippingTool(player, Shape.RECT));
+				MazeHandler.setMaze(player, new Maze(player));
 			}
 		}
 	}
@@ -31,32 +31,32 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		
-		Player p = e.getPlayer();
+		Player player = e.getPlayer();
 		
-		if(p.hasPermission(Constants.buildPerm)) {
-			ToolHandler.setTool(p, new ClippingTool(p, Shape.RECT));
-			MazeHandler.setMaze(p, new Maze(p));
+		if(player.hasPermission(Constants.buildPerm)) {
+			ToolHandler.setTool(player, new ClippingTool(player, Shape.RECT));
+			MazeHandler.setMaze(player, new Maze(player));
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		
-		Player p = e.getPlayer();
+		Player player = e.getPlayer();
 		
-		if(p.hasPermission(Constants.buildPerm)) {
-			ToolHandler.removeTool(p);
-			MazeHandler.removeMaze(p);
+		if(player.hasPermission(Constants.buildPerm)) {
+			ToolHandler.removeTool(player);
+			MazeHandler.removeMaze(player);
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onChangeWorld(PlayerChangedWorldEvent e) {
-		Player p = e.getPlayer();
+		Player player = e.getPlayer();
 			
-		if(p.hasPermission(Constants.buildPerm)) {
-			MazeHandler.getMaze(p).reset();
-			ToolHandler.resetToDefaultTool(p);
+		if(player.hasPermission(Constants.buildPerm)) {
+			MazeHandler.getMaze(player).reset();
+			ToolHandler.resetToDefaultTool(player);
 		}
 	}
 }

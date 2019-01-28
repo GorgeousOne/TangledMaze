@@ -8,15 +8,15 @@ import me.gorgeousone.tangledmaze.util.Constants;
 
 public class DiscardAll {
 	
-	public void execute(Player p) {
+	public void execute(Player player) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
-		
-		MazeHandler.getMaze(p).reset();
-		ToolHandler.resetToDefaultTool(p);
-		p.sendMessage(Constants.prefix + "Deselected your maze and your clipboard.");
+
+		MazeHandler.getMaze(player).reset();
+		ToolHandler.resetToDefaultTool(player);
+		player.sendMessage(Constants.prefix + "Deselected your maze and your clipboard.");
 	}
 }

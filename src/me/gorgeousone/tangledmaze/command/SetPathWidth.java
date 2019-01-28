@@ -9,10 +9,10 @@ import me.gorgeousone.tangledmaze.util.Constants;
 
 public class SetPathWidth {
 
-	public void execute(Player p, String arg0) {
+	public void execute(Player player, String arg0) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
 		
@@ -21,28 +21,28 @@ public class SetPathWidth {
 		try {
 			pathWidth = Integer.parseInt(arg0);
 		} catch (NumberFormatException e) {
-			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
+			player.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
 			return;
 		}
 		
 		if(pathWidth < 1) {
-			p.sendMessage(ChatColor.RED + "A path cannot be thinner than 1 block.");
+			player.sendMessage(ChatColor.RED + "A path cannot be thinner than 1 block.");
 			return;
 		}
 		
 		if(pathWidth > Constants.MAX_PATH_WIDTH) {
-			p.sendMessage(Constants.prefix
+			player.sendMessage(Constants.prefix
 					+ "Grandma still wants to cross the path on her own. "
 					+ "There will not always be a handsome person like you around to help her. "
 					+ "The path width is limited to " + Constants.MAX_PATH_WIDTH + " blocks.");
 			return;
 		}
 		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getPathWidth() != pathWidth) {
 			maze.setPathWidth(pathWidth);
-			p.sendMessage(Constants.prefix + "Set path width to " + pathWidth + ".");
+			player.sendMessage(Constants.prefix + "Set path width to " + pathWidth + " blocks.");
 		}
 	}
 }

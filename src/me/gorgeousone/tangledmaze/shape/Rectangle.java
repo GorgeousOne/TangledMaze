@@ -28,7 +28,7 @@ public class Rectangle implements Shape {
 		v0 = vertices.get(0);
 		v2 = vertices.get(2);
 		
-		int maxY = Utils.getMaxY(vertices);
+		int maxY = Utils.getMinHeight(vertices);
 		
 		Clip clip = new Clip(v0.getWorld());
 		

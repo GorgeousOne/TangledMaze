@@ -226,7 +226,6 @@ public class Maze {
 		}
 	}
 	
-	//TODO normal - overthink MazeActions's storing method
 	public void processAction(ClipAction action, boolean saveToHistory) {
 		
 		getClip().removeFill(action.getRemovedFill());
@@ -302,15 +301,12 @@ public class Maze {
 			
 			for(MazePoint ownBorder : getClip().getBorder(chunk)) {
 				
-				//continue if the point isn't even in the shape
-				if(!clip.contains(ownBorder))
+				if(!clip.contains(ownBorder) ||
+					clip.borderContains(ownBorder) &&
+					sealsMaze(ownBorder, addition, Directions.values())) {
 					continue;
+				}
 				
-				//if the point is inside the shapes border look up if is connected to blocks outside of the maze
-				if(clip.borderContains(ownBorder) && sealsMaze(ownBorder, addition, Directions.values()))
-					continue;
-				
-				//otherwise remove the block
 				addition.removeBorder(ownBorder);
 			}
 		}
@@ -334,7 +330,7 @@ public class Maze {
 		
 		removeIntrudingShapeParts(clip, deletion);
 		
-		if(deletion.getAddedBorder().isEmpty() && deletion.getRemovedFill().isEmpty())
+		if(deletion.getRemovedFill().isEmpty())
 			return deletion;
 		
 		removeExcludedBorder(clip, deletion);
@@ -377,15 +373,12 @@ public class Maze {
 			
 			for(MazePoint ownBorder : getClip().getBorder(chunk)) {
 				
-				//continue if the point isn't even in the shape
-				if(!clip.contains(ownBorder))
+				if(!clip.contains(ownBorder) ||
+					clip.borderContains(ownBorder) &&
+					sealsMaze(ownBorder, deletion, Directions.values())) {
 					continue;
+				}
 				
-				//if the point is inside the shapes border look up if is connected to blocks outside of the maze
-				if(clip.borderContains(ownBorder) && sealsMaze(ownBorder, deletion, Directions.values()))
-					continue;
-				
-				//otherwise remove the block
 				deletion.removeBorder(ownBorder);
 				deletion.removeFill(ownBorder);
 			}

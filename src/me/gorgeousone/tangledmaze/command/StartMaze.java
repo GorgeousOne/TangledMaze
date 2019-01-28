@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
@@ -27,16 +26,14 @@ public class StartMaze {
 		ClippingTool clipboard = ToolHandler.getClipboard(player);
 		
 		if(!clipboard.isComplete()) {
-			player.sendMessage(ChatColor.RED + "Please finish your selection first.");
+			player.sendMessage(ChatColor.RED + "Please finish your clipboard first.");
 			return;
 		}
 		
 		Clip clip = clipboard.getClip();
 		clipboard.reset();
 		
-		Maze maze = MazeHandler.getMaze(player);
-		maze.setClip(clip);
-		
-		player.sendMessage(Constants.prefix + "Started a maze from selection.");
+		MazeHandler.getMaze(player).setClip(clip);
+		player.sendMessage(Constants.prefix + "Started a maze from your clipboard.");
 	}
 }

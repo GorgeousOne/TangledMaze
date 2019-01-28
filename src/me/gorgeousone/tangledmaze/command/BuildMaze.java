@@ -14,42 +14,42 @@ import me.gorgeousone.tangledmaze.util.MaterialDeserializer;
 
 public class BuildMaze {
 
-	public void execute(Player p, ArrayList<String> serializedMaterialData) {
+	public void execute(Player player, ArrayList<String> serializedMaterialData) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
 		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted()) {
 			
-			if(!ToolHandler.hasClipboard(p)) {
-				p.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
-				p.sendMessage("/tangledmaze wand");
+			if(!ToolHandler.hasClipboard(player)) {
+				player.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
+				player.sendMessage("/tangledmaze wand");
 				return;	
 			}
 			
-			p.sendMessage(ChatColor.RED + "Please start a maze first.");
-			p.sendMessage("/tangledmaze start");
+			player.sendMessage(ChatColor.RED + "Please start a maze first.");
+			player.sendMessage("/tangledmaze start");
 			return;
 		}
 		
 		if(maze.getClip().size() == maze.getClip().borderSize()) {
-			p.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built.");
+			player.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built.");
 			return;
 		}
 		
 		if(maze.getExits().isEmpty()) {
-			p.sendMessage(Constants.prefix + "Please mark (at least) one exit at the border where the algorithm can start building.");
-			p.sendMessage("/tangledmaze select exit");
+			player.sendMessage(Constants.prefix + "Please mark (at least) one exit at the border where the algorithm can start building.");
+			player.sendMessage("/tangledmaze select exit");
 			return;
 		}
 		
 		if(serializedMaterialData.isEmpty()) {
-			p.sendMessage(ChatColor.RED + "Please specify (at least) one block type this maze should be built out of.");
-			p.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
+			player.sendMessage(ChatColor.RED + "Please specify (at least) one block type this maze should be built out of.");
+			player.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
 			return;
 		}
 		
@@ -58,16 +58,16 @@ public class BuildMaze {
 		try {
 			composition = getWallComposition(serializedMaterialData);
 		} catch (Exception e) {
-			p.sendMessage(e.getMessage());
+			player.sendMessage(e.getMessage());
 			return;
 		}
 		
 		maze.setWallComposition(composition);
 		MazeHandler.buildMaze(maze);
-		p.sendMessage(Constants.prefix + "Started building your maze.");
+		player.sendMessage(Constants.prefix + "Started building your maze.");
 		
-		ToolHandler.resetToDefaultTool(p);
-		maze.reset();
+		ToolHandler.resetToDefaultTool(player);
+		MazeHandler.setMaze(player, new Maze(player));
 	}
 	
 	private static ArrayList<MaterialData> getWallComposition(ArrayList<String> serializedMaterialData) {

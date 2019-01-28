@@ -12,7 +12,7 @@ public class BuildMap {
 	
 	private Maze maze;
 	private MazeFillType[][] shapeMap;
-	private int[][] heightMap;
+	private int[][] groundHeightMap, mazeHeightMap;
 	
 	private Vec2 minimum;
 	private Vec2 pathStart;
@@ -44,13 +44,29 @@ public class BuildMap {
 	public int getDimZ() {
 		return shapeMap[0].length;
 	}
-	
-	public int getHeight(int x, int z) {
-		return heightMap[x][z];
-	}
 
 	public MazeFillType getType(int x, int z) {
 		return shapeMap[x][z];
+	}
+
+	public int getGroundHeight(int x, int z) {
+		return groundHeightMap[x][z];
+	}
+	
+	public int getGroundHeight(Vec2 point) {
+		return groundHeightMap[point.getIntX()][point.getIntZ()];
+	}
+	
+	public int getMazeHeight(int x, int z) {
+		return mazeHeightMap[x][z];
+	}
+	
+	public int getMazeHeight(Vec2 point) {
+		return mazeHeightMap[point.getIntX()][point.getIntZ()];
+	}
+	
+	public int getWallHeight(Vec2 point) {
+		return getMazeHeight(point) - getGroundHeight(point);
 	}
 	
 	public MazeFillType getType(Vec2 point) {
@@ -61,12 +77,20 @@ public class BuildMap {
 		return pathStart;
 	}
 	
-	public void setHeight(Vec2 point, int newY) {
-		
-		if(newY < 0 || newY > 255)
-			return;
-		
-		heightMap[point.getIntX()][point.getIntZ()] = newY;
+	public void setGroundHeight(int x, int z, int newY) {
+		groundHeightMap[x][z] = newY;
+	}
+	
+	public void setGroundHeight(Vec2 point, int newY) {
+		setGroundHeight(point.getIntX(), point.getIntZ(), newY);
+	}
+
+	public void setMazeHeight(int x, int z, int newY) {
+		mazeHeightMap[x][z] = newY;
+	}
+
+	public void setMazeHeight(Vec2 point, int newY) {
+		setMazeHeight(point.getIntX(), point.getIntZ(), newY);
 	}
 
 	public void setType(int x, int z, MazeFillType type) {
@@ -98,17 +122,45 @@ public class BuildMap {
 		
 		HashSet<Chunk> chunks = maze.getClip().getChunks();
 		minimum = getMinPoint(chunks);
-		Vec2 max = getMaxPoin(chunks);
+		Vec2 max = getMaxPoint(chunks);
 		
 		shapeMap  = new MazeFillType
 			[max.getIntX() - minimum.getIntX()]
 			[max.getIntZ() - minimum.getIntZ()];
 		
-		heightMap = new int
+		groundHeightMap = new int
+			[max.getIntX() - minimum.getIntX()]
+			[max.getIntZ() - minimum.getIntZ()];
+		
+		mazeHeightMap = new int
 			[max.getIntX() - minimum.getIntX()]
 			[max.getIntZ() - minimum.getIntZ()];
 	}
 	
+	private void drawBlankMazeOnMap() {
+		
+		int wallHeight = maze.getWallHeight();
+		
+		for(int x = 0; x < getDimX(); x++) {
+			for(int z = 0; z < getDimZ(); z++) {
+				shapeMap[x][z] = MazeFillType.NOT_MAZE;
+			}
+		}
+		
+		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
+		for(MazePoint point : maze.getClip().getFill()) {
+			
+			shapeMap       [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.UNDEFINED;
+			groundHeightMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY();
+			mazeHeightMap  [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY() + wallHeight;
+		}
+		
+		//mark the border in mazeMap as walls
+		for(MazePoint point : maze.getClip().getBorder()) {
+			shapeMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.WALL;
+		}
+	}
+
 	private Vec2 getMinPoint(HashSet<Chunk> chunks) {
 		
 		Vec2 minimum = null;
@@ -132,7 +184,7 @@ public class BuildMap {
 		return minimum.mult(16);
 	}
 	
-	private Vec2 getMaxPoin(HashSet<Chunk> chunks) {
+	private Vec2 getMaxPoint(HashSet<Chunk> chunks) {
 		
 		Vec2 maximum = null;
 		
@@ -153,18 +205,5 @@ public class BuildMap {
 		}
 		
 		return maximum.add(1, 1).mult(16);
-	}
-	
-	private void drawBlankMazeOnMap() {
-		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
-		for(MazePoint point : maze.getClip().getFill()) {
-				shapeMap [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.UNDEFINED;
-				heightMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY();
-		}
-		
-		//mark the border in mazeMap as walls
-		for(MazePoint point : maze.getClip().getBorder()) {
-				shapeMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.WALL;
-		}
 	}
 }

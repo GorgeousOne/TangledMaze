@@ -1,39 +1,44 @@
 package me.gorgeousone.tangledmaze.clip;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
 public class ClipAction {
 	
-	private HashSet<MazePoint> addedFill, removedFill, addedBorder, removedBorder, removedExits;
+	private TreeSet<MazePoint>
+		addedFill,
+		removedFill,
+		addedBorder,
+		removedBorder,
+		removedExits;
 	
 	public ClipAction() {
-		addedFill     = new HashSet<>();
-		addedBorder   = new HashSet<>();
-		removedFill   = new HashSet<>();
-		removedBorder = new HashSet<>();
-		removedExits  = new HashSet<>();
+		addedFill     = new TreeSet<>();
+		addedBorder   = new TreeSet<>();
+		removedFill   = new TreeSet<>();
+		removedBorder = new TreeSet<>();
+		removedExits  = new TreeSet<>();
 	}
 	
-	public HashSet<MazePoint> getAddedFill() {
+	public TreeSet<MazePoint> getAddedFill() {
 		return addedFill;
 	}
 
-	public HashSet<MazePoint> getRemovedFill() {
+	public TreeSet<MazePoint> getRemovedFill() {
 		return removedFill;
 	}
 
-	public HashSet<MazePoint> getAddedBorder() {
+	public TreeSet<MazePoint> getAddedBorder() {
 		return addedBorder;
 	}
 	
-	public HashSet<MazePoint> getRemovedBorder() {
+	public TreeSet<MazePoint> getRemovedBorder() {
 		return removedBorder;
 	}
 	
-	public HashSet<MazePoint> getRemovedExits() {
+	public TreeSet<MazePoint> getRemovedExits() {
 		return  removedExits;
 	}
 	
@@ -58,14 +63,14 @@ public class ClipAction {
 	}
 	
 	public ClipAction invert() {
-		ArrayList<MazePoint> temporaryHolder = new ArrayList<MazePoint>(addedFill);
+		HashSet<MazePoint> temporaryHolder = new HashSet<>(addedFill);
 		
 		addedFill.clear();
 		addedFill.addAll(removedFill);
 		removedFill.clear();
 		removedFill.addAll(temporaryHolder);
 		
-		temporaryHolder = new ArrayList<>(addedBorder);
+		temporaryHolder = new HashSet<>(addedBorder);
 		
 		addedBorder.clear();
 		addedBorder.addAll(removedBorder);
@@ -73,7 +78,6 @@ public class ClipAction {
 		removedBorder.addAll(temporaryHolder);
 		
 		getRemovedExits().clear();
-		
 		return this;
 	}
 	

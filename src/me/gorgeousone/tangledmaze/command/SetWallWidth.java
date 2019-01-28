@@ -42,7 +42,7 @@ public class SetWallWidth {
 		
 		if(maze.getWallWidth() != wallWidth) {
 			maze.setWallWidth(wallWidth);
-			p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + ".");
+			p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + " blocks.");
 		}
 	}
 }
