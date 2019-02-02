@@ -265,10 +265,6 @@ public class Maze {
 		//check for new border blocks
 		for(Chunk chunk : clip.getBorderChunks()) {
 			
-			if(!getClip().getChunks().contains(chunk)) {
-				continue;
-			}
-			
 			for(MazePoint borderPoint : clip.getBorder(chunk)) {
 				if(!getClip().contains(borderPoint)) {
 					addition.addBorder(borderPoint);
@@ -278,10 +274,6 @@ public class Maze {
 		
 		//add new fill blocks
 		for(Chunk chunk : clip.getChunks()) {
-			
-			if(!getClip().getChunks().contains(chunk)) {
-				continue;
-			}
 			
 			for(MazePoint fillPoint : clip.getFill(chunk)) {
 				if(!getClip().contains(fillPoint)) {
@@ -495,7 +487,6 @@ public class Maze {
 		
 		for(Directions dir : directions) {
 			MazePoint neighbor = point.clone().add(dir.toVec3());
-			
 			if(!changes.clipWillContain(clip, neighbor)) {
 				touchesExternal = true;
 

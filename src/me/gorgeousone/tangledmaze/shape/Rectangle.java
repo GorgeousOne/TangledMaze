@@ -19,33 +19,41 @@ public class Rectangle implements Shape {
 		if(vertices.size() < 2)
 			throw new IllegalArgumentException("A rectangle neeeds 2 vertices to be determined.");
 		
-		MazePoint v0 = vertices.get(0),
-				 v2 = vertices.get(1);
+		MazePoint
+			vertex0 = vertices.get(0),
+			vertex2 = vertices.get(1);
 
 		vertices.clear();
-		vertices.addAll(Shape.createRectangularVertices(v0, v2));
+		vertices.addAll(Shape.createRectangularVertices(vertex0, vertex2));
 		
-		v0 = vertices.get(0);
-		v2 = vertices.get(2);
+		MazePoint
+			minVertex = vertices.get(0).clone(),
+			maxVertex = vertices.get(2).clone().add(1, 0, 1);
 		
-		int maxY = Utils.getMinHeight(vertices);
+		Clip clip = new Clip(vertex0.getWorld());
 		
-		Clip clip = new Clip(v0.getWorld());
+		int minY = Utils.getMinHeight(vertices);
 		
-		for(int x = v0.getBlockX(); x <= v2.getX(); x++) {
-			for(int z = v0.getBlockZ(); z <= v2.getZ(); z++) {
+		for(int x = minVertex.getBlockX(); x < maxVertex.getX(); x++) {
+			for(int z = minVertex.getBlockZ(); z < maxVertex.getZ(); z++) {
 				
-				MazePoint point = new MazePoint(vertices.get(0).getWorld(), x, maxY, z);
+				MazePoint point = new MazePoint(minVertex.getWorld(), x, minY, z);
+				point = Utils.nearestSurface(point);
 				
-				clip.addFill(Utils.nearestSurface(point));
-
-				if(x == v0.getX() || x == v2.getX() ||
-				   z == v0.getZ() || z == v2.getZ()) {
-					clip.addBorder(Utils.nearestSurface(point));
+				clip.addFill(point);
+				
+				if(isBorder(x, z, minVertex, maxVertex)) {
+					clip.addBorder(point);
 				}
 			}
 		}
 		
 		return clip;
+	}
+	
+	private boolean isBorder(int x, int z, MazePoint minVertex, MazePoint maxVertex) {
+		return
+			x == minVertex.getX() || x == maxVertex.getX() - 1 ||
+			z == minVertex.getZ() || z == maxVertex.getZ() - 1;
 	}
 }

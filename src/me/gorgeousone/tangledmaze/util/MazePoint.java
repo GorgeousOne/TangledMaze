@@ -42,6 +42,12 @@ public class MazePoint extends Location implements Comparable<Location> {
 	}
 	
 	@Override
+	public MazePoint add(double x, double y, double z) {
+		super.add((int) x, (int) y, (int) z);
+		return this;
+	}
+	
+	@Override
 	public MazePoint add(Vector vec) {
 		super.add(vec);
 		return this;

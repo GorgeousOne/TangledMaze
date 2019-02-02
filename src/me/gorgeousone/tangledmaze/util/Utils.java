@@ -202,7 +202,7 @@ public abstract class Utils {
 		int min = 255;
 		
 		for(MazePoint point : points) {
-			if(point.getBlockY() > min) {
+			if(point.getBlockY() < min) {
 				min = point.getBlockY();
 			}
 		}

@@ -22,7 +22,7 @@ public interface Shape {
 		ArrayList<MazePoint> vertices = new ArrayList<>();
 		World w = v0.getWorld();
 		
-		int maxY = Math.max(v0.getBlockY(), v2.getBlockY());
+		int minY = Math.min(v0.getBlockY(), v2.getBlockY());
 		
 		int minX = Math.min(v0.getBlockX(), v2.getBlockX()),
 			minZ = Math.min(v0.getBlockZ(), v2.getBlockZ()),
@@ -30,10 +30,10 @@ public interface Shape {
 			maxZ = Math.max(v0.getBlockZ(), v2.getBlockZ());
 		
 		vertices = new ArrayList<>(Arrays.asList(
-				Utils.nearestSurface(new MazePoint(w, minX, maxY, minZ)),
-				Utils.nearestSurface(new MazePoint(w, maxX, maxY, minZ)),
-				Utils.nearestSurface(new MazePoint(w, maxX, maxY, maxZ)),
-				Utils.nearestSurface(new MazePoint(w, minX, maxY, maxZ))));
+				Utils.nearestSurface(new MazePoint(w, minX, minY, minZ)),
+				Utils.nearestSurface(new MazePoint(w, maxX, minY, minZ)),
+				Utils.nearestSurface(new MazePoint(w, maxX, minY, maxZ)),
+				Utils.nearestSurface(new MazePoint(w, minX, minY, maxZ))));
 		
 		return vertices;
 	}
