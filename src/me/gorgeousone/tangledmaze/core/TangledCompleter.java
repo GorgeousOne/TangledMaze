@@ -9,15 +9,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.utils.Constants;
+import me.gorgeousone.tangledmaze.util.Constants;
 
 public class TangledCompleter implements TabCompleter {
 	
-	private ArrayList<String> buildPermCmds, selectionTypes;
+	private ArrayList<String> commandNames, selectionTypes;
 	
 	public TangledCompleter() {
 		
-		buildPermCmds = new ArrayList<>(Arrays.asList(
+		commandNames = new ArrayList<>(Arrays.asList(
 				"wand",
 				"start",
 				"discard",
@@ -30,8 +30,8 @@ public class TangledCompleter implements TabCompleter {
 				"build"));
 		
 		selectionTypes = new ArrayList<>(Arrays.asList(
-				"rectangle",
-				"ellipse",
+				"rect",
+				"circle",
 				"brush",
 				"exit"));
 	}
@@ -52,35 +52,44 @@ public class TangledCompleter implements TabCompleter {
 		
 		ArrayList<String> options = new ArrayList<>();
 		
-		argumentswitch:
 		switch (args.length) {
 		case 1:
+			
 			if(args[0].equals("")) {
-				options.addAll(buildPermCmds);
+				
+				options.addAll(commandNames);
 				
 				if(p.hasPermission(Constants.mazeTpPerm))
 					options.add("teleport");
 				
 			}else {
-				for(String command : buildPermCmds)
+				
+				for(String command : commandNames) {
+					
 					if(command.startsWith(args[0].toLowerCase())) {
 						options.add(command);
-						break argumentswitch;
+						return options;
 					}
+				}
 				
-				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.mazeTpPerm))
+				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.mazeTpPerm)) {
 					options.add("teleport");
+				}
 			}
+			
 			break;
 			
 		case 2:
-			if(args[0].equalsIgnoreCase("select"))
+			
+			if(args[0].equalsIgnoreCase("select")) {
 				options.addAll(selectionTypes);
-			break;
+				break;
+			}
+			
 		default:
 			break;
 		}
+		
 		return options;
 	}
-
 }

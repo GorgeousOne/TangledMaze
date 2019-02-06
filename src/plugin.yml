@@ -1,13 +1,13 @@
 name: TangledMaze
-version: 1.0.0
-authors: [GorgeousOne, Spthiel]
+version: 1.2
+authors: [GorgeousOne]
 
 main: me.gorgeousone.tangledmaze.core.TangledMain
 
 commands:
   tangledmaze:
     usage: /tangledmaze help
-    description: Main command for several subcommands wand, select, merge, cut, deselect, start, build.
+    description: 'Main command for all subcommands: wand, start, select, add, cut, discard, build.'
     aliases: [tm, maze]
 
 permissions:
@@ -15,5 +15,5 @@ permissions:
     description: Have the ability to build mazes.
         
   tm.mazetp:
-    description: Be able to teleport yourself back to your maze in case you lost it.
+    description: Be able to teleport yourself back to your maze,
     default: OP
