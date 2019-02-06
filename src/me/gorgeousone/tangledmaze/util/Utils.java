@@ -186,23 +186,12 @@ public abstract class Utils {
 		return new MazePoint(loc);
 	}
 	
-	public static int getMaxHeight(ArrayList<Integer> heights) {
-		int max = 0;
+	public static int getMaxHeight(ArrayList<MazePoint> points) {
 		
-		for(int height : heights) {
-			if(height > max) {
-				max = height;
-			}
-		}
-		
-		return max;
-	}
-	
-	public static int getMinHeight(ArrayList<MazePoint> points) {
-		int min = 255;
+		int min = 0;
 		
 		for(MazePoint point : points) {
-			if(point.getBlockY() < min) {
+			if(point.getBlockY() > min) {
 				min = point.getBlockY();
 			}
 		}

@@ -92,5 +92,4 @@ public class TangledCompleter implements TabCompleter {
 		
 		return options;
 	}
-
 }

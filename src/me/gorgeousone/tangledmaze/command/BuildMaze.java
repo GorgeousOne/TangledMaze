@@ -26,7 +26,7 @@ public class BuildMaze {
 		if(!maze.isStarted()) {
 			
 			if(!ToolHandler.hasClipboard(player)) {
-				player.sendMessage(ChatColor.RED + "Please select an area with a selection wand first.");
+				player.sendMessage(ChatColor.RED + "Please select a clipboard with a maze wand first.");
 				player.sendMessage("/tangledmaze wand");
 				return;	
 			}
@@ -37,18 +37,20 @@ public class BuildMaze {
 		}
 		
 		if(maze.getClip().size() == maze.getClip().borderSize()) {
-			player.sendMessage(Constants.prefix + "What!? This maze only consists of border, it will not be built.");
+			player.sendMessage(Constants.prefix + "Well... this is just border.");
 			return;
 		}
 		
 		if(maze.getExits().isEmpty()) {
-			player.sendMessage(Constants.prefix + "Please mark (at least) one exit at the border where the algorithm can start building.");
+			player.sendMessage(
+					ChatColor.RED + "Please mark an exit at the border. " + 
+					ChatColor.GREEN + "(You know, the generator needs a start point for building walls and everything.)");
 			player.sendMessage("/tangledmaze select exit");
 			return;
 		}
 		
 		if(serializedMaterialData.isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Please specify (at least) one block type this maze should be built out of.");
+			player.sendMessage(ChatColor.RED + "Please specify a block type this maze should be built out of.");
 			player.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
 			return;
 		}

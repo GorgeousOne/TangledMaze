@@ -23,7 +23,14 @@ public final class BlockGenerator {
 		simplifyMap(map);
 		flattenTrees(map);
 		raiseLowMapParts(map);
-		buildBlocksContinuously(getMazeBlocks(map));
+		
+		new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				buildBlocksContinuously(getMazeBlocks(map));
+			}
+		}.runTask(TangledMain.getPlugin());
 	}
 	
 	private static void buildBlocksContinuously(ArrayList<BlockState> blocksToUpdate) {
@@ -61,7 +68,7 @@ public final class BlockGenerator {
 		
 		int mazeMinX = map.getMinX(),
 			mazeMinZ = map.getMinZ();
-		
+	
 		for(int x = 0; x < map.getDimX(); x++) {
 			for(int z = 0; z < map.getDimZ(); z++) {
 				

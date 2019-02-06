@@ -54,7 +54,7 @@ public class CommandHandler implements CommandExecutor {
 		
 		for(int i = 0; i < pageLinks.length; i++) {
 			pageLinks[i] = new RawMessage();
-			pageLinks[i].add(" page " + (i+2) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
+			pageLinks[i].add(" page " + (i+1) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
 		}
 		
 		pageLinks[0].add("/wand"               ).color(Color.GREEN).click("/tm help 2", ClickAction.RUN);
@@ -188,6 +188,8 @@ public class CommandHandler implements CommandExecutor {
 	
 	private void sendCommandHelp(Player player, int page) {
 		
+		player.sendMessage("");
+
 		if(page < 1 || page > pageLinks.length+1)
 			page = 1;
 		
@@ -212,28 +214,26 @@ public class CommandHandler implements CommandExecutor {
 					+ "This command gives you a mighty maze wand. Use it considerately! "
 					+ "Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). "
 					+ "By clicking and dragging a blue corner you can resize your clipboard. "
-					+ "For starting over just click any other two blocks");
+					+ "For starting over just click any other two blocks.");
 			break;
 		//start
 		case 3:
 			player.sendMessage(ChatColor.YELLOW + "Start Command");
 			player.sendMessage(ChatColor.GREEN
 					+ "With this command you transform your clipboard into a maze's floor plan. "
-					+ "Now you can add other clipboards or cut things away.");
-			pageLinks[6].send(player);
+					+ "Now you can add or cut away other clipboards:");
+			pageLinks[5].send(player);
 			break;
 		//discard
 		case 4:
 			player.sendMessage(ChatColor.YELLOW + "Discard Command");
-			player.sendMessage(ChatColor.GREEN
-					+ "If you have a floor plan for a maze you don't want to continue building use this command to delete it. "
-					+ "It will also remove your current clipboard!");
+			player.sendMessage(ChatColor.GREEN + "Deletes your floor plan and clipboard.");
 			break;
 		//select
 		case 5:
 			player.sendMessage(ChatColor.YELLOW + "Select Command");
 			player.sendMessage(ChatColor.GREEN
-					+ "This command lets you choose tools for shaping/editing your maze's floor plan. "
+					+ "Lets you choose tools for editing your maze's floor plan. "
 					+ "The following tools can be selected:");
 
 			player.sendMessage("");
@@ -270,7 +270,7 @@ public class CommandHandler implements CommandExecutor {
 			
 			player.sendMessage("");
 			player.sendMessage(ChatColor.DARK_GREEN + "For undoing one of these action use:");
-			pageLinks[5].send(player);
+			pageLinks[6].send(player);
 			break;
 		//undo
 		case 7:
@@ -290,17 +290,14 @@ public class CommandHandler implements CommandExecutor {
 		//build
 		case 9:
 			player.sendMessage(ChatColor.YELLOW + "Build Command");
-			player.sendMessage(ChatColor.GREEN + "Builds your maze with the with a mixture of blocks you enter. " 
-					+ "As arguments enter types of blocks and their data value (if necessary), for example: ");
+			player.sendMessage(ChatColor.GREEN + "Builds your maze with the with a mixture of blocks you enter as arguments. " 
+					+ "Specify each block type with it's name (and their data value if necessary), for example: ");
 			
 			player.sendMessage(ChatColor.DARK_GREEN + "\"/maze build quartz_block:1\" " + ChatColor.GREEN + "(that's chiseled quartz).");
-			player.sendMessage(ChatColor.GREEN
-					+ "Remember that a built maze cannot be edited any further.");
-
+			player.sendMessage(ChatColor.GREEN + "Keep in mind that a built maze cannot be edited any further.");
+			break;
 		default:
 			return;
 		}
-		
-		player.sendMessage("");
 	}
 }

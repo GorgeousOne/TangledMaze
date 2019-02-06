@@ -10,8 +10,6 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class Ellipse implements Shape {
 	
-	private static float someGoldenRatioStuffBlah = 0.5f / 1.618f;
-	
 	@Override
 	public int getVertexCount() {
 		return 2;
@@ -41,22 +39,22 @@ public class Ellipse implements Shape {
 			radiusZ = (float) (maxVertex.getZ() - minVertex.getZ()) / 2,
 			distortionZ = 1 / (radiusZ / radiusX);
 		
-		int minY = Utils.getMinHeight(vertices);
+		int maxY = Utils.getMaxHeight(vertices);
 		
 		for(float x = (float) -radiusX; x <= radiusX; x++) {
 			for(float z = (float) -radiusZ; z <= radiusZ; z++) {
 				
-				if(!isInEllipse(x+0.5f, z+0.5f, distortionZ, radiusX - someGoldenRatioStuffBlah)) {
+				if(!isInEllipse(x+0.5f, z+0.5f, distortionZ, radiusX - 0.25f)) {
 					continue;
 				}
 				
 				MazePoint point = minVertex.clone().add(radiusX + x, 0, radiusZ + z);
-				point.setY(minY);
+				point.setY(maxY);
 				point = Utils.nearestSurface(point);
 				
 				clip.addFill(point);
 				
-				if(isEllipseBorder(x+0.5f, z+0.5f, distortionZ, radiusX - someGoldenRatioStuffBlah)) {
+				if(isEllipseBorder(x+0.5f, z+0.5f, distortionZ, radiusX - 0.25f)) {
 					clip.addBorder(point);
 				}
 			}

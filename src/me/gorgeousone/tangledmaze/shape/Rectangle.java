@@ -32,12 +32,12 @@ public class Rectangle implements Shape {
 		
 		Clip clip = new Clip(vertex0.getWorld());
 		
-		int minY = Utils.getMinHeight(vertices);
+		int maxY = Utils.getMaxHeight(vertices);
 		
 		for(int x = minVertex.getBlockX(); x < maxVertex.getX(); x++) {
 			for(int z = minVertex.getBlockZ(); z < maxVertex.getZ(); z++) {
 				
-				MazePoint point = new MazePoint(minVertex.getWorld(), x, minY, z);
+				MazePoint point = new MazePoint(minVertex.getWorld(), x, maxY, z);
 				point = Utils.nearestSurface(point);
 				
 				clip.addFill(point);

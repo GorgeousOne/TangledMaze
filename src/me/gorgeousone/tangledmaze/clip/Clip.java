@@ -40,27 +40,14 @@ public class Clip {
 		return borderSize;
 	}
 	
-	//TODO normal - evaluate the effort to calculate chunks new every time
+	@SuppressWarnings("unchecked")
 	public HashSet<Chunk> getChunks() {
-		
-		HashSet<Chunk> chunks = new HashSet<>();
-		
-		for(MazePoint point : fill) {
-			chunks.add(point.getChunk());
-		}
-		
-		return chunks;
+		return (HashSet<Chunk>) fillChunks.clone();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public HashSet<Chunk> getBorderChunks() {
-		
-		HashSet<Chunk> chunks = new HashSet<>();
-		
-		for(MazePoint point : border) {
-			chunks.add(point.getChunk());
-		}
-		
-		return chunks;
+		return (HashSet<Chunk>) borderChunks.clone();
 	}
 	
 	public TreeSet<MazePoint> getFill() {
