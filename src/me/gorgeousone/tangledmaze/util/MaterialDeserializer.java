@@ -41,10 +41,6 @@ public class MaterialDeserializer {
 			throw new IllegalArgumentException(ChatColor.RED + "\"" + dataString + "\" is not a valid number.");
 		}
 		
-		if(!Utils.canBeBuiltWith(type)) {
-			throw new IllegalArgumentException(ChatColor.RED + "It could get difficult to build a maze out of \"" + typeString + "\".");
-		}
-		
 		return new MaterialData(type, data);
 	}
 }

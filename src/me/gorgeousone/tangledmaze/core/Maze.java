@@ -20,9 +20,6 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 
-/*
- * 
- */
 public class Maze {
 	
 	private UUID builder;
@@ -118,7 +115,7 @@ public class Maze {
 		
 		if(getClip().size() != 0)
 			Renderer.hideMaze(this);
-		
+
 		this.clip = clip;
 		isStarted = true;
 		Renderer.showMaze(this);
@@ -210,29 +207,32 @@ public class Maze {
 			Renderer.sendBlockDelayed(getPlayer(), newExit, Constants.MAZE_MAIN_EXIT);
 		}
 	}
+
+	//TODO move updateHeight() from Maze and ClippingTool to Clip class
+	public Block updateHeight(Block block) {
 		
-	public void updateHeight(Location point) {
+		MazePoint updated = Utils.nearestSurface(block.getLocation());
 		
-		MazePoint updated = Utils.nearestSurface(point);
-		
-		if(getClip().removeFill(updated)) {
-			getClip().addFill(updated);
+		if(getClip().removeFilling(updated)) {
+			getClip().addFilling(updated);
 		
 		}else
-			return;
+			return null;
 		
 		if(getClip().removeBorder(updated)) {
 			getClip().addBorder(updated);
 		}
+
+		return updated.getBlock();
 	}
 	
 	public void processAction(ClipAction action, boolean saveToHistory) {
 		
-		getClip().removeFill(action.getRemovedFill());
+		getClip().removeFilling(action.getRemovedFill());
 		getClip().removeBorder(action.getRemovedBorder());
 		
 		for(MazePoint point : action.getAddedFill())
-			getClip().addFill(point);
+			getClip().addFilling(point);
 		
 		for(MazePoint point : action.getAddedBorder())
 			getClip().addBorder(point);
@@ -275,7 +275,7 @@ public class Maze {
 		//add new fill blocks
 		for(Chunk chunk : clip.getChunks()) {
 			
-			for(MazePoint fillPoint : clip.getFill(chunk)) {
+			for(MazePoint fillPoint : clip.getFilling(chunk)) {
 				if(!getClip().contains(fillPoint)) {
 					addition.addFill(fillPoint);
 				}
@@ -338,7 +338,7 @@ public class Maze {
 				continue;
 			}
 			
-			for(MazePoint point : clip.getFill(chunk))
+			for(MazePoint point : clip.getFilling(chunk))
 				if(getClip().contains(point) && !clip.borderContains(point))
 					deletion.removeFill(point);
 		}

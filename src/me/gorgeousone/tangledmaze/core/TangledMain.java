@@ -15,7 +15,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.handler.CommandHandler;
-import me.gorgeousone.tangledmaze.listener.BlockChangeListener;
+import me.gorgeousone.tangledmaze.listener.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listener.PlayerListener;
 import me.gorgeousone.tangledmaze.listener.ToolActionListener;
 
@@ -25,7 +25,7 @@ public class TangledMain extends JavaPlugin {
 			"Selecting Thingy III",
 			"Difficult Handling II",
 			"Would Recommend It X/X",
-			"Unbreaking âˆž",
+			"Unbreaking ∞",
 			"Overpowered X",
 			"Tangly III",
 			"Wow I",
@@ -38,7 +38,6 @@ public class TangledMain extends JavaPlugin {
 	private static TangledMain plugin;
 
 	private ItemStack mazeTool;
-	private int staffMazeSize, vipMazeSize, normalMazeSize;
 
 	@Override
 	public void onEnable() {
@@ -57,18 +56,6 @@ public class TangledMain extends JavaPlugin {
 	
 	public static TangledMain getPlugin() {
 		return plugin;
-	}
-	
-	public int getStaffMazeSize() {
-		return staffMazeSize;
-	}
-
-	public int getVipMazeSize() {
-		return vipMazeSize;
-	}
-
-	public int getNormalMazeSize() {
-		return normalMazeSize;
 	}
 	
 	public boolean isMazeWand(ItemStack item) {
@@ -105,10 +92,6 @@ public class TangledMain extends JavaPlugin {
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		
-		staffMazeSize = getConfig().getInt("staff");
-		vipMazeSize = getConfig().getInt("vip");
-		normalMazeSize = getConfig().getInt("normal");
 	}
 	
 	private void createMazeWand() {
@@ -134,7 +117,7 @@ public class TangledMain extends JavaPlugin {
 		
 		pm.registerEvents(new ToolActionListener(this), this);
 		pm.registerEvents(new PlayerListener(), this);
-		pm.registerEvents(new BlockChangeListener(), this);
+		pm.registerEvents(new BlockUpdateListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(new CommandHandler(this));
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());

@@ -50,7 +50,7 @@ public class Clip {
 		return (HashSet<Chunk>) borderChunks.clone();
 	}
 	
-	public TreeSet<MazePoint> getFill() {
+	public TreeSet<MazePoint> getFilling() {
 		return fill;
 	}
 
@@ -58,7 +58,7 @@ public class Clip {
 		return border;
 	}
 	
-	public TreeSet<MazePoint> getFill(Chunk chunk) {
+	public TreeSet<MazePoint> getFilling(Chunk chunk) {
 		return getPointsInChunk(fill, chunk);
 	}
 	
@@ -66,7 +66,7 @@ public class Clip {
 		return getPointsInChunk(border, chunk);
 	}
 	
-	public boolean addFill(MazePoint point) {
+	public boolean addFilling(MazePoint point) {
 		
 		if (getWorld() != point.getWorld()) {
 			return false;
@@ -78,15 +78,15 @@ public class Clip {
 			size++;
 			return true;
 		}
-		
+
 		return false;
 	}
 	
-	public boolean removeFill(MazePoint point) {
+	public boolean removeFilling(MazePoint point) {
 		
 		if(fill.remove(point)) {
 			
-			if(getFill(point.getChunk()).isEmpty()) {
+			if(getFilling(point.getChunk()).isEmpty()) {
 				fillChunks.remove(point.getChunk());
 			}
 			
@@ -97,7 +97,7 @@ public class Clip {
 		return false;
 	}
 	
-	public void removeFill(Collection<MazePoint> points) {
+	public void removeFilling(Collection<MazePoint> points) {
 		
 		HashSet<Chunk> chunks = new HashSet<>();
 		
@@ -111,7 +111,7 @@ public class Clip {
 		
 		for(Chunk chunk : chunks) {
 			
-			if(getFill(chunk).isEmpty()) {
+			if(getFilling(chunk).isEmpty()) {
 				fillChunks.remove(chunk);
 			}
 		}
@@ -168,10 +168,20 @@ public class Clip {
 	}
 
 	public boolean contains(MazePoint point) {
+
+		if(point.getWorld() != getWorld()) {
+			return false;
+		}
+
 		return fill.contains(point);
 	}
 	
 	public boolean borderContains(MazePoint point) {
+
+		if(point.getWorld() != getWorld()) {
+			return false;
+		}
+
 		return border.contains(point);
 	}
 	

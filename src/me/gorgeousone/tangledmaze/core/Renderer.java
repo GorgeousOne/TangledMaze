@@ -6,6 +6,7 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -123,9 +124,10 @@ public abstract class Renderer implements Listener {
 	@SuppressWarnings("deprecation")
 	public static void hideClipboard(ClippingTool clipboard, boolean updateMaze) {
 		
-		if(!isClipboardVisible(clipboard))
+		if(!isClipboardVisible(clipboard)) {
 			return;
-		
+		}
+
 		clipVisibilities.put(clipboard, false);
 		Player player = clipboard.getPlayer();
 		

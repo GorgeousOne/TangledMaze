@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
 
+import me.gorgeousone.tangledmaze.generation.MazeGenerator;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
@@ -65,9 +66,17 @@ public class BuildMaze {
 		}
 		
 		maze.setWallComposition(composition);
-		MazeHandler.buildMaze(maze);
+
+//		MazeBuildEvent building = new MazeBuildEvent(maze, exitGen, pathGen, blockGen);
+//		Bukkit.getPluginManager().callEvent(building);
+//
+//		if(building.isCancelled()) {
+//			return;
+//		}
+
+		MazeHandler.buildMaze(maze, new MazeGenerator());
 		player.sendMessage(Constants.prefix + "Started building your maze.");
-		
+
 		ToolHandler.resetToDefaultTool(player);
 		MazeHandler.setMaze(player, new Maze(player));
 	}

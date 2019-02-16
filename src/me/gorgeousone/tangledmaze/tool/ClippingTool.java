@@ -48,7 +48,11 @@ public class ClippingTool extends Tool {
 	public Shape getType() {
 		return shape;
 	}
-	
+
+	public boolean isStarted() {
+		return !vertices.isEmpty();
+	}
+
 	public boolean isComplete() {
 		return isComplete;
 	}
@@ -183,18 +187,20 @@ public class ClippingTool extends Tool {
 		return false;
 	}
 	
-	public void updateHeight(Location point) {
+	public Block updateHeight(Block block) {
 		
-		MazePoint point2 = Utils.nearestSurface(point);
+		MazePoint point = Utils.nearestSurface(block.getLocation());
 		
-		if(getClip().removeFill(point2)) {
-			getClip().addFill(point2);
+		if(getClip().removeFilling(point)) {
+			getClip().addFilling(point);
 		
 		}else
-			return;
+			return null;
 		
-		if(getClip().removeBorder(point2)) {
-			getClip().addBorder(point2);
+		if(getClip().removeBorder(point)) {
+			getClip().addBorder(point);
 		}
+
+		return point.getBlock();
 	}
 }

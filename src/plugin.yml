@@ -6,14 +6,19 @@ main: me.gorgeousone.tangledmaze.core.TangledMain
 
 commands:
   tangledmaze:
-    usage: /tangledmaze help
-    description: 'Main command for all subcommands: wand, start, select, add, cut, discard, build.'
-    aliases: [tm, maze]
+      usage: /tangledmaze help
+      description: 'Main command for all sub-commands: wand, start, select, add, cut, discard, build.'
+      aliases: [tm, maze]
 
 permissions:
-  tm.build:
-    description: Have the ability to build mazes.
-        
-  tm.mazetp:
-    description: Be able to teleport yourself back to your maze,
-    default: OP
+  tangledmaze.build:
+      description: Have the ability to build mazes.
+      default: op
+
+  tangledmaze.getwand:
+      description: Receive a maze wand with the command /tangledmaze wand.
+      default: op
+
+  tangkedmaze.teleport:
+      description: Be able to teleport yourself back to your maze.
+      default: op

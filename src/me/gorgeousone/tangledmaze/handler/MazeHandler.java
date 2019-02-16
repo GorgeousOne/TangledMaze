@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import me.gorgeousone.tangledmaze.generation.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
-import me.gorgeousone.tangledmaze.generation.BlockGenerator;
-import me.gorgeousone.tangledmaze.generation.BuildMap;
-import me.gorgeousone.tangledmaze.generation.ExitGenerator;
-import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
 public abstract class MazeHandler {
 	
@@ -45,17 +42,13 @@ public abstract class MazeHandler {
 		mazes.remove(player.getUniqueId());
 	}
 	
-	public static void buildMaze(Maze maze) {
+	public static void buildMaze(Maze maze, MazeGenerator generator) {
 		Renderer.hideMaze(maze);
 		
 		BukkitRunnable async = new BukkitRunnable() {
 			@Override
 			public void run() {
-
-				BuildMap map = new BuildMap(maze);
-				ExitGenerator.generateExits(map);
-				PathGenerator.generatePaths(map);
-				BlockGenerator.generateBlocks(map);
+				generator.buildMaze(maze);
 			}
 		};
 		

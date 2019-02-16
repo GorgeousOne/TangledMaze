@@ -14,11 +14,9 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public final class BlockGenerator {
+public class BlockGenerator {
 
-	private BlockGenerator() {}
-	
-	public static void generateBlocks(BuildMap map) {
+	public void generateBlocks(BuildMap map) {
 		
 		simplifyMap(map);
 		flattenTrees(map);
@@ -33,7 +31,7 @@ public final class BlockGenerator {
 		}.runTask(TangledMain.getPlugin());
 	}
 	
-	private static void buildBlocksContinuously(ArrayList<BlockState> blocksToUpdate) {
+	protected void buildBlocksContinuously(ArrayList<BlockState> blocksToUpdate) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
@@ -58,7 +56,7 @@ public final class BlockGenerator {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static ArrayList<BlockState> getMazeBlocks(BuildMap map) {
+	protected ArrayList<BlockState> getMazeBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		Random rnd = new Random();
@@ -96,7 +94,7 @@ public final class BlockGenerator {
 		return blocksToUpdate;
 	}
 	
-	private static void simplifyMap(BuildMap map) {
+	protected void simplifyMap(BuildMap map) {
 		
 		for(int x = 0; x < map.getDimX(); x++) {
 			for(int z = 0; z < map.getDimZ(); z++) {
@@ -113,7 +111,7 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static void flattenTrees(BuildMap map) {
+	protected void flattenTrees(BuildMap map) {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
@@ -145,7 +143,7 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static void raiseLowMapParts(BuildMap map) {
+	protected void raiseLowMapParts(BuildMap map) {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
@@ -178,9 +176,9 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static Vec2 getHeighestNeighbor(int x, int z, BuildMap map, MazeFillType limitation) {
+	protected Vec2 getHeighestNeighbor(int x, int z, BuildMap map, MazeFillType limitation) {
 		
-		Vec2 maxNeigbor = null;
+		Vec2 maxNeighbor = null;
 		int maxHeight = 0;
 		
 		for(Directions dir : Directions.values()) {
@@ -199,16 +197,16 @@ public final class BlockGenerator {
 			
 			int neighborHeight = map.getMazeHeight(neighbor);
 			
-			if(maxNeigbor == null || neighborHeight > maxHeight) {
-				maxNeigbor = neighbor;
+			if(maxNeighbor == null || neighborHeight > maxHeight) {
+				maxNeighbor = neighbor;
 				maxHeight = neighborHeight;
 			}
 		}
 		
-		return maxNeigbor;
+		return maxNeighbor;
 	}
 
-	private static int getNeighborGroundHeightDiff(BuildMap map, int x, int z) {
+	protected int getNeighborGroundHeightDiff(BuildMap map, int x, int z) {
 		
 		int groundHeight = map.getGroundHeight(x, z),
 			heightDiff = 0,

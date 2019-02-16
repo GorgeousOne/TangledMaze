@@ -7,11 +7,9 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public final class ExitGenerator {
+public class ExitGenerator {
 	
-	private ExitGenerator() {}
-	
-	public static void generateExits(BuildMap map) {
+	public void generateExits(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		
@@ -27,15 +25,15 @@ public final class ExitGenerator {
 		Vec2 pathStart = mainExit.getEnd();
 		map.setStart(pathStart);
 		map.drawSegment(mainExit, MazeFillType.PATH);
-		
-		int pathGridOffsetX = pathStart.getIntX() % (pathWidth + wallWidth),
-			pathGridOffsetZ = pathStart.getIntZ() % (pathWidth + wallWidth);
-		
+
 		if(maze.getExits().size() < 2) {
 			return;
 		}
+
+		int pathGridOffsetX = pathStart.getIntX() % (pathWidth + wallWidth),
+			pathGridOffsetZ = pathStart.getIntZ() % (pathWidth + wallWidth);
 		
-		for(int i = 0; i < maze.getExits().size() - 2; i++) {
+		for(int i = 0; i < maze.getExits().size() - 1; i++) {
 			
 			generateExit(
 					map,
@@ -47,7 +45,7 @@ public final class ExitGenerator {
 		}
 	}
 	
-	private static PathSegment generateEntrance(
+	protected PathSegment generateEntrance(
 			BuildMap map,
 			MazePoint entrance,
 			int pathWidth,
@@ -65,7 +63,7 @@ public final class ExitGenerator {
 		return entranceSegment;
 	}
 	
-	private static void generateExit(
+	protected void generateExit(
 			BuildMap map,
 			MazePoint exit,
 			int pathWidth,
@@ -114,7 +112,7 @@ public final class ExitGenerator {
 		map.drawSegment(exitSegment, MazeFillType.EXIT);
 	}
 		
-	private static Directions getExitsFacing(Location exit, BuildMap map) {
+	protected Directions getExitsFacing(Location exit, BuildMap map) {
 		
 		for(Directions dir : Directions.cardinalValues()) {
 			

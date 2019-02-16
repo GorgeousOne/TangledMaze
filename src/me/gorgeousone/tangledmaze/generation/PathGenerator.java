@@ -9,14 +9,17 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public final class PathGenerator {
+public class PathGenerator {
 	
-	private static ArrayList<Directions> shuffledCardinals = new ArrayList<>(Arrays.asList(Directions.cardinalValues()));
-	private static Random rnd = new Random();
+	protected ArrayList<Directions> shuffledCardinals;
+	protected Random rnd;
 	
-	private PathGenerator() {}
+	public PathGenerator() {
+		shuffledCardinals = new ArrayList<>(Arrays.asList(Directions.cardinalValues()));
+		rnd = new Random();
+	}
 	
-	public static void generatePaths(BuildMap map) {
+	public void generatePaths(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		
@@ -55,7 +58,7 @@ public final class PathGenerator {
 		}
 	}
 	
-	private static PathSegment createPathSegment(BuildMap map, Vec2 currentEnd, int pathWidth, int wallWidth) {
+	protected PathSegment createPathSegment(BuildMap map, Vec2 currentEnd, int pathWidth, int wallWidth) {
 		
 		Collections.shuffle(shuffledCardinals);
 		
@@ -81,7 +84,7 @@ public final class PathGenerator {
 		return null;
 	}
 	
-	private static boolean pathIsFree(BuildMap map, PathSegment path) {
+	protected boolean pathIsFree(BuildMap map, PathSegment path) {
 		
 		for(Vec2 point : path.getFill()) {
 			

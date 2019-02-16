@@ -221,7 +221,7 @@ public class CommandHandler implements CommandExecutor {
 			player.sendMessage(ChatColor.YELLOW + "Start Command");
 			player.sendMessage(ChatColor.GREEN
 					+ "With this command you transform your clipboard into a maze's floor plan. "
-					+ "Now you can add or cut away other clipboards:");
+					+ "Now you can add or cut away other clipboards.");
 			pageLinks[5].send(player);
 			break;
 		//discard
@@ -281,7 +281,7 @@ public class CommandHandler implements CommandExecutor {
 			break;
 		//height
 		case 8:
-			player.sendMessage(ChatColor.YELLOW + "Path/Wallwidth & Wallheight Command");
+			player.sendMessage(ChatColor.YELLOW + "Path-/Wallwidth & Wallheight Command");
 			player.sendMessage(ChatColor.GREEN
 					+ "Three commands for customization of the path eneration. " 
 					+ "Path and wall width are limited to " + Constants.MAX_PATH_WIDTH
@@ -298,6 +298,17 @@ public class CommandHandler implements CommandExecutor {
 			break;
 		default:
 			return;
+		}
+	}
+
+	private void sendMessage(Player player, String message) {
+
+
+		String[] lines = message.split("\\\\n");
+
+		for(String line : lines) {
+
+
 		}
 	}
 }

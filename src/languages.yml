@@ -1,0 +1,17 @@
+help-pages:
+    wand-command:
+        displayed-title:
+        description: This command gives you a mighty maze wand. Use it considerately! Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). By clicking and dragging a blue corner you can resize your clipboard. For starting over just click any other two blocks.
+    start-command: With this command you transform your clipboard into a maze's floor planNow you can add or cut away other clipboards.
+    discard-command: Deletes your floor plan and clipboard.
+    select-command: 'Lets you choose tools for editing your maze's floor plan. The following tools can be selected:'
+    rectangle-tool: Your clipboards created with a wand will form rectangles.
+    circle-tool: Your clipboards will form circles.
+    brush-tool: Left click on your maze's outline to reduce it at that block. Right click on your maze's outline to expand it at that block.
+    exit-command: Click on your maze's outline to set exits (or entrances, however you perceive that). Click on an exit a second time to delete it again. The diamond exit indicates where the maze generator will begin building.
+    tp-command: Teleports you back to your maze (if you have the permission for that.
+    add-cut-command: Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. If you cut off an area from the main part of your maze (with diamond exit) there won't be generated any paths (just don't).
+    undo-command: Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. If you cut off an area from the main part of your maze (with diamond exit) there won't be generated any paths (just don't).
+    path-wallwidth-wallheight-command:
+    build-command:
+    

@@ -52,7 +52,7 @@ public class Ellipse implements Shape {
 				point.setY(maxY);
 				point = Utils.nearestSurface(point);
 				
-				clip.addFill(point);
+				clip.addFilling(point);
 				
 				if(isEllipseBorder(x+0.5f, z+0.5f, distortionZ, radiusX - 0.25f)) {
 					clip.addBorder(point);

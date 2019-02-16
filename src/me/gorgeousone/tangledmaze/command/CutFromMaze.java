@@ -25,7 +25,7 @@ public class CutFromMaze {
 			return;
 		}
 		
-		if(!ToolHandler.hasClipboard(p)) {
+		if(!ToolHandler.hasClipboard(p) || !ToolHandler.getClipboard(p).isStarted()) {
 			p.sendMessage(ChatColor.RED + "Please select an area with a maze wand first.");
 			p.sendMessage("/tangledmaze wand");
 			return;
