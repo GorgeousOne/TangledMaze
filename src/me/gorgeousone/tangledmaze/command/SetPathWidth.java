@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.command;
 
+import me.gorgeousone.tangledmaze.util.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,7 +17,7 @@ public class SetPathWidth {
 			return;
 		}
 		
-		int pathWidth = 0;
+		int pathWidth;
 		
 		try {
 			pathWidth = Integer.parseInt(arg0);
@@ -30,11 +31,11 @@ public class SetPathWidth {
 			return;
 		}
 		
-		if(pathWidth > Constants.MAX_PATH_WIDTH) {
+		if(pathWidth > Settings.MAX_PATH_WIDTH) {
 			player.sendMessage(Constants.prefix
 					+ "Grandma still wants to cross the path on her own. "
 					+ "There will not always be a handsome person like you around to help her. "
-					+ "The path width is limited to " + Constants.MAX_PATH_WIDTH + " blocks.");
+					+ "The path width is limited to " + Settings.MAX_PATH_WIDTH + " blocks.");
 			return;
 		}
 		

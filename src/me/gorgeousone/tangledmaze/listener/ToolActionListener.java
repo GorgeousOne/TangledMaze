@@ -35,8 +35,11 @@ public class ToolActionListener implements Listener{
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
-		if(plugin.isMazeWand(e.getItem()))
+
+		if(plugin.isMazeWand(e.getItem())) {
 			e.setCancelled(true);
+			e.getPlayer().updateInventory();
+		}
 	}
 	
 	@EventHandler

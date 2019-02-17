@@ -6,7 +6,6 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -90,9 +89,9 @@ public abstract class Renderer implements Listener {
 				for(Location vertex : clipboard.getVertices()) {
 					player.sendBlockChange(vertex, Constants.CLIPBOARD_CORNER, (byte) 0);
 				}
-
+		//TODO change back to runTask() if you can find out why block click still interferes block change after 1 tick
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTaskLater(TangledMain.getPlugin(), 2);
 	}
 	
 	@SuppressWarnings("deprecation")

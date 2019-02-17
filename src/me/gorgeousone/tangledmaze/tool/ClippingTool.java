@@ -87,6 +87,7 @@ public class ClippingTool extends Tool {
 			vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			
 		}else if(vertices.size() == shape.getVertexCount()-1) {
+
 			vertices.add(Utils.nearestSurface(clicked.getLocation()));
 			calculateShape();
 			
@@ -96,11 +97,13 @@ public class ClippingTool extends Tool {
 				resizeShape(clicked);
 			
 			}else if(isVertex(clicked)) {
+
 				indexOfResizedVertex = indexOfVertex(clicked);
 				isResizing = true;
 				return;
 				
 			}else {
+
 				Renderer.hideClipboard(this, true);
 				reset();
 				vertices.add(Utils.nearestSurface(clicked.getLocation()));

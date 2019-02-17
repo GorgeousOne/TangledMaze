@@ -15,6 +15,12 @@ import me.gorgeousone.tangledmaze.util.MaterialDeserializer;
 
 public class BuildMaze {
 
+	private MazeGenerator generator;
+
+	public BuildMaze() {
+		generator = new MazeGenerator();
+	}
+
 	public void execute(Player player, ArrayList<String> serializedMaterialData) {
 		
 		if(!player.hasPermission(Constants.buildPerm)) {
@@ -74,7 +80,7 @@ public class BuildMaze {
 //			return;
 //		}
 
-		MazeHandler.buildMaze(maze, new MazeGenerator());
+		MazeHandler.buildMaze(maze, generator);
 		player.sendMessage(Constants.prefix + "Started building your maze.");
 
 		ToolHandler.resetToDefaultTool(player);

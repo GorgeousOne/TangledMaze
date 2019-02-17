@@ -1,7 +1,10 @@
 package me.gorgeousone.tangledmaze.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.util.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -57,15 +60,15 @@ public class CommandHandler implements CommandExecutor {
 			pageLinks[i].add(" page " + (i+1) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
 		}
 		
-		pageLinks[0].add("/wand"               ).color(Color.GREEN).click("/tm help 2", ClickAction.RUN);
-		pageLinks[1].add("/start"              ).color(Color.GREEN).click("/tm help 3", ClickAction.RUN);
-		pageLinks[2].add("/discard"            ).color(Color.GREEN).click("/tm help 4", ClickAction.RUN);
-		pageLinks[3].add("/teleport"           ).color(Color.GREEN).click("/tm help 5", ClickAction.RUN);
-		pageLinks[4].add("/select <tool type>" ).color(Color.GREEN).click("/tm help 5", ClickAction.RUN);
-		pageLinks[5].add("/add /cut"           ).color(Color.GREEN).click("/tm help 6", ClickAction.RUN);
-		pageLinks[6].add("/undo"               ).color(Color.GREEN).click("/tm help 7", ClickAction.RUN);
-		pageLinks[7].add("/wallheight <integer").color(Color.GREEN).click("/tm help 8", ClickAction.RUN);
-		pageLinks[8].add("/build <block type 1> ... <block type n>").color(Color.GREEN).click("/tm help 9", ClickAction.RUN);
+		pageLinks[0].add("/maze wand"             ).color(Color.GREEN).click("/tm help 2", ClickAction.RUN);
+		pageLinks[1].add("/maze start"            ).color(Color.GREEN).click("/tm help 3", ClickAction.RUN);
+		pageLinks[2].add("/maze discard"          ).color(Color.GREEN).click("/tm help 4", ClickAction.RUN);
+		pageLinks[3].add("/maze teleport"         ).color(Color.GREEN).click("/tm help 5", ClickAction.RUN);
+		pageLinks[4].add("/maze select <tool>" ).color(Color.GREEN).click("/tm help 5", ClickAction.RUN);
+		pageLinks[5].add("/maze add / cut"         ).color(Color.GREEN).click("/tm help 6", ClickAction.RUN);
+		pageLinks[6].add("/maze undo"             ).color(Color.GREEN).click("/tm help 7", ClickAction.RUN);
+		pageLinks[7].add("/maze pathwidth / wallwidth / wallheight <integer").color(Color.GREEN).click("/tm help 8", ClickAction.RUN);
+		pageLinks[8].add("/maze build <block> <block> ...").color(Color.GREEN).click("/tm help 9", ClickAction.RUN);
 	}
 	
 	@Override
@@ -144,17 +147,13 @@ public class CommandHandler implements CommandExecutor {
 				break;
 				
 			case "build":
-				ArrayList<String> materials = new ArrayList<>();
-				
+
 				if(args.length < 2) {
 					sendCommandHelp(p, 9);
 					break;
 				}
-				
-				for (int i = 1; i < args.length; i++)
-					materials.add(args[i]);
-				
-				buildCommand.execute(p, materials);
+
+				buildCommand.execute(p, (ArrayList<String>) Arrays.asList(args).subList(1, args.length));
 				break;
 			
 			case "teleport":
@@ -209,29 +208,32 @@ public class CommandHandler implements CommandExecutor {
 			
 		//wand
 		case 2:
-			player.sendMessage(ChatColor.YELLOW + "Wand Command");
-			player.sendMessage(ChatColor.GREEN
-					+ "This command gives you a mighty maze wand. Use it considerately! "
-					+ "Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). "
-					+ "By clicking and dragging a blue corner you can resize your clipboard. "
-					+ "For starting over just click any other two blocks.");
+			player.sendMessage(ChatColor.YELLOW + "/maze wand");
+			Messages.WAND_COMMAND.send(player);
+//			player.sendMessage(ChatColor.GREEN
+//					+ "This command gives you a mighty maze wand. Use it considerately! "
+//					+ "Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). "
+//					+ "By clicking and dragging a blue corner you can resize your clipboard. "
+//					+ "For starting over just click any other two blocks.");
 			break;
 		//start
 		case 3:
-			player.sendMessage(ChatColor.YELLOW + "Start Command");
-			player.sendMessage(ChatColor.GREEN
-					+ "With this command you transform your clipboard into a maze's floor plan. "
-					+ "Now you can add or cut away other clipboards.");
-			pageLinks[5].send(player);
+			player.sendMessage(ChatColor.YELLOW + "/maze start");
+			Messages.START_COMMAND.send(player);
+//			player.sendMessage(ChatColor.GREEN
+//					+ "With this command you transform your clipboard into a maze's floor plan. "
+//					+ "Now you can add or cut away other clipboards.");
+			sendPageLink(6, player);
 			break;
 		//discard
 		case 4:
-			player.sendMessage(ChatColor.YELLOW + "Discard Command");
-			player.sendMessage(ChatColor.GREEN + "Deletes your floor plan and clipboard.");
+			player.sendMessage(ChatColor.YELLOW + "/maze discard");
+			Messages.DISCARD_COMMAND.send(player);
+//			player.sendMessage(ChatColor.GREEN + "Deletes your floor plan and clipboard.");
 			break;
 		//select
 		case 5:
-			player.sendMessage(ChatColor.YELLOW + "Select Command");
+			player.sendMessage(ChatColor.YELLOW + " /maze select <tool>");
 			player.sendMessage(ChatColor.GREEN
 					+ "Lets you choose tools for editing your maze's floor plan. "
 					+ "The following tools can be selected:");
@@ -255,60 +257,55 @@ public class CommandHandler implements CommandExecutor {
 					+ "The diamond exit indicates where the maze generator will begin building.");
 			break;
 			
-		//teleport
-		case 10:
-			player.sendMessage(ChatColor.YELLOW + "Teleport Command");
-			player.sendMessage(ChatColor.GREEN + "Teleports you back to your maze (if you have the permission for that.)");
-			break;
-
 		//add + cut
 		case 6:
-			player.sendMessage(ChatColor.YELLOW + "Add/Cut Command");
+			player.sendMessage(ChatColor.YELLOW + "/maze add / cut");
 			player.sendMessage(ChatColor.GREEN
 					+ "Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. "
 					+ "If you cut off an area from the main part of your maze (with diamond exit) there won't be generated any paths (just don't).");
 			
 			player.sendMessage("");
 			player.sendMessage(ChatColor.DARK_GREEN + "For undoing one of these action use:");
-			pageLinks[6].send(player);
+			sendPageLink(7, player);
 			break;
 		//undo
 		case 7:
-			player.sendMessage(ChatColor.YELLOW + "Undo Command");
+			player.sendMessage(ChatColor.YELLOW + "/maze undo");
 			player.sendMessage(ChatColor.GREEN
 					+ "Undoes the last action performed on you maze like adding, cutting away or burshing. "
 					+ "Only the last 10 actions will be saved for undoing.");
 			break;
 		//height
 		case 8:
-			player.sendMessage(ChatColor.YELLOW + "Path-/Wallwidth & Wallheight Command");
-			player.sendMessage(ChatColor.GREEN
-					+ "Three commands for customization of the path eneration. " 
-					+ "Path and wall width are limited to " + Constants.MAX_PATH_WIDTH
-					+ " blocks, wall height can be up to " + Constants.MAX_WALL_HEIGHT);
+			player.sendMessage(ChatColor.YELLOW + "/maze pathwidth / wallwidth / wallheight");
+			player.sendMessage(ChatColor.GREEN + "Three commands for customizing the size of maze paths and walls.");
+			player.sendMessage(ChatColor.GREEN + "The path width is limited to " + Settings.MAX_PATH_WIDTH + " blocks");
+			player.sendMessage(ChatColor.GREEN + "The wall width is limited to " + Settings.MAX_PATH_WIDTH + " blocks");
+			player.sendMessage(ChatColor.GREEN + "The wall height can be up to " + Settings.MAX_WALL_HEIGHT + " blocks");
 			break;
 		//build
 		case 9:
-			player.sendMessage(ChatColor.YELLOW + "Build Command");
-			player.sendMessage(ChatColor.GREEN + "Builds your maze with the with a mixture of blocks you enter as arguments. " 
+			player.sendMessage(ChatColor.YELLOW + "/maze build <block> <block> ...");
+			player.sendMessage(ChatColor.GREEN
+					+ "Builds your maze with the with a mixture of blocks you enter as arguments. "
 					+ "Specify each block type with it's name (and their data value if necessary), for example: ");
 			
 			player.sendMessage(ChatColor.DARK_GREEN + "\"/maze build quartz_block:1\" " + ChatColor.GREEN + "(that's chiseled quartz).");
 			player.sendMessage(ChatColor.GREEN + "Keep in mind that a built maze cannot be edited any further.");
 			break;
+
+		//teleport
+		case 10:
+			player.sendMessage(ChatColor.YELLOW + "/maze teleport");
+			player.sendMessage(ChatColor.GREEN + "Teleports you back to your maze (if you have the permission for that).");
+			break;
+
 		default:
-			return;
+			break;
 		}
 	}
 
-	private void sendMessage(Player player, String message) {
-
-
-		String[] lines = message.split("\\\\n");
-
-		for(String line : lines) {
-
-
-		}
+	private void sendPageLink(int page, Player player) {
+		pageLinks[page-1].send(player);
 	}
 }

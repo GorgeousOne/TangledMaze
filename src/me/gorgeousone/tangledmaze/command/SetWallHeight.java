@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.command;
 
+import me.gorgeousone.tangledmaze.util.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,8 +17,8 @@ public class SetWallHeight {
 			return;
 		}
 		
-		int wallHeight = 0;
-		
+		int wallHeight;
+
 		try {
 			wallHeight = Integer.parseInt(arg0);
 			
@@ -31,11 +32,11 @@ public class SetWallHeight {
 			return;
 		}
 		
-		if(wallHeight > Constants.MAX_WALL_HEIGHT) {
+		if(wallHeight > Settings.MAX_WALL_HEIGHT) {
 			player.sendMessage(Constants.prefix
 					+ "People also thought that the tower of babel was a good idea. "
 					+ "And now look at what happened back then. "
-					+ "The wall height is limited to " + Constants.MAX_WALL_HEIGHT + " blocks.");
+					+ "The wall height is limited to " + Settings.MAX_WALL_HEIGHT + " blocks.");
 			return;
 		}
 		

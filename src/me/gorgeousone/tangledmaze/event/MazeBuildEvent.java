@@ -2,10 +2,7 @@ package me.gorgeousone.tangledmaze.event;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.TangledMain;
-import me.gorgeousone.tangledmaze.generation.BlockGenerator;
-import me.gorgeousone.tangledmaze.generation.ExitGenerator;
 import me.gorgeousone.tangledmaze.generation.MazeGenerator;
-import me.gorgeousone.tangledmaze.generation.PathGenerator;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

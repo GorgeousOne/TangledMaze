@@ -1,6 +1,9 @@
 package me.gorgeousone.tangledmaze.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -9,6 +12,7 @@ import me.gorgeousone.tangledmaze.core.TangledMain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public abstract class Utils {
@@ -154,7 +158,15 @@ public abstract class Utils {
 
 	public static YamlConfiguration getDefaultConfig(String fileName) {
 
-		File defaultFile = new File(TangledMain.getPlugin().getDataFolder() + File.separator + fileName);
-		return YamlConfiguration.loadConfiguration(defaultFile);
+		InputStream defConfigStream = TangledMain.getPlugin().getResource(fileName);
+		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
+	}
+
+	public static void saveConfig(FileConfiguration config, File file) {
+		try {
+			config.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,9 +1,12 @@
 package me.gorgeousone.tangledmaze.util;
 
+import me.gorgeousone.tangledmaze.core.TangledMain;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -27,11 +30,6 @@ public class Constants {
 			MAZE_MAIN_EXIT   = Material.DIAMOND_BLOCK,
 			CLIPBOARD_CORNER = Material.LAPIS_BLOCK,
 			CLIPBOARD_BORDER = Material.GOLD_BLOCK;
-	
-	public static final int
-			MAX_PATH_WIDTH  = 50,
-			MAX_WALL_WIDTH  = 50,
-			MAX_WALL_HEIGHT = 100;
 
 	private static final TreeSet<Material>
 			NOT_SOLIDS = new TreeSet<>(),
@@ -39,25 +37,28 @@ public class Constants {
 
 	public static void loadMaterialLists() {
 
-		String fileName;
+		YamlConfiguration materialLists;
 
-		int bukkitVersion = Utils.getBukkitVersion();
 
-		if(bukkitVersion >= 13) {
-			fileName = "1.13_material_lists";
+		if(Utils.getBukkitVersion() >= 13) {
+			materialLists = Utils.getDefaultConfig("1.13_material_lists.yml");
 
 		}else {
-			fileName = "1.12_material_lists";
+			materialLists = Utils.getDefaultConfig("1.12_material_lists.yml");
 		}
-
-		YamlConfiguration materialLists = Utils.getDefaultConfig(fileName);
 
 		for(String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
-			NOT_SOLIDS.add(Material.valueOf(materialName));
+
+			try {
+				NOT_SOLIDS.add(Material.valueOf(materialName));
+			}catch (IllegalArgumentException e) {}
 		}
 
-		for(String materialName : (List<String>) materialLists.getList("replaceable-solids")) {
-			REPLACEABLE_SOLIDS.add(Material.valueOf(materialName));
+		for(String materialName : (List<String>) materialLists.getList("replaceable-solid-materials")) {
+
+			try {
+				REPLACEABLE_SOLIDS.add(Material.valueOf(materialName));
+			}catch (IllegalArgumentException e) {}
 		}
 	}
 }

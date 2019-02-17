@@ -51,7 +51,6 @@ public abstract class MazeHandler {
 				generator.buildMaze(maze);
 			}
 		};
-		
 		async.runTaskAsynchronously(TangledMain.getPlugin());
 	}
 }

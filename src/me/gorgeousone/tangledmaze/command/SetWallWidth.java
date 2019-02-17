@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.command;
 
+import me.gorgeousone.tangledmaze.util.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,7 +17,7 @@ public class SetWallWidth {
 			return;
 		}
 		
-		int wallWidth = 0;
+		int wallWidth;
 		
 		try {
 			wallWidth = Integer.parseInt(arg0);
@@ -30,11 +31,11 @@ public class SetWallWidth {
 			return;
 		}
 		
-		if(wallWidth > Constants.MAX_WALL_WIDTH) {
+		if(wallWidth > Settings.MAX_WALL_WIDTH) {
 			p.sendMessage(Constants.prefix
 					+ "With a wall that thick you could already lock out Mexicans. "
 					+ "If you are a preseident please look out for another maze generator. "
-					+ "The wall width is litmited to " + Constants.MAX_WALL_WIDTH + " blocks. ");
+					+ "The wall width is litmited to " + Settings.MAX_WALL_WIDTH + " blocks. ");
 			return;
 		}
 		

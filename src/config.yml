@@ -1,0 +1,6 @@
+language: english
+wand-item: 284
+maze:
+    maximum-path-width: 50
+    maximum-wall-width: 50
+    maximum-wall-height: 100
