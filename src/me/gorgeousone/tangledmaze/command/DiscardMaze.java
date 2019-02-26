@@ -6,7 +6,7 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 
-public class DiscardAll {
+public class DiscardMaze {
 	
 	public void execute(Player player) {
 		

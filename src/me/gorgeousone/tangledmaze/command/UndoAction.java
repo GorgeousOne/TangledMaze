@@ -18,7 +18,7 @@ public class UndoAction {
 		}
 
 		if(!MazeHandler.getMaze(p).isStarted()) {
-			p.sendMessage(Constants.prefix + "You did not start a maze where aything can be undone.");
+			p.sendMessage(Constants.prefix + "You did not start a maze where anything can be undone.");
 			return;
 		}
 		

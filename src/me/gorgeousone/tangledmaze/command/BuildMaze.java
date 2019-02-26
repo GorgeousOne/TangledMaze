@@ -11,8 +11,9 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.MaterialDeserializer;
+import me.gorgeousone.tangledmaze.util.MaterialReader;
 
+@SuppressWarnings("deprecation")
 public class BuildMaze {
 
 	private MazeGenerator generator;
@@ -43,14 +44,9 @@ public class BuildMaze {
 			return;
 		}
 		
-		if(maze.getClip().size() == maze.getClip().borderSize()) {
-			player.sendMessage(Constants.prefix + "Well... this is just border.");
-			return;
-		}
-		
 		if(maze.getExits().isEmpty()) {
 			player.sendMessage(
-					ChatColor.RED + "Please mark an exit at the border. " + 
+					ChatColor.RED + "Please mark an exit at the maze's border. " +
 					ChatColor.GREEN + "(You know, the generator needs a start point for building walls and everything.)");
 			player.sendMessage("/tangledmaze select exit");
 			return;
@@ -58,7 +54,7 @@ public class BuildMaze {
 		
 		if(serializedMaterialData.isEmpty()) {
 			player.sendMessage(ChatColor.RED + "Please specify a block type this maze should be built out of.");
-			player.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
+			player.sendMessage("/tangledmaze build <block> <block>...");
 			return;
 		}
 		
@@ -73,13 +69,6 @@ public class BuildMaze {
 		
 		maze.setWallComposition(composition);
 
-//		MazeBuildEvent building = new MazeBuildEvent(maze, exitGen, pathGen, blockGen);
-//		Bukkit.getPluginManager().callEvent(building);
-//
-//		if(building.isCancelled()) {
-//			return;
-//		}
-
 		MazeHandler.buildMaze(maze, generator);
 		player.sendMessage(Constants.prefix + "Started building your maze.");
 
@@ -91,7 +80,7 @@ public class BuildMaze {
 		ArrayList<MaterialData> composition = new ArrayList<>();
 		
 		for(String materialData : serializedMaterialData) {
-			composition.add(MaterialDeserializer.deserializeMaterialData(materialData));
+			composition.add(MaterialReader.readMaterialData(materialData));
 		}
 		
 		return composition;

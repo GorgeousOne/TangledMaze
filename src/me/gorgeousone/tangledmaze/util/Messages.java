@@ -7,19 +7,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class Messages {
 
 	public static TextMessage
-			WAND_COMMAND,
-			START_COMMAND,
-			DISCARD_COMMAND,
-			SELECT_COMMAND,
-			ADD_CUT_COMMAND,
-			UNDO_COMMAND,
-			DIMENSIONS_COMMAND,
-			BUILD_COMMAND,
-			TP_COMMAND,
-			RECTANGLE_TOOL,
-			CIRCLE_TOOL,
-			BRUSH_TOOL,
-			EXIT_TOOL;
+			COMMAND_WAND,
+			COMMAND_START,
+			COMMAND_DISCARD,
+			COMMAND_SELECT,
+			COMMAND_ADD_CUT,
+			COMMAND_UNDO,
+			COMMAND_DIMENSIONS,
+			COMMAND_BUILD,
+			COMMAND_TELEPORT,
+			TOOL_RECT,
+			TOOL_CIRCLE,
+			TOOL_BRUSH,
+			TOOL_EXIT;
 	
 	public static String
 			NO_BUILD_PERMISSION,
@@ -36,22 +36,22 @@ public class Messages {
 
 		ConfigurationSection helpPages = langConfig.getConfigurationSection("help-pages");
 
-		WAND_COMMAND       = new TextMessage(helpPages.getString("wand-command"), ChatColor.GREEN);
-		START_COMMAND      = new TextMessage(helpPages.getString("start-command"), ChatColor.GREEN);
-		DISCARD_COMMAND    = new TextMessage(helpPages.getString("discard-command"), ChatColor.GREEN);
-		SELECT_COMMAND     = new TextMessage(helpPages.getString("select-command"), ChatColor.GREEN);
-		ADD_CUT_COMMAND    = new TextMessage(helpPages.getString("add-cut-command"), ChatColor.GREEN);
-		UNDO_COMMAND       = new TextMessage(helpPages.getString("undo-command"), ChatColor.GREEN);
-		DIMENSIONS_COMMAND = new TextMessage(helpPages.getString("pathwidth-wallwidth-wallheight-command"), ChatColor.GREEN);
-		BUILD_COMMAND      = new TextMessage(helpPages.getString("build-command"), ChatColor.GREEN);
-		TP_COMMAND         = new TextMessage(helpPages.getString("teleport-command"), ChatColor.GREEN);
+		COMMAND_WAND = new TextMessage(ChatColor.GREEN + helpPages.getString("wand-command") , true);
+		COMMAND_START = new TextMessage(ChatColor.GREEN + helpPages.getString("start-command"), true);
+		COMMAND_DISCARD = new TextMessage(ChatColor.GREEN + helpPages.getString("discard-command"), true);
+		COMMAND_SELECT = new TextMessage(ChatColor.GREEN + helpPages.getString("select-command"), true);
+		COMMAND_ADD_CUT = new TextMessage(ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
+		COMMAND_UNDO = new TextMessage(ChatColor.GREEN + helpPages.getString("undo-command"), true);
+		COMMAND_DIMENSIONS = new TextMessage(ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
+		COMMAND_BUILD = new TextMessage(ChatColor.GREEN + helpPages.getString("build-command"), true);
+		COMMAND_TELEPORT = new TextMessage(ChatColor.GREEN + helpPages.getString("teleport-command"), true);
 
 		ConfigurationSection tools = helpPages.getConfigurationSection("tools");
 
-		RECTANGLE_TOOL = new TextMessage(tools.getString("rectangle"), ChatColor.GREEN);
-		CIRCLE_TOOL    = new TextMessage(tools.getString("circle"), ChatColor.GREEN);
-		BRUSH_TOOL     = new TextMessage(tools.getString("brush"), ChatColor.GREEN);
-		EXIT_TOOL      = new TextMessage(tools.getString("exit"), ChatColor.GREEN);
+		TOOL_RECT = new TextMessage(ChatColor.GREEN + tools.getString("rectangle"), false);
+		TOOL_CIRCLE = new TextMessage(ChatColor.GREEN + tools.getString("circle"), false);
+		TOOL_BRUSH = new TextMessage(ChatColor.GREEN + tools.getString("brush"), false);
+		TOOL_EXIT = new TextMessage(ChatColor.GREEN + tools.getString("exit"), false);
 
 		ConfigurationSection errors = langConfig.getConfigurationSection("error-messages");
 	}

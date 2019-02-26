@@ -11,7 +11,6 @@ import me.gorgeousone.tangledmaze.util.Settings;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -51,7 +50,7 @@ public class TangledMain extends JavaPlugin {
 		
 		loadConfig();
 
-		Constants.loadMaterialLists();
+		Constants.loadConstants();
 		Settings.loadSettings(getConfig());
 
 		loadLanguage();
@@ -70,6 +69,7 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	public boolean isMazeWand(ItemStack item) {
+
 		if(item == null)
 			return false;
 		
@@ -82,6 +82,7 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	public ItemStack getMazeWand() {
+
 		ItemMeta meta = mazeTool.getItemMeta();
 		List<String> lore = meta.getLore();
 
@@ -137,7 +138,7 @@ public class TangledMain extends JavaPlugin {
 	}
 
 	private void createMazeWand() {
-		mazeTool = new ItemStack(Material.getMaterial(Settings.MAZE_WAND_ITEM));
+		mazeTool = new ItemStack(Settings.MAZE_WAND_ITEM);
 		
 		ItemMeta meta = mazeTool.getItemMeta();
 		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Tool");

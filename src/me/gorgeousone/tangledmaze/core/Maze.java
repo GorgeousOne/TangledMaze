@@ -20,6 +20,7 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 
+@SuppressWarnings("deprecation")
 public class Maze {
 	
 	private UUID builder;
@@ -30,7 +31,6 @@ public class Maze {
 	private ArrayList<MaterialData> wallComposition;
 	
 	private Vector dimensions;
-	
 	private boolean isStarted;
 	
 	public Maze(World world) {

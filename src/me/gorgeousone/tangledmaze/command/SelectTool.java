@@ -24,7 +24,7 @@ public class SelectTool {
 			
 			try {
 				setClipShape(p, Shape.RECT);
-				p.sendMessage(Constants.prefix + "Changed cliping shape to rectangle.");
+				p.sendMessage(Constants.prefix + "Changed tool rectangle.");
 			} catch (Exception e) {}
 			
 			break;
@@ -34,7 +34,7 @@ public class SelectTool {
 			
 			try {
 				setClipShape(p, Shape.CIRCLE);
-				p.sendMessage(Constants.prefix + "Changed cliping shape to circle.");
+				p.sendMessage(Constants.prefix + "Changed tool to circle.");
 			} catch (Exception e) {}
 			
 			break;

@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
@@ -114,12 +113,12 @@ public class ToolActionListener implements Listener{
 		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool, it broke apart.");
 		p.damage(0);
 		
-		if(Bukkit.getVersion().contains("1.8")) {
+		if(Constants.BUKKIT_VERSION == 8) {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ITEM_BREAK"), 1f, 1f);
-			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
+			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.valueOf("EXPLOSION_HUGE"), 0);
 			
 		}else {
-			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
+			p.getWorld().playSound(p.getEyeLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
 			p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 1);
 		}
 	}

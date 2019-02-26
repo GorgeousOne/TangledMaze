@@ -14,6 +14,7 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
+@SuppressWarnings("deprecation")
 public class BlockGenerator {
 
 	public void generateBlocks(BuildMap map) {
@@ -55,7 +56,6 @@ public class BlockGenerator {
 		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
 	}
 	
-	@SuppressWarnings("deprecation")
 	protected ArrayList<BlockState> getMazeBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();

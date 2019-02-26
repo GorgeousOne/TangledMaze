@@ -17,11 +17,6 @@ public class ExitSettingTool extends Tool {
 	public void interact(Block clicked, Action interaction) {
 		
 		Maze maze = MazeHandler.getMaze(getPlayer());
-		
-//		if(maze.exitsContain(clicked))
-//			maze.removeExit(clicked);
-//		else
-		
 		maze.toggleExit(clicked);
 	}
 }

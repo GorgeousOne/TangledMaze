@@ -40,17 +40,18 @@ public class AddToMaze {
 		
 		Maze maze = MazeHandler.getMaze(p);
 		ClipAction action = maze.getAddition(clipboard.getClip());
-		
-		if(action == null) {
-			p.sendMessage(ChatColor.RED + "Your clipboard is entirely covered by your maze.");
-			return;
-			
-		}else if(action.getAddedFill().size() == clipboard.getClip().size()) {
-			p.sendMessage(ChatColor.RED + "Your clipboard does not seem to touch your maze directly (outline on outline).");
+
+		if(action.getAddedFill().size() == clipboard.getClip().size()) {
+			p.sendMessage(ChatColor.RED + "Your clipboard does not seem to touch your maze.");
 			return;
 		}
-		
+
 		clipboard.reset();
+
+		if(action == null) {
+			return;
+		}
+
 		maze.processAction(action, true);
 	}
 }
