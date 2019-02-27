@@ -19,15 +19,22 @@ public class TextMessage {
 			return;
 		}
 
-		for(int i = 0; i < paragraphs.length; i++) {
+		for(int i = 1; i < paragraphs.length; i++) {
 			paragraphs[i] = ChatColor.getLastColors(paragraphs[i-1]) + paragraphs[i];
 		}
 	}
 
 	public void send(CommandSender sender) {
-
+		
 		for(String paragraph : paragraphs) {
 			sender.sendMessage(paragraph);
+		}
+	}
+	
+	public void send(CommandSender sender, PlaceHolder placeHolder) {
+		
+		for(String paragraph : paragraphs) {
+			sender.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
 		}
 	}
 }

@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
+@SuppressWarnings("deprecation")
 public class MaterialReader {
 
 	public static Material readMaterial(String materialName) {
@@ -16,7 +17,6 @@ public class MaterialReader {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static MaterialData readMaterialData(String materialData) {
 		
 		Material type;

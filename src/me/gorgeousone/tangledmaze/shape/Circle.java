@@ -8,7 +8,7 @@ import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public class Ellipse implements Shape {
+public class Circle implements Shape {
 	
 	@Override
 	public int getVertexCount() {

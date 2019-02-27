@@ -7,93 +7,89 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.*;
 import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
 public class SelectTool {
 
-	public void execute(Player p, String toolType) {
+	public void execute(Player player, String toolType) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
+		
+		boolean switchedTool;
 		
 		switch (toolType.toLowerCase()) {
 		case "rect":
 		case "rectangle":
 		case "square":
 			
-			try {
-				setClipShape(p, Shape.RECT);
-				p.sendMessage(Constants.prefix + "Changed tool rectangle.");
-			} catch (Exception e) {}
-			
+			switchedTool = switchClipShape(player, Shape.RECT);
 			break;
 			
 		case "circle":
 		case "ellipse":
 			
-			try {
-				setClipShape(p, Shape.CIRCLE);
-				p.sendMessage(Constants.prefix + "Changed tool to circle.");
-			} catch (Exception e) {}
-			
+			switchedTool = switchClipShape(player, Shape.CIRCLE);
 			break;
 		
 		case "brush":
 			
-			try {
-				setMazeTool(p, new BrushTool(p));
-				p.sendMessage(Constants.prefix + "Changed tool to brush.");
-			} catch (Exception e) {}
-			
+			switchedTool = switchMazeTool(player, new BrushTool(player));
 			break;
 			
 		case "exit":
 		case "entrance":
 			
-			try {
-				setMazeTool(p, new ExitSettingTool(p));
-				p.sendMessage(Constants.prefix + "Changed tool to exit setter.");
-			} catch (Exception e) {}
-			
+			switchedTool = switchMazeTool(player, new ExitSettingTool(player));
 			break;
 			
 		default:
-			p.sendMessage("/tangledmaze help 5");
+			switchedTool = false;
+			player.sendMessage("/tangledmaze help 5");
 			break;
 		}
+		
+		if(switchedTool) {
+			Messages.MESSAGE_TOOL_SWITCH.send(player, new PlaceHolder("tool", ToolHandler.getTool(player).getName()));
+		}
 	}
 	
-	private void setClipShape(Player p, Shape type) {
+	private boolean switchClipShape(Player player, Shape type) {
 		
-		if(!ToolHandler.hasClipboard(p)) {
-			ToolHandler.setTool(p, new ClippingTool(p, type));
-			return;
+		if(!ToolHandler.hasClipboard(player)) {
+			ToolHandler.setTool(player, new ClippingTool(player, type));
+			return true;
 		}
 		
-		ClippingTool clip = ToolHandler.getClipboard(p);
+		ClippingTool clip = ToolHandler.getClipboard(player);
 		
-		if(clip.getType().getClass().equals(type.getClass()))
-			throw new IllegalStateException("Tool is already selected.");
-
+		if(clip.getType().getClass().equals(type.getClass())) {
+			return false;
+		}
+		
 		clip.setType(type);
+		return true;
 	}
 	
-	private boolean setMazeTool(Player p, Tool type) {
+	private boolean switchMazeTool(Player player, Tool type) {
 
-		if(ToolHandler.getTool(p).getClass().equals(type.getClass()))
+		if(ToolHandler.getTool(player).getClass().equals(type.getClass()))
 			return false;
 		
-		if(!MazeHandler.getMaze(p).isStarted()) {
-			p.sendMessage(Constants.prefix + "This tool can only be used on a maze's ground plot.");
-			p.sendMessage("/tangledmaze start");
+		if(!MazeHandler.getMaze(player).isStarted()) {
+			Messages.MESSAGE_TOOL_FOR_MAZE_ONLY.send(player);
+			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
-		if(ToolHandler.hasClipboard(p))
-			ToolHandler.getClipboard(p).reset();
-			
-		ToolHandler.setTool(p, type);
+		if(ToolHandler.hasClipboard(player)) {
+			ToolHandler.getClipboard(player).reset();
+		}
+		
+		ToolHandler.setTool(player, type);
 		return true;
 	}
 }

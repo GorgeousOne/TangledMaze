@@ -65,13 +65,8 @@ public abstract class Utils {
 	}
 
 	public static YamlConfiguration getDefaultConfig(String fileName) {
-		System.out.println("loading " + fileName);
+		
 		InputStream defConfigStream = TangledMain.getPlugin().getResource(fileName);
-		try {
-			System.out.println(defConfigStream + " " + defConfigStream.available());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 

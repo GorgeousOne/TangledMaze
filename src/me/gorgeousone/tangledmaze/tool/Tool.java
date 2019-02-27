@@ -9,6 +9,8 @@ import org.bukkit.event.block.Action;
 
 public abstract class Tool {
 	
+	public abstract String getName();
+	
 	private UUID player;
 
 	public Tool(Player builder) {

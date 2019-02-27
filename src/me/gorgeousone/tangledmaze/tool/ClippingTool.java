@@ -15,7 +15,7 @@ import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 public class ClippingTool extends Tool {
-
+	
 	private Shape shape;
 	
 	private Clip clip;
@@ -38,6 +38,11 @@ public class ClippingTool extends Tool {
 		clip = new Clip(builder.getWorld()); 
 		shape = type;
 		vertices = new ArrayList<>();
+	}
+	
+	@Override
+	public String getName() {
+		return shape.getClass().getSimpleName().toLowerCase();
 	}
 	
 	//think about cleanness

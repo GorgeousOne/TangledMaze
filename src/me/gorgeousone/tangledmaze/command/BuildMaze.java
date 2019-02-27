@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.command;
 import java.util.ArrayList;
 
 import me.gorgeousone.tangledmaze.generation.MazeGenerator;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
@@ -12,6 +11,7 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MaterialReader;
+import me.gorgeousone.tangledmaze.util.Messages;
 
 @SuppressWarnings("deprecation")
 public class BuildMaze {
@@ -34,27 +34,25 @@ public class BuildMaze {
 		if(!maze.isStarted()) {
 			
 			if(!ToolHandler.hasClipboard(player)) {
-				player.sendMessage(ChatColor.RED + "Please select a clipboard with a maze wand first.");
+				Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
 				player.sendMessage("/tangledmaze wand");
 				return;	
 			}
 			
-			player.sendMessage(ChatColor.RED + "Please start a maze first.");
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
 			player.sendMessage("/tangledmaze start");
 			return;
 		}
 		
 		if(maze.getExits().isEmpty()) {
-			player.sendMessage(
-					ChatColor.RED + "Please mark an exit at the maze's border. " +
-					ChatColor.GREEN + "(You know, the generator needs a start point for building walls and everything.)");
+			Messages.ERROR_NO_MAZE_EXIT_SET.send(player);
 			player.sendMessage("/tangledmaze select exit");
 			return;
 		}
 		
 		if(serializedMaterialData.isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Please specify a block type this maze should be built out of.");
-			player.sendMessage("/tangledmaze build <block> <block>...");
+			Messages.ERROR_NO_BUILD_BLOCKS_SPECIFIED.send(player);
+			player.sendMessage("/tangledmaze build <block> ...");
 			return;
 		}
 		
@@ -70,7 +68,7 @@ public class BuildMaze {
 		maze.setWallComposition(composition);
 
 		MazeHandler.buildMaze(maze, generator);
-		player.sendMessage(Constants.prefix + "Started building your maze.");
+		Messages.MESSAGE_MAZE_BUILDING.send(player);
 
 		ToolHandler.resetToDefaultTool(player);
 		MazeHandler.setMaze(player, new Maze(player));

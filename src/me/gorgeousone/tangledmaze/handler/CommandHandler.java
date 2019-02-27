@@ -56,7 +56,7 @@ public class CommandHandler implements CommandExecutor {
 		
 		for(int i = 0; i < pageLinks.length; i++) {
 			pageLinks[i] = new RawMessage();
-			pageLinks[i].add(" page " + (i+1) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
+			pageLinks[i].add("page " + (i+1) + " ").color(Color.LIGHT_GREEN).click("/tm help " + (i+2), ClickAction.RUN);
 		}
 		
 		pageLinks[0].add("/maze wand"             ).color(Color.GREEN).click("/tm help 2", ClickAction.RUN);
@@ -67,7 +67,7 @@ public class CommandHandler implements CommandExecutor {
 		pageLinks[5].add("/maze add / cut"         ).color(Color.GREEN).click("/tm help 6", ClickAction.RUN);
 		pageLinks[6].add("/maze undo"             ).color(Color.GREEN).click("/tm help 7", ClickAction.RUN);
 		pageLinks[7].add("/maze pathwidth / wallwidth / wallheight <integer").color(Color.GREEN).click("/tm help 8", ClickAction.RUN);
-		pageLinks[8].add("/maze build <block> <block> ...").color(Color.GREEN).click("/tm help 9", ClickAction.RUN);
+		pageLinks[8].add("/maze build <block> ...").color(Color.GREEN).click("/tm help 9", ClickAction.RUN);
 	}
 	
 	@Override
@@ -209,105 +209,58 @@ public class CommandHandler implements CommandExecutor {
 		case 2:
 			player.sendMessage(ChatColor.YELLOW + "/maze wand");
 			Messages.COMMAND_WAND.send(player);
-//			player.sendMessage(ChatColor.GREEN
-//					+ "This command gives you a mighty maze wand. Use it considerately! "
-//					+ "Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). "
-//					+ "By clicking and dragging a blue corner you can resize your clipboard. "
-//					+ "For starting over just click any other two blocks.");
 			break;
 		//start
 		case 3:
 			player.sendMessage(ChatColor.YELLOW + "/maze start");
 			Messages.COMMAND_START.send(player);
-//			player.sendMessage(ChatColor.GREEN
-//					+ "With this command you transform your clipboard into a maze's floor plan. "
-//					+ "Now you can add or cut away other clipboards.");
 			sendPageLink(6, player);
 			break;
 		//discard
 		case 4:
 			player.sendMessage(ChatColor.YELLOW + "/maze discard");
 			Messages.COMMAND_DISCARD.send(player);
-//			player.sendMessage(ChatColor.GREEN + "Deletes your floor plan and clipboard.");
 			break;
 		//select
 		case 5:
 			player.sendMessage(ChatColor.YELLOW + " /maze select <tool>");
 			Messages.COMMAND_SELECT.send(player);
+			player.sendMessage(ChatColor.DARK_GREEN + "rectangle:");
 			Messages.TOOL_RECT.send(player);
+			player.sendMessage(ChatColor.DARK_GREEN + "circle:");
 			Messages.TOOL_CIRCLE.send(player);
+			player.sendMessage(ChatColor.DARK_GREEN + "brush:");
 			Messages.TOOL_BRUSH.send(player);
+			player.sendMessage(ChatColor.DARK_GREEN + "exit:");
 			Messages.TOOL_EXIT.send(player);
 
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Lets you choose tools for editing your maze's floor plan. "
-//					+ "The following tools can be selected:");
-//
-//			player.sendMessage("");
-//			player.sendMessage(ChatColor.DARK_GREEN + "rectangle");
-//			player.sendMessage(ChatColor.GREEN + "Your clipboards created with a wand will form rectangles.");
-//
-//			player.sendMessage(ChatColor.DARK_GREEN + "circle");
-//			player.sendMessage(ChatColor.GREEN + "Your clipboards will form circles.");
-//
-//			player.sendMessage(ChatColor.DARK_GREEN + "brush");
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Left click on your maze's outline to reduce it at that block. "
-//					+ "Right click on your maze's outline to expand it at that block.");
-//
-//			player.sendMessage(ChatColor.DARK_GREEN + "exit");
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Click on your maze's outline to set exits (or entrances, however you perceive that). "
-//					+ "Click on an exit a second time to delete it again. "
-//					+ "The diamond exit indicates where the maze generator will begin building.");
 			break;
 			
 		//add + cut
 		case 6:
 			player.sendMessage(ChatColor.YELLOW + "/maze add / cut");
 			Messages.COMMAND_ADD_CUT.send(player);
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. "
-//					+ "If you cut off an area from the main part of your maze (with diamond exit) there won't be generated any paths (just don't).");
-//
-//			player.sendMessage("");
-//			player.sendMessage(ChatColor.DARK_GREEN + "For undoing one of these action use:");
 			sendPageLink(7, player);
 			break;
 		//undo
 		case 7:
 			player.sendMessage(ChatColor.YELLOW + "/maze undo");
 			Messages.COMMAND_UNDO.send(player);
-
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Undoes the last action performed on you maze like adding, cutting away or brushing. "
-//					+ "Only the last 10 actions will be saved for undoing.");
 			break;
 		//dimensions
 		case 8:
 			player.sendMessage(ChatColor.YELLOW + "/maze pathwidth / wallwidth / wallheight");
 			Messages.COMMAND_DIMENSIONS.send(player);
-//			player.sendMessage(ChatColor.GREEN + "These three commands are for customizing the size of maze paths and walls when being generated.");
-
 			break;
 		//build
 		case 9:
-			player.sendMessage(ChatColor.YELLOW + "/maze build <block> <block> ...");
+			player.sendMessage(ChatColor.YELLOW + "/maze build <block> ...");
 			Messages.COMMAND_BUILD.send(player);
-
-//			player.sendMessage(ChatColor.GREEN
-//					+ "Builds your maze with the with a mixture of blocks you enter as arguments. "
-//					+ "Specify each block type with it's name (and their data value if necessary), for example: ");
-//
-//			player.sendMessage(ChatColor.DARK_GREEN + "\"/maze build quartz_block:1\" " + ChatColor.GREEN + "(that's chiseled quartz).");
-//			player.sendMessage(ChatColor.GREEN + "Keep in mind that a built maze cannot be edited any further.");
 			break;
-
 		//teleport
 		case 10:
 			player.sendMessage(ChatColor.YELLOW + "/maze teleport");
 			Messages.COMMAND_TELEPORT.send(player);
-//			player.sendMessage(ChatColor.GREEN + "Teleports you back to your maze (if you have the permission for that).");
 			break;
 
 		default:

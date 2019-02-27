@@ -12,7 +12,7 @@ import me.gorgeousone.tangledmaze.util.Utils;
 public interface Shape {
 	
 	public static final Rectangle RECT = new Rectangle();
-	public static final Ellipse CIRCLE = new Ellipse();
+	public static final Circle CIRCLE = new Circle();
 	
 	public int getVertexCount();
 	

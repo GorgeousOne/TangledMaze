@@ -7,10 +7,12 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
 public class SetWallHeight {
 
-	public void execute(Player player, String arg0) {
+	public void execute(Player player, String argument) {
 		
 		if(!player.hasPermission(Constants.buildPerm)) {
 			player.sendMessage(Constants.insufficientPerms);
@@ -20,10 +22,10 @@ public class SetWallHeight {
 		int wallHeight;
 
 		try {
-			wallHeight = Integer.parseInt(arg0);
+			wallHeight = Integer.parseInt(argument);
 			
 		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
+			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", argument));
 			return;
 		}
 		

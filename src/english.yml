@@ -1,30 +1,32 @@
 help-pages:
     wand-command: This command gives you a mighty maze wand. Use it considerately! Click two blocks and a clipboard will appear with the equipped shape (rectangle or circle). By clicking and dragging a blue corner you can resize your clipboard. For starting over just click any other two blocks.
-    start-command: 'With this command you transform your clipboard into a maze''s floor plan. \n\nYou can add or cut away other clipboards from your floor plan with:'
+    start-command: 'With this command you transform your clipboard into the floor plan of a maze. \n\nYou can add or cut away other clipboards from your floor plan with:'
     discard-command: Discards your floor plan and your clipboard.
-    select-command: 'Lets you choose tools for editing your maze''s floor plan. The following tools can be selected:'
+    select-command: 'Lets you choose between different tools to edit floor plan of your maze. Following tools can be selected:'
     tools:
         rectangle: Your clipboards created with a wand will form rectangles.
         circle: Your clipboards will form circles.
-        brush: Left click on your maze's outline to reduce it at that block. Right click on your maze's outline to expand it at that block.
-        exit: Click on your maze's outline to set exits (or entrances, however you perceive that). Click on an exit a second time to delete it again. The diamond exit indicates where the maze generator will begin building.
+        brush: Left click on the outline of your floor plan to reduce it at that block. Right click on the outline to expand it at that block.
+        exit: Click on the outline of your floor plan to set exits (or entrances, just how you see it). Click on an exit a second time to delete it again. The diamond exit indicates where the maze generator will begin building.
     add-cut-command: 'Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. If you cut off an area from the main part of your maze (with diamond exit) there won''t be generated any paths (just don''t). \n\nFor undoing these actions use:'
     undo-command: Undoes the last change to your maze like adding or cutting a clipboar away or brushing.
     pathwidth-wallwidth-wallheight-command: These three commands are for changing the width or height of maze walls and path when being generated.
-    build-command: 'Builds your maze out of a mixture of blocks you enter. Just type in the name of each block (and ":" + a number if necessary), for example:\n "/maze build quartz_block:1" (that''s chiseled quartz) \nA built maze cannot be edited any further.'
+    build-command: 'Builds your maze out of a mixture of blocks you enter. Just type in the name of each block (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz) \nA built maze cannot be edited any further.'
     teleport-command: Teleports you back to your maze (if you have the permission for that).
 messages:
-    started-maze: Started a maze from your clipboard.
-    discarded-maze: Discarded your maze and your clipboard.
-    changed-tool-to...: Changed tool to %tool%.
+    maze-start: Started a maze from your clipboard.
+    maze-discard: Discarded your maze and your clipboard.
+    maze-building: Started building your maze.
+    tool-switch: Switched tool to %tool%.
+    tool-for-floor-plan-only: This tool can only be used for a floor plan of a maze.
 errors:
     insufficient-permission: You do not have the permission for this command.
     clipboard-not-started: Please select an area with a maze wand first.
     clipboard-not-finished: Please finish your clipboard first.
     maze-not-started: Please start a maze first.
-    clipboard-does-not-touch-maze: Your clipboard does not seem to touch your maze.
+    clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
     no-maze-border-clicked: This block is not the border of your maze...
     no-maze-exit-set: Please mark an exit at the border of your maze first.
     no-build-blocks-specified: Please specify a block(s) from which your maze will be built.
-    argument-does-not-match-block: '%block% is not a block name.'
+    argument-not-matching-block: '%block% is not a block name.'
     number-not-valid: '%number% is not a valid number.'

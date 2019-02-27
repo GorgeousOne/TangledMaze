@@ -10,10 +10,15 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class BrushTool extends Tool {
-	
+
 	public BrushTool(Player builder) {
 		super(builder);
 	}		
+	
+	@Override
+	public String getName() {
+		return "brush";
+	}
 	
 	@Override
 	public void interact(Block clicked, Action interaction) {

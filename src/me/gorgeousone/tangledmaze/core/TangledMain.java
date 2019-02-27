@@ -135,13 +135,14 @@ public class TangledMain extends JavaPlugin {
 		}
 
 		Messages.loadLanguage(langConfig);
+		Utils.saveConfig(langConfig, langFile);
 	}
 
 	private void createMazeWand() {
 		mazeTool = new ItemStack(Settings.MAZE_WAND_ITEM);
 		
 		ItemMeta meta = mazeTool.getItemMeta();
-		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Tool");
+		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Wand");
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		

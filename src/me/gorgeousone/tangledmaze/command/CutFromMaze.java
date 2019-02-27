@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
@@ -9,40 +8,41 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Messages;
 
 public class CutFromMaze {
 
-	public void execute(Player p) {
+	public void execute(Player player) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
+		if(!player.hasPermission(Constants.buildPerm)) {
+			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
 		
-		if(!MazeHandler.getMaze(p).isStarted()) {
-			p.sendMessage(ChatColor.RED + "Please start a maze first.");
-			p.sendMessage("/tangledmaze start");
+		if(!MazeHandler.getMaze(player).isStarted()) {
+			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			player.sendMessage("/tangledmaze start");
 			return;
 		}
 		
-		if(!ToolHandler.hasClipboard(p) || !ToolHandler.getClipboard(p).isStarted()) {
-			p.sendMessage(ChatColor.RED + "Please select an area with a maze wand first.");
-			p.sendMessage("/tangledmaze wand");
+		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
+			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
+			player.sendMessage("/tangledmaze wand");
 			return;
 		}
 		
-		ClippingTool clipboard = ToolHandler.getClipboard(p);
+		ClippingTool clipboard = ToolHandler.getClipboard(player);
 
 		if(!clipboard.isComplete()) {
-			p.sendMessage(ChatColor.RED + "Please finish your clipboard first.");
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
 			return;
 		}
 		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		ClipAction action = maze.getDeletion(clipboard.getClip());
 		
 		if(action == null) {
-			p.sendMessage(ChatColor.RED + "Your clipboard does not seem to intersect your maze directly.");
+			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
 			return;
 		}
 

@@ -44,6 +44,8 @@ public class Constants {
 
 		if(BUKKIT_VERSION < 13) {
 			materialLists = Utils.getDefaultConfig("1.12_material_lists.yml");
+//			materialLists = Utils.getDefaultConfig("english.yml");
+
 
 		}else {
 			materialLists = Utils.getDefaultConfig("1.13_material_lists.yml");
