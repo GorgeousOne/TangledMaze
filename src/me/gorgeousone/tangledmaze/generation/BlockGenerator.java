@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.generation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -29,10 +30,10 @@ public class BlockGenerator {
 			public void run() {
 				buildBlocksContinuously(getMazeBlocks(map));
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
-	protected void buildBlocksContinuously(ArrayList<BlockState> blocksToUpdate) {
+	protected void buildBlocksContinuously(List<BlockState> blocksToUpdate) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
@@ -53,16 +54,16 @@ public class BlockGenerator {
 				this.cancel();
 			}
 		};
-		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
+		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 	
-	protected ArrayList<BlockState> getMazeBlocks(BuildMap map) {
+	protected List<BlockState> getMazeBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		Random rnd = new Random();
 		
-		ArrayList<MaterialData> composition = maze.getWallComposition();
-		ArrayList<BlockState> blocksToUpdate = new ArrayList<>();
+		List<MaterialData> composition = maze.getWallComposition();
+		List<BlockState> blocksToUpdate = new ArrayList<>();
 		
 		int mazeMinX = map.getMinX(),
 			mazeMinZ = map.getMinZ();

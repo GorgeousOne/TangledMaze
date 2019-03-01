@@ -1,18 +1,51 @@
 package me.gorgeousone.tangledmaze.command;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Messages;
 
-public class UndoAction {
+public class UndoAction extends MazeCommand {
 
+	public UndoAction() {
+		super("undo", "/tangledmaze undo", 0, true, null);
+	}
+	
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
+		
+		if(!super.execute(sender, arguments)) {
+			return false;
+		}
+		
+		Player player = (Player) sender;
+		
+		if(!MazeHandler.getMaze(player).isStarted()) {
+			//TODO think about better error message
+			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			return false;
+		}
+		
+		Maze maze = MazeHandler.getMaze(player);
+		
+		if(maze.getActionHistory().isEmpty()) {
+			return false;
+		}
+			
+		ClipAction action = maze.getActionHistory().popLastAction().invert();
+		maze.processAction(action, false);
+
+		return true;
+	}
+	
 	public void execute(Player p) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
+		if(!p.hasPermission(Constants.BUILD_PERM)) {
 			p.sendMessage(Constants.insufficientPerms);
 			return;
 		}

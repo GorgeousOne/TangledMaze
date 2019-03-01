@@ -31,7 +31,7 @@ public class MazeBuildEvent extends Event implements Cancellable {
 					MazeHandler.buildMaze(MazeBuildEvent.this.maze, generator);
 				}
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.command;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -10,11 +11,59 @@ import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.Messages;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SelectTool {
+public class SelectTool extends MazeCommand {
 
+	public SelectTool() {
+		super("select", "/tangledmaze select <tool>", 1, true, null);
+	}
+	
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
+	
+		if(!super.execute(sender, arguments)) {
+			return false;
+		}
+		
+		Player player = (Player) sender;
+		String toolType = arguments[0];
+		
+		switch (toolType.toLowerCase()) {
+		case "rect":
+		case "rectangle":
+		case "square":
+			
+			switchClipShape(player, Shape.RECT);
+			break;
+			
+		case "circle":
+		case "ellipse":
+			
+			switchClipShape(player, Shape.CIRCLE);
+			break;
+		
+		case "brush":
+			
+			switchMazeTool(player, new BrushTool(player));
+			break;
+			
+		case "exit":
+		case "entrance":
+			
+			switchMazeTool(player, new ExitSettingTool(player));
+			break;
+			
+		default:
+			player.sendMessage("/tangledmaze help 5");
+			return false;
+		}
+		
+		Messages.MESSAGE_TOOL_SWITCH.send(player, new PlaceHolder("tool", ToolHandler.getTool(player).getName()));
+		return true;
+	}
+	
 	public void execute(Player player, String toolType) {
 		
-		if(!player.hasPermission(Constants.buildPerm)) {
+		if(!player.hasPermission(Constants.BUILD_PERM)) {
 			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}

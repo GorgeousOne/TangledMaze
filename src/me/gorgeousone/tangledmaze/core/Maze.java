@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -27,8 +28,8 @@ public class Maze {
 	
 	private ActionHistory history;
 	private Clip clip;
-	private ArrayList<MazePoint> exits;
-	private ArrayList<MaterialData> wallComposition;
+	private List<MazePoint> exits;
+	private List<MaterialData> wallComposition;
 	
 	private Vector dimensions;
 	private boolean isStarted;
@@ -67,7 +68,7 @@ public class Maze {
 		return clip;
 	}
 	
-	public ArrayList<MazePoint> getExits() {
+	public List<MazePoint> getExits() {
 		return exits;
 	}
 	
@@ -91,7 +92,7 @@ public class Maze {
 		return dimensions.getBlockZ();
 	}
 	
-	public ArrayList<MaterialData> getWallComposition() {
+	public List<MaterialData> getWallComposition() {
 		return wallComposition;
 	}
 	

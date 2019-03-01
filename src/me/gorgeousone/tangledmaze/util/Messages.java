@@ -20,8 +20,6 @@ public class Messages {
 			TOOL_CIRCLE,
 			TOOL_BRUSH,
 			TOOL_EXIT,
-			MESSAGE_MAZE_START,
-			MESSAGE_MAZE_DISCARD,
 			MESSAGE_MAZE_BUILDING,
 			MESSAGE_TOOL_SWITCH,
 			MESSAGE_TOOL_FOR_MAZE_ONLY,
@@ -58,12 +56,9 @@ public class Messages {
 		
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
 		
-		MESSAGE_MAZE_START = new TextMessage(Constants.prefix + messages.getString("maze-start"), false);
-		MESSAGE_MAZE_DISCARD = new TextMessage(Constants.prefix + messages.getString("maze-discard"), false);
 		MESSAGE_MAZE_BUILDING = new TextMessage(Constants.prefix + messages.getString("maze-building"), false);
 		MESSAGE_TOOL_SWITCH = new TextMessage(Constants.prefix + messages.getString("tool-switch"), false);
 		MESSAGE_TOOL_FOR_MAZE_ONLY = new TextMessage(Constants.prefix + messages.getString("tool-for-floor-plan-only"), false);
-		
 		
 		ConfigurationSection errors = langConfig.getConfigurationSection("errors");
 		

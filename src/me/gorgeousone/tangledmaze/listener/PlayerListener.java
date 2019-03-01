@@ -21,7 +21,7 @@ public class PlayerListener implements Listener {
 	public PlayerListener() {
 		
 		for(Player player : Bukkit.getOnlinePlayers()) {
-			if(player.hasPermission(Constants.buildPerm)) {
+			if(player.hasPermission(Constants.BUILD_PERM)) {
 				ToolHandler.setTool(player, new ClippingTool(player, Shape.RECT));
 				MazeHandler.setMaze(player, new Maze(player));
 			}
@@ -33,7 +33,7 @@ public class PlayerListener implements Listener {
 		
 		Player player = e.getPlayer();
 		
-		if(player.hasPermission(Constants.buildPerm)) {
+		if(player.hasPermission(Constants.BUILD_PERM)) {
 			ToolHandler.setTool(player, new ClippingTool(player, Shape.RECT));
 			MazeHandler.setMaze(player, new Maze(player));
 		}
@@ -44,7 +44,7 @@ public class PlayerListener implements Listener {
 		
 		Player player = e.getPlayer();
 		
-		if(player.hasPermission(Constants.buildPerm)) {
+		if(player.hasPermission(Constants.BUILD_PERM)) {
 			ToolHandler.removeTool(player);
 			MazeHandler.removeMaze(player);
 		}
@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
 	public void onChangeWorld(PlayerChangedWorldEvent e) {
 		Player player = e.getPlayer();
 			
-		if(player.hasPermission(Constants.buildPerm)) {
+		if(player.hasPermission(Constants.BUILD_PERM)) {
 			MazeHandler.getMaze(player).reset();
 			ToolHandler.resetToDefaultTool(player);
 		}

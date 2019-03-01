@@ -14,9 +14,9 @@ public class Constants {
 	
 	public static final String
 			insufficientPerms = ChatColor.RED + "You do not have the Permission for this command.",
-			buildPerm  = "tangledmaze.build",
-			wandPerm   = "tangledmaze.getwand",
-			mazeTpPerm = "tangledmaze.teleport";
+			BUILD_PERM  = "tangledmaze.build",
+			WAND_PERM   = "tangledmaze.getwand",
+			MAZE_TP_PERM = "tangledmaze.teleport";
 	
 	public static final String prefix =
 			ChatColor.DARK_GREEN + "["  +
@@ -34,7 +34,19 @@ public class Constants {
 	public static final TreeSet<Material>
 			NOT_SOLIDS = new TreeSet<>(),
 			REPLACEABLE_SOLIDS = new TreeSet<>();
-
+	
+	public static final String[] MAZE_WAND_ENCHANTS = {
+			"Difficult Handling II",
+			"Would Recommend X/X",
+			"Unbreaking ∞",
+			"Overpowered X",
+			"Tangly III",
+			"Wow I",
+			"Ignoring WorldGuard V",
+			"Wubba Lubba Dub Dub IV",
+			"Artifact Lv. XCIX"
+	};
+	
 	@SuppressWarnings("unchecked")
 	public static void loadConstants() {
 		
@@ -44,8 +56,6 @@ public class Constants {
 
 		if(BUKKIT_VERSION < 13) {
 			materialLists = Utils.getDefaultConfig("1.12_material_lists.yml");
-//			materialLists = Utils.getDefaultConfig("english.yml");
-
 
 		}else {
 			materialLists = Utils.getDefaultConfig("1.13_material_lists.yml");

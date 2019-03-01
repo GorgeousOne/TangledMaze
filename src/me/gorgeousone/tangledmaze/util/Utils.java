@@ -5,14 +5,55 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract class Utils {
+
+	public static boolean isMazeWand(ItemStack item) {
+
+		if(item == null)
+			return false;
+		
+		if(item.getType() != Settings.MAZE_WAND_ITEM) {
+			return false;
+		}
+		
+		ItemMeta itemMeta = item.getItemMeta();
+		
+		return
+			itemMeta.getDisplayName() != null &&
+			itemMeta.getDisplayName().equals(Settings.MAZE_WAND.getItemMeta().getDisplayName());
+	}
+
+	public static ItemStack getMazeWand() {
+		
+		ItemMeta rndMeta = Settings.MAZE_WAND.getItemMeta();
+		List<String> lore = rndMeta.getLore();
+
+		lore.set(0, ChatColor.GRAY + getRndMazeWandEnchantment());
+		rndMeta.setLore(lore);
+		
+		ItemStack wand = Settings.MAZE_WAND.clone();
+		wand.setItemMeta(rndMeta);
+		
+		return wand;
+	}
+	
+	private static String getRndMazeWandEnchantment() {
+		
+		int rndIndex = (int) (Math.random() * Constants.MAZE_WAND_ENCHANTS.length);
+		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
+	}
 
 	public static boolean isLikeGround(Material m) {
 		return m.isSolid() && !Constants.NOT_SOLIDS.contains(m);
@@ -51,6 +92,10 @@ public abstract class Utils {
 		return new MazePoint(loc);
 	}
 	
+	public static int limitInt(int value, int min, int max) {
+		return Math.min(max, Math.max(min, value));
+	}
+	
 	public static int getMaxHeight(ArrayList<MazePoint> points) {
 		
 		int min = 0;
@@ -66,7 +111,7 @@ public abstract class Utils {
 
 	public static YamlConfiguration getDefaultConfig(String fileName) {
 		
-		InputStream defConfigStream = TangledMain.getPlugin().getResource(fileName);
+		InputStream defConfigStream = TangledMain.getInstance().getResource(fileName);
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 

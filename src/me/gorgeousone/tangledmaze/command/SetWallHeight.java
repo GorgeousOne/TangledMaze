@@ -1,7 +1,8 @@
 package me.gorgeousone.tangledmaze.command;
 
 import me.gorgeousone.tangledmaze.util.Settings;
-import org.bukkit.ChatColor;
+import me.gorgeousone.tangledmaze.util.Utils;
+
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
@@ -10,11 +11,15 @@ import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.Messages;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SetWallHeight {
+public class SetWallHeight extends MazeCommand {
 
+	public SetWallHeight() {
+		super("wallheight", "/tangledmaze wallheight <integer>", 1, true, null);
+	}
+	
 	public void execute(Player player, String argument) {
 		
-		if(!player.hasPermission(Constants.buildPerm)) {
+		if(!player.hasPermission(Constants.BUILD_PERM)) {
 			player.sendMessage(Constants.insufficientPerms);
 			return;
 		}
@@ -22,23 +27,11 @@ public class SetWallHeight {
 		int wallHeight;
 
 		try {
-			wallHeight = Integer.parseInt(argument);
+			wallHeight = Utils.limitInt(Integer.parseInt(argument), 1, Settings.MAX_WALL_HEIGHT);
 			
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException ex) {
+			
 			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", argument));
-			return;
-		}
-		
-		if(wallHeight < 1) {
-			player.sendMessage(ChatColor.RED + "A wall cannot be flatter than 1 block.");
-			return;
-		}
-		
-		if(wallHeight > Settings.MAX_WALL_HEIGHT) {
-			player.sendMessage(Constants.prefix
-					+ "People also thought that the tower of babel was a good idea. "
-					+ "And now look at what happened back then. "
-					+ "The wall height is limited to " + Settings.MAX_WALL_HEIGHT + " blocks.");
 			return;
 		}
 		
@@ -46,7 +39,7 @@ public class SetWallHeight {
 		
 		if(maze.getWallHeight() != wallHeight) {
 			maze.setWallHeight(wallHeight);
-			player.sendMessage(Constants.prefix + "Set wall height to " + wallHeight + " blocks.");
+			Messages.MESSAGE_MAZE_BUILDING.send(player, new PlaceHolder("number", wallHeight));
 		}
 	}
 }

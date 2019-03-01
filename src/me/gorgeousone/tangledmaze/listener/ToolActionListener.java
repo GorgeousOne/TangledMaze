@@ -18,24 +18,18 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
-import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")
 public class ToolActionListener implements Listener{
 	
-	private TangledMain plugin;
-	
-	public ToolActionListener(TangledMain plugin) {
-		this.plugin = plugin;
-	}
-	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
 
-		if(plugin.isMazeWand(e.getItem())) {
+		if(Utils.isMazeWand(e.getItem())) {
 			e.setCancelled(true);
 			e.getPlayer().updateInventory();
 		}
@@ -55,7 +49,7 @@ public class ToolActionListener implements Listener{
 				return;
 		} catch (NoSuchMethodError err) {}
 		
-		if(!plugin.isMazeWand(e.getItem()))
+		if(!Utils.isMazeWand(e.getItem()))
 			return;
 		
 		e.setCancelled(true);
@@ -63,7 +57,7 @@ public class ToolActionListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack wand = e.getItem();
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
+		if(!p.hasPermission(Constants.BUILD_PERM)) {
 			destroyMazeWand(p, wand);
 			return;
 		}
@@ -78,7 +72,7 @@ public class ToolActionListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack newItem = p.getInventory().getItem(e.getNewSlot());
 		
-		if(TangledMain.getPlugin().isMazeWand(newItem)) {
+		if(Utils.isMazeWand(newItem)) {
 				
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
@@ -91,7 +85,7 @@ public class ToolActionListener implements Listener{
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPickUp(PlayerPickupItemEvent e) {
 
-		if(TangledMain.getPlugin().isMazeWand(e.getItem().getItemStack())) {
+		if(Utils.isMazeWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))

@@ -161,6 +161,6 @@ public class BlockUpdateListener implements Listener {
 					}
 				}
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 }

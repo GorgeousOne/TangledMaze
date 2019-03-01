@@ -1,13 +1,22 @@
 package me.gorgeousone.tangledmaze.util;
 
+import java.util.ArrayList;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public final class Settings {
 
 	public static String LANGUAGE;
-	public static Material MAZE_WAND_ITEM;
 
+	public static ItemStack MAZE_WAND;
+	public static Material MAZE_WAND_ITEM;
+	
 	public static int
 			MAX_PATH_WIDTH,
 			MAX_WALL_WIDTH,
@@ -19,12 +28,11 @@ public final class Settings {
 
 		LANGUAGE = config.getString("language", "english");
 
-		MAX_PATH_WIDTH = bytify(config.getInt("maze.maximum-path-width", 50));
-		MAX_WALL_WIDTH = bytify(config.getInt("maze.maximum-wall-width", 50));
-		MAX_WALL_HEIGHT = bytify(config.getInt("maze.maximum-wall-height", 100));
+		MAX_PATH_WIDTH = Utils.limitInt(config.getInt("maze.maximum-path-width", 50), 1, 255);
+		MAX_WALL_WIDTH = Utils.limitInt(config.getInt("maze.maximum-wall-width", 50), 1, 255);
+		MAX_WALL_HEIGHT = Utils.limitInt(config.getInt("maze.maximum-wall-height", 100), 1, 255);
 
 		MAZE_WAND_ITEM = MaterialReader.readMaterial(config.getString("wand-item"));
-		
 		
 		if(MAZE_WAND_ITEM != null) {
 			return;
@@ -36,9 +44,26 @@ public final class Settings {
 		}else {
 			MAZE_WAND_ITEM = Material.GOLDEN_SHOVEL;
 		}
+		
+		createMazeWand();
 	}
-
-	private static int bytify(int value) {
-		return Math.min(255, Math.max(1, value));
+	
+	private static void createMazeWand() {
+		
+		MAZE_WAND = new ItemStack(Settings.MAZE_WAND_ITEM);
+		
+		ItemMeta meta = MAZE_WAND.getItemMeta();
+		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Wand");
+		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		
+		ArrayList<String> lore = new ArrayList<>();
+		lore.add("");
+		lore.add(ChatColor.GREEN + "A tool designed to create mazes.");
+		lore.add(ChatColor.GREEN + "" + ChatColor.ITALIC + "Look at it's delicate curves! つ◕_◕つ");
+		lore.add(ChatColor.GREEN + "Click on the ground to start a clipboard.");
+		
+		meta.setLore(lore);
+		MAZE_WAND.setItemMeta(meta);
 	}
 }

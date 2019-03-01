@@ -91,7 +91,7 @@ public abstract class Renderer implements Listener {
 				}
 		//TODO change back to runTask() if you can find out why block click still interferes block change after 1 tick
 			}
-		}.runTaskLater(TangledMain.getPlugin(), 2);
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -117,7 +117,7 @@ public abstract class Renderer implements Listener {
 					player.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
 				}
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -242,7 +242,7 @@ public abstract class Renderer implements Listener {
 			public void run() {
 				player.sendBlockChange(point, mat, (byte) 0);
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
 	public static void sendBlocksDelayed(Player player, Collection<MazePoint> points, Material mat) {
@@ -258,6 +258,6 @@ public abstract class Renderer implements Listener {
 				}
 			}
 		};
-		delay.runTask(TangledMain.getPlugin());
+		delay.runTask(TangledMain.getInstance());
 	}
 }

@@ -59,7 +59,7 @@ public class TangledCompleter implements TabCompleter {
 				
 				options.addAll(commandNames);
 				
-				if(p.hasPermission(Constants.mazeTpPerm))
+				if(p.hasPermission(Constants.MAZE_TP_PERM))
 					options.add("teleport");
 				
 			}else {
@@ -72,7 +72,7 @@ public class TangledCompleter implements TabCompleter {
 					}
 				}
 				
-				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.mazeTpPerm)) {
+				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.MAZE_TP_PERM)) {
 					options.add("teleport");
 				}
 			}

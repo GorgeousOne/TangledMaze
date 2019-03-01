@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.util.Utils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,15 +14,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.command.*;
-import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
 import me.gorgeousone.tangledmaze.util.Constants;
 
 public class CommandHandler implements CommandExecutor {
-	
-	private TangledMain plugin;
 	
 	private StartMaze startCommand;
 	private DiscardMaze discardCommand;
@@ -37,8 +36,7 @@ public class CommandHandler implements CommandExecutor {
 	//contents of the first help page
 	private RawMessage[] pageLinks;
 
-	public CommandHandler(TangledMain plugin) {
-		this.plugin = plugin;
+	public CommandHandler() {
 		
 		startCommand      = new StartMaze();
 		discardCommand    = new DiscardMaze();
@@ -76,88 +74,88 @@ public class CommandHandler implements CommandExecutor {
 		if (commandSender instanceof ConsoleCommandSender)
 			return true;
 		
-		Player p = (Player) commandSender;
+		Player player = (Player) commandSender;
 
 		if (!command.getName().equalsIgnoreCase("tangledmaze"))
 			return true;
 
 		if (args.length < 1) {
-			sendCommandHelp(p, 1);
+			sendCommandHelp(player, 1);
 			return false;
 		}
 		
 		switch (args[0].toLowerCase()) {
 			case "wand":
-				if(p.hasPermission(Constants.wandPerm)) {
-					p.getInventory().addItem(plugin.getMazeWand());
-					p.sendMessage(Constants.prefix + "Maze wand added to your inventory.");
+				if(player.hasPermission(Constants.WAND_PERM)) {
+					player.getInventory().addItem(Utils.getMazeWand());
+					player.sendMessage(Constants.prefix + "Maze wand added to your inventory.");
 				}else
-					p.sendMessage(Constants.insufficientPerms);
+					player.sendMessage(Constants.insufficientPerms);
 				break;
 				
 			case "start":
-				startCommand.execute(p);
+				startCommand.execute(player);
 				break;
 				
 			case "discard":
-				discardCommand.execute(p);
+				discardCommand.execute(player);
 				break;
 
 			case "select":
 				if(args.length >= 2)
-					selectCommand.execute(p, args[1]);
+					selectCommand.execute(player, args[1]);
 				else
-					sendCommandHelp(p, 5);
+					sendCommandHelp(player, 5);
 				break;
 				
 			case "add":
 			case "merge":
-				addCommand.execute(p);
+				addCommand.execute(player);
 				break;
 				
 			case "cut":
-			case "subtract":
-				cutCommand.execute(p);
+			case "remove":
+				cutCommand.execute(player);
 				break;
 			
 			case "undo":
-				undoCommand.execute(p);
+				undoCommand.execute(player);
 				break;
 			
 			case "pathwidth":
 				if(args.length >= 2)
-					pathWidthCommand.execute(p, args[1]);
+					pathWidthCommand.execute(player, args[1]);
 				else
-					sendCommandHelp(p, 8);
+					sendCommandHelp(player, 8);
 				break;
 			
 			case "wallwidth":
 				if(args.length >= 2)
-					wallWidthCommand.execute(p, args[1]);
+					wallWidthCommand.execute(player, args[1]);
 				else
-					sendCommandHelp(p, 8);
+					sendCommandHelp(player, 8);
 				break;
 			
 			case "wallheight":
 				if(args.length >= 2)
-					wallHeightCommand.execute(p, args[1]);
+					wallHeightCommand.execute(player, args[1]);
 				else
-					sendCommandHelp(p, 8);
+					sendCommandHelp(player, 8);
 				break;
 				
 			case "build":
 
 				if(args.length < 2) {
-					sendCommandHelp(p, 9);
+					sendCommandHelp(player, 9);
 					break;
 				}
 
-				buildCommand.execute(p, (ArrayList<String>) Arrays.asList(args).subList(1, args.length));
+				buildCommand.execute(player, (ArrayList<String>) Arrays.asList(args).subList(1, args.length));
 				break;
 			
 			case "teleport":
 			case "tp":
-				tpCommand.execute(p);
+				tpCommand.execute(player);
 				break;
 				
 			case "help":
@@ -166,16 +164,16 @@ public class CommandHandler implements CommandExecutor {
 				if(args.length >= 2) {
 					try {
 						int page = Integer.parseInt(args[1]);
-						sendCommandHelp(p, page);
+						sendCommandHelp(player, page);
 						return true;
 						
 					} catch (NumberFormatException e) {
-						p.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + args[1] + "/cheese cake");
-						p.sendMessage(ChatColor.YELLOW + "WOW ;) You discovered a hidden page! Not.");
+						player.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + args[1] + "/cheese cake");
+						player.sendMessage(ChatColor.YELLOW + "WOW ;) You discovered a hidden page! Not.");
 						return true;
 					}
 				}
-				sendCommandHelp(p, 1);
+				sendCommandHelp(player, 1);
 				break;
 				
 			default:
