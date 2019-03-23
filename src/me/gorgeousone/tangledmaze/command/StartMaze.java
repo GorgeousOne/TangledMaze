@@ -1,15 +1,13 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
+import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.Messages;
 
 public class StartMaze extends MazeCommand {
 	
@@ -44,31 +42,5 @@ public class StartMaze extends MazeCommand {
 		MazeHandler.getMaze(player).setClip(clip);
 
 		return true;
-	}
-	
-	public void execute(Player player) {
-		
-		if(!player.hasPermission(Constants.BUILD_PERM)) {
-			player.sendMessage(Constants.insufficientPerms);
-			return;
-		}
-		
-		if(!ToolHandler.hasClipboard(player)) {
-			player.sendMessage(ChatColor.RED + "Please select an area first.");
-			return;
-		}
-		
-		ClippingTool clipboard = ToolHandler.getClipboard(player);
-		
-		if(!clipboard.isComplete()) {
-			player.sendMessage(ChatColor.RED + "Please finish your clipboard first.");
-			return;
-		}
-		
-		Clip clip = clipboard.getClip();
-		clipboard.reset();
-		
-		MazeHandler.getMaze(player).setClip(clip);
-		//TODO start message needed?
 	}
 }

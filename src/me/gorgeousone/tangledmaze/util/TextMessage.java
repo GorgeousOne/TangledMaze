@@ -9,6 +9,11 @@ public class TextMessage {
 
 	public TextMessage(String message, boolean readColorCodes) {
 
+		setText(message, readColorCodes);
+	}
+	
+	public void setText(String message, boolean readColorCodes) {
+		
 		if(readColorCodes) {
 			message = ChatColor.translateAlternateColorCodes('&', message);
 		}
@@ -23,7 +28,7 @@ public class TextMessage {
 			paragraphs[i] = ChatColor.getLastColors(paragraphs[i-1]) + paragraphs[i];
 		}
 	}
-
+	
 	public void send(CommandSender sender) {
 		
 		for(String paragraph : paragraphs) {

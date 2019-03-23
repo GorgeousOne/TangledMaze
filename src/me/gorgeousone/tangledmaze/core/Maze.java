@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 import me.gorgeousone.tangledmaze.clip.ActionHistory;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipAction;
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;

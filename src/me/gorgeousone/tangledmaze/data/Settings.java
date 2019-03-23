@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.util;
+package me.gorgeousone.tangledmaze.data;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.gorgeousone.tangledmaze.util.MaterialReader;
+import me.gorgeousone.tangledmaze.util.Utils;
+
 public final class Settings {
 
 	public static String LANGUAGE;
@@ -18,9 +21,9 @@ public final class Settings {
 	public static Material MAZE_WAND_ITEM;
 	
 	public static int
-			MAX_PATH_WIDTH,
-			MAX_WALL_WIDTH,
-			MAX_WALL_HEIGHT;
+			MAX_PATHWIDTH,
+			MAX_WALLWIDTH,
+			MAX_WALLHEIGHT;
 
 	private Settings() {}
 
@@ -28,9 +31,9 @@ public final class Settings {
 
 		LANGUAGE = config.getString("language", "english");
 
-		MAX_PATH_WIDTH = Utils.limitInt(config.getInt("maze.maximum-path-width", 50), 1, 255);
-		MAX_WALL_WIDTH = Utils.limitInt(config.getInt("maze.maximum-wall-width", 50), 1, 255);
-		MAX_WALL_HEIGHT = Utils.limitInt(config.getInt("maze.maximum-wall-height", 100), 1, 255);
+		MAX_PATHWIDTH = Utils.limitInt(config.getInt("maze.maximum-pathwidth", 50), 1, 255);
+		MAX_WALLWIDTH = Utils.limitInt(config.getInt("maze.maximum-wallwidth", 50), 1, 255);
+		MAX_WALLHEIGHT = Utils.limitInt(config.getInt("maze.maximum-wallheight", 100), 1, 255);
 
 		MAZE_WAND_ITEM = MaterialReader.readMaterial(config.getString("wand-item"));
 		

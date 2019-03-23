@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
+import me.gorgeousone.tangledmaze.data.Constants;
+
 @SuppressWarnings("deprecation")
 public class MaterialReader {
 

@@ -14,9 +14,12 @@ help-pages:
     build-command: 'Builds your maze out of a mixture of blocks you enter. Just type in the name of each block (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz) \nA built maze cannot be edited any further.'
     teleport-command: Teleports you back to your maze (if you have the permission for that).
 messages:
-    maze-building: Started building your maze.
-    tool-switch: Switched tool to %tool%.
+    tool-switched: Switched tool to %tool%.
     tool-for-floor-plan-only: This tool can only be used for a floor plan of a maze.
+    maze-pathwidth-changed: Path width set to %number% blocks.
+    maze-wallwidth-changed: Wall width set to %number% blocks.
+    maze-wallheight-changed: Wall height set to %number% blocks.
+    maze-building-started: Started building your maze.
 errors:
     insufficient-permission: You do not have the permission for this command.
     clipboard-not-started: Please select an area with a maze wand first.

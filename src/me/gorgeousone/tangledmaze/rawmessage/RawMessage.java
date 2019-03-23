@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.rawmessage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -11,7 +12,7 @@ public class RawMessage {
 			start = "{\"text\":\"\",\"extra\":[",
 			end = "]}";
 
-	private ArrayList<RawElement> rawElements;
+	private List<RawElement> rawElements;
 
 	public RawMessage() {
 		rawElements = new ArrayList<>();
@@ -22,7 +23,11 @@ public class RawMessage {
 		rawElements.add(element);
 		return element;
 	}
-
+	
+	public RawElement last() {
+		return rawElements.isEmpty() ? null : rawElements.get(rawElements.size()-1);
+	}
+	
 	public void send(CommandSender sender) {
 		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " " + this.toString());
 	}

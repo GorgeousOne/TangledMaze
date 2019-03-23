@@ -1,9 +1,9 @@
 package me.gorgeousone.tangledmaze.core;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
 import org.bukkit.Chunk;

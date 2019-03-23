@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 public class GiveWand extends MazeCommand {

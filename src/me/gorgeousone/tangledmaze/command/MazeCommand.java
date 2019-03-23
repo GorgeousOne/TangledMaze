@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.data.Messages;
 
 public abstract class MazeCommand {
 	
@@ -44,7 +44,11 @@ public abstract class MazeCommand {
 	public int getArgumentCount() {
 		return argumentCount;
 	}
-
+	
+	public String getUsage() {
+		return usage;
+	}
+	
 	public boolean isPlayerRequiered() {
 		return requieresPlayer;
 	}

@@ -2,9 +2,6 @@ package me.gorgeousone.tangledmaze.core;
 
 import java.io.File;
 
-import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.Messages;
-import me.gorgeousone.tangledmaze.util.Settings;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,12 +13,16 @@ import me.gorgeousone.tangledmaze.command.BuildMaze;
 import me.gorgeousone.tangledmaze.command.CutFromMaze;
 import me.gorgeousone.tangledmaze.command.DiscardMaze;
 import me.gorgeousone.tangledmaze.command.GiveWand;
+import me.gorgeousone.tangledmaze.command.HelpCommand;
 import me.gorgeousone.tangledmaze.command.SelectTool;
 import me.gorgeousone.tangledmaze.command.SetPathWidth;
 import me.gorgeousone.tangledmaze.command.SetWallHeight;
 import me.gorgeousone.tangledmaze.command.SetWallWidth;
 import me.gorgeousone.tangledmaze.command.StartMaze;
 import me.gorgeousone.tangledmaze.command.TpToMaze;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.Settings;
 import me.gorgeousone.tangledmaze.handler.MazeCommandHandler;
 import me.gorgeousone.tangledmaze.listener.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listener.PlayerListener;
@@ -43,8 +44,8 @@ public class TangledMain extends JavaPlugin {
 
 		Constants.loadConstants();
 		Settings.loadSettings(getConfig());
-
 		loadLanguage();
+		
 		registerListeners();
 		registerCommands();
 	}
@@ -60,14 +61,15 @@ public class TangledMain extends JavaPlugin {
 		return plugin;
 	}
 	
-	public void reload() {
+	public void reloadPlugin() {
 		
 		Settings.loadSettings(getConfig());
 		loadLanguage();
 	}
 	
 	private void registerCommands() {
-		
+
+		commandHandler.registerCommand(new HelpCommand());
 		commandHandler.registerCommand(new GiveWand());
 		commandHandler.registerCommand(new StartMaze());
 		commandHandler.registerCommand(new DiscardMaze());
@@ -106,6 +108,7 @@ public class TangledMain extends JavaPlugin {
 			langConfig = YamlConfiguration.loadConfiguration(langFile);
 			langConfig.setDefaults(defEnglish);
 			langConfig.options().copyDefaults(true);
+			
 			Utils.saveConfig(langConfig, langFile);
 			getLogger().info("Loaded " + Settings.LANGUAGE + " successfully.");
 
@@ -115,17 +118,16 @@ public class TangledMain extends JavaPlugin {
 			getLogger().info("Unable to find language file: " + Settings.LANGUAGE + ".yml. Loading default english.");
 		}
 
-		Messages.loadLanguage(langConfig);
-		Utils.saveConfig(langConfig, langFile);
+		Messages.loadMessages(langConfig);
 	}
 
 	private void registerListeners() {
 		
-		PluginManager mamager = Bukkit.getPluginManager();
+		PluginManager manager = Bukkit.getPluginManager();
 		
-		mamager.registerEvents(new ToolActionListener(), this);
-		mamager.registerEvents(new PlayerListener(), this);
-		mamager.registerEvents(new BlockUpdateListener(), this);
+		manager.registerEvents(new ToolActionListener(), this);
+		manager.registerEvents(new PlayerListener(), this);
+		manager.registerEvents(new BlockUpdateListener(), this);
 		
 		getCommand("tangledmaze").setExecutor(commandHandler);
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());

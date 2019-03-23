@@ -1,9 +1,11 @@
-package me.gorgeousone.tangledmaze.util;
+package me.gorgeousone.tangledmaze.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import me.gorgeousone.tangledmaze.util.Utils;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -13,7 +15,8 @@ public class Constants {
 	public static int BUKKIT_VERSION;
 	
 	public static final String
-			insufficientPerms = ChatColor.RED + "You do not have the Permission for this command.",
+			INSUFFICIENT_PERMS = ChatColor.RED + "You do not have the Permission for this command.",
+			RELOAD_PERM = "tangledmaze.reload",
 			BUILD_PERM  = "tangledmaze.build",
 			WAND_PERM   = "tangledmaze.getwand",
 			MAZE_TP_PERM = "tangledmaze.teleport";

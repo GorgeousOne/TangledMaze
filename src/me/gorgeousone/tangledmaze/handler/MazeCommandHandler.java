@@ -7,9 +7,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import me.gorgeousone.tangledmaze.command.HelpCommand;
 import me.gorgeousone.tangledmaze.command.MazeCommand;
-import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.Messages;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
 
 public class MazeCommandHandler implements CommandExecutor {
 
@@ -27,8 +28,7 @@ public class MazeCommandHandler implements CommandExecutor {
 		}
 		
 		if(arguments.length < 1) {
-			sender.sendMessage("help pages coming back soon");
-			//TODO send help page 1
+			HelpCommand.sendHelpPage(sender, 1);
 			return true;
 		}
 		
@@ -40,11 +40,10 @@ public class MazeCommandHandler implements CommandExecutor {
 				continue;
 			}
 			
-			mazeCommand.execute(sender, getSubArguents(arguments));
-			break;
+			return mazeCommand.execute(sender, getSubArguents(arguments));
 		}
 		
-		return true;
+		return false;
 	}
 	
 	public void registerCommand(MazeCommand command) {
@@ -57,6 +56,6 @@ public class MazeCommandHandler implements CommandExecutor {
 			return new String[] {};
 		}
 		
-		return Arrays.copyOfRange(arguments, 1, arguments.length-1);
+		return Arrays.copyOfRange(arguments, 1, arguments.length);
 	}
 }

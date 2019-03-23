@@ -1,11 +1,12 @@
 package me.gorgeousone.tangledmaze.rawmessage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RawElement {
 	
 	private RawMessage parent;
-	private ArrayList<ColorText> texts;
+	private List<ColorText> texts;
 	private HoverText hoverText;
 	private ClickText clickText;
 	

@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.Messages;
 
 public class UndoAction extends MazeCommand {
 
@@ -46,7 +46,7 @@ public class UndoAction extends MazeCommand {
 	public void execute(Player p) {
 		
 		if(!p.hasPermission(Constants.BUILD_PERM)) {
-			p.sendMessage(Constants.insufficientPerms);
+			p.sendMessage(Constants.INSUFFICIENT_PERMS);
 			return;
 		}
 

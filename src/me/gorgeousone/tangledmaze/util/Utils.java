@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Settings;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -55,12 +57,12 @@ public abstract class Utils {
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}
 
-	public static boolean isLikeGround(Material m) {
-		return m.isSolid() && !Constants.NOT_SOLIDS.contains(m);
+	public static boolean isLikeGround(Material mat) {
+		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
 	}
 	
-	public static boolean canBeOverbuild(Material m) {
-		return !m.isSolid() || Constants.REPLACEABLE_SOLIDS.contains(m);
+	public static boolean canBeOverbuild(Material mat) {
+		return !mat.isSolid() || Constants.REPLACEABLE_SOLIDS.contains(mat);
 	}
 
 	public static MazePoint nearestSurface(Location loc) {

@@ -45,7 +45,6 @@ public class ClippingTool extends Tool {
 		return shape.getClass().getSimpleName().toLowerCase();
 	}
 	
-	//think about cleanness
 	public World getWorld() {
 		return clip.getWorld();
 	}
@@ -67,17 +66,17 @@ public class ClippingTool extends Tool {
 	}
 	
 	public void setType(Shape shape) {
-		this.shape = shape;
-		
-		//stop code from deleting the vertex so another shape can be created with an already set vertex
-		if(!isComplete)
-			return;
-		
-		vertices.remove(3);
-		vertices.remove(1);
 		
 		Renderer.hideClipboard(this, true);
-		calculateShape();
+		this.shape = shape;
+
+		if(isComplete) {
+
+			vertices.remove(3);
+			vertices.remove(1);
+			calculateShape();
+		}
+		
 		Renderer.showClipboard(this);
 	}
 	

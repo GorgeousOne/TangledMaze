@@ -18,9 +18,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")

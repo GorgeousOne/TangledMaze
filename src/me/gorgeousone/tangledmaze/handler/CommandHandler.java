@@ -1,9 +1,5 @@
 package me.gorgeousone.tangledmaze.handler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import me.gorgeousone.tangledmaze.util.Messages;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 import org.bukkit.ChatColor;
@@ -14,10 +10,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.command.*;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
-import me.gorgeousone.tangledmaze.util.Constants;
 
 public class CommandHandler implements CommandExecutor {
 	
@@ -35,7 +32,8 @@ public class CommandHandler implements CommandExecutor {
 	
 	//contents of the first help page
 	private RawMessage[] pageLinks;
-
+	
+	
 	public CommandHandler() {
 		
 		startCommand      = new StartMaze();
@@ -90,55 +88,55 @@ public class CommandHandler implements CommandExecutor {
 					player.getInventory().addItem(Utils.getMazeWand());
 					player.sendMessage(Constants.prefix + "Maze wand added to your inventory.");
 				}else
-					player.sendMessage(Constants.insufficientPerms);
+					player.sendMessage(Constants.INSUFFICIENT_PERMS);
 				break;
 				
 			case "start":
-				startCommand.execute(player);
+				startCommand.execute(player, args);
 				break;
 				
 			case "discard":
-				discardCommand.execute(player);
+				discardCommand.execute(player, args);
 				break;
 
 			case "select":
 				if(args.length >= 2)
-					selectCommand.execute(player, args[1]);
+					selectCommand.execute(player, args);
 				else
 					sendCommandHelp(player, 5);
 				break;
 				
 			case "add":
 			case "merge":
-				addCommand.execute(player);
+				addCommand.execute(player, args);
 				break;
 				
 			case "cut":
 			case "remove":
-				cutCommand.execute(player);
+				cutCommand.execute(player, args);
 				break;
 			
 			case "undo":
-				undoCommand.execute(player);
+				undoCommand.execute(player, args);
 				break;
 			
 			case "pathwidth":
 				if(args.length >= 2)
-					pathWidthCommand.execute(player, args[1]);
+					pathWidthCommand.execute(player, args);
 				else
 					sendCommandHelp(player, 8);
 				break;
 			
 			case "wallwidth":
 				if(args.length >= 2)
-					wallWidthCommand.execute(player, args[1]);
+					wallWidthCommand.execute(player, args);
 				else
 					sendCommandHelp(player, 8);
 				break;
 			
 			case "wallheight":
 				if(args.length >= 2)
-					wallHeightCommand.execute(player, args[1]);
+					wallHeightCommand.execute(player, args);
 				else
 					sendCommandHelp(player, 8);
 				break;
@@ -150,12 +148,12 @@ public class CommandHandler implements CommandExecutor {
 					break;
 				}
 
-				buildCommand.execute(player, (ArrayList<String>) Arrays.asList(args).subList(1, args.length));
+				buildCommand.execute(player, args);
 				break;
 			
 			case "teleport":
 			case "tp":
-				tpCommand.execute(player);
+				tpCommand.execute(player, args);
 				break;
 				
 			case "help":
