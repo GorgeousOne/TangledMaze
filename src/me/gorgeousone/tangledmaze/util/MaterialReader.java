@@ -23,7 +23,8 @@ public class MaterialReader {
 		
 		Material type;
 		byte data;
-		String typeString, dataString;
+		String typeString;
+		String dataString;
 		
 		if(materialData.contains(":")) {
 

@@ -22,7 +22,7 @@ public abstract class MazeCommand {
 	public MazeCommand(String name, String usage, int argumentCount, boolean requieresPlayer, String permission, String... aliases) {
 		
 		this.name = name.toLowerCase();
-		this.aliases = createAliases(name, aliases);
+		this.aliases = createAliases(aliases);
 		this.permission = permission;
 		this.usage = usage;
 		this.argumentCount = argumentCount;
@@ -76,7 +76,7 @@ public abstract class MazeCommand {
 		return true;
 	}
 	
-	private List<String> createAliases(String name, String[] aliases) {
+	private List<String> createAliases(String[] aliases) {
 		
 		List<String> allAliases = new ArrayList<>();
 		

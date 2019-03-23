@@ -14,11 +14,14 @@ public class TextMessage {
 	
 	public void setText(String message, boolean readColorCodes) {
 		
-		if(readColorCodes) {
-			message = ChatColor.translateAlternateColorCodes('&', message);
-		}
-
-		paragraphs = message.split("\\\\n");
+		String alteredMessage;
+		
+		if(readColorCodes)
+			alteredMessage = ChatColor.translateAlternateColorCodes('&', message);
+		else
+			alteredMessage = message;
+			
+		paragraphs = alteredMessage.split("\\\\n");
 
 		if(paragraphs.length < 2 || !readColorCodes) {
 			return;

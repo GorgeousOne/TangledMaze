@@ -64,9 +64,9 @@ public class Circle implements Shape {
 	}
 	
 	private static boolean isInEllipse(float x, float z, float distortionZ, float radius) {
-	
-		z *= distortionZ;
-		return Math.sqrt(x*x + z*z) <= radius;
+		
+		float circleZ = z * distortionZ;
+		return Math.sqrt(x*x + circleZ*circleZ) <= radius;
 	}
 	
 	private static boolean isEllipseBorder(float x, float z, float distortionZ, float radius) {

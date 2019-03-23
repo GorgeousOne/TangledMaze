@@ -9,9 +9,8 @@ import org.bukkit.event.block.Action;
 
 public abstract class Tool {
 	
-	public abstract String getName();
-	
 	private UUID player;
+	
 
 	public Tool(Player builder) {
 		this.player = builder.getUniqueId();
@@ -20,6 +19,8 @@ public abstract class Tool {
 	public Player getPlayer() {
 		return Bukkit.getPlayer(player);
 	}
+
+	public abstract String getName();
 	
 	public abstract void interact(Block clicked, Action interaction);
 }
