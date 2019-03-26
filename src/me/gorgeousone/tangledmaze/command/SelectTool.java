@@ -46,13 +46,17 @@ public class SelectTool extends MazeCommand {
 		
 		case "brush":
 			
-			switchMazeTool(player, new BrushTool(player));
+			if(!switchMazeTool(player, new BrushTool(player)))
+				return true;
+			
 			break;
 			
 		case "exit":
 		case "entrance":
 			
-			switchMazeTool(player, new ExitSettingTool(player));
+			if(!switchMazeTool(player, new ExitSettingTool(player)))
+				return true;
+			
 			break;
 			
 		default:

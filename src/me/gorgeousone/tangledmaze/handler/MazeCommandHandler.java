@@ -36,8 +36,10 @@ public class MazeCommandHandler implements CommandExecutor {
 		
 		for(MazeCommand mazeCommand : mazeCommands) {
 			
-			if(mazeCommand.isCommand(subCommandName))
-				return mazeCommand.execute(sender, getSubArguents(arguments));
+			if(mazeCommand.isCommand(subCommandName)) {
+				mazeCommand.execute(sender, getSubArguents(arguments));
+				return true;
+			}
 		}
 		
 		return false;

@@ -10,8 +10,8 @@ help-pages:
         exit: Click on the outline of your floor plan to set exits (or entrances, just how you see it). Click on an exit a second time to delete it again. The diamond exit indicates where the maze generator will begin building.
     add-cut-command: 'Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. If you cut off an area from the main part of your maze (with diamond exit) there won''t be generated any paths (just don''t). \n\nFor undoing these actions use:'
     undo-command: Undoes the last change to your maze like adding or cutting a clipboar away or brushing.
-    pathwidth-wallwidth-wallheight-command: These three commands are for changing the width or height of maze walls and path when being generated.
-    build-command: 'Builds your maze out of a mixture of blocks you enter. Just type in the name of each block (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz) \nA built maze cannot be edited any further.'
+    pathwidth-wallwidth-wallheight-command: These three commands are for changing the width of maze paths and walls as well as the wall height for the generation in the end.
+    build-command: 'Builds your maze out of a mixture of blocks you enter. Just type in the name of each block (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz) \nA constructed maze cannot be edited any further.'
     teleport-command: Teleports you back to your maze (if you have the permission for that).
 messages:
     tool-switched: Switched tool to %tool%.

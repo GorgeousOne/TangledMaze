@@ -23,6 +23,7 @@ public class MaterialReader {
 		
 		Material type;
 		byte data;
+		
 		String typeString;
 		String dataString;
 		

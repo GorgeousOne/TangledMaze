@@ -8,7 +8,6 @@ import me.gorgeousone.tangledmaze.data.Constants;
 public class Reload extends MazeCommand {
 	
 	public Reload() {
-		
 		super("reload", "/tangledmaze reload", 0, false, Constants.RELOAD_PERM, "rl");
 	}
 	

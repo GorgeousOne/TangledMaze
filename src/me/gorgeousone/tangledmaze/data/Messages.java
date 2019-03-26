@@ -33,6 +33,7 @@ public class Messages {
 			ERROR_CLIPBOARD_NOT_FINISHED,
 			ERROR_MAZE_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_TOUCHING_MAZE,
+			ERROR_NO_MAZE_BORDER_CLICKED,
 			ERROR_NO_MAZE_EXIT_SET,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
@@ -41,23 +42,24 @@ public class Messages {
 	public static void loadMessages(FileConfiguration langConfig) {
 		
 		ConfigurationSection helpPages = langConfig.getConfigurationSection("help-pages");
-
-		COMMAND_WAND = new TextMessage(ChatColor.GREEN + helpPages.getString("wand-command") , false);
-		COMMAND_START = new TextMessage(ChatColor.GREEN + helpPages.getString("start-command"), true);
-		COMMAND_DISCARD = new TextMessage(ChatColor.GREEN + helpPages.getString("discard-command"), true);
-		COMMAND_SELECT = new TextMessage(ChatColor.GREEN + helpPages.getString("select-command"), true);
-		COMMAND_ADD_CUT = new TextMessage(ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
-		COMMAND_UNDO = new TextMessage(ChatColor.GREEN + helpPages.getString("undo-command"), true);
-		COMMAND_DIMENSIONS = new TextMessage(ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
-		COMMAND_BUILD = new TextMessage(ChatColor.GREEN + helpPages.getString("build-command"), true);
-		COMMAND_TELEPORT = new TextMessage(ChatColor.GREEN + helpPages.getString("teleport-command"), true);
+		
+		//TODO I will come back in 3 years and laugh about how silly I implemented this here
+		COMMAND_WAND       = new TextMessage(ChatColor.DARK_GREEN + "/maze wand\n" + ChatColor.GREEN + helpPages.getString("wand-command") , false);
+		COMMAND_START      = new TextMessage(ChatColor.DARK_GREEN + "/maze start\n" + ChatColor.GREEN + helpPages.getString("start-command"), true);
+		COMMAND_DISCARD    = new TextMessage(ChatColor.DARK_GREEN + "/maze discard\n"+ ChatColor.GREEN + helpPages.getString("discard-command"), true);
+		COMMAND_SELECT     = new TextMessage(ChatColor.DARK_GREEN + "/maze select <tool>\n" + ChatColor.GREEN + helpPages.getString("select-command"), true);
+		COMMAND_ADD_CUT    = new TextMessage(ChatColor.DARK_GREEN + "/maze add / cut" + ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
+		COMMAND_UNDO       = new TextMessage(ChatColor.DARK_GREEN + "/maze undo\n" + ChatColor.GREEN + helpPages.getString("undo-command"), true);
+		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze pathwidth / wallwidth / wallheight <integer>\n" + ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
+		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
+		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
 
 		ConfigurationSection tools = helpPages.getConfigurationSection("tools");
 
-		TOOL_RECT = new TextMessage(ChatColor.GREEN + tools.getString("rectangle"), false);
-		TOOL_CIRCLE = new TextMessage(ChatColor.GREEN + tools.getString("circle"), false);
-		TOOL_BRUSH = new TextMessage(ChatColor.GREEN + tools.getString("brush"), false);
-		TOOL_EXIT = new TextMessage(ChatColor.GREEN + tools.getString("exit"), false);
+		TOOL_RECT   = new TextMessage(ChatColor.DARK_GREEN + "rectangle\n" + ChatColor.GREEN + tools.getString("rectangle"), false);
+		TOOL_CIRCLE = new TextMessage(ChatColor.DARK_GREEN + "circle\n" + ChatColor.GREEN + tools.getString("circle"), false);
+		TOOL_BRUSH  = new TextMessage(ChatColor.DARK_GREEN + "brush\n" + ChatColor.GREEN + tools.getString("brush"), false);
+		TOOL_EXIT   = new TextMessage(ChatColor.DARK_GREEN + "exit\n" + ChatColor.GREEN + tools.getString("exit"), false);
 		
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
 		
@@ -74,7 +76,8 @@ public class Messages {
 		ERROR_CLIPBOARD_NOT_STARTED = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-started"), false);
 		ERROR_CLIPBOARD_NOT_FINISHED = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-finished"), false);
 		ERROR_MAZE_NOT_STARTED = new TextMessage(ChatColor.RED + errors.getString("maze-not-started"), false);
-		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE = new TextMessage(ChatColor.RED + errors.getString("no-maze-border-clicke"), false);
+		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-touching-maze"), false);
+		ERROR_NO_MAZE_BORDER_CLICKED = new TextMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + errors.getString("no-maze-border-clicked"), false);
 		ERROR_NO_MAZE_EXIT_SET = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);

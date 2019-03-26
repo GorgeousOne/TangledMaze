@@ -14,6 +14,7 @@ import me.gorgeousone.tangledmaze.command.CutFromMaze;
 import me.gorgeousone.tangledmaze.command.DiscardMaze;
 import me.gorgeousone.tangledmaze.command.GiveWand;
 import me.gorgeousone.tangledmaze.command.HelpCommand;
+import me.gorgeousone.tangledmaze.command.Reload;
 import me.gorgeousone.tangledmaze.command.SelectTool;
 import me.gorgeousone.tangledmaze.command.SetPathWidth;
 import me.gorgeousone.tangledmaze.command.SetWallHeight;
@@ -63,12 +64,14 @@ public class TangledMain extends JavaPlugin {
 	
 	public void reloadPlugin() {
 		
+		reloadConfig();
 		Settings.loadSettings(getConfig());
 		loadLanguage();
 	}
 	
 	private void registerCommands() {
-
+		
+		commandHandler.registerCommand(new Reload());
 		commandHandler.registerCommand(new HelpCommand());
 		commandHandler.registerCommand(new GiveWand());
 		commandHandler.registerCommand(new StartMaze());
