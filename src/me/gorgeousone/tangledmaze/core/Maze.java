@@ -108,7 +108,7 @@ public class Maze {
 		dimensions.setZ(Math.max(1, wallWidth));
 	}
 	
-	public void setWallComposition(ArrayList<MaterialData> composition) {
+	public void setWallComposition(List<MaterialData> composition) {
 		wallComposition = composition;
 	}
 	

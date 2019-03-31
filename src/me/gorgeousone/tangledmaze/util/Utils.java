@@ -26,7 +26,7 @@ public abstract class Utils {
 		if(item == null)
 			return false;
 		
-		if(item.getType() != Settings.MAZE_WAND_ITEM) {
+		if(item.getType() != Settings.MAZE_WAND_MATERIAL) {
 			return false;
 		}
 		
@@ -39,13 +39,13 @@ public abstract class Utils {
 
 	public static ItemStack getMazeWand() {
 		
-		ItemMeta rndMeta = Settings.MAZE_WAND.getItemMeta();
+		ItemStack wand = Settings.MAZE_WAND.clone();
+		ItemMeta rndMeta = wand.getItemMeta();
 		List<String> lore = rndMeta.getLore();
 
 		lore.set(0, ChatColor.GRAY + getRndMazeWandEnchantment());
 		rndMeta.setLore(lore);
 		
-		ItemStack wand = Settings.MAZE_WAND.clone();
 		wand.setItemMeta(rndMeta);
 		
 		return wand;

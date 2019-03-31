@@ -22,6 +22,7 @@ public class Messages {
 			TOOL_CIRCLE,
 			TOOL_BRUSH,
 			TOOL_EXIT,
+			MESSAGE_PLUGIN_RELOADED,
 			MESSAGE_TOOL_SWITCHED,
 			MESSAGE_TOOL_FOR_MAZE_ONLY,
 			MESSAGE_PATHWIDTH_CHANGED,
@@ -48,7 +49,7 @@ public class Messages {
 		COMMAND_START      = new TextMessage(ChatColor.DARK_GREEN + "/maze start\n" + ChatColor.GREEN + helpPages.getString("start-command"), true);
 		COMMAND_DISCARD    = new TextMessage(ChatColor.DARK_GREEN + "/maze discard\n"+ ChatColor.GREEN + helpPages.getString("discard-command"), true);
 		COMMAND_SELECT     = new TextMessage(ChatColor.DARK_GREEN + "/maze select <tool>\n" + ChatColor.GREEN + helpPages.getString("select-command"), true);
-		COMMAND_ADD_CUT    = new TextMessage(ChatColor.DARK_GREEN + "/maze add / cut" + ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
+		COMMAND_ADD_CUT    = new TextMessage(ChatColor.DARK_GREEN + "/maze add / cut\n" + ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
 		COMMAND_UNDO       = new TextMessage(ChatColor.DARK_GREEN + "/maze undo\n" + ChatColor.GREEN + helpPages.getString("undo-command"), true);
 		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze pathwidth / wallwidth / wallheight <integer>\n" + ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
 		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
@@ -63,6 +64,7 @@ public class Messages {
 		
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
 		
+		MESSAGE_PLUGIN_RELOADED = new TextMessage(Constants.prefix + messages.getString("plugin-reloaded"), false);
 		MESSAGE_TOOL_SWITCHED = new TextMessage(Constants.prefix + messages.getString("tool-switched"), false);
 		MESSAGE_TOOL_FOR_MAZE_ONLY = new TextMessage(Constants.prefix + messages.getString("tool-for-floor-plan-only"), false);
 		MESSAGE_PATHWIDTH_CHANGED = new TextMessage(Constants.prefix + messages.getString("maze-pathwidth-changed"), false);
@@ -107,6 +109,7 @@ public class Messages {
 		
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
 		
+		MESSAGE_PLUGIN_RELOADED.setText(Constants.prefix + messages.getString("plugin-reloaded"), false);
 		MESSAGE_TOOL_SWITCHED.setText(Constants.prefix + messages.getString("tool-switched"), false);
 		MESSAGE_TOOL_FOR_MAZE_ONLY.setText(Constants.prefix + messages.getString("tool-for-floor-plan-only"), false);
 		MESSAGE_PATHWIDTH_CHANGED.setText(Constants.prefix + messages.getString("maze-pathwidth-changed"), false);

@@ -10,15 +10,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.gorgeousone.tangledmaze.util.MaterialReader;
+import me.gorgeousone.tangledmaze.util.BlockTypeReader;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 public final class Settings {
 
-	public static String LANGUAGE;
-
 	public static ItemStack MAZE_WAND;
-	public static Material MAZE_WAND_ITEM;
+	public static Material MAZE_WAND_MATERIAL;
 	
 	public static int
 			MAX_PATHWIDTH,
@@ -29,23 +27,23 @@ public final class Settings {
 
 	public static void loadSettings(FileConfiguration config) {
 
-		LANGUAGE = config.getString("language", "english");
-
 		MAX_PATHWIDTH = Utils.limitInt(config.getInt("maze.maximum-pathwidth", 50), 1, 255);
 		MAX_WALLWIDTH = Utils.limitInt(config.getInt("maze.maximum-wallwidth", 50), 1, 255);
 		MAX_WALLHEIGHT = Utils.limitInt(config.getInt("maze.maximum-wallheight", 100), 1, 255);
 
-		MAZE_WAND_ITEM = MaterialReader.readMaterial(config.getString("wand-item"));
+		MAZE_WAND_MATERIAL = BlockTypeReader.readMaterial(config.getString("wand-item"));
 		
-		if(MAZE_WAND_ITEM != null) {
+		if(MAZE_WAND_MATERIAL != null) {
 			return;
 		}
 		
 		if(Constants.BUKKIT_VERSION < 13) {
-			MAZE_WAND_ITEM = Material.valueOf("GOLD_SPADE");
+			//TODO rmeove
+			System.out.println("this 1.12 code is happening");
+			MAZE_WAND_MATERIAL = Material.valueOf("GOLD_SPADE");
 		
 		}else {
-			MAZE_WAND_ITEM = Material.GOLDEN_SHOVEL;
+			MAZE_WAND_MATERIAL = Material.GOLDEN_SHOVEL;
 		}
 		
 		createMazeWand();
@@ -53,7 +51,7 @@ public final class Settings {
 	
 	private static void createMazeWand() {
 		
-		MAZE_WAND = new ItemStack(Settings.MAZE_WAND_ITEM);
+		MAZE_WAND = new ItemStack(Settings.MAZE_WAND_MATERIAL);
 		
 		ItemMeta meta = MAZE_WAND.getItemMeta();
 		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Wand");

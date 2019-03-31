@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public final class ReflectionMaterials {
+public final class MaterialReflection {
 	
 	private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
@@ -26,7 +26,7 @@ public final class ReflectionMaterials {
 	private static final Class<?> CRAFTITEMSTACK = getMcClass("org.bukkit.craftbukkit.%s.inventory.CraftItemStack");
 	private static final Method CRAFTITEMSTACK_NEW_CRAFTSTACK = getDeclaredMethod(Objects.requireNonNull(CRAFTITEMSTACK), "asNewCraftStack", ITEM_CLASS);
 
-	private ReflectionMaterials() {}
+	private MaterialReflection() {}
 
 	public static Material getMaterial(String mcName){
 		

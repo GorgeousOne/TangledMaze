@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
 
 public class Reload extends MazeCommand {
 	
@@ -19,6 +20,7 @@ public class Reload extends MazeCommand {
 		}
 		
 		TangledMain.getInstance().reloadPlugin();
+		Messages.MESSAGE_PLUGIN_RELOADED.send(sender);
 		return true;
 	}
 }

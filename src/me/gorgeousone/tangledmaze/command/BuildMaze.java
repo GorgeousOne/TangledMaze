@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.gorgeousone.tangledmaze.generation.MazeGenerator;
 
@@ -12,7 +13,8 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.MaterialReader;
+import me.gorgeousone.tangledmaze.util.BlockTypeReader;
+import me.gorgeousone.tangledmaze.util.TextException;
 
 @SuppressWarnings("deprecation")
 public class BuildMaze extends MazeCommand {
@@ -56,13 +58,14 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		ArrayList<MaterialData> composition;
+		List<MaterialData> composition;
 		
 		try {
-			composition = getWallComposition(arguments);
-		
-		} catch (Exception e) {
-			player.sendMessage(e.getMessage());
+			composition = getWallComposition(player, arguments);
+			
+		} catch (TextException ex) {
+			
+			ex.getText().send(player, ex.getPlaceHolder());
 			return false;
 		}
 		
@@ -76,12 +79,12 @@ public class BuildMaze extends MazeCommand {
 		return true;
 	}
 	
-	private static ArrayList<MaterialData> getWallComposition(String[] serializedMaterialData) {
-		ArrayList<MaterialData> composition = new ArrayList<>();
+	private static List<MaterialData> getWallComposition(Player player, String[] serializedMaterialData) throws TextException {
 		
-		for(String materialData : serializedMaterialData) {
-			composition.add(MaterialReader.readMaterialData(materialData));
-		}
+		List<MaterialData> composition = new ArrayList<>();
+		
+		for(String materialDataString : serializedMaterialData)
+			composition.add(BlockTypeReader.readMaterialData(materialDataString));
 		
 		return composition;
 	}

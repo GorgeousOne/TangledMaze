@@ -1,4 +1,3 @@
-language: english
 wand-item: gold_spade
 maze:
     maximum-pathwidth: 50

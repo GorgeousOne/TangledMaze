@@ -1,25 +1,25 @@
 package me.gorgeousone.tangledmaze.util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
 
 @SuppressWarnings("deprecation")
-public class MaterialReader {
+public class BlockTypeReader {
 
 	public static Material readMaterial(String materialName) {
 
 		if(Constants.BUKKIT_VERSION <= 12) {
-			return ReflectionMaterials.getMaterial(materialName);
+			return MaterialReflection.getMaterial(materialName);
 
 		}else {
 			return Material.matchMaterial(materialName);
 		}
 	}
 
-	public static MaterialData readMaterialData(String materialData) {
+	public static MaterialData readMaterialData(String materialData) throws TextException {
 		
 		Material type;
 		byte data;
@@ -41,14 +41,15 @@ public class MaterialReader {
 		
 		type = readMaterial(typeString);
 		
-		if(type == null) {
-			throw new IllegalArgumentException(ChatColor.RED + "\"" + typeString + "\" does not match any block.");
+		if(type == null || !type.isBlock()) {
+			throw new TextException(Messages.ERROR_NO_MATCHING_BLOCK_TYPE, new PlaceHolder("block", typeString));
 		}
 		
 		try {
 			data = Byte.parseByte(dataString);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(ChatColor.RED + "\"" + dataString + "\" is not a valid number.");
+		
+		} catch (NumberFormatException ex) {
+			throw new TextException(Messages.ERROR_NUMBER_NOT_VALID, new PlaceHolder("number", dataString));
 		}
 		
 		return new MaterialData(type, data);

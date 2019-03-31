@@ -60,7 +60,7 @@ public class SelectTool extends MazeCommand {
 			break;
 			
 		default:
-			player.sendMessage("/tangledmaze help 5");
+			player.sendMessage("/tangledmaze help 6");
 			return false;
 		}
 		

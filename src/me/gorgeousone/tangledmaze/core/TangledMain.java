@@ -95,32 +95,18 @@ public class TangledMain extends JavaPlugin {
 
 	private void loadLanguage() {
 
-		File langFolder =  new File(getDataFolder() + File.separator + "languages");
-		File englishFile = new File(langFolder + File.separator + "english.yml");
-		YamlConfiguration defEnglish = Utils.getDefaultConfig("english.yml");
+		File langFile = new File(getDataFolder() + File.separator + "language.yml");
+		YamlConfiguration defLangConfig = Utils.getDefaultConfig("language.yml");
 
-		if(!englishFile.exists()) {
-			Utils.saveConfig(defEnglish, englishFile);
+		if(!langFile.exists()) {
+			Utils.saveConfig(defLangConfig, langFile);
 		}
 
-		YamlConfiguration langConfig;
-		File langFile = new File(langFolder + File.separator + Settings.LANGUAGE + ".yml");
-
-		if(langFile.exists()) {
-
-			langConfig = YamlConfiguration.loadConfiguration(langFile);
-			langConfig.setDefaults(defEnglish);
-			langConfig.options().copyDefaults(true);
-			
-			Utils.saveConfig(langConfig, langFile);
-			getLogger().info("Loaded " + Settings.LANGUAGE + " successfully.");
-
-		}else {
-			
-			langConfig = defEnglish;
-			getLogger().info("Unable to find language file: " + Settings.LANGUAGE + ".yml. Loading default english.");
-		}
-
+		YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langFile);
+		langConfig.setDefaults(defLangConfig);
+		langConfig.options().copyDefaults(true);
+		Utils.saveConfig(langConfig, langFile);
+		
 		Messages.loadMessages(langConfig);
 	}
 
