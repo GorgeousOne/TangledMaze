@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.data.Constants;
 
 public class TangledCompleter implements TabCompleter {
 	
@@ -59,7 +59,7 @@ public class TangledCompleter implements TabCompleter {
 				
 				options.addAll(commandNames);
 				
-				if(p.hasPermission(Constants.mazeTpPerm))
+				if(p.hasPermission(Constants.MAZE_TP_PERM))
 					options.add("teleport");
 				
 			}else {
@@ -72,7 +72,7 @@ public class TangledCompleter implements TabCompleter {
 					}
 				}
 				
-				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.mazeTpPerm)) {
+				if("teleport".startsWith(args[0].toLowerCase()) && p.hasPermission(Constants.MAZE_TP_PERM)) {
 					options.add("teleport");
 				}
 			}

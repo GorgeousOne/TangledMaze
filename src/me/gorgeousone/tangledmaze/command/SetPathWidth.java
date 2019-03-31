@@ -1,48 +1,51 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
+import me.gorgeousone.tangledmaze.util.Utils;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.Settings;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SetPathWidth {
+public class SetPathWidth extends MazeCommand {
 
-	public void execute(Player player, String arg0) {
-		
-		if(!player.hasPermission(Constants.buildPerm)) {
-			player.sendMessage(Constants.insufficientPerms);
-			return;
+	public SetPathWidth() {
+		super("pathwidth", "/tangledmaze pathwidth <integer>", 1, true, null);
+	}
+	
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
+
+		if(!super.execute(sender, arguments)) {
+			return false;
 		}
 		
-		int pathWidth = 0;
+		Player player = (Player) sender;
+		
+		String pathWidthString = arguments[0];
+		int pathWidth;
 		
 		try {
-			pathWidth = Integer.parseInt(arg0);
-		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
-			return;
-		}
+			pathWidth = Utils.limitInt(Integer.parseInt(pathWidthString), 1, Settings.MAX_PATHWIDTH);
 		
-		if(pathWidth < 1) {
-			player.sendMessage(ChatColor.RED + "A path cannot be thinner than 1 block.");
-			return;
-		}
-		
-		if(pathWidth > Constants.MAX_PATH_WIDTH) {
-			player.sendMessage(Constants.prefix
-					+ "Grandma still wants to cross the path on her own. "
-					+ "There will not always be a handsome person like you around to help her. "
-					+ "The path width is limited to " + Constants.MAX_PATH_WIDTH + " blocks.");
-			return;
+		} catch (NumberFormatException ex) {
+			
+			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", pathWidthString));
+			return false;
 		}
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getPathWidth() != pathWidth) {
+			
 			maze.setPathWidth(pathWidth);
-			player.sendMessage(Constants.prefix + "Set path width to " + pathWidth + " blocks.");
+			Messages.MESSAGE_PATHWIDTH_CHANGED.send(player, new PlaceHolder("number", pathWidth));
 		}
+
+		return true;
 	}
 }

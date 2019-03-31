@@ -33,6 +33,11 @@ public final class ReflectionMaterials {
 		try {
 			Object mcKey = Objects.requireNonNull(MINECRAFT_KEY_CONSTRUCTOR).newInstance(mcName);
 			ItemStack itemStack = (ItemStack) Objects.requireNonNull(CRAFTITEMSTACK_NEW_CRAFTSTACK).invoke(null, Objects.requireNonNull(MINECRAFT_REGISTRY_GET).invoke(ITEM_REGISTRY, mcKey));
+
+			if(itemStack.getType() == Material.AIR && !mcName.equalsIgnoreCase("AIR")) {
+				return null;
+			}
+
 			return itemStack.getType();
 			
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

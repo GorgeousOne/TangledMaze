@@ -1,38 +1,42 @@
 package me.gorgeousone.tangledmaze.rawmessage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public class RawMessage {
 
-	private ArrayList<RawElement> collections;
-	private String start, end;
-	
+	private static final String
+			start = "{\"text\":\"\",\"extra\":[",
+			end = "]}";
+
+	private List<RawElement> rawElements;
+
 	public RawMessage() {
-		collections = new ArrayList<>();
-		
-		start = "{\"text\":\"\",\"extra\":[";
-		end = "]}";
+		rawElements = new ArrayList<>();
 	}
 	
 	public RawElement add(String text) {
-		RawElement collection = new RawElement(text, this);
-		collections.add(collection);
-		return collection;
+		RawElement element = new RawElement(text, this);
+		rawElements.add(element);
+		return element;
 	}
-
-	public void send(Player p) {
-		String command = "tellraw " + p.getName() + " " + this.toString();
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+	
+	public RawElement last() {
+		return rawElements.isEmpty() ? null : rawElements.get(rawElements.size()-1);
+	}
+	
+	public void send(CommandSender sender) {
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " " + this.toString());
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder message = new StringBuilder(start);
 		
-		for(RawElement collection : collections)
+		for(RawElement collection : rawElements)
 			message.append("{" + collection.toString() + "},");
 
 		message.deleteCharAt(message.length()-1);

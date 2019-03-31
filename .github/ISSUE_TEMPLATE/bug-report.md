@@ -8,6 +8,7 @@ about: Create a report to help us improve the plugin
 A clear and concise description of what the bug is.
 
 **To Reproduce**
+
 Steps to reproduce the behavior for example:
 1. Select a rectangle/ellipse somewhere
 2. Run command "..."

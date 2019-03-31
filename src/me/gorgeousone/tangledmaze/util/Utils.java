@@ -1,162 +1,70 @@
 package me.gorgeousone.tangledmaze.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
+import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Settings;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract class Utils {
 
-	private final static ArrayList<Material> NOT_GROUND_SOLIDS = new ArrayList<>(Arrays.asList(
-			Material.ACACIA_DOOR,
-			Material.ACTIVATOR_RAIL,
-			Material.ANVIL,
-			Material.BIRCH_DOOR,
-			Material.BREWING_STAND,
-			Material.BROWN_MUSHROOM,
-			Material.CACTUS,
-			Material.CARPET,
-			Material.CARROT,
-			Material.COCOA,
-			Material.CHEST,
-			Material.DARK_OAK_DOOR,
-			Material.DAYLIGHT_DETECTOR,
-			Material.DEAD_BUSH,
-			Material.DETECTOR_RAIL,
-			Material.DOUBLE_PLANT,
-			Material.ENDER_CHEST,
-			Material.FIRE,
-			Material.FLOWER_POT,
-			Material.GOLD_PLATE,
-			Material.IRON_DOOR,
-			Material.IRON_PLATE,
-			Material.JUNGLE_DOOR,
-			Material.LADDER,
-			Material.LEAVES,
-			Material.LEAVES_2,
-			Material.LEVER,
-			Material.LONG_GRASS,
-			Material.MELON_STEM,
-			Material.PISTON_MOVING_PIECE,
-			Material.POTATO,
-			Material.POWERED_RAIL,
-			Material.PUMPKIN_STEM,
-			Material.RAILS,
-			Material.RED_MUSHROOM,
-			Material.RED_ROSE,
-			Material.REDSTONE_TORCH_OFF,
-			Material.REDSTONE_TORCH_ON,
-			Material.REDSTONE_WIRE,
-			Material.SAPLING,
-			Material.SIGN_POST,
-			Material.SKULL,
-			Material.SPRUCE_DOOR,
-			Material.SNOW,
-			Material.STANDING_BANNER,	
-			Material.STONE_BUTTON,
-			Material.STONE_PLATE,
-			Material.SUGAR_CANE_BLOCK,
-			Material.TORCH,
-			Material.TRAPPED_CHEST,
-			Material.TRIPWIRE,
-			Material.TRIPWIRE_HOOK,
-			Material.VINE,
-			Material.WALL_BANNER,
-			Material.WALL_SIGN,
-			Material.WATER_LILY,
-			Material.WEB,
-			Material.WHEAT,
-			Material.WOOD_BUTTON,
-			Material.WOOD_PLATE,
-			Material.WOODEN_DOOR,
-			Material.YELLOW_FLOWER));
-	
-	private static ArrayList<Material> REPLACABLE_SOLIDS = new ArrayList<>(Arrays.asList(
-			Material.BROWN_MUSHROOM,
-			Material.CACTUS,
-			Material.CARPET,
-			Material.CARROT,
-			Material.COCOA,
-			Material.DEAD_BUSH,
-			Material.DOUBLE_PLANT,
-			Material.FIRE,
-			Material.LONG_GRASS,
-			Material.MELON_STEM,
-			Material.POTATO,
-			Material.PUMPKIN_STEM,
-			Material.RED_MUSHROOM,
-			Material.RED_ROSE,
-			Material.SAPLING,
-			Material.SNOW,
-			Material.WATER_LILY,
-			Material.WHEAT,
-			Material.YELLOW_FLOWER));
-	
-	private static ArrayList<Material> NON_BUILD_SOLIDS = new ArrayList<>(Arrays.asList(
-			Material.ACACIA_DOOR,
-			Material.ACTIVATOR_RAIL,
-			Material.BIRCH_DOOR,
-			Material.BROWN_MUSHROOM,
-			Material.CACTUS,
-			Material.CARROT,
-			Material.COCOA,
-			Material.DARK_OAK_DOOR,
-			Material.DEAD_BUSH,
-			Material.DETECTOR_RAIL,
-			Material.DOUBLE_PLANT,
-			Material.FLOWER_POT,
-			Material.GOLD_PLATE,
-			Material.IRON_DOOR,
-			Material.IRON_PLATE,
-			Material.JUNGLE_DOOR,
-			Material.LADDER,
-			Material.LEVER,
-			Material.LONG_GRASS,
-			Material.MELON_STEM,
-			Material.POTATO,
-			Material.POWERED_RAIL,
-			Material.PUMPKIN_STEM,
-			Material.RAILS,
-			Material.RED_MUSHROOM,
-			Material.RED_ROSE,
-			Material.REDSTONE_TORCH_OFF,
-			Material.REDSTONE_TORCH_ON,
-			Material.REDSTONE_WIRE,
-			Material.SAPLING,
-			Material.SIGN_POST,
-			Material.SKULL,
-			Material.SPRUCE_DOOR,
-			Material.SNOW,
-			Material.STANDING_BANNER,	
-			Material.STONE_BUTTON,
-			Material.STONE_PLATE,
-			Material.SUGAR_CANE_BLOCK,
-			Material.TORCH,
-			Material.TRIPWIRE,
-			Material.TRIPWIRE_HOOK,
-			Material.VINE,
-			Material.WALL_BANNER,
-			Material.WALL_SIGN,
-			Material.WATER_LILY,
-			Material.WHEAT,
-			Material.WOOD_PLATE,
-			Material.WOOD_BUTTON,
-			Material.WOODEN_DOOR,
-			Material.YELLOW_FLOWER));
-	
-	public static boolean isLikeGround(Material m) {
-		return m.isSolid() && !NOT_GROUND_SOLIDS.contains(m);
-	}
-	
-	public static boolean canBeOverbuild(Material m) {
-		return !m.isSolid() || REPLACABLE_SOLIDS.contains(m);
+	public static boolean isMazeWand(ItemStack item) {
+
+		if(item == null)
+			return false;
+		
+		if(item.getType() != Settings.MAZE_WAND_ITEM) {
+			return false;
+		}
+		
+		ItemMeta itemMeta = item.getItemMeta();
+		
+		return
+			itemMeta.getDisplayName() != null &&
+			itemMeta.getDisplayName().equals(Settings.MAZE_WAND.getItemMeta().getDisplayName());
 	}
 
-	public static boolean canBeBuiltWith(Material m) {
-		return m.isSolid() && !NON_BUILD_SOLIDS.contains(m);
+	public static ItemStack getMazeWand() {
+		
+		ItemMeta rndMeta = Settings.MAZE_WAND.getItemMeta();
+		List<String> lore = rndMeta.getLore();
+
+		lore.set(0, ChatColor.GRAY + getRndMazeWandEnchantment());
+		rndMeta.setLore(lore);
+		
+		ItemStack wand = Settings.MAZE_WAND.clone();
+		wand.setItemMeta(rndMeta);
+		
+		return wand;
 	}
 	
+	private static String getRndMazeWandEnchantment() {
+		
+		int rndIndex = (int) (Math.random() * Constants.MAZE_WAND_ENCHANTS.length);
+		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
+	}
+
+	public static boolean isLikeGround(Material mat) {
+		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
+	}
+	
+	public static boolean canBeOverbuild(Material mat) {
+		return !mat.isSolid() || Constants.REPLACEABLE_SOLIDS.contains(mat);
+	}
+
 	public static MazePoint nearestSurface(Location loc) {
 	
 		MazePoint iter = new MazePoint(loc);
@@ -186,6 +94,10 @@ public abstract class Utils {
 		return new MazePoint(loc);
 	}
 	
+	public static int limitInt(int value, int min, int max) {
+		return Math.min(max, Math.max(min, value));
+	}
+	
 	public static int getMaxHeight(ArrayList<MazePoint> points) {
 		
 		int min = 0;
@@ -197,5 +109,20 @@ public abstract class Utils {
 		}
 		
 		return min;
+	}
+
+	public static YamlConfiguration getDefaultConfig(String fileName) {
+		
+		InputStream defConfigStream = TangledMain.getInstance().getResource(fileName);
+		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
+	}
+
+	public static void saveConfig(FileConfiguration config, File file) {
+		
+		try {
+			config.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

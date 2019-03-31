@@ -14,14 +14,14 @@ public class ExitSettingTool extends Tool {
 	}
 	
 	@Override
+	public String getName() {
+		return "exit setter";
+	}
+	
+	@Override
 	public void interact(Block clicked, Action interaction) {
 		
 		Maze maze = MazeHandler.getMaze(getPlayer());
-		
-//		if(maze.exitsContain(clicked))
-//			maze.removeExit(clicked);
-//		else
-		
 		maze.toggleExit(clicked);
 	}
 }

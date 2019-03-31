@@ -1,9 +1,9 @@
 package me.gorgeousone.tangledmaze.core;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.util.Constants;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 
 import org.bukkit.Chunk;
@@ -89,9 +89,9 @@ public abstract class Renderer implements Listener {
 				for(Location vertex : clipboard.getVertices()) {
 					player.sendBlockChange(vertex, Constants.CLIPBOARD_CORNER, (byte) 0);
 				}
-
+		//TODO change back to runTask() if you can find out why block click still interferes block change after 1 tick
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -117,15 +117,16 @@ public abstract class Renderer implements Listener {
 					player.sendBlockChange(maze.getExits().get(0), Constants.MAZE_MAIN_EXIT, (byte) 0);
 				}
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
 	@SuppressWarnings("deprecation")
 	public static void hideClipboard(ClippingTool clipboard, boolean updateMaze) {
 		
-		if(!isClipboardVisible(clipboard))
+		if(!isClipboardVisible(clipboard)) {
 			return;
-		
+		}
+
 		clipVisibilities.put(clipboard, false);
 		Player player = clipboard.getPlayer();
 		
@@ -241,7 +242,7 @@ public abstract class Renderer implements Listener {
 			public void run() {
 				player.sendBlockChange(point, mat, (byte) 0);
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
 	public static void sendBlocksDelayed(Player player, Collection<MazePoint> points, Material mat) {
@@ -257,6 +258,6 @@ public abstract class Renderer implements Listener {
 				}
 			}
 		};
-		delay.runTask(TangledMain.getPlugin());
+		delay.runTask(TangledMain.getInstance());
 	}
 }

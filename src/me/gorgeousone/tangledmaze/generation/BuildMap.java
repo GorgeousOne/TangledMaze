@@ -121,9 +121,10 @@ public class BuildMap {
 	private void calculateMapSize() {
 		
 		HashSet<Chunk> chunks = maze.getClip().getChunks();
+
 		minimum = getMinPoint(chunks);
 		Vec2 max = getMaxPoint(chunks);
-		
+
 		shapeMap  = new MazeFillType
 			[max.getIntX() - minimum.getIntX()]
 			[max.getIntZ() - minimum.getIntZ()];
@@ -148,7 +149,7 @@ public class BuildMap {
 		}
 		
 		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
-		for(MazePoint point : maze.getClip().getFill()) {
+		for(MazePoint point : maze.getClip().getFilling()) {
 			
 			shapeMap       [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.UNDEFINED;
 			groundHeightMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY();
@@ -164,7 +165,7 @@ public class BuildMap {
 	private Vec2 getMinPoint(HashSet<Chunk> chunks) {
 		
 		Vec2 minimum = null;
-		
+
 		for(Chunk chunk : chunks) {
 			
 			if(minimum == null) {

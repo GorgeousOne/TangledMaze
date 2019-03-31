@@ -1,142 +1,138 @@
 package me.gorgeousone.tangledmaze.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.File;
 
+import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.gorgeousone.tangledmaze.handler.CommandHandler;
-import me.gorgeousone.tangledmaze.listener.BlockChangeListener;
+import me.gorgeousone.tangledmaze.command.AddToMaze;
+import me.gorgeousone.tangledmaze.command.BuildMaze;
+import me.gorgeousone.tangledmaze.command.CutFromMaze;
+import me.gorgeousone.tangledmaze.command.DiscardMaze;
+import me.gorgeousone.tangledmaze.command.GiveWand;
+import me.gorgeousone.tangledmaze.command.HelpCommand;
+import me.gorgeousone.tangledmaze.command.Reload;
+import me.gorgeousone.tangledmaze.command.SelectTool;
+import me.gorgeousone.tangledmaze.command.SetPathWidth;
+import me.gorgeousone.tangledmaze.command.SetWallHeight;
+import me.gorgeousone.tangledmaze.command.SetWallWidth;
+import me.gorgeousone.tangledmaze.command.StartMaze;
+import me.gorgeousone.tangledmaze.command.TpToMaze;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.Settings;
+import me.gorgeousone.tangledmaze.handler.MazeCommandHandler;
+import me.gorgeousone.tangledmaze.listener.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listener.PlayerListener;
 import me.gorgeousone.tangledmaze.listener.ToolActionListener;
 
 public class TangledMain extends JavaPlugin {
-	
-	private final String[] enchants = {
-			"Selecting Thingy III",
-			"Difficult Handling II",
-			"Would Recommend It X/X",
-			"Unbreaking âˆž",
-			"Overpowered X",
-			"Tangly III",
-			"Wow I",
-			"Ignore WorldGuard V",
-			"Infinite Maze I",
-			"Wubba Lubba Dub Dub IV",
-			"Artifact Lv. XCIX"
-	};
-	
+
 	private static TangledMain plugin;
-
-	private ItemStack mazeTool;
-	private int staffMazeSize, vipMazeSize, normalMazeSize;
-
+	
+	private MazeCommandHandler commandHandler;
+	
 	@Override
 	public void onEnable() {
-		plugin = this;
 		
-		createMazeWand();
+		plugin = this;
+		commandHandler = new MazeCommandHandler();
+		
 		loadConfig();
+
+		Constants.loadConstants();
+		Settings.loadSettings(getConfig());
+		loadLanguage();
+		
 		registerListeners();
+		registerCommands();
 	}
 	
 	@Override
 	public void onDisable() {
+		
 		Renderer.reload();
 		super.onDisable();
 	}
 	
-	public static TangledMain getPlugin() {
+	public static TangledMain getInstance() {
 		return plugin;
 	}
 	
-	public int getStaffMazeSize() {
-		return staffMazeSize;
-	}
-
-	public int getVipMazeSize() {
-		return vipMazeSize;
-	}
-
-	public int getNormalMazeSize() {
-		return normalMazeSize;
+	public void reloadPlugin() {
+		
+		reloadConfig();
+		Settings.loadSettings(getConfig());
+		loadLanguage();
 	}
 	
-	public boolean isMazeWand(ItemStack item) {
-		if(item == null)
-			return false;
+	private void registerCommands() {
 		
-		ItemMeta itemMeta = item.getItemMeta();
-		
-		return
-			item.getType() == mazeTool.getType() &&
-			itemMeta.getDisplayName() != null &&
-			itemMeta.getDisplayName().equals(mazeTool.getItemMeta().getDisplayName());
-	}
-	
-	public ItemStack getMazeWand() {
-		ItemMeta meta = mazeTool.getItemMeta();
-		List<String> lore = meta.getLore();
-
-		lore.set(0, ChatColor.GRAY + getCustomEnchantment());
-		meta.setLore(lore);
-		mazeTool.setItemMeta(meta);
-
-		return mazeTool;
-	}
-	
-	private String getCustomEnchantment() {
-		Random rnd = new Random();
-		
-		int select = rnd.nextInt(enchants.length);
-		return enchants[select];
+		commandHandler.registerCommand(new Reload());
+		commandHandler.registerCommand(new HelpCommand());
+		commandHandler.registerCommand(new GiveWand());
+		commandHandler.registerCommand(new StartMaze());
+		commandHandler.registerCommand(new DiscardMaze());
+		commandHandler.registerCommand(new SelectTool());
+		commandHandler.registerCommand(new AddToMaze());
+		commandHandler.registerCommand(new CutFromMaze());
+		commandHandler.registerCommand(new SetPathWidth());
+		commandHandler.registerCommand(new SetWallWidth());
+		commandHandler.registerCommand(new SetWallHeight());
+		commandHandler.registerCommand(new TpToMaze());
+		commandHandler.registerCommand(new BuildMaze());
 	}
 	
 	private void loadConfig() {
+		
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		
-		staffMazeSize = getConfig().getInt("staff");
-		vipMazeSize = getConfig().getInt("vip");
-		normalMazeSize = getConfig().getInt("normal");
 	}
-	
-	private void createMazeWand() {
-		mazeTool = new ItemStack(Material.GOLD_SPADE);
-		
-		ItemMeta meta = mazeTool.getItemMeta();
-		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Tool");
-		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		
-		ArrayList<String> lore = new ArrayList<>();
-		lore.add("");
-		lore.add(ChatColor.GREEN + "A tool designed to create mazes.");
-		lore.add(ChatColor.GREEN + "" + ChatColor.ITALIC + "Look at it's delicate curves! つ◕_◕つ");
-		lore.add(ChatColor.GREEN + "Click on the ground to start a clipboard.");
-		
-		meta.setLore(lore);
-		mazeTool.setItemMeta(meta);
+
+	private void loadLanguage() {
+
+		File langFolder =  new File(getDataFolder() + File.separator + "languages");
+		File englishFile = new File(langFolder + File.separator + "english.yml");
+		YamlConfiguration defEnglish = Utils.getDefaultConfig("english.yml");
+
+		if(!englishFile.exists()) {
+			Utils.saveConfig(defEnglish, englishFile);
+		}
+
+		YamlConfiguration langConfig;
+		File langFile = new File(langFolder + File.separator + Settings.LANGUAGE + ".yml");
+
+		if(langFile.exists()) {
+
+			langConfig = YamlConfiguration.loadConfiguration(langFile);
+			langConfig.setDefaults(defEnglish);
+			langConfig.options().copyDefaults(true);
+			
+			Utils.saveConfig(langConfig, langFile);
+			getLogger().info("Loaded " + Settings.LANGUAGE + " successfully.");
+
+		}else {
+			
+			langConfig = defEnglish;
+			getLogger().info("Unable to find language file: " + Settings.LANGUAGE + ".yml. Loading default english.");
+		}
+
+		Messages.loadMessages(langConfig);
 	}
-	
+
 	private void registerListeners() {
-		PluginManager pm = Bukkit.getPluginManager();
 		
-		pm.registerEvents(new ToolActionListener(this), this);
-		pm.registerEvents(new PlayerListener(), this);
-		pm.registerEvents(new BlockChangeListener(), this);
+		PluginManager manager = Bukkit.getPluginManager();
 		
-		getCommand("tangledmaze").setExecutor(new CommandHandler(this));
+		manager.registerEvents(new ToolActionListener(), this);
+		manager.registerEvents(new PlayerListener(), this);
+		manager.registerEvents(new BlockUpdateListener(), this);
+		
+		getCommand("tangledmaze").setExecutor(commandHandler);
 		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
 	}
 }

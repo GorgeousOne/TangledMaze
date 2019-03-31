@@ -1,49 +1,51 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
+import me.gorgeousone.tangledmaze.util.Utils;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.Settings;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SetWallHeight {
+public class SetWallHeight extends MazeCommand {
 
-	public void execute(Player player, String arg0) {
-		
-		if(!player.hasPermission(Constants.buildPerm)) {
-			player.sendMessage(Constants.insufficientPerms);
-			return;
+	public SetWallHeight() {
+		super("wallheight", "/tangledmaze wallheight <integer>", 1, true, null);
+	}
+	
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
+
+		if(!super.execute(sender, arguments)) {
+			return false;
 		}
 		
-		int wallHeight = 0;
+		Player player = (Player) sender;
 		
+		String wallHeightString = arguments[0];
+		int wallHeight;
+
 		try {
-			wallHeight = Integer.parseInt(arg0);
+			wallHeight = Utils.limitInt(Integer.parseInt(wallHeightString), 1, Settings.MAX_WALLHEIGHT);
 			
-		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
-			return;
-		}
-		
-		if(wallHeight < 1) {
-			player.sendMessage(ChatColor.RED + "A wall cannot be flatter than 1 block.");
-			return;
-		}
-		
-		if(wallHeight > Constants.MAX_WALL_HEIGHT) {
-			player.sendMessage(Constants.prefix
-					+ "People also thought that the tower of babel was a good idea. "
-					+ "And now look at what happened back then. "
-					+ "The wall height is limited to " + Constants.MAX_WALL_HEIGHT + " blocks.");
-			return;
+		} catch (NumberFormatException ex) {
+			
+			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", wallHeightString));
+			return false;
 		}
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
-		if(maze.getWallHeight() != wallHeight) {
-			maze.setWallHeight(wallHeight);
-			player.sendMessage(Constants.prefix + "Set wall height to " + wallHeight + " blocks.");
+		if(maze.getWallHeight() == wallHeight) {
+			return false;
 		}
+		
+		maze.setWallHeight(wallHeight);
+		Messages.MESSAGE_WALLHEIGHT_CHANGED.send(player, new PlaceHolder("number", wallHeight));
+		return true;
 	}
 }

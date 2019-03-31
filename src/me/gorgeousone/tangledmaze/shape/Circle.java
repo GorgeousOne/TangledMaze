@@ -8,7 +8,7 @@ import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public class Ellipse implements Shape {
+public class Circle implements Shape {
 	
 	@Override
 	public int getVertexCount() {
@@ -52,7 +52,7 @@ public class Ellipse implements Shape {
 				point.setY(maxY);
 				point = Utils.nearestSurface(point);
 				
-				clip.addFill(point);
+				clip.addFilling(point);
 				
 				if(isEllipseBorder(x+0.5f, z+0.5f, distortionZ, radiusX - 0.25f)) {
 					clip.addBorder(point);
@@ -64,9 +64,9 @@ public class Ellipse implements Shape {
 	}
 	
 	private static boolean isInEllipse(float x, float z, float distortionZ, float radius) {
-	
-		z *= distortionZ;
-		return Math.sqrt(x*x + z*z) <= radius;
+		
+		float circleZ = z * distortionZ;
+		return Math.sqrt(x*x + circleZ*circleZ) <= radius;
 	}
 	
 	private static boolean isEllipseBorder(float x, float z, float distortionZ, float radius) {

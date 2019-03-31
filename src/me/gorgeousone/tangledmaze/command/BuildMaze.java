@@ -2,81 +2,85 @@ package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
 
-import org.bukkit.ChatColor;
+import me.gorgeousone.tangledmaze.generation.MazeGenerator;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
-import me.gorgeousone.tangledmaze.util.MaterialDeserializer;
+import me.gorgeousone.tangledmaze.util.MaterialReader;
 
-public class BuildMaze {
+@SuppressWarnings("deprecation")
+public class BuildMaze extends MazeCommand {
 
-	public void execute(Player player, ArrayList<String> serializedMaterialData) {
+	private MazeGenerator generator;
+
+	public BuildMaze() {
 		
-		if(!player.hasPermission(Constants.buildPerm)) {
-			player.sendMessage(Constants.insufficientPerms);
-			return;
+		super("build", "/tangledmaze build <block> ...", 1, true, null);
+		
+		generator = new MazeGenerator();
+	}
+
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
+		
+		if(!super.execute(sender, arguments)) {
+			return true;
 		}
 		
+		Player player = (Player) sender;
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted()) {
 			
 			if(!ToolHandler.hasClipboard(player)) {
-				player.sendMessage(ChatColor.RED + "Please select a clipboard with a maze wand first.");
+				
+				Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
 				player.sendMessage("/tangledmaze wand");
-				return;	
+				return false;	
 			}
 			
-			player.sendMessage(ChatColor.RED + "Please start a maze first.");
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
 			player.sendMessage("/tangledmaze start");
-			return;
-		}
-		
-		if(maze.getClip().size() == maze.getClip().borderSize()) {
-			player.sendMessage(Constants.prefix + "Well... this is just border.");
-			return;
+			return false;
 		}
 		
 		if(maze.getExits().isEmpty()) {
-			player.sendMessage(
-					ChatColor.RED + "Please mark an exit at the border. " + 
-					ChatColor.GREEN + "(You know, the generator needs a start point for building walls and everything.)");
+			Messages.ERROR_NO_MAZE_EXIT_SET.send(player);
 			player.sendMessage("/tangledmaze select exit");
-			return;
-		}
-		
-		if(serializedMaterialData.isEmpty()) {
-			player.sendMessage(ChatColor.RED + "Please specify a block type this maze should be built out of.");
-			player.sendMessage("/tangledmaze build <block type 1> ... <block type n>");
-			return;
+			return false;
 		}
 		
 		ArrayList<MaterialData> composition;
 		
 		try {
-			composition = getWallComposition(serializedMaterialData);
+			composition = getWallComposition(arguments);
+		
 		} catch (Exception e) {
 			player.sendMessage(e.getMessage());
-			return;
+			return false;
 		}
 		
 		maze.setWallComposition(composition);
-		MazeHandler.buildMaze(maze);
-		player.sendMessage(Constants.prefix + "Started building your maze.");
-		
+
+		MazeHandler.buildMaze(maze, generator);
+		Messages.MESSAGE_MAZE_BUILDING_STARTED.send(player);
+
 		ToolHandler.resetToDefaultTool(player);
 		MazeHandler.setMaze(player, new Maze(player));
+		return true;
 	}
 	
-	private static ArrayList<MaterialData> getWallComposition(ArrayList<String> serializedMaterialData) {
+	private static ArrayList<MaterialData> getWallComposition(String[] serializedMaterialData) {
 		ArrayList<MaterialData> composition = new ArrayList<>();
 		
 		for(String materialData : serializedMaterialData) {
-			composition.add(MaterialDeserializer.deserializeMaterialData(materialData));
+			composition.add(MaterialReader.readMaterialData(materialData));
 		}
 		
 		return composition;

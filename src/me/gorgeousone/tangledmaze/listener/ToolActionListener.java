@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Particle;
@@ -19,24 +18,21 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import me.gorgeousone.tangledmaze.core.Renderer;
-import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")
 public class ToolActionListener implements Listener{
 	
-	private TangledMain plugin;
-	
-	public ToolActionListener(TangledMain plugin) {
-		this.plugin = plugin;
-	}
-	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
-		if(plugin.isMazeWand(e.getItem()))
+
+		if(Utils.isMazeWand(e.getItem())) {
 			e.setCancelled(true);
+			e.getPlayer().updateInventory();
+		}
 	}
 	
 	@EventHandler
@@ -53,7 +49,7 @@ public class ToolActionListener implements Listener{
 				return;
 		} catch (NoSuchMethodError err) {}
 		
-		if(!plugin.isMazeWand(e.getItem()))
+		if(!Utils.isMazeWand(e.getItem()))
 			return;
 		
 		e.setCancelled(true);
@@ -61,7 +57,7 @@ public class ToolActionListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack wand = e.getItem();
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
+		if(!p.hasPermission(Constants.BUILD_PERM)) {
 			destroyMazeWand(p, wand);
 			return;
 		}
@@ -76,7 +72,7 @@ public class ToolActionListener implements Listener{
 		Player p = e.getPlayer();
 		ItemStack newItem = p.getInventory().getItem(e.getNewSlot());
 		
-		if(TangledMain.getPlugin().isMazeWand(newItem)) {
+		if(Utils.isMazeWand(newItem)) {
 				
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
 				Renderer.showMaze(MazeHandler.getMaze(p));
@@ -89,7 +85,7 @@ public class ToolActionListener implements Listener{
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPickUp(PlayerPickupItemEvent e) {
 
-		if(TangledMain.getPlugin().isMazeWand(e.getItem().getItemStack())) {
+		if(Utils.isMazeWand(e.getItem().getItemStack())) {
 			Player p = e.getPlayer();
 			
 			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
@@ -111,12 +107,12 @@ public class ToolActionListener implements Listener{
 		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool, it broke apart.");
 		p.damage(0);
 		
-		if(Bukkit.getVersion().contains("1.8")) {
+		if(Constants.BUKKIT_VERSION == 8) {
 			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ITEM_BREAK"), 1f, 1f);
-			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.EXPLOSION_HUGE, 0);
+			p.getWorld().playEffect(p.getLocation().add(0, 1, 0), Effect.valueOf("EXPLOSION_HUGE"), 0);
 			
 		}else {
-			p.getWorld().playSound(p.getEyeLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 1f, 1f);
+			p.getWorld().playSound(p.getEyeLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
 			p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 1);
 		}
 	}

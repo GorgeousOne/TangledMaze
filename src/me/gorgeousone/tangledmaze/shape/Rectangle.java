@@ -17,7 +17,7 @@ public class Rectangle implements Shape {
 	public Clip createClip(ArrayList<MazePoint> vertices) {
 		
 		if(vertices.size() < 2)
-			throw new IllegalArgumentException("A rectangle neeeds 2 vertices to be determined.");
+			throw new IllegalArgumentException("A rectangle needs 2 vertices to be determined.");
 		
 		MazePoint
 			vertex0 = vertices.get(0),
@@ -40,14 +40,14 @@ public class Rectangle implements Shape {
 				MazePoint point = new MazePoint(minVertex.getWorld(), x, maxY, z);
 				point = Utils.nearestSurface(point);
 				
-				clip.addFill(point);
+				clip.addFilling(point);
 				
 				if(isBorder(x, z, minVertex, maxVertex)) {
 					clip.addBorder(point);
 				}
 			}
 		}
-		
+
 		return clip;
 	}
 	

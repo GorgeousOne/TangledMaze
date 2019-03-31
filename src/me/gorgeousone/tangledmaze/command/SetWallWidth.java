@@ -1,48 +1,50 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
+import me.gorgeousone.tangledmaze.util.Utils;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.Settings;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.Constants;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SetWallWidth {
+public class SetWallWidth extends MazeCommand {
 
-	public void execute(Player p, String arg0) {
+	public SetWallWidth() {
+		super("wallwidth", "/tangledmaze wallwidth <integer>", 1, true, null);
+	}
+
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
-			return;
+		if(!super.execute(sender, arguments)) {
+			return false;
 		}
 		
-		int wallWidth = 0;
+		Player player = (Player) sender;
+
+		String wallWidthString = arguments[0];
+		int wallWidth;
 		
 		try {
-			wallWidth = Integer.parseInt(arg0);
-		} catch (NumberFormatException e) {
-			p.sendMessage(ChatColor.RED + "\"" + arg0 + "\" is not an integer.");
-			return;
+			wallWidth = Utils.limitInt(Integer.parseInt(wallWidthString), 1, Settings.MAX_WALLWIDTH);
+		
+		}catch (NumberFormatException ex) {
+			
+			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", wallWidthString));
+			return false;
 		}
 		
-		if(wallWidth < 1) {
-			p.sendMessage(ChatColor.RED + "A wall cannot be thinner than 1 block.");
-			return;
-		}
-		
-		if(wallWidth > Constants.MAX_WALL_WIDTH) {
-			p.sendMessage(Constants.prefix
-					+ "With a wall that thick you could already lock out Mexicans. "
-					+ "If you are a preseident please look out for another maze generator. "
-					+ "The wall width is litmited to " + Constants.MAX_WALL_WIDTH + " blocks. ");
-			return;
-		}
-		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getWallWidth() != wallWidth) {
 			maze.setWallWidth(wallWidth);
-			p.sendMessage(Constants.prefix + "Set wall width to " + wallWidth + " blocks.");
+			Messages.MESSAGE_WALLWIDTH_CHANGED.send(player, new PlaceHolder("number", wallWidth));
 		}
+		
+		return true;
 	}
 }

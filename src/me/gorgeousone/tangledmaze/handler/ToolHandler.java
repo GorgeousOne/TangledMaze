@@ -15,14 +15,14 @@ public abstract class ToolHandler {
 	
 	private static HashMap<UUID, Tool> tools = new HashMap<>();
 
-	public static boolean hasClipboard(Player p) {
+	public static boolean hasClipboard(Player player) {
 		return
-			tools.containsKey(p.getUniqueId()) &&
-			tools.get(p.getUniqueId()) instanceof ClippingTool;
+			tools.containsKey(player.getUniqueId()) &&
+			tools.get(player.getUniqueId()) instanceof ClippingTool;
 	}
 	
-	public static Tool getTool(Player p) {
-		return tools.get(p.getUniqueId());
+	public static Tool getTool(Player player) {
+		return tools.get(player.getUniqueId());
 	}
 	
 	public static ArrayList<Tool> getTools() {
@@ -41,21 +41,22 @@ public abstract class ToolHandler {
 			Renderer.registerClip((ClippingTool) tool);
 	}
 	
-	public static void resetToDefaultTool(Player p) {
+	public static void resetToDefaultTool(Player player) {
 		
-		//TODO low - check practicality
-		if(hasClipboard(p)) {
-			getClipboard(p).reset();
+		if(hasClipboard(player)) {
+
+			if(getClipboard(player).isStarted())
+				getClipboard(player).reset();
 		
 		}else {
-			setTool(p, new ClippingTool(p, Shape.RECT));
+			setTool(player, new ClippingTool(player, Shape.RECT));
 		}
 	}
 	
-	public static void removeTool(Player p) {
-		if(hasClipboard(p))
-			Renderer.unregisterShape(getClipboard(p));
+	public static void removeTool(Player player) {
+		if(hasClipboard(player))
+			Renderer.unregisterShape(getClipboard(player));
 
-		tools.remove(p.getUniqueId());
+		tools.remove(player.getUniqueId());
 	}
 }

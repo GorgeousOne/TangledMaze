@@ -1,56 +1,63 @@
 package me.gorgeousone.tangledmaze.command;
 
-import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
-import me.gorgeousone.tangledmaze.util.Constants;
 
-public class AddToMaze {
+public class AddToMaze extends MazeCommand {
 
-	public void execute(Player p) {
+	public AddToMaze() {
+		super("add", "/maze add", 0, true, null, "merge");
+	}
+	
+	@Override
+	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!p.hasPermission(Constants.buildPerm)) {
-			p.sendMessage(Constants.insufficientPerms);
-			return;
+		if(!super.execute(sender, arguments)) {
+			return false;
 		}
 		
-		if(!MazeHandler.getMaze(p).isStarted()) {
-			p.sendMessage(ChatColor.RED + "Please start a maze first.");
-			p.sendMessage("/tangledmaze start");
-			return;
+		Player player = (Player) sender;
+		
+		if(!MazeHandler.getMaze(player).isStarted()) {
+			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			player.sendMessage("/tangledmaze start");
+			return false;
 		}
 		
-		if(!ToolHandler.hasClipboard(p)) {
-			p.sendMessage(ChatColor.RED + "Please select an area with a maze wand first.");
-			p.sendMessage("/tangledmaze select rectangle/ellipse");
-			return;
+		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
+			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
+			player.sendMessage("/tangledmaze select rectangle/ellipse");
+			return false;
 		}
 		
-		ClippingTool clipboard = ToolHandler.getClipboard(p);
+		ClippingTool clipboard = ToolHandler.getClipboard(player);
 		
 		if(!clipboard.isComplete()) {
-			p.sendMessage(ChatColor.RED + "Please finish your clipboard first.");
-			return;
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
+			return false;
 		}
 		
-		Maze maze = MazeHandler.getMaze(p);
+		Maze maze = MazeHandler.getMaze(player);
 		ClipAction action = maze.getAddition(clipboard.getClip());
-		
+
 		if(action == null) {
-			p.sendMessage(ChatColor.RED + "Your clipboard is entirely covered by your maze.");
-			return;
-			
-		}else if(action.getAddedFill().size() == clipboard.getClip().size()) {
-			p.sendMessage(ChatColor.RED + "Your clipboard does not seem to touch your maze directly (outline on outline).");
-			return;
+			return false;
 		}
 		
+		if(action.getAddedFill().size() == clipboard.getClip().size()) {
+			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
+			return false;
+		}
+
 		clipboard.reset();
 		maze.processAction(action, true);
+		return true;
 	}
 }

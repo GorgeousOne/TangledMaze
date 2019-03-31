@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.generation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -14,11 +15,10 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public final class BlockGenerator {
+@SuppressWarnings("deprecation")
+public class BlockGenerator {
 
-	private BlockGenerator() {}
-	
-	public static void generateBlocks(BuildMap map) {
+	public void generateBlocks(BuildMap map) {
 		
 		simplifyMap(map);
 		flattenTrees(map);
@@ -30,10 +30,10 @@ public final class BlockGenerator {
 			public void run() {
 				buildBlocksContinuously(getMazeBlocks(map));
 			}
-		}.runTask(TangledMain.getPlugin());
+		}.runTask(TangledMain.getInstance());
 	}
 	
-	private static void buildBlocksContinuously(ArrayList<BlockState> blocksToUpdate) {
+	protected void buildBlocksContinuously(List<BlockState> blocksToUpdate) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
@@ -54,17 +54,16 @@ public final class BlockGenerator {
 				this.cancel();
 			}
 		};
-		builder.runTaskTimer(TangledMain.getPlugin(), 0, 1);
+		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static ArrayList<BlockState> getMazeBlocks(BuildMap map) {
+	protected List<BlockState> getMazeBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		Random rnd = new Random();
 		
-		ArrayList<MaterialData> composition = maze.getWallComposition();
-		ArrayList<BlockState> blocksToUpdate = new ArrayList<>();
+		List<MaterialData> composition = maze.getWallComposition();
+		List<BlockState> blocksToUpdate = new ArrayList<>();
 		
 		int mazeMinX = map.getMinX(),
 			mazeMinZ = map.getMinZ();
@@ -96,7 +95,7 @@ public final class BlockGenerator {
 		return blocksToUpdate;
 	}
 	
-	private static void simplifyMap(BuildMap map) {
+	protected void simplifyMap(BuildMap map) {
 		
 		for(int x = 0; x < map.getDimX(); x++) {
 			for(int z = 0; z < map.getDimZ(); z++) {
@@ -113,7 +112,7 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static void flattenTrees(BuildMap map) {
+	protected void flattenTrees(BuildMap map) {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
@@ -145,7 +144,7 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static void raiseLowMapParts(BuildMap map) {
+	protected void raiseLowMapParts(BuildMap map) {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
@@ -178,9 +177,9 @@ public final class BlockGenerator {
 		}
 	}
 	
-	private static Vec2 getHeighestNeighbor(int x, int z, BuildMap map, MazeFillType limitation) {
+	protected Vec2 getHeighestNeighbor(int x, int z, BuildMap map, MazeFillType limitation) {
 		
-		Vec2 maxNeigbor = null;
+		Vec2 maxNeighbor = null;
 		int maxHeight = 0;
 		
 		for(Directions dir : Directions.values()) {
@@ -199,16 +198,16 @@ public final class BlockGenerator {
 			
 			int neighborHeight = map.getMazeHeight(neighbor);
 			
-			if(maxNeigbor == null || neighborHeight > maxHeight) {
-				maxNeigbor = neighbor;
+			if(maxNeighbor == null || neighborHeight > maxHeight) {
+				maxNeighbor = neighbor;
 				maxHeight = neighborHeight;
 			}
 		}
 		
-		return maxNeigbor;
+		return maxNeighbor;
 	}
 
-	private static int getNeighborGroundHeightDiff(BuildMap map, int x, int z) {
+	protected int getNeighborGroundHeightDiff(BuildMap map, int x, int z) {
 		
 		int groundHeight = map.getGroundHeight(x, z),
 			heightDiff = 0,
