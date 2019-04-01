@@ -7,21 +7,18 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import me.gorgeousone.tangledmaze.clip.ActionHistory;
-import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.*;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 
-@SuppressWarnings("deprecation")
 public class Maze {
 	
 	private UUID builder;
@@ -29,7 +26,7 @@ public class Maze {
 	private ActionHistory history;
 	private Clip clip;
 	private List<MazePoint> exits;
-	private List<MaterialData> wallComposition;
+	private List<Material> wallMaterials;
 	
 	private Vector dimensions;
 	private boolean isStarted;
@@ -92,8 +89,8 @@ public class Maze {
 		return dimensions.getBlockZ();
 	}
 	
-	public List<MaterialData> getWallComposition() {
-		return wallComposition;
+	public List<Material> getWallMaterials() {
+		return wallMaterials;
 	}
 	
 	public void setPathWidth(int pathWidth) {
@@ -108,8 +105,8 @@ public class Maze {
 		dimensions.setZ(Math.max(1, wallWidth));
 	}
 	
-	public void setWallComposition(List<MaterialData> composition) {
-		wallComposition = composition;
+	public void setWallComposition(List<org.bukkit.Material> composition) {
+		wallMaterials = composition;
 	}
 	
 	public void setClip(Clip clip) {

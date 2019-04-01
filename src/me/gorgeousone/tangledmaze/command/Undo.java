@@ -10,9 +10,9 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
-public class UndoAction extends MazeCommand {
+public class Undo extends MazeCommand {
 
-	public UndoAction() {
+	public Undo() {
 		super("undo", "/tangledmaze undo", 0, true, null);
 	}
 	

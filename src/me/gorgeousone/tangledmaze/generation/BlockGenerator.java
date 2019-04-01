@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.Maze;
@@ -15,7 +15,6 @@ import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-@SuppressWarnings("deprecation")
 public class BlockGenerator {
 
 	public void generateBlocks(BuildMap map) {
@@ -28,12 +27,12 @@ public class BlockGenerator {
 			
 			@Override
 			public void run() {
-				buildBlocksContinuously(getMazeBlocks(map));
+				updateBlocksContinuously(getMazeWallBlocks(map));
 			}
 		}.runTask(TangledMain.getInstance());
 	}
 	
-	protected void buildBlocksContinuously(List<BlockState> blocksToUpdate) {
+	protected void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
@@ -54,15 +53,16 @@ public class BlockGenerator {
 				this.cancel();
 			}
 		};
+		
 		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 	
-	protected List<BlockState> getMazeBlocks(BuildMap map) {
+	protected List<BlockState> getMazeWallBlocks(BuildMap map) {
 		
 		Maze maze = map.getMaze();
 		Random rnd = new Random();
 		
-		List<MaterialData> composition = maze.getWallComposition();
+		List<Material> wallMaterials = maze.getWallMaterials();
 		List<BlockState> blocksToUpdate = new ArrayList<>();
 		
 		int mazeMinX = map.getMinX(),
@@ -83,10 +83,9 @@ public class BlockGenerator {
 						continue;
 					}
 					
-					MaterialData rndMatData = composition.get(rnd.nextInt(composition.size()));
+					Material rndMaterial = wallMaterials.get(rnd.nextInt(wallMaterials.size()));
 					
-					block.setType(rndMatData.getItemType());
-					block.setRawData(rndMatData.getData());
+					block.setType(rndMaterial);
 					blocksToUpdate.add(block);
 				}
 			}

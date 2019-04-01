@@ -1,6 +1,9 @@
 package me.gorgeousone.tangledmaze.core;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
@@ -8,47 +11,34 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.gorgeousone.tangledmaze.command.AddToMaze;
-import me.gorgeousone.tangledmaze.command.BuildMaze;
-import me.gorgeousone.tangledmaze.command.CutFromMaze;
-import me.gorgeousone.tangledmaze.command.DiscardMaze;
-import me.gorgeousone.tangledmaze.command.GiveWand;
-import me.gorgeousone.tangledmaze.command.HelpCommand;
-import me.gorgeousone.tangledmaze.command.Reload;
-import me.gorgeousone.tangledmaze.command.SelectTool;
-import me.gorgeousone.tangledmaze.command.SetPathWidth;
-import me.gorgeousone.tangledmaze.command.SetWallHeight;
-import me.gorgeousone.tangledmaze.command.SetWallWidth;
-import me.gorgeousone.tangledmaze.command.StartMaze;
-import me.gorgeousone.tangledmaze.command.TpToMaze;
-import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.data.Settings;
+import me.gorgeousone.tangledmaze.command.*;
+import me.gorgeousone.tangledmaze.data.*;
 import me.gorgeousone.tangledmaze.handler.MazeCommandHandler;
-import me.gorgeousone.tangledmaze.listener.BlockUpdateListener;
-import me.gorgeousone.tangledmaze.listener.PlayerListener;
-import me.gorgeousone.tangledmaze.listener.ToolActionListener;
+import me.gorgeousone.tangledmaze.listener.*;
 
 public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
 	
+	private List<MazeCommand> commands;
 	private MazeCommandHandler commandHandler;
 	
 	@Override
 	public void onEnable() {
 		
 		plugin = this;
-		commandHandler = new MazeCommandHandler();
 		
 		loadConfig();
+		loadLanguage();
 
 		Constants.loadConstants();
 		Settings.loadSettings(getConfig());
-		loadLanguage();
 		
 		registerListeners();
 		registerCommands();
+
+		getCommand("tangledmaze").setExecutor(commandHandler);
+		getCommand("tangledmaze").setTabCompleter(new TangledCompleter(commands));
 	}
 	
 	@Override
@@ -71,19 +61,40 @@ public class TangledMain extends JavaPlugin {
 	
 	private void registerCommands() {
 		
-		commandHandler.registerCommand(new Reload());
-		commandHandler.registerCommand(new HelpCommand());
-		commandHandler.registerCommand(new GiveWand());
-		commandHandler.registerCommand(new StartMaze());
-		commandHandler.registerCommand(new DiscardMaze());
-		commandHandler.registerCommand(new SelectTool());
-		commandHandler.registerCommand(new AddToMaze());
-		commandHandler.registerCommand(new CutFromMaze());
-		commandHandler.registerCommand(new SetPathWidth());
-		commandHandler.registerCommand(new SetWallWidth());
-		commandHandler.registerCommand(new SetWallHeight());
-		commandHandler.registerCommand(new TpToMaze());
-		commandHandler.registerCommand(new BuildMaze());
+		commands = new ArrayList<>(Arrays.asList(
+				new HelpCommand(),
+				new Reload(),
+				new GiveWand(),
+				new StartMaze(),
+				new DiscardMaze(),
+				new SelectTool(),
+				new AddToMaze(),
+				new CutFromMaze(),
+				new SetPathWidth(),
+				new SetWallWidth(),
+				new SetWallHeight(),
+				new TpToMaze(),
+				new BuildMaze()));
+		
+		commandHandler = new MazeCommandHandler();
+
+		for(MazeCommand command : commands) {
+			commandHandler.registerCommand(command);
+		}
+		
+//		commandHandler.registerCommand(new Reload());
+//		commandHandler.registerCommand(new HelpCommand());
+//		commandHandler.registerCommand(new GiveWand());
+//		commandHandler.registerCommand(new StartMaze());
+//		commandHandler.registerCommand(new DiscardMaze());
+//		commandHandler.registerCommand(new SelectTool());
+//		commandHandler.registerCommand(new AddToMaze());
+//		commandHandler.registerCommand(new CutFromMaze());
+//		commandHandler.registerCommand(new SetPathWidth());
+//		commandHandler.registerCommand(new SetWallWidth());
+//		commandHandler.registerCommand(new SetWallHeight());
+//		commandHandler.registerCommand(new TpToMaze());
+//		commandHandler.registerCommand(new BuildMaze());
 	}
 	
 	private void loadConfig() {
@@ -117,8 +128,5 @@ public class TangledMain extends JavaPlugin {
 		manager.registerEvents(new ToolActionListener(), this);
 		manager.registerEvents(new PlayerListener(), this);
 		manager.registerEvents(new BlockUpdateListener(), this);
-		
-		getCommand("tangledmaze").setExecutor(commandHandler);
-		getCommand("tangledmaze").setTabCompleter(new TangledCompleter());
 	}
 }

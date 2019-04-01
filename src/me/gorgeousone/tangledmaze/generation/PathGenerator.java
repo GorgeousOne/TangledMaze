@@ -51,7 +51,7 @@ public class PathGenerator {
 			
 			}else {
 				
-				map.drawSegment(path, MazeFillType.PATH);
+				map.mapSegment(path, MazeFillType.PATH);
 				openEnds.add(path.getEnd());
 				linkedPathsLength++;
 			}

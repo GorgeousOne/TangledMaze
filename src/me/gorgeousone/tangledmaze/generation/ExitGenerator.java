@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.generation;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import me.gorgeousone.tangledmaze.core.Maze;
@@ -16,19 +17,19 @@ public class ExitGenerator {
 		int pathWidth = maze.getPathWidth(),
 			wallWidth = maze.getWallWidth();
 		
-		PathSegment mainExit = generateEntrance(
+		PathSegment entrance = generateEntrance(
 				map,
 				maze.getMainExit().clone(),
 				pathWidth,
 				wallWidth);
 		
-		Vec2 pathStart = mainExit.getEnd();
+		Vec2 pathStart = entrance.getEnd();
+		
 		map.setStart(pathStart);
-		map.drawSegment(mainExit, MazeFillType.PATH);
-
-		if(maze.getExits().size() < 2) {
+		map.mapSegment(entrance, MazeFillType.PATH);
+		
+		if(maze.getExits().size() == 1)
 			return;
-		}
 
 		int pathGridOffsetX = pathStart.getIntX() % (pathWidth + wallWidth),
 			pathGridOffsetZ = pathStart.getIntZ() % (pathWidth + wallWidth);
@@ -55,7 +56,7 @@ public class ExitGenerator {
 		
 		PathSegment entranceSegment = new PathSegment(
 			new Vec2(entrance.toVector()),
-			getExitsFacing(entrance, map).toVec2(),
+			getExitFacing(entrance, map).toVec2(),
 			wallWidth + pathWidth,
 			pathWidth,
 			true);
@@ -71,48 +72,45 @@ public class ExitGenerator {
 			int pathGridOffsetX,
 			int pathGridOffsetZ) {
 		
-		exit.subtract(map.getMinX(), 0, map.getMinZ());
-		Vec2 facing = getExitsFacing(exit, map).toVec2();
+		MazePoint relExit = exit.clone().add(-map.getMinX(), 0, -map.getMinZ());
+//		relExit.subtract(map.getMinX(), 0, map.getMinZ());
+
+		Vec2 exitFacing = getExitFacing(relExit, map).toVec2();
 		
 		PathSegment exitSegment = new PathSegment(
-				new Vec2(exit.toVector()),
-				facing,
+				new Vec2(relExit.toVector()),
+				exitFacing,
 				pathWidth,
 				pathWidth,
 				true);
 			
-		//TODO normal - check if maze exits are placed correctly, maybe there is a bug
-		
-		//calculate calculate how long the exit has to be to reach the path grid
+		//calculate how long the exit has to be to reach the grid of paths
 		int exitOffset;
 
-		//start with getting the exits position relative to the path grid
-		if(facing.getIntX() != 0) {
+		//start with getting the exit's position relative to the path grid
+		if(exitFacing.getIntX() != 0)
 			exitOffset = exitSegment.getStart().getIntX() - pathGridOffsetX;
-		}else {
+		else
 			exitOffset = exitSegment.getStart().getIntZ() - pathGridOffsetZ;
-		}
 		
 		//reduce the relative position to the actual possible offset
-		if(Math.abs(exitOffset) > pathWidth + wallWidth) {
+		if(Math.abs(exitOffset) > pathWidth + wallWidth)
 			exitOffset %= pathWidth + wallWidth;
-		}
 		
-		//invert offset if the exit's facing is not along with the grid's facing (simply -x or -z)
-		if(facing.getIntX() == 1 || facing.getIntZ() == 1) {
+		//invert offset if it is calculated to opposing path in the grid
+		if(exitFacing.getIntX() == 1 || exitFacing.getIntZ() == 1)
 			exitOffset = (pathWidth + wallWidth) - exitOffset;
-		}
 		
-		//get rid off negative values
-		if(exitOffset <= 0) {
+		Bukkit.broadcastMessage("exit offset maybe negative: " + exitOffset);
+		//increase offset if it's under possible minimum of 1 block
+		if(exitOffset < 1)
 			exitOffset += pathWidth + wallWidth;
-		}
 		
 		exitSegment.expand(exitOffset);
-		map.drawSegment(exitSegment, MazeFillType.EXIT);
+		map.mapSegment(exitSegment, MazeFillType.EXIT);
 	}
 		
-	protected Directions getExitsFacing(Location exit, BuildMap map) {
+	public static Directions getExitFacing(Location exit, BuildMap map) {
 		
 		for(Directions dir : Directions.cardinalValues()) {
 			

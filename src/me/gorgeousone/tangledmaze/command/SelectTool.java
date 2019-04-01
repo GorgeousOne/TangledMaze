@@ -27,6 +27,7 @@ public class SelectTool extends MazeCommand {
 		String toolType = arguments[0];
 		
 		switch (toolType.toLowerCase()) {
+		
 		case "rect":
 		case "rectangle":
 		case "square":

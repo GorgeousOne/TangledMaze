@@ -13,7 +13,7 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 public class AddToMaze extends MazeCommand {
 
 	public AddToMaze() {
-		super("add", "/maze add", 0, true, null, "merge");
+		super("add", "/tangledmaze add", 0, true, null, "merge");
 	}
 	
 	@Override

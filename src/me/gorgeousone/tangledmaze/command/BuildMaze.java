@@ -5,18 +5,17 @@ import java.util.List;
 
 import me.gorgeousone.tangledmaze.generation.MazeGenerator;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.BlockTypeReader;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.TextException;
 
-@SuppressWarnings("deprecation")
 public class BuildMaze extends MazeCommand {
 
 	private MazeGenerator generator;
@@ -58,10 +57,10 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		List<MaterialData> composition;
+		List<Material> wallMaterials;
 		
 		try {
-			composition = getWallComposition(player, arguments);
+			wallMaterials = getWallMaterials(arguments);
 			
 		} catch (TextException ex) {
 			
@@ -69,7 +68,7 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		maze.setWallComposition(composition);
+		maze.setWallComposition(wallMaterials);
 
 		MazeHandler.buildMaze(maze, generator);
 		Messages.MESSAGE_MAZE_BUILDING_STARTED.send(player);
@@ -79,13 +78,20 @@ public class BuildMaze extends MazeCommand {
 		return true;
 	}
 	
-	private static List<MaterialData> getWallComposition(Player player, String[] serializedMaterialData) throws TextException {
+	private static List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
 		
-		List<MaterialData> composition = new ArrayList<>();
+		List<Material> wallMaterials = new ArrayList<>();
 		
-		for(String materialDataString : serializedMaterialData)
-			composition.add(BlockTypeReader.readMaterialData(materialDataString));
+		for(String materialString : serializedMaterials) {
+			
+			Material material = Material.matchMaterial(materialString);
+			
+			if(material == null || !material.isBlock())
+				throw new TextException(Messages.ERROR_NO_MATCHING_BLOCK_TYPE, new PlaceHolder("block", materialString));
+			else
+				wallMaterials.add(material);
+		}
 		
-		return composition;
+		return wallMaterials;
 	}
 }

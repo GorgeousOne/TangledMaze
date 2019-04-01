@@ -12,7 +12,7 @@ import java.util.TreeSet;
 
 public class Constants {
 	
-	public static int BUKKIT_VERSION;
+	public static int BUKKIT_VERSIO;
 	
 	public static final String
 			INSUFFICIENT_PERMS = ChatColor.RED + "You do not have the Permission for this command.",
@@ -53,11 +53,11 @@ public class Constants {
 	@SuppressWarnings("unchecked")
 	public static void loadConstants() {
 		
-		BUKKIT_VERSION = Integer.valueOf(Bukkit.getBukkitVersion().split("\\.")[1]);
+		BUKKIT_VERSIO = Integer.valueOf(Bukkit.getBukkitVersion().split("\\.")[1]);
 
 		YamlConfiguration materialLists;
 
-		if(BUKKIT_VERSION < 13) {
+		if(BUKKIT_VERSIO < 13) {
 			materialLists = Utils.getDefaultConfig("1.12_material_lists.yml");
 
 		}else {

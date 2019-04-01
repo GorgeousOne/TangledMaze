@@ -106,7 +106,7 @@ public class BuildMap {
 		this.pathStart = pathStart;
 	}
 	
-	public void drawSegment(PathSegment segment, MazeFillType type) {
+	public void mapSegment(PathSegment segment, MazeFillType type) {
 		
 		for(Vec2 point : segment.getFill()) {
 			
