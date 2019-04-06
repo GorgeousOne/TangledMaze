@@ -55,14 +55,7 @@ public class Constants {
 		
 		BUKKIT_VERSIO = Integer.valueOf(Bukkit.getBukkitVersion().split("\\.")[1]);
 
-		YamlConfiguration materialLists;
-
-		if(BUKKIT_VERSIO < 13) {
-			materialLists = Utils.getDefaultConfig("1.12_material_lists.yml");
-
-		}else {
-			materialLists = Utils.getDefaultConfig("1.13_material_lists.yml");
-		}
+		YamlConfiguration materialLists = Utils.getDefaultConfig("material_lists.yml");
 
 		for(String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
 

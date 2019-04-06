@@ -37,14 +37,21 @@ public class BuildMap {
 		return minimum.getIntZ();
 	}
 	
-	public int getDimX() {
+	public int getSizeX() {
 		return shapeMap.length;
 	}
 	
-	public int getDimZ() {
+	public int getSizeZ() {
 		return shapeMap[0].length;
 	}
-
+	
+	public boolean contains(Vec2 point) {
+	
+		return
+			point.getIntX() >= 0 && point.getIntX() < getSizeX() &&
+			point.getIntZ() >= 0 && point.getIntZ() < getSizeZ();
+	}
+	
 	public MazeFillType getType(int x, int z) {
 		return shapeMap[x][z];
 	}
@@ -110,11 +117,8 @@ public class BuildMap {
 		
 		for(Vec2 point : segment.getFill()) {
 			
-			if(point.getIntX() >= 0 && point.getIntX() < getDimX() &&
-			   point.getIntZ() >= 0 && point.getIntZ() < getDimZ()) {
-				
+			if(contains(point))
 				setType(point, type);
-			}
 		}
 	}
 	
@@ -140,26 +144,28 @@ public class BuildMap {
 	
 	private void drawBlankMazeOnMap() {
 		
-		int wallHeight = maze.getWallHeight();
-		
-		for(int x = 0; x < getDimX(); x++) {
-			for(int z = 0; z < getDimZ(); z++) {
-				shapeMap[x][z] = MazeFillType.NOT_MAZE;
+		for(int x = 0; x < getSizeX(); x++) {
+			for(int z = 0; z < getSizeZ(); z++) {
+				setType(x, z, MazeFillType.NOT_MAZE);
 			}
 		}
 		
+		int wallHeight = maze.getWallHeight();
+
 		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
 		for(MazePoint point : maze.getClip().getFilling()) {
 			
-			shapeMap       [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.UNDEFINED;
-			groundHeightMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY();
-			mazeHeightMap  [point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = point.getBlockY() + wallHeight;
+			int relPointX = point.getBlockX() - getMinX();
+			int relPointZ = point.getBlockZ() - getMinZ();
+			
+			setType(relPointX, relPointZ, MazeFillType.UNDEFINED);
+			setGroundHeight(relPointX, relPointZ, point.getBlockY());
+			setMazeHeight(relPointX, relPointZ, point.getBlockY() + wallHeight);
 		}
 		
 		//mark the border in mazeMap as walls
-		for(MazePoint point : maze.getClip().getBorder()) {
-			shapeMap[point.getBlockX() - getMinX()][point.getBlockZ() - getMinZ()] = MazeFillType.WALL;
-		}
+		for(MazePoint point : maze.getClip().getBorder())
+			setType(point.getBlockX() - getMinX(), point.getBlockZ() - getMinZ(), MazeFillType.WALL);
 	}
 
 	private Vec2 getMinPoint(HashSet<Chunk> chunks) {

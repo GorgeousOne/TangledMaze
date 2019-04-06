@@ -20,6 +20,18 @@ public enum Directions {
 		this.facing = facing;
 	}
 	
+	public int getSign() {
+		return facing.getZ() == 0 ? facing.getIntX() : facing.getIntZ();
+	}
+	
+	public boolean isXAligned() {
+		return facing.getX() == 0;
+	}
+	
+	public boolean isZAligned() {
+		return facing.getZ() == 0;
+	}
+	
 	public Vec2 toVec2() {
 		return facing.clone();
 	}

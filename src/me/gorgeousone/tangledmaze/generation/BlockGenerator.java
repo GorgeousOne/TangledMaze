@@ -68,8 +68,8 @@ public class BlockGenerator {
 		int mazeMinX = map.getMinX(),
 			mazeMinZ = map.getMinZ();
 	
-		for(int x = 0; x < map.getDimX(); x++) {
-			for(int z = 0; z < map.getDimZ(); z++) {
+		for(int x = 0; x < map.getSizeX(); x++) {
+			for(int z = 0; z < map.getSizeZ(); z++) {
 				
 				if(map.getType(x, z) != MazeFillType.WALL) {
 					continue;
@@ -96,8 +96,8 @@ public class BlockGenerator {
 	
 	protected void simplifyMap(BuildMap map) {
 		
-		for(int x = 0; x < map.getDimX(); x++) {
-			for(int z = 0; z < map.getDimZ(); z++) {
+		for(int x = 0; x < map.getSizeX(); x++) {
+			for(int z = 0; z < map.getSizeZ(); z++) {
 				
 				MazeFillType type = map.getType(x, z);
 				
@@ -115,8 +115,8 @@ public class BlockGenerator {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
-		for(int x = 0; x < map.getDimX(); x++) {
-			for(int z = 0; z < map.getDimZ(); z++) {
+		for(int x = 0; x < map.getSizeX(); x++) {
+			for(int z = 0; z < map.getSizeZ(); z++) {
 				
 				if(map.getType(x, z) == MazeFillType.NOT_MAZE) {
 					continue;
@@ -147,8 +147,8 @@ public class BlockGenerator {
 		
 		int wallHeight = map.getMaze().getWallHeight();
 
-		for(int x = 0; x < map.getDimX(); x++) {
-			for(int z = 0; z < map.getDimZ(); z++) {
+		for(int x = 0; x < map.getSizeX(); x++) {
+			for(int z = 0; z < map.getSizeZ(); z++) {
 				
 				if(map.getType(x, z) == MazeFillType.NOT_MAZE) {
 					continue;
@@ -185,8 +185,8 @@ public class BlockGenerator {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.toVec2());
 			
-			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getDimX() ||
-			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getDimZ()) {
+			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getSizeX() ||
+			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getSizeZ()) {
 				continue;
 			}
 			
@@ -216,8 +216,8 @@ public class BlockGenerator {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.toVec2());
 			
-			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getDimX() ||
-			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getDimZ() ||
+			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getSizeX() ||
+			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getSizeZ() ||
 				map.getType(neighbor) == MazeFillType.NOT_MAZE) {
 				continue;
 			}

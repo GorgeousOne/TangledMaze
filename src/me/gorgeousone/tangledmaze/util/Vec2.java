@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.util;
 
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class Vec2 {
@@ -16,9 +17,14 @@ public class Vec2 {
 		this.z = z;
 	}
 
-	public Vec2(Vector vec3) {
-		this.x = vec3.getBlockX();
-		this.z = vec3.getBlockZ();
+//	public Vec2(Vector vec3) {
+//		this.x = vec3.getBlockX();
+//		this.z = vec3.getBlockZ();
+//	}
+	
+	public Vec2(Location loc) {
+		this.x = loc.getBlockX();
+		this.z = loc.getBlockZ();
 	}
 	
 	public float getX() {

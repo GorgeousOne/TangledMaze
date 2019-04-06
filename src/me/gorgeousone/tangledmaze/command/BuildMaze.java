@@ -18,13 +18,13 @@ import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildMaze extends MazeCommand {
 
-	private MazeGenerator generator;
+	private MazeGenerator mazeGenerator;
 
 	public BuildMaze() {
 		
 		super("build", "/tangledmaze build <block> ...", 1, true, null);
 		
-		generator = new MazeGenerator();
+		mazeGenerator = new MazeGenerator();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class BuildMaze extends MazeCommand {
 		
 		maze.setWallComposition(wallMaterials);
 
-		MazeHandler.buildMaze(maze, generator);
+		MazeHandler.buildMaze(maze, mazeGenerator);
 		Messages.MESSAGE_MAZE_BUILDING_STARTED.send(player);
 
 		ToolHandler.resetToDefaultTool(player);

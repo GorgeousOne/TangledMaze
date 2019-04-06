@@ -48,7 +48,7 @@ public abstract class MazeHandler {
 		BukkitRunnable async = new BukkitRunnable() {
 			@Override
 			public void run() {
-				generator.buildMaze(maze);
+				generator.generateMaze(maze);
 			}
 		};
 		async.runTaskAsynchronously(TangledMain.getInstance());
