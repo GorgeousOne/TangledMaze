@@ -12,8 +12,8 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class PathGenerator {
 	
-	public ArrayList<Directions> shuffledCardinals;
-	public Random rnd;
+	private ArrayList<Directions> shuffledCardinals;
+	private Random rnd;
 	
 	public PathGenerator() {
 		
@@ -25,9 +25,10 @@ public class PathGenerator {
 		
 		generateExitSegments(buildMap);
 		generatePathSegments(buildMap);
+		buildMap.flip();
 	}
 	
-	public void generateExitSegments(BuildMap buildMap) {
+	private void generateExitSegments(BuildMap buildMap) {
 	
 		Maze maze = buildMap.getMaze();
 		
@@ -53,17 +54,85 @@ public class PathGenerator {
 		
 		for(int i = 0; i < maze.getExits().size() - 1; i++) {
 			
-			createExitSegment(
+			PathSegment exitSegment = createExitSegment(
 					maze.getExits().get(i).clone(),
 					buildMap,
-					pathWidth,
-					wallWidth,
 					pathGridOffsetX,
-					pathGridOffsetZ);
+					pathGridOffsetZ,
+					pathWidth,
+					wallWidth);
+			
+			buildMap.mapSegment(exitSegment, MazeFillType.EXIT);
 		}
 	}
 	
-	public void generatePathSegments(BuildMap buildMap) {
+	private PathSegment createEntranceSegment(
+			MazePoint entrance,
+			BuildMap buildMap,
+			int pathWidth,
+			int wallWidth) {
+		
+		PathSegment entranceSegment = new PathSegment(
+			new Vec2(entrance),
+			wallWidth + pathWidth,
+			pathWidth,
+			getExitFacing(entrance, buildMap),
+			true);
+		
+		return entranceSegment;
+	}
+	
+	private PathSegment createExitSegment(
+			MazePoint exit,
+			BuildMap buildMap,
+			int pathGridOffsetX,
+			int pathGridOffsetZ,
+			int pathWidth,
+			int wallWidth) {
+
+		Directions exitFacing = getExitFacing(exit, buildMap);
+		
+		PathSegment exitSegment = new PathSegment(
+				new Vec2(exit),
+				pathWidth,
+				pathWidth,
+				exitFacing,
+				true);
+		
+		exitSegment.expand(exitFacing.isXAligned() ?
+				getExitDistanceToPathGrid(exitSegment.getStart().getIntX(), exitFacing, pathGridOffsetX, pathWidth, wallWidth) :
+				getExitDistanceToPathGrid(exitSegment.getStart().getIntZ(), exitFacing, pathGridOffsetZ, pathWidth, wallWidth));
+		
+		return exitSegment;
+	}
+	
+	private int getExitDistanceToPathGrid(
+			int exitSegmentStart,
+			Directions exitFacing,
+			int pathGridOffset,
+			int pathWidth,
+			int wallWidth) {
+		
+		//calculate how long the exit has to be to reach the grid of paths
+		//start with getting the exit's position relative to the path grid
+		int exitOffset = exitSegmentStart - pathGridOffset;
+		
+		//reduce the relative position to the actual possible offset
+		if(Math.abs(exitOffset) > pathWidth + wallWidth)
+			exitOffset %= pathWidth + wallWidth;
+
+		//invert offset if it is calculated to opposing path in the grid
+		if(exitFacing.getSign() == 1)
+			exitOffset = (pathWidth + wallWidth) - exitOffset;
+		
+		//increase offset if it's under possible minimum of 1 block
+		if(exitOffset < 1)
+			exitOffset += pathWidth + wallWidth;
+
+		return exitOffset;
+	}
+	
+	private void generatePathSegments(BuildMap buildMap) {
 		
 		Maze maze = buildMap.getMaze();
 		
@@ -102,51 +171,7 @@ public class PathGenerator {
 		}
 	}
 
-	public PathSegment createEntranceSegment(
-			MazePoint entrance,
-			BuildMap buildMap,
-			int pathWidth,
-			int wallWidth) {
-		
-		MazePoint relEntrance = entrance.clone();
-		relEntrance.subtract(buildMap.getMinX(), 0, buildMap.getMinZ());
-		
-		PathSegment entranceSegment = new PathSegment(
-			new Vec2(relEntrance),
-			wallWidth + pathWidth,
-			pathWidth,
-			getExitFacing(relEntrance, buildMap),
-			true);
-		
-		return entranceSegment;
-	}
-	
-	public PathSegment createExitSegment(
-			MazePoint exit,
-			BuildMap buildMap,
-			int pathGridOffsetX,
-			int pathGridOffsetZ,
-			int pathWidth,
-			int wallWidth) {
-
-		MazePoint relExit = exit.clone().add(-buildMap.getMinX(), 0, -buildMap.getMinZ());
-		Directions exitFacing = getExitFacing(relExit, buildMap);
-		
-		PathSegment exitSegment = new PathSegment(
-				new Vec2(relExit),
-				pathWidth,
-				pathWidth,
-				exitFacing,
-				true);
-		
-		exitSegment.expand(exitFacing.isXAligned() ?
-				getExitDistanceToPathGrid(exitSegment.getStart().getIntX(), exitFacing, pathGridOffsetX, pathWidth, wallWidth) :
-				getExitDistanceToPathGrid(exitSegment.getStart().getIntZ(), exitFacing, pathGridOffsetZ, pathWidth, wallWidth));
-		
-		return exitSegment;
-	}
-	
-	public PathSegment createPathSegment(
+	private PathSegment createPathSegment(
 			BuildMap map,
 			Vec2 currentEnd,
 			int pathWidth,
@@ -175,54 +200,24 @@ public class PathGenerator {
 		return null;
 	}
 	
-	public static Directions getExitFacing(MazePoint relExit, BuildMap buildMap) {
+	private static Directions getExitFacing(MazePoint exit, BuildMap buildMap) {
 		
 		for(Directions dir : Directions.cardinalValues()) {
 			
-			Vec2 neighbor = new Vec2(relExit).add(dir.toVec2());
+			Vec2 neighbor = new Vec2(exit).add(dir.toVec2());
 			
-			if(!buildMap.contains(neighbor)) {
-				System.out.println("DEBUG: " + dir + " out of maze");
+			if(!buildMap.contains(neighbor))
 				continue;
-			}
 			
-			//check if location next to exit is inside of the maze
+			//check if location next to exit is inside maze
 			if(buildMap.getType(neighbor) == MazeFillType.UNDEFINED)
 				return dir;
-			else
-				System.out.println("DEBUG: " + dir + buildMap.getType(neighbor));
 		}
 		
-		throw new IllegalStateException("The parsed Location cannot be an exit of this maze.");
+		throw new IllegalArgumentException("The passed Location cannot be an exit of this maze.");
 	}
 	
-	public int getExitDistanceToPathGrid(
-			int exitSegmentStart,
-			Directions exitFacing,
-			int pathGridOffset,
-			int pathWidth,
-			int wallWidth) {
-		
-		//calculate how long the exit has to be to reach the grid of paths
-		//start with getting the exit's position relative to the path grid
-		int exitOffset = exitSegmentStart - pathGridOffset;
-		
-		//reduce the relative position to the actual possible offset
-		if(Math.abs(exitOffset) > pathWidth + wallWidth)
-			exitOffset %= pathWidth + wallWidth;
-		
-		//invert offset if it is calculated to opposing path in the grid
-		if(exitFacing.getSign() == 1)
-			exitOffset = (pathWidth + wallWidth) - exitOffset;
-		
-		//increase offset if it's under possible minimum of 1 block
-		if(exitOffset < 1)
-			exitOffset += pathWidth + wallWidth;
-		
-		return exitOffset;
-	}
-	
-	public boolean segmentIsFree(BuildMap buildMap, PathSegment segment) {
+	private boolean segmentIsFree(BuildMap buildMap, PathSegment segment) {
 		
 		for(Vec2 point : segment.getFill()) {
 			

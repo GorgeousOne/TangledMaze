@@ -25,11 +25,11 @@ public enum Directions {
 	}
 	
 	public boolean isXAligned() {
-		return facing.getX() == 0;
+		return facing.getX() != 0;
 	}
 	
 	public boolean isZAligned() {
-		return facing.getZ() == 0;
+		return facing.getZ() != 0;
 	}
 	
 	public Vec2 toVec2() {

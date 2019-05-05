@@ -17,22 +17,82 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class BlockGenerator {
 
-	public void generateBlocks(BuildMap map) {
+	public void generateBlocks(BuildMap buildMap) {
 		
-		simplifyMap(map);
-		flattenTrees(map);
-		raiseLowMapParts(map);
+		cullTrees(buildMap);
+		raiseTooLowWalls(buildMap);
 		
 		new BukkitRunnable() {
 			
 			@Override
 			public void run() {
-				updateBlocksContinuously(getMazeWallBlocks(map));
+				updateBlocksContinuously(getMazeWallBlocks(buildMap));
 			}
 		}.runTask(TangledMain.getInstance());
 	}
 	
-	protected void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
+	//lowers wall heights at points where spikes of wall would stick out of the maze
+	private void cullTrees(BuildMap buildMap) {
+		
+		int wallHeight = buildMap.getMaze().getWallHeight();
+
+		for(int x = buildMap.getMinX(); x < buildMap.getMaxX(); x++) {
+			for(int z = buildMap.getMinZ(); z < buildMap.getMaxZ(); z++) {
+				
+				if(buildMap.getType(x, z) == MazeFillType.NOT_MAZE)
+					continue;
+				
+				Vec2 maxNeighbor = getHeighestNeighbor(x, z, buildMap, null);
+				
+				int mazeHeight = buildMap.getMazeHeight(x, z);
+				int defaultMazeHeight = buildMap.getGroundHeight(maxNeighbor) + wallHeight;
+				
+				if(mazeHeight <= defaultMazeHeight)
+					continue;
+				
+				int groundDiffToNeighbors = getGroundDiffToNeighbors(buildMap, x, z);
+				
+				//adapt ground height of path points to surrounding ground height
+				if(buildMap.getType(x, z) == MazeFillType.PATH)
+					buildMap.setGroundHeight(x, z, buildMap.getGroundHeight(x, z) + groundDiffToNeighbors);
+				//adapt wall height of wall points to default wall height or neighbor wall heights
+				else
+					buildMap.setMazeHeight(x, z, Math.min(defaultMazeHeight, mazeHeight + groundDiffToNeighbors));
+			}
+		}
+	}
+	
+	//raises walls with a low height to surrounding paths
+	private void raiseTooLowWalls(BuildMap buildMap) {
+		
+		int wallHeight = buildMap.getMaze().getWallHeight();
+
+		for(int x = buildMap.getMinX(); x < buildMap.getMaxX(); x++) {
+			for(int z = buildMap.getMinZ(); z < buildMap.getMaxZ(); z++) {
+				
+				if(buildMap.getType(x, z) == MazeFillType.NOT_MAZE)
+					continue;
+				
+				Vec2 maxNeighbor = getHeighestNeighbor(x, z, buildMap, MazeFillType.PATH);
+				
+				if(maxNeighbor == null)
+					continue;
+				
+				int maxNeighborsWallHeight = buildMap.getWallHeight(maxNeighbor);
+		
+				if(maxNeighborsWallHeight <= 0)
+					continue;
+				
+				int mazeHeight = buildMap.getMazeHeight(x, z),
+					maxNeighborsGroundHeight = buildMap.getGroundHeight(maxNeighbor);
+				
+				if(mazeHeight < maxNeighborsGroundHeight + wallHeight)
+					buildMap.setMazeHeight(x, z, maxNeighborsGroundHeight + wallHeight);
+			}
+		}
+	}
+	
+	private void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			
@@ -57,27 +117,23 @@ public class BlockGenerator {
 		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 	
-	protected List<BlockState> getMazeWallBlocks(BuildMap map) {
+	private List<BlockState> getMazeWallBlocks(BuildMap buildMap) {
 		
-		Maze maze = map.getMaze();
+		Maze maze = buildMap.getMaze();
 		Random rnd = new Random();
 		
 		List<Material> wallMaterials = maze.getWallMaterials();
 		List<BlockState> blocksToUpdate = new ArrayList<>();
 		
-		int mazeMinX = map.getMinX(),
-			mazeMinZ = map.getMinZ();
-	
-		for(int x = 0; x < map.getSizeX(); x++) {
-			for(int z = 0; z < map.getSizeZ(); z++) {
+		for(int x = buildMap.getMinX(); x < buildMap.getMaxX(); x++) {
+			for(int z = buildMap.getMinZ(); z < buildMap.getMaxZ(); z++) {
 				
-				if(map.getType(x, z) != MazeFillType.WALL) {
+				if(buildMap.getType(x, z) != MazeFillType.WALL)
 					continue;
-				}
 				
-				for(int i = map.getGroundHeight(x, z) + 1; i <= map.getMazeHeight(x, z); i++) {
+				for(int height = buildMap.getGroundHeight(x, z) + 1; height <= buildMap.getMazeHeight(x, z); height++) {
 					
-					BlockState block = new Location(maze.getWorld(), x + mazeMinX, i, z + mazeMinZ).getBlock().getState();
+					BlockState block = new Location(maze.getWorld(), x, height, z).getBlock().getState();
 					
 					if(!Utils.canBeOverbuild(block.getType())) {
 						continue;
@@ -94,89 +150,7 @@ public class BlockGenerator {
 		return blocksToUpdate;
 	}
 	
-	protected void simplifyMap(BuildMap map) {
-		
-		for(int x = 0; x < map.getSizeX(); x++) {
-			for(int z = 0; z < map.getSizeZ(); z++) {
-				
-				MazeFillType type = map.getType(x, z);
-				
-				if(type == MazeFillType.UNDEFINED) {
-					map.setType(x, z, MazeFillType.WALL);
-					
-				}else if(type == MazeFillType.EXIT) {
-					map.setType(x, z, MazeFillType.PATH);
-				}
-			}
-		}
-	}
-	
-	protected void flattenTrees(BuildMap map) {
-		
-		int wallHeight = map.getMaze().getWallHeight();
-
-		for(int x = 0; x < map.getSizeX(); x++) {
-			for(int z = 0; z < map.getSizeZ(); z++) {
-				
-				if(map.getType(x, z) == MazeFillType.NOT_MAZE) {
-					continue;
-				}
-				
-				Vec2 maxNeighbor = getHeighestNeighbor(x, z, map, null);
-				
-				int mazeHeight = map.getMazeHeight(x, z),
-					minimumMazeHeight = map.getGroundHeight(maxNeighbor) + wallHeight;
-				
-				if(mazeHeight <= minimumMazeHeight) {
-					continue;
-				}
-				
-				int groundHeightDiff = getNeighborGroundHeightDiff(map, x, z);
-				
-				if(map.getType(x, z) == MazeFillType.PATH) {
-					map.setGroundHeight(x, z, map.getGroundHeight(x, z) + groundHeightDiff);
-					
-				}else {
-					map.setMazeHeight(x, z, Math.min(minimumMazeHeight, mazeHeight + groundHeightDiff));
-				}
-			}
-		}
-	}
-	
-	protected void raiseLowMapParts(BuildMap map) {
-		
-		int wallHeight = map.getMaze().getWallHeight();
-
-		for(int x = 0; x < map.getSizeX(); x++) {
-			for(int z = 0; z < map.getSizeZ(); z++) {
-				
-				if(map.getType(x, z) == MazeFillType.NOT_MAZE) {
-					continue;
-				}
-				
-				Vec2 maxNeighbor = getHeighestNeighbor(x, z, map, MazeFillType.PATH);
-				
-				if(maxNeighbor == null) {
-					continue;
-				}
-				
-				int maxNeighborsWallHeight = map.getWallHeight(maxNeighbor);
-		
-				if(maxNeighborsWallHeight <= 0) {
-					continue;
-				}
-				
-				int mazeHeight = map.getGroundHeight(x, z),
-					maxNeighborsGroundHeight = map.getGroundHeight(maxNeighbor);
-				
-				if(mazeHeight < maxNeighborsGroundHeight + wallHeight) {
-					map.setMazeHeight(x, z, maxNeighborsGroundHeight + wallHeight);
-				}
-			}
-		}
-	}
-	
-	protected Vec2 getHeighestNeighbor(int x, int z, BuildMap map, MazeFillType limitation) {
+	private Vec2 getHeighestNeighbor(int x, int z, BuildMap buildMap, MazeFillType limitation) {
 		
 		Vec2 maxNeighbor = null;
 		int maxHeight = 0;
@@ -185,17 +159,15 @@ public class BlockGenerator {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.toVec2());
 			
-			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getSizeX() ||
-			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getSizeZ()) {
+			if(!buildMap.contains(neighbor))
+				continue;
+			
+			if(buildMap.getType(neighbor) == MazeFillType.NOT_MAZE || limitation != null &&
+			   buildMap.getType(neighbor) != limitation) {
 				continue;
 			}
 			
-			if(map.getType(neighbor) == MazeFillType.NOT_MAZE || limitation != null &&
-			   map.getType(neighbor) != limitation) {
-				continue;
-			}
-			
-			int neighborHeight = map.getMazeHeight(neighbor);
+			int neighborHeight = buildMap.getMazeHeight(neighbor);
 			
 			if(maxNeighbor == null || neighborHeight > maxHeight) {
 				maxNeighbor = neighbor;
@@ -206,23 +178,20 @@ public class BlockGenerator {
 		return maxNeighbor;
 	}
 
-	protected int getNeighborGroundHeightDiff(BuildMap map, int x, int z) {
+	private int getGroundDiffToNeighbors(BuildMap buildMap, int x, int z) {
 		
-		int groundHeight = map.getGroundHeight(x, z),
-			heightDiff = 0,
-			neighborsCount = 0;
+		int groundHeight = buildMap.getGroundHeight(x, z);
+		int heightDiff = 0;
+		int neighborsCount = 0;
 		
 		for(Directions dir : Directions.values()) {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.toVec2());
 			
-			if(neighbor.getIntX() < 0 || neighbor.getIntX() >= map.getSizeX() ||
-			   neighbor.getIntZ() < 0 || neighbor.getIntZ() >= map.getSizeZ() ||
-				map.getType(neighbor) == MazeFillType.NOT_MAZE) {
+			if(!buildMap.contains(neighbor) || buildMap.getType(neighbor) == MazeFillType.NOT_MAZE)
 				continue;
-			}
 			
-			heightDiff += map.getGroundHeight(neighbor) - groundHeight;
+			heightDiff += buildMap.getGroundHeight(neighbor) - groundHeight;
 			neighborsCount++;
 		}
 		

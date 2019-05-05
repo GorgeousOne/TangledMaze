@@ -14,7 +14,7 @@ public class BuildMap {
 	private MazeFillType[][] shapeMap;
 	private int[][] groundHeightMap, mazeHeightMap;
 	
-	private Vec2 minimum;
+	private Vec2 minimum, maximum;
 	private Vec2 pathStart;
 	
 	public BuildMap(Maze maze) {
@@ -22,7 +22,7 @@ public class BuildMap {
 		this.maze = maze;
 		
 		calculateMapSize();
-		drawBlankMazeOnMap();
+		copyMazeOntoMap();
 	}
 	
 	public Maze getMaze() {
@@ -37,55 +37,63 @@ public class BuildMap {
 		return minimum.getIntZ();
 	}
 	
-	public int getSizeX() {
-		return shapeMap.length;
+	public int getMaxX() {
+		return maximum.getIntX();
 	}
-	
-	public int getSizeZ() {
-		return shapeMap[0].length;
+
+	public int getMaxZ() {
+		return maximum.getIntZ();
 	}
 	
 	public boolean contains(Vec2 point) {
 	
 		return
-			point.getIntX() >= 0 && point.getIntX() < getSizeX() &&
-			point.getIntZ() >= 0 && point.getIntZ() < getSizeZ();
+			point.getIntX() >= getMinX() && point.getIntX() < getMaxX() &&
+			point.getIntZ() >= getMinZ() && point.getIntZ() < getMaxZ();
 	}
 	
 	public MazeFillType getType(int x, int z) {
-		return shapeMap[x][z];
+		return shapeMap[x-getMinX()][z-getMinZ()];
+	}
+	
+	public MazeFillType getType(Vec2 point) {
+		return getType(point.getIntX(), point.getIntZ());
 	}
 
 	public int getGroundHeight(int x, int z) {
-		return groundHeightMap[x][z];
+		return groundHeightMap[x-getMinX()][z-getMinZ()];
 	}
 	
 	public int getGroundHeight(Vec2 point) {
-		return groundHeightMap[point.getIntX()][point.getIntZ()];
+		return getGroundHeight(point.getIntX(), point.getIntZ());
 	}
 	
 	public int getMazeHeight(int x, int z) {
-		return mazeHeightMap[x][z];
+		return mazeHeightMap[x-getMinX()][z-getMinZ()];
 	}
 	
 	public int getMazeHeight(Vec2 point) {
-		return mazeHeightMap[point.getIntX()][point.getIntZ()];
+		return getMazeHeight(point.getIntX(), point.getIntZ());
 	}
 	
 	public int getWallHeight(Vec2 point) {
 		return getMazeHeight(point) - getGroundHeight(point);
 	}
 	
-	public MazeFillType getType(Vec2 point) {
-		return shapeMap[point.getIntX()][point.getIntZ()];
-	}
-
 	public Vec2 getStart() {
 		return pathStart;
 	}
 	
+	public void setType(int x, int z, MazeFillType type) {
+		shapeMap[x-getMinX()][z-getMinZ()] = type;
+	}
+
+	public void setType(Vec2 point, MazeFillType type) {
+		setType(point.getIntX(), point.getIntZ(), type);
+	}
+	
 	public void setGroundHeight(int x, int z, int newY) {
-		groundHeightMap[x][z] = newY;
+		groundHeightMap[x-getMinX()][z-getMinZ()] = newY;
 	}
 	
 	public void setGroundHeight(Vec2 point, int newY) {
@@ -93,22 +101,13 @@ public class BuildMap {
 	}
 
 	public void setMazeHeight(int x, int z, int newY) {
-		mazeHeightMap[x][z] = newY;
+		mazeHeightMap[x-getMinX()][z-getMinZ()] = newY;
 	}
 
 	public void setMazeHeight(Vec2 point, int newY) {
 		setMazeHeight(point.getIntX(), point.getIntZ(), newY);
 	}
-
-	public void setType(int x, int z, MazeFillType type) {
-		shapeMap[x][z] = type;
-	}
-
-	public void setType(Vec2 point, MazeFillType type) {
-		shapeMap[point.getIntX()]
-				[point.getIntZ()] = type;
-	}
-
+	
 	public void setStart(Vec2 pathStart) {
 		this.pathStart = pathStart;
 	}
@@ -118,7 +117,23 @@ public class BuildMap {
 		for(Vec2 point : segment.getFill()) {
 			
 			if(contains(point))
-				setType(point, type);
+				setType(point.getIntX(), point.getIntZ(), type);
+		}
+	}
+	
+	public void flip() {
+		
+		for(int x = getMinX(); x < getMaxX(); x++) {
+			for(int z = getMinZ(); z < getMaxZ(); z++) {
+				
+				MazeFillType fillType = getType(x, z);
+				
+				if(fillType == MazeFillType.UNDEFINED)
+					setType(x, z, MazeFillType.WALL);
+					
+				else if(fillType == MazeFillType.EXIT)
+					setType(x, z, MazeFillType.PATH);
+			}
 		}
 	}
 	
@@ -127,25 +142,25 @@ public class BuildMap {
 		HashSet<Chunk> chunks = maze.getClip().getChunks();
 
 		minimum = getMinPoint(chunks);
-		Vec2 max = getMaxPoint(chunks);
+		maximum = getMaxPoint(chunks);
 
 		shapeMap  = new MazeFillType
-			[max.getIntX() - minimum.getIntX()]
-			[max.getIntZ() - minimum.getIntZ()];
+			[maximum.getIntX() - minimum.getIntX()]
+			[maximum.getIntZ() - minimum.getIntZ()];
 		
 		groundHeightMap = new int
-			[max.getIntX() - minimum.getIntX()]
-			[max.getIntZ() - minimum.getIntZ()];
+			[maximum.getIntX() - minimum.getIntX()]
+			[maximum.getIntZ() - minimum.getIntZ()];
 		
 		mazeHeightMap = new int
-			[max.getIntX() - minimum.getIntX()]
-			[max.getIntZ() - minimum.getIntZ()];
+			[maximum.getIntX() - minimum.getIntX()]
+			[maximum.getIntZ() - minimum.getIntZ()];
 	}
 	
-	private void drawBlankMazeOnMap() {
+	private void copyMazeOntoMap() {
 		
-		for(int x = 0; x < getSizeX(); x++) {
-			for(int z = 0; z < getSizeZ(); z++) {
+		for(int x = getMinX(); x < getMaxX(); x++) {
+			for(int z = getMinZ(); z < getMaxZ(); z++) {
 				setType(x, z, MazeFillType.NOT_MAZE);
 			}
 		}
@@ -155,19 +170,19 @@ public class BuildMap {
 		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
 		for(MazePoint point : maze.getClip().getFilling()) {
 			
-			int relPointX = point.getBlockX() - getMinX();
-			int relPointZ = point.getBlockZ() - getMinZ();
+			Vec2 pointVec = new Vec2(point);
 			
-			setType(relPointX, relPointZ, MazeFillType.UNDEFINED);
-			setGroundHeight(relPointX, relPointZ, point.getBlockY());
-			setMazeHeight(relPointX, relPointZ, point.getBlockY() + wallHeight);
+			setType(pointVec, MazeFillType.UNDEFINED);
+			setGroundHeight(pointVec, point.getBlockY());
+			setMazeHeight(pointVec, point.getBlockY() + wallHeight);
 		}
 		
 		//mark the border in mazeMap as walls
 		for(MazePoint point : maze.getClip().getBorder())
-			setType(point.getBlockX() - getMinX(), point.getBlockZ() - getMinZ(), MazeFillType.WALL);
+			//TODO
+			setType(point.getBlockX(), point.getBlockZ(), MazeFillType.WALL);
 	}
-
+	
 	private Vec2 getMinPoint(HashSet<Chunk> chunks) {
 		
 		Vec2 minimum = null;
@@ -202,13 +217,11 @@ public class BuildMap {
 				continue;
 			}
 			
-			if(chunk.getX() > maximum.getX()) {
+			if(chunk.getX() > maximum.getX())
 				maximum.setX(chunk.getX());
-			}
 				
-			if(chunk.getZ() > maximum.getZ()) {
+			if(chunk.getZ() > maximum.getZ())
 				maximum.setZ(chunk.getZ());
-			}
 		}
 		
 		return maximum.add(1, 1).mult(16);

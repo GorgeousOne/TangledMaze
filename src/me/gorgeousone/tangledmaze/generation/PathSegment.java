@@ -70,7 +70,7 @@ public class PathSegment {
 		Vec2 distanceStartToEnd = facing.toVec2().clone().mult(length - width);
 		end.add(distanceStartToEnd);
 
-		if(facing.isZAligned()) {
+		if(facing.isXAligned()) {
 			
 			size.set(length, width);
 			

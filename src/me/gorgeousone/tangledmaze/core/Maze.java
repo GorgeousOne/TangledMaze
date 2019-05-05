@@ -41,12 +41,8 @@ public class Maze {
 
 	public Maze(Player builder) {
 		
+		this(builder.getWorld());
 		this.builder = builder.getUniqueId();
-
-		clip = new Clip(builder.getWorld());
-		history = new ActionHistory();
-		exits = new ArrayList<>();
-		dimensions = new Vector(1, 2, 1);
 	}
 	
 	public Player getPlayer() {
@@ -105,7 +101,7 @@ public class Maze {
 		dimensions.setZ(Math.max(1, wallWidth));
 	}
 	
-	public void setWallComposition(List<org.bukkit.Material> composition) {
+	public void setWallComposition(List<Material> composition) {
 		wallMaterials = composition;
 	}
 	

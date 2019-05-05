@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.data;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class Constants {
-	
-	public static int BUKKIT_VERSIO;
 	
 	public static final String
 			INSUFFICIENT_PERMS = ChatColor.RED + "You do not have the Permission for this command.",
@@ -53,8 +50,6 @@ public class Constants {
 	@SuppressWarnings("unchecked")
 	public static void loadConstants() {
 		
-		BUKKIT_VERSIO = Integer.valueOf(Bukkit.getBukkitVersion().split("\\.")[1]);
-
 		YamlConfiguration materialLists = Utils.getDefaultConfig("material_lists.yml");
 
 		for(String materialName : (List<String>) materialLists.getList("not-solid-materials")) {

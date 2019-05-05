@@ -16,11 +16,6 @@ public class Vec2 {
 		this.x = x;
 		this.z = z;
 	}
-
-//	public Vec2(Vector vec3) {
-//		this.x = vec3.getBlockX();
-//		this.z = vec3.getBlockZ();
-//	}
 	
 	public Vec2(Location loc) {
 		this.x = loc.getBlockX();
