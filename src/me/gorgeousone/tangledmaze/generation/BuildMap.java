@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.generation;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Chunk;
 
@@ -139,7 +139,7 @@ public class BuildMap {
 	
 	private void calculateMapSize() {
 		
-		HashSet<Chunk> chunks = maze.getClip().getChunks();
+		Set<Chunk> chunks = maze.getClip().getChunks();
 
 		minimum = getMinPoint(chunks);
 		maximum = getMaxPoint(chunks);
@@ -183,7 +183,7 @@ public class BuildMap {
 			setType(point.getBlockX(), point.getBlockZ(), MazeFillType.WALL);
 	}
 	
-	private Vec2 getMinPoint(HashSet<Chunk> chunks) {
+	private Vec2 getMinPoint(Set<Chunk> chunks) {
 		
 		Vec2 minimum = null;
 
@@ -206,7 +206,7 @@ public class BuildMap {
 		return minimum.mult(16);
 	}
 	
-	private Vec2 getMaxPoint(HashSet<Chunk> chunks) {
+	private Vec2 getMaxPoint(Set<Chunk> chunks) {
 		
 		Vec2 maximum = null;
 		

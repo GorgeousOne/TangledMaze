@@ -1,9 +1,12 @@
 package me.gorgeousone.tangledmaze.command;
 
 
+import java.util.TreeSet;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -23,15 +26,16 @@ public class TpToMaze extends MazeCommand {
 		}
 		
 		Player player = (Player) sender;
+		Maze maze = MazeHandler.getMaze(player);
 		
-		if(!MazeHandler.getMaze(player).isStarted()) {
+		if(!maze.isStarted()) {
 
 			Messages.ERROR_MAZE_NOT_STARTED.send(player);
 			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
-		MazePoint target = MazeHandler.getMaze(player).getClip().getBorder().first();
+		MazePoint target = ((TreeSet<MazePoint>) maze.getClip().getBorder()).first();
 
 		target.add(0.5, 2, 0.5);
 		target.setDirection(player.getLocation().getDirection());

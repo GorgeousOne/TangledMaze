@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Renderer implements Listener {
 	
@@ -215,7 +215,7 @@ public abstract class Renderer implements Listener {
 		if(!clipboard.isComplete())
 			return;
 
-		HashSet<Chunk> mazeBorderChunks = maze.getClip().getBorderChunks();
+		Set<Chunk> mazeBorderChunks = maze.getClip().getBorderChunks();
 		
 		for(Chunk clipBorderChunk : clipboard.getClip().getBorderChunks()) {
 			
