@@ -1,11 +1,11 @@
 package me.gorgeousone.tangledmaze.listener;
 
+import org.bukkit.event.block.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -84,9 +84,8 @@ public class BlockUpdateListener implements Listener {
 		HashSet<Maze> affectedMazes = getAffectedMazes(point);
 		HashSet<ClippingTool> affectedClipboards = getAffectedClipboards(point);
 
-		if(affectedClipboards.isEmpty() && affectedMazes.isEmpty()) {
+		if(affectedClipboards.isEmpty() && affectedMazes.isEmpty())
 			return;
-		}
 
 		update(block, affectedMazes, affectedClipboards, hideAffectedElements);
 	}
@@ -97,10 +96,8 @@ public class BlockUpdateListener implements Listener {
 
 		for(Maze maze : MazeHandler.getMazes()) {
 
-			if(!maze.getClip().contains(new MazePoint(point)))
-				continue;
-
-			affectedMazes.add(maze);
+			if(maze.isStarted() && !maze.isConstructed() && maze.getClip().contains(new MazePoint(point)))
+				affectedMazes.add(maze);
 		}
 
 		return affectedMazes;
@@ -136,29 +133,25 @@ public class BlockUpdateListener implements Listener {
 
 				for(Maze maze : affectedMazes) {
 
-					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.isHighlighted(changedBlock)) {
+					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.isBorderBlock(changedBlock))
 						Renderer.hideMaze(maze);
-					}
 
 					Block updatedBlock = maze.updateHeight(changedBlock);
-
-					//TODO only update visibility of changed block
-					if(!hideAffectedElements && updatedBlock != null) {
+					
+					//TODO less important - only update visibility of changed block
+					if(!hideAffectedElements && updatedBlock != null)
 						Renderer.updateChunk(updatedBlock.getChunk());
-					}
 				}
 
 				for(ClippingTool clipboard : affectedClipboards) {
 
-					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.isHighlighted(changedBlock)) {
+					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.isBorderBlock(changedBlock))
 						Renderer.hideClipboard(clipboard, true);
-					}
 
 					Block updatedBlock = clipboard.updateHeight(changedBlock);
 
-					if(!hideAffectedElements && updatedBlock != null) {
+					if(!hideAffectedElements && updatedBlock != null)
 						Renderer.updateChunk(updatedBlock.getChunk());
-					}
 				}
 			}
 		}.runTask(TangledMain.getInstance());

@@ -19,24 +19,24 @@ public class Undo extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
 		Player player = (Player) sender;
 		
-		if(!MazeHandler.getMaze(player).isStarted()) {
-			//TODO think about better error message
+		Maze maze = MazeHandler.getMaze(player);
+		
+		if(!maze.isStarted() || maze.isConstructed()) {
+			
 			Messages.ERROR_MAZE_NOT_STARTED.send(player);
 			return false;
 		}
 		
-		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getActionHistory().isEmpty()) {
 			return false;
 		}
-			
+		
 		ClipAction action = maze.getActionHistory().popLastAction().invert();
 		maze.processAction(action, false);
 

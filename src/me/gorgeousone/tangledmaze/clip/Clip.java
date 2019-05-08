@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.clip;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.bukkit.Chunk;
@@ -12,8 +13,8 @@ import me.gorgeousone.tangledmaze.util.MazePoint;
 public class Clip {
 	
 	private World world;
-	private TreeSet<MazePoint> fill, border;
-	private HashSet<Chunk> fillChunks, borderChunks;
+	private Set<MazePoint> fill, border;
+	private Set<Chunk> fillChunks, borderChunks;
 	
 	private int size, borderSize;
 	
@@ -41,36 +42,35 @@ public class Clip {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public HashSet<Chunk> getChunks() {
-		return (HashSet<Chunk>) fillChunks.clone();
+	public Set<Chunk> getChunks() {
+		return (Set<Chunk>) ((HashSet<Chunk>) fillChunks).clone();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public HashSet<Chunk> getBorderChunks() {
-		return (HashSet<Chunk>) borderChunks.clone();
+	public Set<Chunk> getBorderChunks() {
+		return (Set<Chunk>) ((HashSet<Chunk>) borderChunks).clone();
 	}
 	
-	public TreeSet<MazePoint> getFilling() {
+	public Set<MazePoint> getFilling() {
 		return fill;
 	}
 
-	public TreeSet<MazePoint> getBorder() {
+	public Set<MazePoint> getBorder() {
 		return border;
 	}
 	
-	public TreeSet<MazePoint> getFilling(Chunk chunk) {
-		return getPointsInChunk(fill, chunk);
+	public Set<MazePoint> getFilling(Chunk chunk) {
+		return getPointsInChunk((TreeSet<MazePoint>) fill, chunk);
 	}
 	
-	public TreeSet<MazePoint> getBorder(Chunk chunk) {
-		return getPointsInChunk(border, chunk);
+	public Set<MazePoint> getBorder(Chunk chunk) {
+		return getPointsInChunk((TreeSet<MazePoint>) border, chunk);
 	}
 	
 	public boolean addFilling(MazePoint point) {
 		
-		if (getWorld() != point.getWorld()) {
+		if(getWorld() != point.getWorld())
 			return false;
-		}
 		
 		if(fill.add(point)) {
 			
@@ -86,9 +86,8 @@ public class Clip {
 		
 		if(fill.remove(point)) {
 			
-			if(getFilling(point.getChunk()).isEmpty()) {
+			if(getFilling(point.getChunk()).isEmpty())
 				fillChunks.remove(point.getChunk());
-			}
 			
 			size--;
 			return true;
@@ -99,31 +98,30 @@ public class Clip {
 	
 	public void removeFilling(Collection<MazePoint> points) {
 		
-		HashSet<Chunk> chunks = new HashSet<>();
+		HashSet<Chunk> changedChunks = new HashSet<>();
 		
 		for(MazePoint point : points) {	
 
 			if(fill.remove(point)) {
-				chunks.add(point.getChunk());
+				changedChunks.add(point.getChunk());
 				size--;
 			}
 		}
 		
-		for(Chunk chunk : chunks) {
+		for(Chunk chunk : changedChunks) {
 			
-			if(getFilling(chunk).isEmpty()) {
+			if(getFilling(chunk).isEmpty())
 				fillChunks.remove(chunk);
-			}
 		}
 	}
 	
 	public boolean addBorder(MazePoint point) {
 
-		if (getWorld() != point.getWorld()) {
+		if(getWorld() != point.getWorld())
 			return false;
-		}
 		
 		if(border.add(point)) {
+
 			borderChunks.add(point.getChunk());
 			borderSize++;
 			return true;
@@ -134,58 +132,52 @@ public class Clip {
 	
 	public boolean removeBorder(MazePoint point) {
 		
-		if(border.remove(point)) {
+		if(!border.remove(point))
+			return false;
 			
-			if(getBorder(point.getChunk()).isEmpty()) {
-				borderChunks.remove(point.getChunk());
-			}
+		if(getBorder(point.getChunk()).isEmpty())
+			borderChunks.remove(point.getChunk());
 
-			borderSize--;
-			return true;
-		}
-		
-		return false;
+		borderSize--;
+		return true;
 	}
 	
 	public void removeBorder(Collection<MazePoint> points) {
 		
-		HashSet<Chunk> chunks = new HashSet<>();
+		HashSet<Chunk> changedChunks = new HashSet<>();
 		
 		for(MazePoint point : points) {	
 
 			if(border.remove(point)) {
-				chunks.add(point.getChunk());
+				changedChunks.add(point.getChunk());
 				size--;
 			}
 		}
 		
-		for(Chunk chunk : chunks) {
+		for(Chunk chunk : changedChunks) {
 			
-			if(getBorder(chunk).isEmpty()) {
+			if(getBorder(chunk).isEmpty())
 				fillChunks.remove(chunk);
-			}
 		}
 	}
 
 	public boolean contains(MazePoint point) {
 
-		if(point.getWorld() != getWorld()) {
+		if(point.getWorld() != getWorld())
 			return false;
-		}
 
 		return fill.contains(point);
 	}
 	
 	public boolean borderContains(MazePoint point) {
 
-		if(point.getWorld() != getWorld()) {
+		if(point.getWorld() != getWorld())
 			return false;
-		}
 
 		return border.contains(point);
 	}
 	
-	private TreeSet<MazePoint> getPointsInChunk(TreeSet<MazePoint> set, Chunk chunk) {
+	private Set<MazePoint> getPointsInChunk(TreeSet<MazePoint> set, Chunk chunk) {
 		
 		int chunkX = chunk.getX() * 16,
 			chunkZ = chunk.getZ() * 16,

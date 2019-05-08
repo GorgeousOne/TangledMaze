@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -16,7 +17,13 @@ import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class BlockGenerator {
+	
+	private Random rnd;
 
+	public BlockGenerator() {
+		rnd = new Random();
+	}
+			
 	public void generateBlocks(BuildMap buildMap) {
 		
 		cullTrees(buildMap);
@@ -26,9 +33,69 @@ public class BlockGenerator {
 			
 			@Override
 			public void run() {
-				updateBlocksContinuously(getMazeWallBlocks(buildMap));
+				listMazeWallBlocks(buildMap);
 			}
 		}.runTask(TangledMain.getInstance());
+	}
+	
+	private void listMazeWallBlocks(BuildMap buildMap) {
+		
+		Maze maze = buildMap.getMaze();
+
+		List<Material> wallMaterials = maze.getWallMaterials();
+		List<BlockState> blocksToUpdate = new ArrayList<>();
+		List<BlockState> backupBlocks = new ArrayList<>();
+
+		for(int x = buildMap.getMinX(); x < buildMap.getMaxX(); x++) {
+			for(int z = buildMap.getMinZ(); z < buildMap.getMaxZ(); z++) {
+				
+				if(buildMap.getType(x, z) != MazeFillType.WALL)
+					continue;
+				
+				for(int height = buildMap.getGroundHeight(x, z) + 1; height <= buildMap.getMazeHeight(x, z); height++) {
+					
+					Block block = new Location(maze.getWorld(), x, height, z).getBlock();
+					
+					if(Utils.canBeOverbuild(block.getType())) {
+						
+						Material rndMaterial = wallMaterials.get(rnd.nextInt(wallMaterials.size()));
+						
+						BlockState blockToUpdate = block.getState();
+						blockToUpdate.setType(rndMaterial);
+						
+						blocksToUpdate.add(blockToUpdate);
+						backupBlocks.add(block.getState());
+					}
+				}
+			}
+		}
+		
+		maze.setBuiltBlocks(backupBlocks);
+		updateBlocksContinuously(blocksToUpdate);
+	}
+
+	public void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
+		
+		BukkitRunnable builder = new BukkitRunnable() {
+			@Override
+			public void run() {
+				
+				long timer = System.currentTimeMillis();
+				
+				while(!blocksToUpdate.isEmpty()) {
+					
+					blocksToUpdate.get(0).update(true, false);
+					blocksToUpdate.remove(0);
+					
+					if(System.currentTimeMillis() - timer >= 49)
+						return;
+				}
+				
+				this.cancel();
+			}
+		};
+		
+		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 	
 	//lowers wall heights at points where spikes of wall would stick out of the maze
@@ -90,64 +157,6 @@ public class BlockGenerator {
 					buildMap.setMazeHeight(x, z, maxNeighborsGroundHeight + wallHeight);
 			}
 		}
-	}
-	
-	private void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
-		
-		BukkitRunnable builder = new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				
-				long timer = System.currentTimeMillis();
-				
-				while(!blocksToUpdate.isEmpty()) {
-					
-					blocksToUpdate.get(0).update(true, false);
-					blocksToUpdate.remove(0);
-					
-					if(System.currentTimeMillis() - timer >= 49)
-						return;
-				}
-				
-				this.cancel();
-			}
-		};
-		
-		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
-	}
-	
-	private List<BlockState> getMazeWallBlocks(BuildMap buildMap) {
-		
-		Maze maze = buildMap.getMaze();
-		Random rnd = new Random();
-		
-		List<Material> wallMaterials = maze.getWallMaterials();
-		List<BlockState> blocksToUpdate = new ArrayList<>();
-		
-		for(int x = buildMap.getMinX(); x < buildMap.getMaxX(); x++) {
-			for(int z = buildMap.getMinZ(); z < buildMap.getMaxZ(); z++) {
-				
-				if(buildMap.getType(x, z) != MazeFillType.WALL)
-					continue;
-				
-				for(int height = buildMap.getGroundHeight(x, z) + 1; height <= buildMap.getMazeHeight(x, z); height++) {
-					
-					BlockState block = new Location(maze.getWorld(), x, height, z).getBlock().getState();
-					
-					if(!Utils.canBeOverbuild(block.getType())) {
-						continue;
-					}
-					
-					Material rndMaterial = wallMaterials.get(rnd.nextInt(wallMaterials.size()));
-					
-					block.setType(rndMaterial);
-					blocksToUpdate.add(block);
-				}
-			}
-		}
-		
-		return blocksToUpdate;
 	}
 	
 	private Vec2 getHeighestNeighbor(int x, int z, BuildMap buildMap, MazeFillType limitation) {

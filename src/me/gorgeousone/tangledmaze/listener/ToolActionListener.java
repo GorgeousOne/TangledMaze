@@ -16,6 +16,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -67,17 +68,23 @@ public class ToolActionListener implements Listener{
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSlotSwitch(PlayerItemHeldEvent e) {
 		
-		Player p = e.getPlayer();
-		ItemStack newItem = p.getInventory().getItem(e.getNewSlot());
+		Player player = e.getPlayer();
 		
-		if(Utils.isMazeWand(newItem)) {
+		if(!player.hasPermission(Constants.BUILD_PERM))
+			return;
+		
+		ItemStack newItem = player.getInventory().getItem(e.getNewSlot());
+		
+		if(!Utils.isMazeWand(newItem))
+			return;
 				
-			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
-				Renderer.showMaze(MazeHandler.getMaze(p));
+		Maze maze = MazeHandler.getMaze(player);
 			
-			if(ToolHandler.hasClipboard(p) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(p)))
-				Renderer.showClipboard(ToolHandler.getClipboard(p));
-		}
+		if(!maze.isConstructed() || !Renderer.isMazeVisible(maze))
+			Renderer.showMaze(MazeHandler.getMaze(player));
+		
+		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
+			Renderer.showClipboard(ToolHandler.getClipboard(player));
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

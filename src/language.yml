@@ -11,8 +11,9 @@ help-pages:
     add-cut-command: 'Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. In areas cut off from the main part of your maze with the diamond exit there won''t be generated any paths (just don''t).'
     undo-command: Undoes the last change to your maze like adding or cutting a clipboard away or usage of the brush tool.
     pathwidth-wallwidth-wallheight-command: These three commands are for changing the width of maze paths and walls as well as the wall height for the generation in the end.
-    build-command: 'Builds your maze out of a mixture of blocks you enter. Type in the name of each block you want your maze to be built of (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz) \nA constructed maze cannot be edited any further.'
+    build-command: 'Builds your maze out of a mixture of blocks you enter. Type in the name of each block you want your maze to be built of (and &2":" &a+ &2a number &aif necessary), for example:\n &2"/maze build quartz_block:1" &a(that''s chiseled quartz).'
     teleport-command: Teleports you back to your floor plan (if you have the permission for that).
+    unbuild-command: Unbuilds your last generated maze. Then you can also change it further and rebuild.
 messages:
     plugin-reloaded: Reloaded Tangled Maze.
     tool-switched: Switched tool to %tool%.

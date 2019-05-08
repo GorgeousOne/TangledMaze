@@ -74,7 +74,8 @@ public class TangledMain extends JavaPlugin {
 				new SetWallWidth(),
 				new SetWallHeight(),
 				new TpToMaze(),
-				new BuildMaze()));
+				new BuildMaze(),
+				new UnbuildMaze()));
 		
 		commandHandler = new MazeCommandHandler();
 

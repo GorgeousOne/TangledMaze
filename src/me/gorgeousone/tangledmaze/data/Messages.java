@@ -18,6 +18,7 @@ public class Messages {
 			COMMAND_DIMENSIONS,
 			COMMAND_BUILD,
 			COMMAND_TELEPORT,
+			COMMAND_UNBUILD,
 			TOOL_RECT,
 			TOOL_CIRCLE,
 			TOOL_BRUSH,
@@ -38,7 +39,8 @@ public class Messages {
 			ERROR_NO_MAZE_EXIT_SET,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
-			ERROR_NUMBER_NOT_VALID;
+			ERROR_NUMBER_NOT_VALID,
+			ERROR_MAZE_NOT_BUILT;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -54,6 +56,7 @@ public class Messages {
 		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze pathwidth / wallwidth / wallheight <integer>\n" + ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
 		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
 		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
+		COMMAND_UNBUILD    = new TextMessage(ChatColor.DARK_GREEN + "/maze unbuild\n" + ChatColor.GREEN + helpPages.getString("unbuild-command"), true);
 
 		ConfigurationSection tools = helpPages.getConfigurationSection("tools");
 
@@ -128,5 +131,6 @@ public class Messages {
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED.setText(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE.setText(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
 		ERROR_NUMBER_NOT_VALID.setText(ChatColor.RED + errors.getString("number-not-valid"), false);
+		ERROR_MAZE_NOT_BUILT.setText(ChatColor.RED + errors.getString("maze-not-built"), false);
 	}
 }

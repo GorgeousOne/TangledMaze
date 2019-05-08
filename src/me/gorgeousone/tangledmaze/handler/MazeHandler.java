@@ -42,15 +42,25 @@ public abstract class MazeHandler {
 		mazes.remove(player.getUniqueId());
 	}
 	
-	public static void buildMaze(Maze maze, MazeGenerator generator) {
+	public static void buildMaze(Maze maze, PathGenerator pathGenerator, BlockGenerator blockGenerator) {
 		Renderer.hideMaze(maze);
 		
-		BukkitRunnable async = new BukkitRunnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
-				generator.generateMaze(maze);
+				
+				BuildMap buildMap = new BuildMap(maze);
+				
+				pathGenerator.generatePaths(buildMap);
+				blockGenerator.generateBlocks(buildMap);
 			}
-		};
-		async.runTaskAsynchronously(TangledMain.getInstance());
+		}.runTaskAsynchronously(TangledMain.getInstance());
+	}
+	
+	public static void unbuilMaze(Maze maze, BlockGenerator blockGenerator) {
+		
+		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks());
+		maze.setBuiltBlocks(null);
+		Renderer.showMaze(maze);
 	}
 }

@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -27,9 +28,12 @@ public class Maze {
 	private Clip clip;
 	private List<MazePoint> exits;
 	private List<Material> wallMaterials;
+	private List<BlockState> builtBlocks;
 	
 	private Vector dimensions;
-	private boolean isStarted;
+	private boolean isStarted, isConstructed;
+	
+	private IllegalStateException notAlterableException = new IllegalStateException("The maze cannot be altered when it is constructed");
 	
 	public Maze(World world) {
 		
@@ -57,52 +61,12 @@ public class Maze {
 		return isStarted;
 	}
 	
+	public boolean isConstructed() {
+		return isConstructed;
+	}
+	
 	public Clip getClip() {
 		return clip;
-	}
-	
-	public List<MazePoint> getExits() {
-		return exits;
-	}
-	
-	public MazePoint getMainExit() {
-		return exits.isEmpty() ? null : exits.get(exits.size()-1);
-	}
-	
-	public ActionHistory getActionHistory() {
-		return history;
-	}
-	
-	public int getPathWidth() {
-		return dimensions.getBlockX();
-	}
-	
-	public int getWallHeight() {
-		return dimensions.getBlockY();
-	}
-	
-	public int getWallWidth() {
-		return dimensions.getBlockZ();
-	}
-	
-	public List<Material> getWallMaterials() {
-		return wallMaterials;
-	}
-	
-	public void setPathWidth(int pathWidth) {
-		dimensions.setX(Math.max(1, pathWidth));
-	}
-	
-	public void setWallHeight(int wallHeight) {
-		dimensions.setY(Math.max(1, wallHeight));
-	}
-	
-	public void setWallWidth(int wallWidth) {
-		dimensions.setZ(Math.max(1, wallWidth));
-	}
-	
-	public void setWallComposition(List<Material> composition) {
-		wallMaterials = composition;
 	}
 	
 	public void setClip(Clip clip) {
@@ -115,32 +79,79 @@ public class Maze {
 		Renderer.showMaze(this);
 	}
 	
-	public void reset() {
-		
-		Renderer.hideMaze(this);
+	public List<MazePoint> getExits() {
+		return exits;
+	}
+	
+	public MazePoint getMainExit() {
+		return getExits().isEmpty() ? null : getExits().get(getExits().size()-1);
+	}
+	
+	public ActionHistory getActionHistory() {
+		return history;
+	}
+	
+	public int getPathWidth() {
+		return dimensions.getBlockX();
+	}
+	
+	public void setPathWidth(int pathWidth) {
+		dimensions.setX(Math.max(1, pathWidth));
+	}
 
-		clip = new Clip(getWorld());
-		exits.clear();
-		history.clear();
-		isStarted = false; 
+	public int getWallHeight() {
+		return dimensions.getBlockY();
+	}
+	
+	public void setWallHeight(int wallHeight) {
+		dimensions.setY(Math.max(1, wallHeight));
+	}
+	
+	public int getWallWidth() {
+		return dimensions.getBlockZ();
+	}
+	
+	public void setWallWidth(int wallWidth) {
+		dimensions.setZ(Math.max(1, wallWidth));
+	}
+	
+	public List<Material> getWallMaterials() {
+		return wallMaterials;
+	}
+	
+	public void setWallMaterials(List<Material> composition) {
+		wallMaterials = composition;
+	}
+	
+	public List<BlockState> getBuiltBlocks() {
+		return builtBlocks;
+	}
+	
+	public void setBuiltBlocks(List<BlockState> builtBlocks) {
+		
+		this.builtBlocks = builtBlocks;
+		
+		if(builtBlocks != null)
+			isConstructed = true;
+		else
+			isConstructed = false;
 	}
 	
 	public boolean exitsContain(Location loc) {
-		return exits.contains(loc);
+		return getExits().contains(loc);
 	}
 	
 	public boolean canBeExit(Block block) {
 		
 		MazePoint point = new MazePoint(block.getLocation());
 		
-		if(!isHighlighted(point.getBlock())) {
+		if(!isBorderBlock(point.getBlock()))
 			return false;
-		}
 		
 		return sealsMaze(point, new ClipAction(), Directions.cardinalValues());
 	}
 	
-	public boolean isHighlighted(Block block) {
+	public boolean isBorderBlock(Block block) {
 		
 		MazePoint point = new MazePoint(block.getLocation());
 		
@@ -161,7 +172,7 @@ public class Maze {
 		
 		MazePoint point = new MazePoint(block.getLocation());
 		
-		for(MazePoint exit : exits) {
+		for(MazePoint exit : getExits()) {
 			if(point.equals(exit) && point.getY() == exit.getY())
 				return true;
 		}
@@ -171,10 +182,10 @@ public class Maze {
 	
 	public void toggleExit(Block block) {
 		
-		if(!isHighlighted(block)) {
+		if(!isBorderBlock(block)) {
 			return;
 		}
-
+		
 		MazePoint newExit = new MazePoint(block.getLocation());
 		
 		if(!canBeExit(block)) {
@@ -184,43 +195,27 @@ public class Maze {
 		
 		if(isExit(block)) {
 			
-			exits.remove(newExit);
+			getExits().remove(newExit);
 			Renderer.sendBlockDelayed(getPlayer(), newExit, Constants.MAZE_BORDER);
 
-			if(!exits.isEmpty()) {
-				Renderer.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_MAIN_EXIT);
-			}
+			if(!getExits().isEmpty())
+				Renderer.sendBlockDelayed(getPlayer(), getExits().get(getExits().size()-1), Constants.MAZE_MAIN_EXIT);
 			
 		}else {
 
-			if(!exits.isEmpty()) {
-				Renderer.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_EXIT);
-			}
+			if(!getExits().isEmpty())
+				Renderer.sendBlockDelayed(getPlayer(), getExits().get(getExits().size()-1), Constants.MAZE_EXIT);
 			
-			exits.add(newExit);
+			getExits().add(newExit);
+			
 			Renderer.sendBlockDelayed(getPlayer(), newExit, Constants.MAZE_MAIN_EXIT);
 		}
 	}
 
-	//TODO move updateHeight() from Maze and ClippingTool to Clip class
-	public Block updateHeight(Block block) {
-		
-		MazePoint updated = Utils.nearestSurface(block.getLocation());
-		
-		if(getClip().removeFilling(updated)) {
-			getClip().addFilling(updated);
-		
-		}else
-			return null;
-		
-		if(getClip().removeBorder(updated)) {
-			getClip().addBorder(updated);
-		}
-
-		return updated.getBlock();
-	}
-	
 	public void processAction(ClipAction action, boolean saveToHistory) {
+		
+		if(isConstructed())
+			throw notAlterableException;
 		
 		getClip().removeFilling(action.getRemovedFill());
 		getClip().removeBorder(action.getRemovedBorder());
@@ -232,7 +227,7 @@ public class Maze {
 			getClip().addBorder(point);
 		
 		if(saveToHistory)
-			history.pushAction(action);
+			getActionHistory().pushAction(action);
 
 		Renderer.showMazeAction(this, action);
 	}
@@ -373,7 +368,7 @@ public class Maze {
 
 	public ClipAction getExpansion(Block block) {
 		
-		if(!isHighlighted(block))
+		if(!isBorderBlock(block))
 			return null;
 		
 		MazePoint point = new MazePoint(block.getLocation());
@@ -416,7 +411,7 @@ public class Maze {
 	
 	public ClipAction getErasure(Block block) {
 		
-		if(!isHighlighted(block))
+		if(!isBorderBlock(block))
 			return null;
 		
 		MazePoint point = new MazePoint(block.getLocation());
@@ -475,23 +470,60 @@ public class Maze {
 	
 	public boolean sealsMaze(MazePoint point, ClipAction changes, Directions[] directions) {
 		
-		boolean
-			touchesFill = false,
-			touchesExternal = false;
+		boolean touchesFill = false;
+		boolean touchesExternal = false;
 		
 		for(Directions dir : directions) {
+			
 			MazePoint neighbor = point.clone().add(dir.toVec3());
-			if(!changes.clipWillContain(clip, neighbor)) {
+			
+			if(!changes.clipWillContain(clip, neighbor))
 				touchesExternal = true;
 
-			}else if(!changes.clipBorderWillContain(clip, neighbor)) {
+			else if(!changes.clipBorderWillContain(clip, neighbor))
 				touchesFill = true;
-			}
 			
-			if(touchesFill && touchesExternal) {
+			if(touchesFill && touchesExternal)
 				return true;
-			}
 		}
 		return false;
+	}
+
+	/* Adapts to potential changes in ground height for every point.
+	 * This only works if border points and filling points are same objects.
+	 */
+	public void updateHeights() {
+		
+		if(isConstructed())
+			throw notAlterableException;
+
+		if(isConstructed())
+			
+		for(MazePoint filling : getClip().getFilling())
+			filling.setY(Utils.nearestSurface(filling).getY());
+		
+		if(Renderer.isMazeVisible(this)) {
+			
+			Renderer.hideMaze(this);
+			Renderer.showMaze(this);
+		}
+	}
+	
+	public Block updateHeight(Block block) {
+
+		if(isConstructed())
+			throw notAlterableException;
+		
+		MazePoint updatedBlock = Utils.nearestSurface(block.getLocation());
+		
+		if(!getClip().removeFilling(updatedBlock))
+			return block;
+		
+		getClip().addFilling(updatedBlock);
+			
+		if(getClip().removeBorder(updatedBlock))
+			getClip().addBorder(updatedBlock);
+
+		return updatedBlock.getBlock();
 	}
 }

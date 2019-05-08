@@ -150,11 +150,11 @@ public class ClippingTool extends Tool {
 		return vertices;
 	}
 	
-	public boolean isVertex(Block b) {
+	public boolean isVertex(Block block) {
 		
 		for(MazePoint vertex : vertices) {
 			
-			if(vertex.equals(b.getLocation())) {
+			if(vertex.equals(block.getLocation())) {
 				return true;
 			}
 		}
@@ -162,26 +162,26 @@ public class ClippingTool extends Tool {
 		return false;
 	}
 	
-	public int indexOfVertex(Block b) {
+	public int indexOfVertex(Block block) {
 		
-		if(!isComplete() || !b.getWorld().equals(getWorld()))
+		if(!isComplete() || !block.getWorld().equals(getWorld()))
 			return -1;
 		
 		for(Location vertex : vertices) {
-			if(b.getX() == vertex.getX() &&
-			   b.getZ() == vertex.getZ())
+			if(block.getX() == vertex.getX() &&
+			   block.getZ() == vertex.getZ())
 				return vertices.indexOf(vertex);
 		}
 		
 		return -1;
 	}
 
-	public boolean isHighlighted(Block b) {
+	public boolean isBorderBlock(Block block) {
 		
-		if(!isComplete() ||!b.getWorld().equals(getWorld()))
+		if(!isComplete() ||!block.getWorld().equals(getWorld()))
 			return false;
 		
-		MazePoint point = new MazePoint(b.getLocation());
+		MazePoint point = new MazePoint(block.getLocation());
 		
 		if(!getClip().borderContains(point))
 			return false;
@@ -196,18 +196,16 @@ public class ClippingTool extends Tool {
 	
 	public Block updateHeight(Block block) {
 		
-		MazePoint point = Utils.nearestSurface(block.getLocation());
+		MazePoint updatedPoint = Utils.nearestSurface(block.getLocation());
 		
-		if(getClip().removeFilling(point)) {
-			getClip().addFilling(point);
+		if(!getClip().removeFilling(updatedPoint))
+			return block;
 		
-		}else
-			return null;
+		getClip().addFilling(updatedPoint);
 		
-		if(getClip().removeBorder(point)) {
-			getClip().addBorder(point);
-		}
+		if(getClip().removeBorder(updatedPoint))
+			getClip().addBorder(updatedPoint);
 
-		return point.getBlock();
+		return updatedPoint.getBlock();
 	}
 }

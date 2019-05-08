@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 
@@ -21,7 +22,7 @@ public class DiscardMaze extends MazeCommand {
 		
 		Player player = (Player) sender;
 		
-		MazeHandler.getMaze(player).reset();
+		MazeHandler.setMaze(player, new Maze(player));
 		ToolHandler.resetToDefaultTool(player);
 		return true;
 	}

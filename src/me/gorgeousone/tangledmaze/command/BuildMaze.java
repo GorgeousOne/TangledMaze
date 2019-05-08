@@ -3,7 +3,8 @@ package me.gorgeousone.tangledmaze.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.gorgeousone.tangledmaze.generation.MazeGenerator;
+import me.gorgeousone.tangledmaze.generation.BlockGenerator;
+import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -18,20 +19,22 @@ import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildMaze extends MazeCommand {
 
-	private MazeGenerator mazeGenerator;
+	private PathGenerator pathGenerator;
+	private BlockGenerator blockGenerator;
 
 	public BuildMaze() {
 		
 		super("build", "/tangledmaze build <block> ...", 1, true, null);
 		
-		mazeGenerator = new MazeGenerator();
+		pathGenerator = new PathGenerator();
+		blockGenerator = new BlockGenerator();
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
 		if(!super.execute(sender, arguments)) {
-			return true;
+			return false;
 		}
 		
 		Player player = (Player) sender;
@@ -68,13 +71,12 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		maze.setWallComposition(wallMaterials);
+		maze.setWallMaterials(wallMaterials);
 
-		MazeHandler.buildMaze(maze, mazeGenerator);
+		MazeHandler.buildMaze(maze, pathGenerator, blockGenerator);
 		Messages.MESSAGE_MAZE_BUILDING_STARTED.send(player);
 
 		ToolHandler.resetToDefaultTool(player);
-		MazeHandler.setMaze(player, new Maze(player));
 		return true;
 	}
 	
