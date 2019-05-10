@@ -21,7 +21,7 @@ public enum Directions {
 	}
 	
 	public int getSign() {
-		return facing.getZ() == 0 ? facing.getIntX() : facing.getIntZ();
+		return facing.getZ() == 0 ? facing.getX() : facing.getZ();
 	}
 	
 	public boolean isXAligned() {

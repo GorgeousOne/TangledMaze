@@ -59,12 +59,12 @@ public abstract class MazeCommand {
 	
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(requieresPlayer && !(sender instanceof Player)) {
+		if(requieresPlayer && !(sender instanceof Player))
 			return false;
-		}
 		
 		if(extraPermission != null && !sender.hasPermission(extraPermission)) {
 			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
+			return false;
 		}
 		
 		if(arguments.length < argumentCount) {

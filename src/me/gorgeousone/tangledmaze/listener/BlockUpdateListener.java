@@ -133,25 +133,25 @@ public class BlockUpdateListener implements Listener {
 
 				for(Maze maze : affectedMazes) {
 
-					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.isBorderBlock(changedBlock))
+					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
 						Renderer.hideMaze(maze);
 
 					Block updatedBlock = maze.updateHeight(changedBlock);
 					
-					//TODO less important - only update visibility of changed block
-					if(!hideAffectedElements && updatedBlock != null)
-						Renderer.updateChunk(updatedBlock.getChunk());
+//					//TODO important - only update visibility of changed block
+//					if(!hideAffectedElements && updatedBlock != null)
+//						Renderer.updateChunk(updatedBlock.getChunk());
 				}
 
 				for(ClippingTool clipboard : affectedClipboards) {
 
-					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.isBorderBlock(changedBlock))
+					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(changedBlock))
 						Renderer.hideClipboard(clipboard, true);
 
 					Block updatedBlock = clipboard.updateHeight(changedBlock);
 
-					if(!hideAffectedElements && updatedBlock != null)
-						Renderer.updateChunk(updatedBlock.getChunk());
+//					if(!hideAffectedElements && updatedBlock != null)
+//						Renderer.updateChunk(updatedBlock.getChunk());
 				}
 			}
 		}.runTask(TangledMain.getInstance());

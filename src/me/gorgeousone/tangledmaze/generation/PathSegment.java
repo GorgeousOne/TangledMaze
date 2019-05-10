@@ -42,8 +42,8 @@ public class PathSegment {
 		Vec2 min = start.clone().add(relativeMin);
 		Vec2 max = min.clone().add(size);
 
-		for(int x = min.getIntX(); x < max.getIntX(); x++)
-			for(int z = min.getIntZ(); z < max.getIntZ(); z++)
+		for(int x = min.getX(); x < max.getX(); x++)
+			for(int z = min.getZ(); z < max.getZ(); z++)
 				fill.add(new Vec2(x, z));
 		
 		return fill;

@@ -14,6 +14,7 @@ import me.gorgeousone.tangledmaze.data.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +57,8 @@ public abstract class Utils {
 		int rndIndex = (int) (Math.random() * Constants.MAZE_WAND_ENCHANTS.length);
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}
-
+	
+	//use methos mat.is
 	public static boolean isLikeGround(Material mat) {
 		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
 	}
@@ -65,9 +67,9 @@ public abstract class Utils {
 		return !mat.isSolid() || Constants.REPLACEABLE_SOLIDS.contains(mat);
 	}
 
-	public static MazePoint nearestSurface(Location loc) {
-	
-		MazePoint iter = new MazePoint(loc);
+	public static Location nearestSurface(Location loc) {
+		
+		Location iter = loc.clone();
 		
 		if(isLikeGround(iter.getBlock().getType())) {
 		
@@ -91,21 +93,52 @@ public abstract class Utils {
 			}
 		}
 		
-		return new MazePoint(loc);
+		return loc;
+	}
+	
+	public static int nearestSurfaceY(Vec2 loc, int height, World world) {
+		
+		Location iter = new Location(world, loc.getX(), height, loc.getZ());
+		
+		if(isLikeGround(iter.getBlock().getType())) {
+			
+			while(iter.getY() <= 255) {
+				
+				iter.add(0, 1, 0);
+				
+				if(!isLikeGround(iter.getBlock().getType())) {
+					iter.add(0, -1, 0);
+					return iter.getBlockY();
+				}
+			}
+		
+		}else {
+			
+			while(iter.getY() >= 0) {
+				
+				iter.add(0, -1, 0);
+				
+				if(isLikeGround(iter.getBlock().getType())) {
+					return iter.getBlockY();
+				}
+			}
+		}
+		
+		return height;
 	}
 	
 	public static int limitInt(int value, int min, int max) {
 		return Math.min(max, Math.max(min, value));
 	}
 	
-	public static int getMaxHeight(ArrayList<MazePoint> points) {
+	public static int getMaxHeight(ArrayList<Location> locs) {
 		
 		int min = 0;
 		
-		for(MazePoint point : points) {
-			if(point.getBlockY() > min) {
+		for(Location point : locs) {
+			
+			if(point.getBlockY() > min)
 				min = point.getBlockY();
-			}
 		}
 		
 		return min;

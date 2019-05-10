@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
@@ -19,9 +20,8 @@ public class AddToMaze extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
 		Player player = (Player) sender;
 		
@@ -47,16 +47,17 @@ public class AddToMaze extends MazeCommand {
 		Maze maze = MazeHandler.getMaze(player);
 		ClipAction action = maze.getAddition(clipboard.getClip());
 
-		if(action == null) {
+		if(action == null)
 			return false;
-		}
 		
 		if(action.getAddedFill().size() == clipboard.getClip().size()) {
 			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
 			return false;
 		}
-
+		
+		Renderer.hideClipboard(clipboard, true);
 		clipboard.reset();
+		
 		maze.processAction(action, true);
 		return true;
 	}

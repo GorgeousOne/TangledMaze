@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
@@ -98,7 +99,11 @@ public class SelectTool extends MazeCommand {
 		}
 		
 		if(ToolHandler.hasClipboard(player)) {
-			ToolHandler.getClipboard(player).reset();
+			
+			ClippingTool clipboard = ToolHandler.getClipboard(player);
+			
+			Renderer.hideClipboard(clipboard, false);
+			clipboard.reset();
 		}
 		
 		ToolHandler.setTool(player, type);

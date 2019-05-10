@@ -1,64 +1,62 @@
 package me.gorgeousone.tangledmaze.util;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-public class Vec2 {
+public class Vec2 implements Comparable<Vec2>{
 	
-	private float x, z;
+	private int x, z;
 	
 	public Vec2() {
 		this.x = 0;
 		this.z = 0;
 	}
 	
-	public Vec2(float x, float z) {
+	public Vec2(int x, int z) {
 		this.x = x;
 		this.z = z;
 	}
-	
+
 	public Vec2(Location loc) {
 		this.x = loc.getBlockX();
 		this.z = loc.getBlockZ();
 	}
 	
-	public float getX() {
+	public Vec2(Block block) {
+		this.x = block.getX();
+		this.z = block.getZ();
+	}
+	
+	public int getX() {
 		return x;
 	}
 	
-	public float getZ() {
+	public int getZ() {
 		return z;
 	}
 	
-	public int getIntX() {
-		return (int) x;
+	public int length() {
+		return (int) Math.sqrt(x*x + z*z);
 	}
 	
-	public int getIntZ() {
-		return (int) z;
-	}
-	
-	public float length() {
-		return (float) Math.sqrt(x*x + z*z);
-	}
-	
-	public Vec2 set(float x, float z) {
+	public Vec2 set(int x, int z) {
 		this.x = x;
 		this.z = z;
 		return this;
 	}
 	
-	public Vec2 setX(float x) {
+	public Vec2 setX(int x) {
 		this.x = x;
 		return this;
 	}
 	
-	public Vec2 setZ(float z) {
+	public Vec2 setZ(int z) {
 		this.z = z;
 		return this;
 	}
 	
-	public Vec2 add(float dx, float dz) {
+	public Vec2 add(int dx, int dz) {
 		x += dx;
 		z += dz;
 		return this;
@@ -76,20 +74,9 @@ public class Vec2 {
 		return this;
 	}
 	
-	public Vec2 mult(float i) {
+	public Vec2 mult(int i) {
 		x *= i;
 		z *= i;
-		return this;
-	}
-	
-	public Vec2 cross(Vec2 vec2) {
-		x *= vec2.z;
-		z *= vec2.x;
-		return this;
-	}
-	
-	public Vec2 normalize() {
-		mult(1f / length());
 		return this;
 	}
 	
@@ -116,9 +103,27 @@ public class Vec2 {
 		
 		int hash = 3;
 		
-	    hash = 19 * hash + (getIntX() ^ getIntX() >>> 32);
-	    hash = 19 * hash + (getIntZ() ^ getIntZ() >>> 32);
+	    hash = 19 * hash + (getX() ^ getX() >>> 32);
+	    hash = 19 * hash + (getZ() ^ getZ() >>> 32);
 	    
 	    return hash;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		
+		if(obj == null || obj.getClass() != this.getClass())
+			return false;
+		
+		Vec2 otherVec = (Vec2) obj;
+		
+		return otherVec.getX() == getX() && otherVec.getZ() == getZ();
+	}
+	
+	@Override
+	public int compareTo(Vec2 vec) {
+
+		int deltaX = Double.compare(getX(), vec.getX());
+		return deltaX != 0 ? deltaX : Double.compare(getZ(), vec.getZ());
 	}
 }

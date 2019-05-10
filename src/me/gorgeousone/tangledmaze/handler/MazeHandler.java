@@ -61,6 +61,6 @@ public abstract class MazeHandler {
 		
 		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks());
 		maze.setBuiltBlocks(null);
-		Renderer.showMaze(maze);
+		Renderer.displayMaze(maze);
 	}
 }

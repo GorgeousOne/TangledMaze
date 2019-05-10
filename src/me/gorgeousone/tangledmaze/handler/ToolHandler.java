@@ -44,9 +44,14 @@ public abstract class ToolHandler {
 	public static void resetToDefaultTool(Player player) {
 		
 		if(hasClipboard(player)) {
-
-			if(getClipboard(player).isStarted())
-				getClipboard(player).reset();
+			
+			ClippingTool clipboard = getClipboard(player);
+			
+			if(clipboard.isStarted()) {
+				
+				Renderer.hideClipboard(clipboard, true);
+				clipboard.reset();
+			}
 		
 		}else {
 			setTool(player, new ClippingTool(player, Shape.RECT));

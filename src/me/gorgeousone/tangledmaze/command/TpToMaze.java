@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 
 import java.util.TreeSet;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,7 +11,7 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.MazePoint;
+import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class TpToMaze extends MazeCommand {
 	
@@ -35,8 +36,9 @@ public class TpToMaze extends MazeCommand {
 			return false;
 		}
 		
-		MazePoint target = ((TreeSet<MazePoint>) maze.getClip().getBorder()).first();
-
+		Vec2 firstLoc = ((TreeSet<Vec2>) maze.getClip().getBorder()).first();
+		
+		Location target = maze.getClip().getLocation(firstLoc);
 		target.add(0.5, 2, 0.5);
 		target.setDirection(player.getLocation().getDirection());
 		

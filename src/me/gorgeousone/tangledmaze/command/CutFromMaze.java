@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
@@ -51,12 +52,14 @@ public class CutFromMaze extends MazeCommand {
 		ClipAction action = maze.getDeletion(clipboard.getClip());
 		
 		if(action == null) {
-
+			
 			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
 			return false;
 		}
 
+		Renderer.hideClipboard(clipboard, true);
 		clipboard.reset();
+		
 		maze.processAction(action, true);
 		return true;
 	}

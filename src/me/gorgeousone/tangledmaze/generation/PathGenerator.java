@@ -7,7 +7,6 @@ import java.util.Random;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class PathGenerator {
@@ -49,13 +48,16 @@ public class PathGenerator {
 		if(maze.getExits().size() == 1)
 			return;
 
-		int pathGridOffsetX = pathStart.getIntX() % (pathWidth + wallWidth),
-			pathGridOffsetZ = pathStart.getIntZ() % (pathWidth + wallWidth);
+		int pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth),
+			pathGridOffsetZ = pathStart.getZ() % (pathWidth + wallWidth);
 		
-		for(int i = 0; i < maze.getExits().size() - 1; i++) {
+		for(Vec2 exit : maze.getExits()) {
+			
+			if(exit.equals(maze.getMainExit()))
+				continue;
 			
 			PathSegment exitSegment = createExitSegment(
-					maze.getExits().get(i).clone(),
+					exit,
 					buildMap,
 					pathGridOffsetX,
 					pathGridOffsetZ,
@@ -67,13 +69,13 @@ public class PathGenerator {
 	}
 	
 	private PathSegment createEntranceSegment(
-			MazePoint entrance,
+			Vec2 entrance,
 			BuildMap buildMap,
 			int pathWidth,
 			int wallWidth) {
 		
 		PathSegment entranceSegment = new PathSegment(
-			new Vec2(entrance),
+			entrance,
 			wallWidth + pathWidth,
 			pathWidth,
 			getExitFacing(entrance, buildMap),
@@ -83,7 +85,7 @@ public class PathGenerator {
 	}
 	
 	private PathSegment createExitSegment(
-			MazePoint exit,
+			Vec2 exit,
 			BuildMap buildMap,
 			int pathGridOffsetX,
 			int pathGridOffsetZ,
@@ -93,15 +95,15 @@ public class PathGenerator {
 		Directions exitFacing = getExitFacing(exit, buildMap);
 		
 		PathSegment exitSegment = new PathSegment(
-				new Vec2(exit),
+				exit,
 				pathWidth,
 				pathWidth,
 				exitFacing,
 				true);
 		
 		exitSegment.expand(exitFacing.isXAligned() ?
-				getExitDistanceToPathGrid(exitSegment.getStart().getIntX(), exitFacing, pathGridOffsetX, pathWidth, wallWidth) :
-				getExitDistanceToPathGrid(exitSegment.getStart().getIntZ(), exitFacing, pathGridOffsetZ, pathWidth, wallWidth));
+				getExitDistanceToPathGrid(exitSegment.getStart().getX(), exitFacing, pathGridOffsetX, pathWidth, wallWidth) :
+				getExitDistanceToPathGrid(exitSegment.getStart().getZ(), exitFacing, pathGridOffsetZ, pathWidth, wallWidth));
 		
 		return exitSegment;
 	}
@@ -182,8 +184,8 @@ public class PathGenerator {
 		for(Directions dir : shuffledCardinals) {
 
 			Vec2 facing = dir.toVec2();
-			Vec2 start  = new Vec2(currentEnd.getIntX() + facing.getIntX() * pathWidth,
-								  currentEnd.getIntZ() + facing.getIntZ() * pathWidth);
+			Vec2 start  = new Vec2(currentEnd.getX() + facing.getX() * pathWidth,
+								  currentEnd.getZ() + facing.getZ() * pathWidth);
 		
 			PathSegment path = new PathSegment(
 					start,
@@ -200,11 +202,11 @@ public class PathGenerator {
 		return null;
 	}
 	
-	private static Directions getExitFacing(MazePoint exit, BuildMap buildMap) {
+	private static Directions getExitFacing(Vec2 exit, BuildMap buildMap) {
 		
 		for(Directions dir : Directions.cardinalValues()) {
 			
-			Vec2 neighbor = new Vec2(exit).add(dir.toVec2());
+			Vec2 neighbor = exit.clone().add(dir.toVec2());
 			
 			if(!buildMap.contains(neighbor))
 				continue;
@@ -214,7 +216,7 @@ public class PathGenerator {
 				return dir;
 		}
 		
-		throw new IllegalArgumentException("The passed Location cannot be an exit of this maze.");
+		throw new IllegalArgumentException("The passed location cannot be an exit of this maze.");
 	}
 	
 	private boolean segmentIsFree(BuildMap buildMap, PathSegment segment) {

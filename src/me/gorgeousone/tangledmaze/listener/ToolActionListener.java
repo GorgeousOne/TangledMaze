@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.listener;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,6 +21,7 @@ import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
+import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")
@@ -36,44 +37,58 @@ public class ToolActionListener implements Listener{
 	}
 	
 	@EventHandler
-	public void onBlockClick(PlayerInteractEvent e) {
+	public void onBlockClick(PlayerInteractEvent event) {
 		
-		Action action = e.getAction();
+		Action action = event.getAction();
 		
 		if(action != Action.LEFT_CLICK_BLOCK &&
-		   action != Action.RIGHT_CLICK_BLOCK)
+		   action != Action.RIGHT_CLICK_BLOCK ||
+		   event.getHand() != EquipmentSlot.HAND)
 			return;
 		
-		try {
-			if(e.getHand() != EquipmentSlot.HAND)
+		Player player = event.getPlayer();
+		Block block = event.getClickedBlock();
+		
+		if(Utils.isMazeWand(event.getItem())) {
+		
+			event.setCancelled(true);
+			
+			if(!player.hasPermission(Constants.BUILD_PERM)) {
+				destroyMazeWand(player, event.getItem());
 				return;
-		} catch (NoSuchMethodError err) {}
+			}
+			
+			ToolHandler.getTool(player).interact(block, action);
 		
-		if(!Utils.isMazeWand(e.getItem()))
-			return;
-		
-		e.setCancelled(true);
-		
-		Player p = e.getPlayer();
-		ItemStack wand = e.getItem();
-		
-		if(!p.hasPermission(Constants.BUILD_PERM)) {
-			destroyMazeWand(p, wand);
-			return;
+		}else if(action == Action.RIGHT_CLICK_BLOCK && player.hasPermission(Constants.BUILD_PERM)) {
+			
+			
+			if(ToolHandler.hasClipboard(player)) {
+				
+				ClippingTool clipboard = ToolHandler.getClipboard(player);
+				
+				if(Renderer.isClipboardVisible(clipboard) && (clipboard.isVertex(block) || clipboard.getClip().isBorderBlock(block))) {
+					Renderer.redisplayMazeBorder(maze, block);
+					return;
+				}
+			}
+			
+			Maze maze = MazeHandler.getMaze(player);
+
+			if(Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(block))
+				Renderer.redisplayMazeBorder(maze, block);
 		}
-		
-		ToolHandler.getTool(p).interact(e.getClickedBlock(), action);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onSlotSwitch(PlayerItemHeldEvent e) {
+	public void onSlotSwitch(PlayerItemHeldEvent event) {
 		
-		Player player = e.getPlayer();
+		Player player = event.getPlayer();
 		
 		if(!player.hasPermission(Constants.BUILD_PERM))
 			return;
 		
-		ItemStack newItem = player.getInventory().getItem(e.getNewSlot());
+		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
 		
 		if(!Utils.isMazeWand(newItem))
 			return;
@@ -81,30 +96,30 @@ public class ToolActionListener implements Listener{
 		Maze maze = MazeHandler.getMaze(player);
 			
 		if(!maze.isConstructed() || !Renderer.isMazeVisible(maze))
-			Renderer.showMaze(MazeHandler.getMaze(player));
+			Renderer.displayMaze(MazeHandler.getMaze(player));
 		
 		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
-			Renderer.showClipboard(ToolHandler.getClipboard(player));
+			Renderer.displayClipboard(ToolHandler.getClipboard(player));
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPickUp(PlayerPickupItemEvent e) {
 
 		if(Utils.isMazeWand(e.getItem().getItemStack())) {
-			Player p = e.getPlayer();
+			Player player = e.getPlayer();
 			
-			if(MazeHandler.hasMaze(p) && !Renderer.isMazeVisible(MazeHandler.getMaze(p)))
-				Renderer.showMaze(MazeHandler.getMaze(p));
+			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))
+				Renderer.displayMaze(MazeHandler.getMaze(player));
 			
-			if(ToolHandler.hasClipboard(p) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(p)))
-				Renderer.showClipboard(ToolHandler.getClipboard(p));
+			if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
+				Renderer.displayClipboard(ToolHandler.getClipboard(player));
 		}
 	}
 	
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent e) {
-		Renderer.updateChunk(e.getChunk());
-	}
+//	@EventHandler
+//	public void onChunkLoad(ChunkLoadEvent e) {
+//		Renderer.updateChunk(e.getChunk());
+//	}
 	
 	private void destroyMazeWand(Player p, ItemStack wand) {
 		

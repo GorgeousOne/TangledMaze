@@ -3,10 +3,10 @@ package me.gorgeousone.tangledmaze.shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 public interface Shape {
@@ -16,24 +16,25 @@ public interface Shape {
 	
 	public int getVertexCount();
 	
-	public Clip createClip(ArrayList<MazePoint> vertices);
+	public Clip createClip(ArrayList<Location> vertices);
 	
-	public static ArrayList<MazePoint> createRectangularVertices(MazePoint v0, MazePoint v2) {
-		ArrayList<MazePoint> vertices = new ArrayList<>();
-		World w = v0.getWorld();
+	public static ArrayList<Location> createRectangularVertices(Location vertex0, Location vertex2) {
 		
-		int minY = Math.min(v0.getBlockY(), v2.getBlockY());
+		ArrayList<Location> vertices = new ArrayList<>();
+		World world = vertex0.getWorld();
 		
-		int minX = Math.min(v0.getBlockX(), v2.getBlockX()),
-			minZ = Math.min(v0.getBlockZ(), v2.getBlockZ()),
-			maxX = Math.max(v0.getBlockX(), v2.getBlockX()),
-			maxZ = Math.max(v0.getBlockZ(), v2.getBlockZ());
+		int maxY = Math.max(vertex0.getBlockY(), vertex2.getBlockY());
+		
+		int minX = Math.min(vertex0.getBlockX(), vertex2.getBlockX()),
+			minZ = Math.min(vertex0.getBlockZ(), vertex2.getBlockZ()),
+			maxX = Math.max(vertex0.getBlockX(), vertex2.getBlockX()),
+			maxZ = Math.max(vertex0.getBlockZ(), vertex2.getBlockZ());
 		
 		vertices = new ArrayList<>(Arrays.asList(
-				Utils.nearestSurface(new MazePoint(w, minX, minY, minZ)),
-				Utils.nearestSurface(new MazePoint(w, maxX, minY, minZ)),
-				Utils.nearestSurface(new MazePoint(w, maxX, minY, maxZ)),
-				Utils.nearestSurface(new MazePoint(w, minX, minY, maxZ))));
+				Utils.nearestSurface(new Location(world, minX, maxY, minZ)),
+				Utils.nearestSurface(new Location(world, maxX, maxY, minZ)),
+				Utils.nearestSurface(new Location(world, maxX, maxY, maxZ)),
+				Utils.nearestSurface(new Location(world, minX, maxY, maxZ))));
 		
 		return vertices;
 	}
