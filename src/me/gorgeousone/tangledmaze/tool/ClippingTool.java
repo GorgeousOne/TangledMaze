@@ -25,6 +25,7 @@ public class ClippingTool extends Tool {
 	private int indexOfResizedVertex;
 	
 	public ClippingTool(World world, Shape type) {
+		
 		super(null);
 		
 		clip = new Clip(world);
@@ -149,11 +150,14 @@ public class ClippingTool extends Tool {
 	
 	public boolean isVertex(Block block) {
 		
+		if(getWorld() != block.getWorld())
+			return false;
+		
+		Location loc = block.getLocation();
+		
 		for(Location vertex : vertices) {
-			
-			if(vertex.equals(block.getLocation())) {
+			if(vertex.equals(loc))
 				return true;
-			}
 		}
 		
 		return false;
@@ -171,16 +175,25 @@ public class ClippingTool extends Tool {
 		return -1;
 	}
 
-	public Block updateHeight(Block block) {
+	public Location updateHeight(Block block) {
+		
+		Location updatedBlock = null;
+
+		if(isVertex(block)) {
+			
+			updatedBlock = Utils.nearestSurface(block.getLocation());
+			vertices.get(indexOfVertex(block)).setY(updatedBlock.getBlockY());
+		}
 		
 		if(!isComplete())
-			return null;
-		
-		Location updatedBlock = Utils.nearestSurface(block.getLocation());
+			return updatedBlock;
+		else
+			updatedBlock = Utils.nearestSurface(block.getLocation());
+
 		Vec2 blockVec = new Vec2(block);
 		
 		getClip().addFill(blockVec, updatedBlock.getBlockY());
-			
-		return updatedBlock.getBlock();
+		
+		return updatedBlock;
 	}
 }

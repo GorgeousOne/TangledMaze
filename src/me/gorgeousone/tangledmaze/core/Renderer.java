@@ -9,12 +9,9 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -146,12 +143,22 @@ public abstract class Renderer implements Listener {
 			player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
 	}
 	
-	public static void redisplayMazeBorder(Maze maze, Block block) {
+	public static void redisplayClipboardBorder(ClippingTool clipboard, Location loc) {
+		
+		Player player = clipboard.getPlayer();
+		
+		if(clipboard.isVertex(loc.getBlock()))
+			sendBlockDelayed(player, loc, Constants.CLIPBOARD_CORNER);
+		
+		else
+			sendBlockDelayed(player, loc, Constants.CLIPBOARD_BORDER);
+	}
+
+	public static void redisplayMazeBorder(Maze maze, Location loc) {
 		
 		Player player = maze.getPlayer();
 		
-		Vec2 locVec = new Vec2(block);
-		Location loc = block.getLocation();
+		Vec2 locVec = new Vec2(loc);
 		
 		if(locVec.equals(maze.getMainExit()))
 			sendBlockDelayed(player, loc, Constants.MAZE_MAIN_EXIT);

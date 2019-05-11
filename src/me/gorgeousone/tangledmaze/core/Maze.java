@@ -144,10 +144,7 @@ public class Maze {
 		
 		Vec2 blockVec = new Vec2(block);
 		
-		if(getExits().contains(blockVec) && getClip().getHeight(blockVec) == block.getY())
-			return true;
-		
-		return false;
+		return getExits().contains(blockVec) && getClip().getHeight(blockVec) == block.getY();
 	}
 	
 	public boolean canBeExit(Block block) {
@@ -445,13 +442,11 @@ public class Maze {
 		if(isConstructed())
 			throw notAlterableException;
 
-		if(isConstructed())
-			
 		for(Vec2 fill : getClip().getFill())
 			getClip().addFill(fill, Utils.nearestSurfaceY(fill, getClip().getHeight(fill), getWorld()));
 	}
 	
-	public Block updateHeight(Block block) {
+	public Location updateHeight(Block block) {
 		
 		if(isConstructed())
 			throw notAlterableException;
@@ -461,6 +456,6 @@ public class Maze {
 		
 		getClip().addFill(blockVec, updatedBlock.getBlockY());
 			
-		return updatedBlock.getBlock();
+		return updatedBlock;
 	}
 }

@@ -34,7 +34,7 @@ public class SetWallHeight extends MazeCommand {
 			
 		} catch (NumberFormatException ex) {
 			
-			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", wallHeightString));
+			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", wallHeightString));
 			return false;
 		}
 		

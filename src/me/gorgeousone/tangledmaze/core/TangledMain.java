@@ -1,9 +1,6 @@
 package me.gorgeousone.tangledmaze.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
@@ -13,15 +10,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.command.*;
 import me.gorgeousone.tangledmaze.data.*;
-import me.gorgeousone.tangledmaze.handler.MazeCommandHandler;
+import me.gorgeousone.tangledmaze.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.listener.*;
 
 public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
 	
-	private List<MazeCommand> commands;
-	private MazeCommandHandler commandHandler;
+	private CommandHandler commandHandler;
 	
 	@Override
 	public void onEnable() {
@@ -38,7 +34,7 @@ public class TangledMain extends JavaPlugin {
 		registerCommands();
 
 		getCommand("tangledmaze").setExecutor(commandHandler);
-		getCommand("tangledmaze").setTabCompleter(new TangledCompleter(commands));
+		getCommand("tangledmaze").setTabCompleter(new TangledCompleter(commandHandler.getCommands()));
 	}
 	
 	@Override
@@ -61,41 +57,22 @@ public class TangledMain extends JavaPlugin {
 	
 	private void registerCommands() {
 		
-		commands = new ArrayList<>(Arrays.asList(
-				new HelpCommand(),
-				new Reload(),
-				new GiveWand(),
-				new StartMaze(),
-				new DiscardMaze(),
-				new SelectTool(),
-				new AddToMaze(),
-				new CutFromMaze(),
-				new SetPathWidth(),
-				new SetWallWidth(),
-				new SetWallHeight(),
-				new TpToMaze(),
-				new BuildMaze(),
-				new UnbuildMaze()));
-		
-		commandHandler = new MazeCommandHandler();
+		commandHandler = new CommandHandler();
 
-		for(MazeCommand command : commands) {
-			commandHandler.registerCommand(command);
-		}
-		
-//		commandHandler.registerCommand(new Reload());
-//		commandHandler.registerCommand(new HelpCommand());
-//		commandHandler.registerCommand(new GiveWand());
-//		commandHandler.registerCommand(new StartMaze());
-//		commandHandler.registerCommand(new DiscardMaze());
-//		commandHandler.registerCommand(new SelectTool());
-//		commandHandler.registerCommand(new AddToMaze());
-//		commandHandler.registerCommand(new CutFromMaze());
-//		commandHandler.registerCommand(new SetPathWidth());
-//		commandHandler.registerCommand(new SetWallWidth());
-//		commandHandler.registerCommand(new SetWallHeight());
-//		commandHandler.registerCommand(new TpToMaze());
-//		commandHandler.registerCommand(new BuildMaze());
+		commandHandler.registerCommand(new HelpCommand());
+		commandHandler.registerCommand(new Reload());
+		commandHandler.registerCommand(new GiveWand());
+		commandHandler.registerCommand(new StartMaze());
+		commandHandler.registerCommand(new DiscardMaze());
+		commandHandler.registerCommand(new SelectTool());
+		commandHandler.registerCommand(new AddToMaze());
+		commandHandler.registerCommand(new CutFromMaze());
+		commandHandler.registerCommand(new SetPathWidth());
+		commandHandler.registerCommand(new SetWallWidth());
+		commandHandler.registerCommand(new SetWallHeight());
+		commandHandler.registerCommand(new TpToMaze());
+		commandHandler.registerCommand(new BuildMaze());
+		commandHandler.registerCommand(new UnbuildMaze());
 	}
 	
 	private void loadConfig() {

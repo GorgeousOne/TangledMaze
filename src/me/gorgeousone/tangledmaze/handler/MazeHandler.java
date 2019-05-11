@@ -1,5 +1,7 @@
 package me.gorgeousone.tangledmaze.handler;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -59,8 +61,13 @@ public abstract class MazeHandler {
 	
 	public static void unbuilMaze(Maze maze, BlockGenerator blockGenerator) {
 		
-		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks());
-		maze.setBuiltBlocks(null);
-		Renderer.displayMaze(maze);
+		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks(), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				maze.setBuiltBlocks(null);
+				maze.updateHeights();
+				Renderer.displayMaze(maze);
+			}
+		});
 	}
 }

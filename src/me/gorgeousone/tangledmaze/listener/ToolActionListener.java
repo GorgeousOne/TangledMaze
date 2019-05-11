@@ -60,7 +60,7 @@ public class ToolActionListener implements Listener{
 			
 			ToolHandler.getTool(player).interact(block, action);
 		
-		}else if(action == Action.RIGHT_CLICK_BLOCK && player.hasPermission(Constants.BUILD_PERM)) {
+		}else if(player.hasPermission(Constants.BUILD_PERM)) {
 			
 			
 			if(ToolHandler.hasClipboard(player)) {
@@ -68,7 +68,7 @@ public class ToolActionListener implements Listener{
 				ClippingTool clipboard = ToolHandler.getClipboard(player);
 				
 				if(Renderer.isClipboardVisible(clipboard) && (clipboard.isVertex(block) || clipboard.getClip().isBorderBlock(block))) {
-					Renderer.redisplayMazeBorder(maze, block);
+					Renderer.redisplayClipboardBorder(clipboard, block.getLocation());
 					return;
 				}
 			}
@@ -76,7 +76,7 @@ public class ToolActionListener implements Listener{
 			Maze maze = MazeHandler.getMaze(player);
 
 			if(Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(block))
-				Renderer.redisplayMazeBorder(maze, block);
+				Renderer.redisplayMazeBorder(maze, block.getLocation());
 		}
 	}
 	

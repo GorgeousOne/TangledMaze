@@ -32,9 +32,8 @@ public final class Settings {
 
 		MAZE_WAND_MATERIAL = Material.matchMaterial(config.getString("wand-item"));
 		
-		if(MAZE_WAND_MATERIAL == null) {
+		if(MAZE_WAND_MATERIAL == null)
 			MAZE_WAND_MATERIAL = Material.GOLDEN_SHOVEL;
-		}
 		
 		createMazeWand();
 	}

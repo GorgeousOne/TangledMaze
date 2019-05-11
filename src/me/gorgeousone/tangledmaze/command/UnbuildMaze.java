@@ -11,7 +11,7 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class UnbuildMaze extends MazeCommand {
 	
-	BlockGenerator blockGenerator;
+	private BlockGenerator blockGenerator;
 	
 	public UnbuildMaze() {
 		
@@ -30,12 +30,12 @@ public class UnbuildMaze extends MazeCommand {
 		
 		if(!maze.isConstructed()) {
 			
-			Messages.ERROR_MAZE_NOT_BUILT.send(player);
+			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.send(player);
 			return true;
 		}
 		
 		MazeHandler.unbuilMaze(maze, blockGenerator);
-		maze.updateHeights();
+		Messages.MESSAGE_MAZE_UNBUILDING_STARTED.send(player);
 		return true;
 	}
 }

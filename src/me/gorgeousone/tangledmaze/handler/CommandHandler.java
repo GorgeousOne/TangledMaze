@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,14 +13,14 @@ import me.gorgeousone.tangledmaze.command.MazeCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 
-public class MazeCommandHandler implements CommandExecutor {
+public class CommandHandler implements CommandExecutor {
 
-	private ArrayList<MazeCommand> mazeCommands;
+	private List<MazeCommand> mazeCommands;
 
-	public MazeCommandHandler() {
+	public CommandHandler() {
 		mazeCommands = new ArrayList<>();
 	}
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
 		
@@ -45,6 +46,10 @@ public class MazeCommandHandler implements CommandExecutor {
 		return false;
 	}
 	
+	public List<MazeCommand> getCommands() {
+		return mazeCommands;
+	}
+
 	public void registerCommand(MazeCommand command) {
 		mazeCommands.add(command);
 	}

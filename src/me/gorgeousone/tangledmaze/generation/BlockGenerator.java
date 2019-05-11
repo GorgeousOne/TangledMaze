@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.generation;
 
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -71,10 +72,10 @@ public class BlockGenerator {
 		}
 		
 		maze.setBuiltBlocks(backupBlocks);
-		updateBlocksContinuously(blocksToUpdate);
+		updateBlocksContinuously(blocksToUpdate, null);
 	}
 
-	public void updateBlocksContinuously(List<BlockState> blocksToUpdate) {
+	public void updateBlocksContinuously(List<BlockState> blocksToUpdate, ActionListener callback) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			@Override
@@ -92,6 +93,9 @@ public class BlockGenerator {
 				}
 				
 				this.cancel();
+				
+				if(callback != null)
+					callback.actionPerformed(null);
 			}
 		};
 		

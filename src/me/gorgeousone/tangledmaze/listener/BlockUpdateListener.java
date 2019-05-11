@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.listener;
 
 import org.bukkit.event.block.*;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
-import me.gorgeousone.tangledmaze.util.MazePoint;
+import me.gorgeousone.tangledmaze.util.Vec2;
 
 import java.util.HashSet;
 
@@ -80,9 +81,9 @@ public class BlockUpdateListener implements Listener {
 
 	private void checkForUpdates(Block block, boolean hideAffectedElements) {
 
-		MazePoint point = new MazePoint(block.getLocation());
-		HashSet<Maze> affectedMazes = getAffectedMazes(point);
-		HashSet<ClippingTool> affectedClipboards = getAffectedClipboards(point);
+		Vec2 loc = new Vec2(block);
+		HashSet<Maze> affectedMazes = getAffectedMazes(loc);
+		HashSet<ClippingTool> affectedClipboards = getAffectedClipboards(loc);
 
 		if(affectedClipboards.isEmpty() && affectedMazes.isEmpty())
 			return;
@@ -90,57 +91,52 @@ public class BlockUpdateListener implements Listener {
 		update(block, affectedMazes, affectedClipboards, hideAffectedElements);
 	}
 
-	private HashSet<Maze> getAffectedMazes(MazePoint point) {
+	private HashSet<Maze> getAffectedMazes(Vec2 loc) {
 
 		HashSet<Maze> affectedMazes = new HashSet<>();
 
 		for(Maze maze : MazeHandler.getMazes()) {
 
-			if(maze.isStarted() && !maze.isConstructed() && maze.getClip().contains(new MazePoint(point)))
+			if(maze.isStarted() && !maze.isConstructed() && maze.getClip().contains(loc))
 				affectedMazes.add(maze);
 		}
 
 		return affectedMazes;
 	}
 
-	private HashSet<ClippingTool> getAffectedClipboards(MazePoint point) {
+	private HashSet<ClippingTool> getAffectedClipboards(Vec2 loc) {
 
 		HashSet<ClippingTool> affectedClipboards = new HashSet<>();
 
 		for(Tool tool : ToolHandler.getTools()) {
 
-			if(!(tool instanceof ClippingTool)) {
+			if(!(tool instanceof ClippingTool))
 				continue;
-			}
 
 			ClippingTool clipboard = (ClippingTool) tool;
 
-			if(!clipboard.getClip().contains(point)) {
-				continue;
-			}
-
-			affectedClipboards.add(clipboard);
+			if(clipboard.getClip().contains(loc))
+				affectedClipboards.add(clipboard);
 		}
 
 		return affectedClipboards;
 	}
 
 	private void update(Block changedBlock, HashSet<Maze> affectedMazes, HashSet<ClippingTool> affectedClipboards, boolean hideAffectedElements) {
-
+		
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-
+				
 				for(Maze maze : affectedMazes) {
 
 					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
 						Renderer.hideMaze(maze);
 
-					Block updatedBlock = maze.updateHeight(changedBlock);
+					Location updatedBlock = maze.updateHeight(changedBlock);
 					
-//					//TODO important - only update visibility of changed block
-//					if(!hideAffectedElements && updatedBlock != null)
-//						Renderer.updateChunk(updatedBlock.getChunk());
+					if(!hideAffectedElements && updatedBlock != null && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock.getBlock()))
+						Renderer.redisplayMazeBorder(maze, updatedBlock);
 				}
 
 				for(ClippingTool clipboard : affectedClipboards) {
@@ -148,10 +144,10 @@ public class BlockUpdateListener implements Listener {
 					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(changedBlock))
 						Renderer.hideClipboard(clipboard, true);
 
-					Block updatedBlock = clipboard.updateHeight(changedBlock);
+					Location updatedBlock = clipboard.updateHeight(changedBlock);
 
-//					if(!hideAffectedElements && updatedBlock != null)
-//						Renderer.updateChunk(updatedBlock.getChunk());
+					if(!hideAffectedElements && updatedBlock != null && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(updatedBlock.getBlock()))
+						Renderer.redisplayClipboardBorder(clipboard, updatedBlock);
 				}
 			}
 		}.runTask(TangledMain.getInstance());

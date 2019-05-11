@@ -30,6 +30,8 @@ public class Messages {
 			MESSAGE_WALLWIDTH_CHANGED,
 			MESSAGE_WALLHEIGHT_CHANGED,
 			MESSAGE_MAZE_BUILDING_STARTED,
+			MESSAGE_MAZE_UNBUILDING_STARTED,
+			MESSAGE_NO_MAZE_TO_UNBUILD,
 			ERROR_NO_BUILD_PERMISSION,
 			ERROR_CLIPBOARD_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_FINISHED,
@@ -39,8 +41,7 @@ public class Messages {
 			ERROR_NO_MAZE_EXIT_SET,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
-			ERROR_NUMBER_NOT_VALID,
-			ERROR_MAZE_NOT_BUILT;
+			ERROR_INVALID_NUMBER;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -74,6 +75,8 @@ public class Messages {
 		MESSAGE_WALLWIDTH_CHANGED = new TextMessage(Constants.prefix + messages.getString("maze-wallwidth-changed"), false);
 		MESSAGE_WALLHEIGHT_CHANGED = new TextMessage(Constants.prefix + messages.getString("maze-wallheight-changed"), false);
 		MESSAGE_MAZE_BUILDING_STARTED = new TextMessage(Constants.prefix + messages.getString("maze-building-started"), false);
+		MESSAGE_MAZE_UNBUILDING_STARTED = new TextMessage(Constants.prefix + messages.getString("maze-unbuilding-started"), false);
+		MESSAGE_NO_MAZE_TO_UNBUILD = new TextMessage(Constants.prefix + messages.getString("no-maze-to-unbuild"), false);
 	
 		ConfigurationSection errors = langConfig.getConfigurationSection("errors");
 		
@@ -86,7 +89,7 @@ public class Messages {
 		ERROR_NO_MAZE_EXIT_SET = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
-		ERROR_NUMBER_NOT_VALID = new TextMessage(ChatColor.RED + errors.getString("number-not-valid"), false);
+		ERROR_INVALID_NUMBER = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
 	}
 	
 	public static void reloadMessages(FileConfiguration langConfig) {
@@ -130,7 +133,7 @@ public class Messages {
 		ERROR_NO_MAZE_EXIT_SET.setText(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED.setText(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE.setText(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
-		ERROR_NUMBER_NOT_VALID.setText(ChatColor.RED + errors.getString("number-not-valid"), false);
-		ERROR_MAZE_NOT_BUILT.setText(ChatColor.RED + errors.getString("maze-not-built"), false);
+		ERROR_INVALID_NUMBER.setText(ChatColor.RED + errors.getString("number-not-valid"), false);
+		MESSAGE_NO_MAZE_TO_UNBUILD.setText(ChatColor.RED + errors.getString("maze-not-built"), false);
 	}
 }

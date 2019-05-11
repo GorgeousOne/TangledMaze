@@ -34,7 +34,7 @@ public class SetWallWidth extends MazeCommand {
 		
 		}catch (NumberFormatException ex) {
 			
-			Messages.ERROR_NUMBER_NOT_VALID.send(player, new PlaceHolder("number", wallWidthString));
+			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", wallWidthString));
 			return false;
 		}
 		
