@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;

@@ -1,5 +1,1 @@
 wand-item: golden_shovel
-maze:
-    maximum-pathwidth: 50
-    maximum-wallwidth: 50
-    maximum-wallheight: 100

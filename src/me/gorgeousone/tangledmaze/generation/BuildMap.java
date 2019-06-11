@@ -1,7 +1,10 @@
 package me.gorgeousone.tangledmaze.generation;
 
+import java.util.Map.Entry;
+
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.generation.path.PathSegment;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class BuildMap {
@@ -163,13 +166,11 @@ public class BuildMap {
 		Clip clip = maze.getClip();
 		
 		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
-		for(Vec2 loc : clip.getFill()) {
+		for(Entry<Vec2, Integer> loc : clip.getFillSet()) {
 			
-			int groundHeight =  clip.getHeight(loc);
-			
-			setType(loc, MazeFillType.UNDEFINED);
-			setGroundHeight(loc, groundHeight);
-			setMazeHeight(loc, groundHeight + wallHeight);
+			setType(loc.getKey(), MazeFillType.UNDEFINED);
+			setGroundHeight(loc.getKey(), loc.getValue());
+			setMazeHeight(loc.getKey(), loc.getValue() + wallHeight);
 		}
 		
 		//mark the border in mazeMap as walls

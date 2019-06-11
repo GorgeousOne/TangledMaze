@@ -127,7 +127,7 @@ public abstract class Utils {
 		return height;
 	}
 	
-	public static int limitInt(int value, int min, int max) {
+	public static int limit(int value, int min, int max) {
 		return Math.min(max, Math.max(min, value));
 	}
 	

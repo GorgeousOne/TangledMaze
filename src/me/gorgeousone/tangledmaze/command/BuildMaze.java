@@ -54,7 +54,7 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		if(maze.getExits().isEmpty()) {
+		if(!maze.hasExits()) {
 			Messages.ERROR_NO_MAZE_EXIT_SET.send(player);
 			player.sendMessage("/tangledmaze select exit");
 			return false;

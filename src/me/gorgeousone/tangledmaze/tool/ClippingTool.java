@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;

@@ -3,9 +3,10 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Renderer;
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
@@ -37,11 +38,18 @@ public class StartMaze extends MazeCommand {
 			return false;
 		}
 		
-		MazeHandler.getMaze(player).setClip(clipboard.getClip());
-		
 		Renderer.hideClipboard(clipboard, false);
-		clipboard.reset();
+
+		Maze maze = MazeHandler.getMaze(player);
 		
+		if(maze.isConstructed()) {
+			maze = new Maze(player).setClip(clipboard.getClip());
+			MazeHandler.setMaze(player, maze);
+			
+		}else
+			maze.setClip(clipboard.getClip());
+		
+		clipboard.reset();
 		return true;
 	}
 }

@@ -20,14 +20,23 @@ public enum Directions {
 		this.facing = facing;
 	}
 	
-	public int getSign() {
-		return facing.getZ() == 0 ? facing.getX() : facing.getZ();
+	/**
+	 * Returns if the diretion's vector is pointing towards positive or negative (with it's x or z coordinate)
+	 */
+	public boolean isPositive() {
+		return facing.getZ() == 0 ? facing.getX() == 1 : facing.getZ() == 1;
 	}
 	
+	/**
+	 * Returns if the x coordinate of the direction's vector is not 0
+	 */
 	public boolean isXAligned() {
 		return facing.getX() != 0;
 	}
 	
+	/**
+	 * Returns if the z coordinate of the direction's vector is not 0
+	 */
 	public boolean isZAligned() {
 		return facing.getZ() != 0;
 	}
@@ -42,5 +51,13 @@ public enum Directions {
 	
 	public static Directions[] cardinalValues() {
 		return new Directions[] {EAST, WEST, SOUTH, NORTH};
+	}
+	
+	public static Directions cardinalValueOf(Vec2 vec) {
+		
+		if(vec.getX() != 0)
+			return vec.getX() > 0 ? EAST : WEST;
+					
+		return vec.getZ() > 0 ? SOUTH : NORTH;
 	}
 }

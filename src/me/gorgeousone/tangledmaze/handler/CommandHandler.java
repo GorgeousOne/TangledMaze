@@ -24,11 +24,11 @@ public class CommandHandler implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
 		
-		if(!sender.hasPermission(Constants.BUILD_PERM)) {
+		if(!sender.hasPermission(Constants.BUILD_PERM))
 			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
-		}
 		
 		if(arguments.length < 1) {
+			
 			HelpCommand.sendHelpPage(sender, 1);
 			return true;
 		}
@@ -37,7 +37,7 @@ public class CommandHandler implements CommandExecutor {
 		
 		for(MazeCommand mazeCommand : mazeCommands) {
 			
-			if(mazeCommand.isCommand(subCommandName)) {
+			if(mazeCommand.getName().equalsIgnoreCase(subCommandName)) {
 				mazeCommand.execute(sender, getSubArguents(arguments));
 				return true;
 			}
@@ -56,9 +56,8 @@ public class CommandHandler implements CommandExecutor {
 	
 	private String[] getSubArguents(String[] arguments) {
 		
-		if(arguments.length < 2) {
+		if(arguments.length < 2)
 			return new String[] {};
-		}
 		
 		return Arrays.copyOfRange(arguments, 1, arguments.length);
 	}

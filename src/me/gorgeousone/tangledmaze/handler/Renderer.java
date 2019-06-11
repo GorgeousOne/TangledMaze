@@ -1,9 +1,10 @@
-package me.gorgeousone.tangledmaze.core;
+package me.gorgeousone.tangledmaze.handler;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -15,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class Renderer implements Listener {
 	
@@ -124,7 +126,7 @@ public abstract class Renderer implements Listener {
 				for(Vec2 exit : maze.getExits())
 					player.sendBlockChange(maze.getClip().getLocation(exit), Constants.MAZE_EXIT, (byte) 0);
 				
-				if(!maze.getExits().isEmpty())
+				if(maze.hasExits())
 					player.sendBlockChange(maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_MAIN_EXIT, (byte) 0);
 			}
 		}.runTask(TangledMain.getInstance());
@@ -179,9 +181,11 @@ public abstract class Renderer implements Listener {
 		for(Vec2 exit : action.getRemovedExits()) {
 			
 			player.sendBlockChange(clip.getLocation(exit), Constants.MAZE_BORDER, (byte) 0);
-
-			if(exit.equals(maze.getMainExit()) && maze.getExits().size() > 1)
-				player.sendBlockChange(clip.getLocation(maze.getExits().get(maze.getExits().size()-2)), Constants.MAZE_MAIN_EXIT, (byte) 0);
+			
+			List<Vec2> mazeExits = maze.getExits();
+			
+			if(exit.equals(maze.getMainExit()) && mazeExits.size() > 1)
+				player.sendBlockChange(clip.getLocation(mazeExits.get(mazeExits.size()-2)), Constants.MAZE_MAIN_EXIT, (byte) 0);
 		}
 
 		for(Vec2 loc : action.getAddedBorder())
@@ -194,38 +198,6 @@ public abstract class Renderer implements Listener {
 			
 		}
 	}
-	
-//	public static void updateChunk(Chunk chunk) {
-//		
-//		for(Maze maze : mazeVisibilities.keySet()) {
-//			
-//			if(!maze.isStarted() || !isMazeVisible(maze) || !maze.getClip().getChunks().contains(chunk))
-//				continue;
-//			
-//			sendBlocksDelayed(maze.getPlayer(), maze.getClip().getBorderBlocks(chunk), Constants.MAZE_BORDER);
-//		}
-//		
-//		for(ClippingTool clipboard : clipVisibilities.keySet()) {
-//			
-//			if(!isClipboardVisible(clipboard) || !clipboard.isComplete() || !clipboard.getClip().getChunks().contains(chunk))
-//				continue;
-//			
-//			Player player = clipboard.getPlayer();
-//			
-//			sendBlocksDelayed(player, clipboard.getClip().getBorderBlocks(chunk), Constants.CLIPBOARD_BORDER);
-//			sendBlocksDelayed(player, clipboard.getVertices(), Constants.CLIPBOARD_CORNER);
-//		}
-//	}
-	
-//	private static void displayAction(Maze maze, ClipAction action) {
-//		
-//		Player player = maze.getPlayer();
-//		
-//		for(Vec2 border : action.getAddedBorder()) {
-//			
-//			
-//		}
-//	}
 	
 	//Displays maze parts that were covered under a clipboard.
 	@SuppressWarnings("deprecation")

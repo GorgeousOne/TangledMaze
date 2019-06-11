@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 
 public abstract class MazeHandler {
@@ -64,7 +63,8 @@ public abstract class MazeHandler {
 		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks(), new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				maze.setBuiltBlocks(null);
+
+				maze.setConstructedBlocks(null);
 				maze.updateHeights();
 				Renderer.displayMaze(maze);
 			}

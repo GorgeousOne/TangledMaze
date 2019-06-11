@@ -17,9 +17,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
@@ -62,21 +62,18 @@ public class ToolActionListener implements Listener{
 		
 		}else if(player.hasPermission(Constants.BUILD_PERM)) {
 			
-			
-			if(ToolHandler.hasClipboard(player)) {
-				
-				ClippingTool clipboard = ToolHandler.getClipboard(player);
-				
-				if(Renderer.isClipboardVisible(clipboard) && (clipboard.isVertex(block) || clipboard.getClip().isBorderBlock(block))) {
-					Renderer.redisplayClipboardBorder(clipboard, block.getLocation());
-					return;
-				}
-			}
-			
 			Maze maze = MazeHandler.getMaze(player);
 
 			if(Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(block))
-				Renderer.redisplayMazeBorder(maze, block.getLocation());
+				Renderer.hideMaze(maze);
+			
+			if(!ToolHandler.hasClipboard(player))
+				return;
+				
+			ClippingTool clipboard = ToolHandler.getClipboard(player);
+			
+			if(Renderer.isClipboardVisible(clipboard) && (clipboard.isVertex(block) || clipboard.getClip().isBorderBlock(block)))
+				Renderer.hideClipboard(clipboard, false);
 		}
 	}
 	

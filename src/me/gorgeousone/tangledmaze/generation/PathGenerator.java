@@ -6,28 +6,29 @@ import java.util.Collections;
 import java.util.Random;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.generation.path.PathSegment;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class PathGenerator {
 	
-	private ArrayList<Directions> shuffledCardinals;
+	private ArrayList<Directions> shuffledCardinalDirs;
 	private Random rnd;
 	
 	public PathGenerator() {
 		
-		shuffledCardinals = new ArrayList<>(Arrays.asList(Directions.cardinalValues()));
+		shuffledCardinalDirs = new ArrayList<>(Arrays.asList(Directions.cardinalValues()));
 		rnd = new Random();
 	}
 	
 	public void generatePaths(BuildMap buildMap) {
 		
-		generateExitSegments(buildMap);
-		generatePathSegments(buildMap);
+		generateExits(buildMap);
+		generatePathMap(buildMap);
 		buildMap.flip();
 	}
 	
-	private void generateExitSegments(BuildMap buildMap) {
+	private void generateExits(BuildMap buildMap) {
 	
 		Maze maze = buildMap.getMaze();
 		
@@ -35,8 +36,8 @@ public class PathGenerator {
 			wallWidth = maze.getWallWidth();
 		
 		PathSegment entrance = createEntranceSegment(
-				maze.getMainExit().clone(),
-				buildMap,
+				maze.getMainExit(),
+				getExitFacing(maze.getMainExit(), buildMap),
 				pathWidth,
 				wallWidth);
 		
@@ -45,7 +46,7 @@ public class PathGenerator {
 		buildMap.setStart(pathStart);
 		buildMap.mapSegment(entrance, MazeFillType.PATH);
 		
-		if(maze.getExits().size() == 1)
+		if(maze.getExits().size() < 2)
 			return;
 
 		int pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth),
@@ -56,21 +57,19 @@ public class PathGenerator {
 			if(exit.equals(maze.getMainExit()))
 				continue;
 			
-			PathSegment exitSegment = createExitSegment(
+			createExitSegment(
 					exit,
 					buildMap,
 					pathGridOffsetX,
 					pathGridOffsetZ,
 					pathWidth,
 					wallWidth);
-			
-			buildMap.mapSegment(exitSegment, MazeFillType.EXIT);
 		}
 	}
 	
 	private PathSegment createEntranceSegment(
 			Vec2 entrance,
-			BuildMap buildMap,
+			Directions facing,
 			int pathWidth,
 			int wallWidth) {
 		
@@ -78,7 +77,7 @@ public class PathGenerator {
 			entrance,
 			wallWidth + pathWidth,
 			pathWidth,
-			getExitFacing(entrance, buildMap),
+			facing,
 			true);
 		
 		return entranceSegment;
@@ -91,115 +90,225 @@ public class PathGenerator {
 			int pathGridOffsetZ,
 			int pathWidth,
 			int wallWidth) {
-
-		Directions exitFacing = getExitFacing(exit, buildMap);
+		
+		Directions facing = getExitFacing(exit, buildMap);
 		
 		PathSegment exitSegment = new PathSegment(
 				exit,
 				pathWidth,
 				pathWidth,
-				exitFacing,
+				facing,
 				true);
 		
-		exitSegment.expand(exitFacing.isXAligned() ?
-				getExitDistanceToPathGrid(exitSegment.getStart().getX(), exitFacing, pathGridOffsetX, pathWidth, wallWidth) :
-				getExitDistanceToPathGrid(exitSegment.getStart().getZ(), exitFacing, pathGridOffsetZ, pathWidth, wallWidth));
+		exitSegment.expand(facing.isXAligned() ?
+				getExitOffsetToPathGrid(exitSegment.getStart().getX(), facing, pathGridOffsetX, pathWidth, wallWidth) :
+				getExitOffsetToPathGrid(exitSegment.getStart().getZ(), facing, pathGridOffsetZ, pathWidth, wallWidth));
 		
+		
+//		if(!segmentIsFree(buildMap, exitSegment))
+//			return null;
+
+//		buildMap.mapSegment(exitSegment, MazeFillType.EXIT);
+//		
+//		Vec2 verticalOffset = facing.isXAligned() ?
+//				getVerticalOffsetToPathGrid(exitSegment.getEnd().getZ(), facing, pathGridOffsetZ, pathWidth, wallWidth) :
+//				getVerticalOffsetToPathGrid(exitSegment.getEnd().getX(), facing, pathGridOffsetX, pathWidth, wallWidth);
+//		
+//		System.out.println(facing + " " + facing.toVec2().toString());
+//		System.out.println(Directions.cardinalValueOf(verticalOffset) + " " + verticalOffset.toString());
+//		
+//		if(!verticalOffset.isZero()) {
+//			
+//			exitSegment = new PathSegment(
+//					exitSegment.getEnd(),
+//					pathWidth,
+//					pathWidth,
+//					Directions.cardinalValueOf(verticalOffset),
+//					false);
+//			
+//			exitSegment.expand(verticalOffset.length());
+//			
+//			if(!segmentIsFree(buildMap, exitSegment))
+//				return null;
+//			
+//		}
+		
+		buildMap.mapSegment(exitSegment, MazeFillType.EXIT);
 		return exitSegment;
 	}
 	
-	private int getExitDistanceToPathGrid(
+	//calculate how long the exit has to be to reach the grid of paths
+	private int getExitOffsetToPathGrid(
 			int exitSegmentStart,
 			Directions exitFacing,
 			int pathGridOffset,
 			int pathWidth,
 			int wallWidth) {
 		
-		//calculate how long the exit has to be to reach the grid of paths
 		//start with getting the exit's position relative to the path grid
 		int exitOffset = exitSegmentStart - pathGridOffset;
 		
 		//reduce the relative position to the actual possible offset
-		if(Math.abs(exitOffset) > pathWidth + wallWidth)
-			exitOffset %= pathWidth + wallWidth;
-
+		exitOffset %= pathWidth + wallWidth;
+		
 		//invert offset if it is calculated to opposing path in the grid
-		if(exitFacing.getSign() == 1)
-			exitOffset = (pathWidth + wallWidth) - exitOffset;
+		if(exitFacing.isPositive())
+			exitOffset = (int) Math.signum(exitOffset) * (pathWidth + wallWidth) - exitOffset;
 		
 		//increase offset if it's under possible minimum of 1 block
 		if(exitOffset < 1)
 			exitOffset += pathWidth + wallWidth;
-
+		
 		return exitOffset;
 	}
 	
-	private void generatePathSegments(BuildMap buildMap) {
+	//calculate how long the exit has to be to reach the grid of paths
+//	private Vec2 getVerticalOffsetToPathGrid(
+//			int exitSegmentStart,
+//			Directions exitFacing,
+//			int pathGridOffset,
+//			int pathWidth,
+//			int wallWidth) {
+//		
+//		//start with getting the exit's position relative to the path grid
+//		int exitOffset = exitSegmentStart - pathGridOffset;
+//		
+//		//reduce the relative position to the actual possible offset
+//		exitOffset %= pathWidth + wallWidth;
+//
+//		//invert offset if it is calculated to opposing path in the grid
+//		if(exitFacing.isPositive())
+//			exitOffset = (pathWidth + wallWidth) - exitOffset;
+//		
+//		//increase offset if it's under possible minimum of 1 block
+//		if(exitOffset < 1)
+//			exitOffset += pathWidth + wallWidth;
+//
+//		return exitFacing.toVec2().mult(exitOffset);
+//	}
+	
+	private void generatePathMap(BuildMap buildMap) {
 		
 		Maze maze = buildMap.getMaze();
 		
-		ArrayList<Vec2> openEnds = new ArrayList<>();
-		openEnds.add(buildMap.getStart());
+		ArrayList<Vec2> pathEnds = new ArrayList<>();
+		pathEnds.add(buildMap.getStart());
 		
-		int	pathWidth  = maze.getPathWidth(),
-			wallWidth  = maze.getWallWidth(),
-			linkedPathsLength = 0;
-					
-		Vec2 currentEnd;
+		int wallWidth  = maze.getWallWidth();
+		int	pathWidth  = maze.getPathWidth();
+		int pathLength = maze.getPathLength();
+		
+		int maxLinkedPathsCount = 3;
+		int linkedPathsCount = 0;
+		
+		Vec2 currentPathEnd;
+		
+		boolean lastSegmentWasExpanded = false;
+		
+		while(!pathEnds.isEmpty()) {
+			
+			if(linkedPathsCount < maxLinkedPathsCount) {
+				currentPathEnd = pathEnds.get(pathEnds.size()-1);
+			
+			}else {
+				currentPathEnd = pathEnds.get(rnd.nextInt(pathEnds.size()));
+				linkedPathsCount = 0;
+			}
+			
+			Collections.shuffle(shuffledCardinalDirs);
+			PathSegment newPath = createPathSegment(buildMap, currentPathEnd, wallWidth, pathWidth, pathLength);
 
-		while(!openEnds.isEmpty()) {
+			if(newPath == null) {
 			
-			if(linkedPathsLength < 3) {
-				currentEnd = openEnds.get(openEnds.size()-1);
+				pathEnds.remove(currentPathEnd);
+				linkedPathsCount = 0;
+				continue;
 			
-			}else {
-				currentEnd = openEnds.get(rnd.nextInt(openEnds.size()));
-				linkedPathsLength = 0;
-			}
+			//if this cardinal direction is the last one in shuffledCardinals the path end cannot have further junctions
+			}else if(shuffledCardinalDirs.indexOf(newPath.getFacing()) == 3)
+				pathEnds.remove(currentPathEnd);
+
+			if(pathLength > 1 && !lastSegmentWasExpanded)
+				lastSegmentWasExpanded = tryExpandSegment(buildMap, newPath, wallWidth, pathWidth, rnd.nextInt(pathLength));
+			else
+				lastSegmentWasExpanded = false;
+
+			buildMap.mapSegment(newPath, MazeFillType.PATH);
 			
-			PathSegment path = createPathSegment(buildMap, currentEnd, pathWidth, wallWidth);
-			
-			if(path == null) {
-				
-				openEnds.remove(currentEnd);
-				linkedPathsLength = 0;
-			
-			}else {
-				
-				buildMap.mapSegment(path, MazeFillType.PATH);
-				openEnds.add(path.getEnd());
-				linkedPathsLength++;
-			}
+			pathEnds.add(newPath.getEnd());
+			linkedPathsCount++;
 		}
 	}
 
 	private PathSegment createPathSegment(
-			BuildMap map,
-			Vec2 currentEnd,
+			BuildMap buildMap,
+			Vec2 lastPathEnd,
+			int wallWidth,
 			int pathWidth,
-			int wallWidth) {
+			int pathLength) {
 		
-		Collections.shuffle(shuffledCardinals);
+		Collections.shuffle(shuffledCardinalDirs);
 		
-		for(Directions dir : shuffledCardinals) {
+		PathSegment newPath = null;
+		
+		for(Directions dir : shuffledCardinalDirs) {
 
 			Vec2 facing = dir.toVec2();
-			Vec2 start  = new Vec2(currentEnd.getX() + facing.getX() * pathWidth,
-								  currentEnd.getZ() + facing.getZ() * pathWidth);
+			Vec2 start  = new Vec2(
+					lastPathEnd.getX() + facing.getX() * pathWidth,
+					lastPathEnd.getZ() + facing.getZ() * pathWidth);
 		
-			PathSegment path = new PathSegment(
+			PathSegment possiblePath = new PathSegment(
 					start,
 					pathWidth + wallWidth,
 					pathWidth,
 					dir,
 					false);
-				
-			if(segmentIsFree(map, path)) {
-				return path;
+			
+			if(segmentIsFree(buildMap, possiblePath)) {
+				newPath = possiblePath;
+				break;
 			}
 		}
 		
-		return null;
+		return newPath;
+	}
+	
+	private boolean tryExpandSegment(
+			BuildMap buildMap,
+			PathSegment segment,
+			int wallWidth,
+			int pathWidth,
+			int maxPathLength) {
+		
+		Vec2 facing = segment.getFacing().toVec2();
+		int extensionLength = pathWidth + wallWidth;
+
+		PathSegment extension = new PathSegment(
+				segment.getEnd().add(facing.clone().mult(pathWidth)),
+				extensionLength,
+				pathWidth,
+				segment.getFacing(),
+				false);
+		
+		if(!segmentIsFree(buildMap, extension))
+			return false;
+		
+		segment.expand(extensionLength);
+		
+		for(int i = 2; i < maxPathLength; i++) {
+			
+			extension.translate(
+					facing.getX() * extensionLength,
+					facing.getZ() * extensionLength);
+
+			if(segmentIsFree(buildMap, extension))
+				segment.expand(extensionLength);
+			else
+				break;
+		}
+			
+		return true;
 	}
 	
 	private static Directions getExitFacing(Vec2 exit, BuildMap buildMap) {

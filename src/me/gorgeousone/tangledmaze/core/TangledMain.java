@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.gorgeousone.tangledmaze.command.*;
 import me.gorgeousone.tangledmaze.data.*;
 import me.gorgeousone.tangledmaze.handler.CommandHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.listener.*;
 
 public class TangledMain extends JavaPlugin {
@@ -67,12 +68,14 @@ public class TangledMain extends JavaPlugin {
 		commandHandler.registerCommand(new SelectTool());
 		commandHandler.registerCommand(new AddToMaze());
 		commandHandler.registerCommand(new CutFromMaze());
-		commandHandler.registerCommand(new SetPathWidth());
 		commandHandler.registerCommand(new SetWallWidth());
 		commandHandler.registerCommand(new SetWallHeight());
+		commandHandler.registerCommand(new SetPathWidth());
+		commandHandler.registerCommand(new SetPathLength());
 		commandHandler.registerCommand(new TpToMaze());
 		commandHandler.registerCommand(new BuildMaze());
 		commandHandler.registerCommand(new UnbuildMaze());
+		commandHandler.registerCommand(new Undo());
 	}
 	
 	private void loadConfig() {
@@ -87,15 +90,15 @@ public class TangledMain extends JavaPlugin {
 		File langFile = new File(getDataFolder() + File.separator + "language.yml");
 		YamlConfiguration defLangConfig = Utils.getDefaultConfig("language.yml");
 
-		if(!langFile.exists()) {
+		if(!langFile.exists())
 			Utils.saveConfig(defLangConfig, langFile);
-		}
 
 		YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langFile);
+		
 		langConfig.setDefaults(defLangConfig);
 		langConfig.options().copyDefaults(true);
-		Utils.saveConfig(langConfig, langFile);
 		
+		Utils.saveConfig(langConfig, langFile);
 		Messages.loadMessages(langConfig);
 	}
 

@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.clip;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -19,8 +20,6 @@ public class Clip {
 	private Map<Vec2, Integer> fill;
 	private Set<Vec2> border;
 	
-	private int size, borderSize;
-	
 	public Clip(World world) {
 
 		this.world = world;
@@ -33,6 +32,10 @@ public class Clip {
 		return world;
 	}
 	
+	public Set<Entry<Vec2, Integer>> getFillSet() {
+		return fill.entrySet();
+	}
+	
 	public Set<Vec2> getFill() {
 		return fill.keySet();
 	}
@@ -42,23 +45,23 @@ public class Clip {
 	}
 
 	public void addFill(Vec2 loc, int height) {
-		
-		if(fill.put(loc, height) == null)
-			size++;
+		fill.put(loc, height);
+	}
+	
+	public void addAllFill(Map<Vec2, Integer> locs) {
+		fill.putAll(locs);
 	}
 	
 	public void removeFill(Vec2 loc) {
 
-		if(fill.remove(loc) != null) {
-			size--;
+		if(fill.remove(loc) != null)
 			removeBorder(loc);
-		}
 	}
 		
 	public void removeFill(Location loc) {
 		removeFill(new Vec2(loc));
 	}
-
+	
 	public Set<Vec2> getBorder() {
 		return border;
 	}
@@ -69,14 +72,12 @@ public class Clip {
 
 	public void addBorder(Vec2 loc) {
 		
-		if(border.add(loc))
-			borderSize++;
+		if(fill.containsKey(loc))
+			border.add(loc);
 	}
 	
 	public void removeBorder(Vec2 loc) {
-		
-		if(border.remove(loc))
-			borderSize--;
+		border.remove(loc);
 	}
 	
 	public void removeBorder(Location loc) {
@@ -84,19 +85,19 @@ public class Clip {
 	}
 	
 	public int size() {
-		return size;
+		return fill.size();
 	}
 
 	public int borderSize() {
-		return borderSize;
+		return border.size();
 	}
 	
 	public int getHeight(Vec2 loc) {
-		return contains(loc) ? fill.get(loc) : -1;
+		return fill.get(loc);
 	}
 	
 	public Location getLocation(Vec2 loc) {
-		return contains(loc) ? new Location(getWorld(), loc.getX(), getHeight(loc), loc.getZ()) : null;
+		return new Location(getWorld(), loc.getX(), getHeight(loc), loc.getZ());
 	}
 	
 	public Set<Location> getBorderBlocks() {
@@ -126,7 +127,6 @@ public class Clip {
 		
 		Vec2 blockVec = new Vec2(block);
 		
-//		System.out.println(borderContains(blockVec) + ", " + getHeight(blockVec) + " = " + block.getY());
 		return borderContains(blockVec) && getHeight(blockVec) == block.getY();
 	}
 	

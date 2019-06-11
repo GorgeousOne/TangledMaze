@@ -10,25 +10,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.gorgeousone.tangledmaze.util.Utils;
-
 public final class Settings {
 
 	public static ItemStack MAZE_WAND;
 	public static Material MAZE_WAND_MATERIAL;
 	
-	public static int
-			MAX_PATHWIDTH,
-			MAX_WALLWIDTH,
-			MAX_WALLHEIGHT;
-
 	private Settings() {}
 
 	public static void loadSettings(FileConfiguration config) {
-
-		MAX_PATHWIDTH = Utils.limitInt(config.getInt("maze.maximum-pathwidth", 50), 1, 255);
-		MAX_WALLWIDTH = Utils.limitInt(config.getInt("maze.maximum-wallwidth", 50), 1, 255);
-		MAX_WALLHEIGHT = Utils.limitInt(config.getInt("maze.maximum-wallheight", 100), 1, 255);
 
 		MAZE_WAND_MATERIAL = Material.matchMaterial(config.getString("wand-item"));
 		

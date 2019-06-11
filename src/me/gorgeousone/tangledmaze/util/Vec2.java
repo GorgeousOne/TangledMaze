@@ -1,10 +1,14 @@
 package me.gorgeousone.tangledmaze.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
 
-public class Vec2 implements Comparable<Vec2>{
+public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 	
 	private int x, z;
 	
@@ -28,6 +32,20 @@ public class Vec2 implements Comparable<Vec2>{
 		this.z = block.getZ();
 	}
 	
+	public Vec2(String serialized) {
+		
+		if(!serialized.startsWith("vec2[x:") || !serialized.endsWith("]"))
+			throw new IllegalArgumentException();
+		
+		String[] location = serialized.substring(5, serialized.length()-1).split(",");
+		
+		if(location.length != 2)
+			throw new IllegalArgumentException();
+
+		this.x = Integer.parseInt(location[0].substring(3));
+		this.z = Integer.parseInt(location[1].substring(3));
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -38,6 +56,10 @@ public class Vec2 implements Comparable<Vec2>{
 	
 	public int length() {
 		return (int) Math.sqrt(x*x + z*z);
+	}
+	
+	public boolean isZero() {
+		return x == 0 && z == 0;
 	}
 	
 	public Vec2 set(int x, int z) {
@@ -90,7 +112,7 @@ public class Vec2 implements Comparable<Vec2>{
 	
 	@Override
 	public String toString() {
-		return "vec2[x:" + x + ", z:" + z + "]";
+		return "vec2[x:" + x + ",z:" + z + "]";
 	}
 	
 	@Override
@@ -125,5 +147,23 @@ public class Vec2 implements Comparable<Vec2>{
 
 		int deltaX = Double.compare(getX(), vec.getX());
 		return deltaX != 0 ? deltaX : Double.compare(getZ(), vec.getZ());
+	}
+	
+	@Override
+	public Map<String, Object> serialize() {
+		
+		Map<String, Object> data = new HashMap<>();
+		
+		data.put("x", Integer.valueOf(x));
+	    data.put("z", Integer.valueOf(z));
+	    
+		return data;
+	}
+	
+	public static Vec2 desrialize(Map<String, Object> data) {
+		
+		return new Vec2(
+				Integer.parseInt(data.get("x").toString()),
+				Integer.parseInt(data.get("z").toString()));
 	}
 }
