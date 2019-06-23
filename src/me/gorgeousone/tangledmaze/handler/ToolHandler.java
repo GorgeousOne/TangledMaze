@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
@@ -44,9 +43,14 @@ public abstract class ToolHandler {
 	public static void resetToDefaultTool(Player player) {
 		
 		if(hasClipboard(player)) {
-
-			if(getClipboard(player).isStarted())
-				getClipboard(player).reset();
+			
+			ClippingTool clipboard = getClipboard(player);
+			
+			if(clipboard.isStarted()) {
+				
+				Renderer.hideClipboard(clipboard, true);
+				clipboard.reset();
+			}
 		
 		}else {
 			setTool(player, new ClippingTool(player, Shape.RECT));

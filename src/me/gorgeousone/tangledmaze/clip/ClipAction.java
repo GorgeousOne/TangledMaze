@@ -1,92 +1,132 @@
 package me.gorgeousone.tangledmaze.clip;
 
 import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.Set;
 
-import me.gorgeousone.tangledmaze.util.MazePoint;
+import org.bukkit.Location;
+
+import java.util.HashMap;
+
+import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class ClipAction {
 	
-	private TreeSet<MazePoint>
-		addedFill,
-		removedFill,
+	private Clip clip;
+	
+	private Set<Vec2>
 		addedBorder,
 		removedBorder,
 		removedExits;
+		
+	private Map<Vec2, Integer>
+		addedFill,
+		removedFill;
 	
-	public ClipAction() {
-		addedFill     = new TreeSet<>();
-		addedBorder   = new TreeSet<>();
-		removedFill   = new TreeSet<>();
-		removedBorder = new TreeSet<>();
-		removedExits  = new TreeSet<>();
+	public ClipAction(Clip clip) {
+		
+		this.clip = clip;
+		addedFill     = new HashMap<>();
+		removedFill   = new HashMap<>();
+
+		addedBorder   = new HashSet<>();
+		removedBorder = new HashSet<>();
+		removedExits  = new HashSet<>();
 	}
 	
-	public TreeSet<MazePoint> getAddedFill() {
+	public Clip getClip() {
+		return clip;
+	}
+	
+	public Map<Vec2, Integer> getAddedFill() {
 		return addedFill;
 	}
 
-	public TreeSet<MazePoint> getRemovedFill() {
+	public Map<Vec2, Integer> getRemovedFill() {
 		return removedFill;
 	}
 
-	public TreeSet<MazePoint> getAddedBorder() {
+	public Set<Vec2> getAddedBorder() {
 		return addedBorder;
 	}
 	
-	public TreeSet<MazePoint> getRemovedBorder() {
+	public Set<Vec2> getRemovedBorder() {
 		return removedBorder;
 	}
 	
-	public TreeSet<MazePoint> getRemovedExits() {
+	public Set<Vec2> getRemovedExits() {
 		return  removedExits;
 	}
 	
-	public void addFill(MazePoint point) {
-		addedFill.add(point);
+	public void addFill(Vec2 loc, int height) {
+		addedFill.put(loc, height);
 	}
 	
-	public void removeFill(MazePoint point) {
-		removedFill.add(point);
+	public void removeFill(Vec2 loc, int height) {
+		removedFill.put(loc, height);
 	}
 	
-	public void addBorder(MazePoint point) {
-		addedBorder.add(point);
+	public void addBorder(Vec2 loc) {
+		addedBorder.add(loc);
 	}
 	
-	public void removeBorder(MazePoint point) {
-		removedBorder.add(point);
+	public void removeBorder(Vec2 loc) {
+		removedBorder.add(loc);
 	}
 	
-	public void removeExit(MazePoint point) {
-		removedExits.add(point);
+	public void removeExit(Vec2 loc) {
+		removedExits.add(loc);
 	}
 	
+	public Location getBorder(Vec2 loc) {
+		
+		int height;
+		
+		if(removedBorder.contains(loc)) {
+			
+			if(removedFill.containsKey(loc))
+				height = removedFill.get(loc);
+			else
+				height = getClip().getHeight(loc);
+			
+		}else if(addedBorder.contains(loc)) {
+			
+			if(addedFill.containsKey(loc))
+				height = addedFill.get(loc);
+			else
+				height = getClip().getHeight(loc);
+		
+		}else
+			return null;
+		
+		return new Location(getClip().getWorld(), loc.getX(), height, loc.getZ());
+	}
+
 	public ClipAction invert() {
-		HashSet<MazePoint> temporaryHolder = new HashSet<>(addedFill);
+		
+		HashMap<Vec2, Integer> temporaryHolder = new HashMap<>(addedFill);
 		
 		addedFill.clear();
-		addedFill.addAll(removedFill);
+		addedFill.putAll(removedFill);
 		removedFill.clear();
-		removedFill.addAll(temporaryHolder);
+		removedFill.putAll(temporaryHolder);
 		
-		temporaryHolder = new HashSet<>(addedBorder);
+		HashSet<Vec2> temporaryHolder2= new HashSet<>(addedBorder);
 		
 		addedBorder.clear();
 		addedBorder.addAll(removedBorder);
 		removedBorder.clear();
-		removedBorder.addAll(temporaryHolder);
+		removedBorder.addAll(temporaryHolder2);
 		
 		getRemovedExits().clear();
 		return this;
 	}
 	
-	public boolean clipWillContain(Clip clip, MazePoint point) {
-		return (clip.contains(point) || addedFill.contains(point)) && !removedFill.contains(point);
+	public boolean clipWillContain(Vec2 loc) {
+		return getClip().contains(loc) && !getRemovedFill().containsKey(loc) || getAddedFill().containsKey(loc);
 	}
 	
-	public boolean clipBorderWillContain(Clip clip, MazePoint point) {
-		return (clip.borderContains(point) || addedBorder.contains(point)) && !removedBorder.contains(point);
+	public boolean clipBorderWillContain(Clip clip, Vec2 loc) {
+		return getAddedBorder().contains(loc) || !getRemovedBorder().contains(loc) && getClip().borderContains(loc);
 	}
-
 }

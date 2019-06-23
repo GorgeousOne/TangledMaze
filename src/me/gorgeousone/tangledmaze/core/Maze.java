@@ -1,55 +1,61 @@
 package me.gorgeousone.tangledmaze.core;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
-import org.bukkit.util.Vector;
 
-import me.gorgeousone.tangledmaze.clip.ActionHistory;
-import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.*;
 import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
+import me.gorgeousone.tangledmaze.util.Vec2;
 
-@SuppressWarnings("deprecation")
 public class Maze {
+	
+	private static IllegalStateException notAlterableException = new IllegalStateException("The maze cannot be altered when it is constructed");
 	
 	private UUID builder;
 	
 	private ActionHistory history;
 	private Clip clip;
-	private List<MazePoint> exits;
-	private List<MaterialData> wallComposition;
+	private Stack<Vec2> exits;
+	private List<Material> wallMaterials;
+	private List<BlockState> builtBlocks;
 	
-	private Vector dimensions;
-	private boolean isStarted;
+	private int wallWidth;
+	private int wallHeight;
+	private int pathWidth;
+	private int pathLength;
+	
+	private boolean isStarted, isConstructed;
+	
 	
 	public Maze(World world) {
 		
 		clip = new Clip(world);
 		history = new ActionHistory();
-		exits = new ArrayList<>();
-		dimensions = new Vector(1, 2, 1);
+		exits = new Stack<>();
+		
+		wallWidth = 1;
+		wallHeight = 2;
+		pathWidth = 1;
+		pathLength = 5;
 	}
 
 	public Maze(Player builder) {
 		
+		this(builder.getWorld());
 		this.builder = builder.getUniqueId();
-
-		clip = new Clip(builder.getWorld());
-		history = new ActionHistory();
-		exits = new ArrayList<>();
-		dimensions = new Vector(1, 2, 1);
 	}
 	
 	public Player getPlayer() {
@@ -64,125 +70,127 @@ public class Maze {
 		return isStarted;
 	}
 	
+	public boolean isConstructed() {
+		return isConstructed;
+	}
+	
 	public Clip getClip() {
 		return clip;
 	}
 	
-	public List<MazePoint> getExits() {
-		return exits;
-	}
-	
-	public MazePoint getMainExit() {
-		return exits.isEmpty() ? null : exits.get(exits.size()-1);
-	}
-	
-	public ActionHistory getActionHistory() {
-		return history;
-	}
-	
-	public int getPathWidth() {
-		return dimensions.getBlockX();
-	}
-	
-	public int getWallHeight() {
-		return dimensions.getBlockY();
-	}
-	
-	public int getWallWidth() {
-		return dimensions.getBlockZ();
-	}
-	
-	public List<MaterialData> getWallComposition() {
-		return wallComposition;
-	}
-	
-	public void setPathWidth(int pathWidth) {
-		dimensions.setX(Math.max(1, pathWidth));
-	}
-	
-	public void setWallHeight(int wallHeight) {
-		dimensions.setY(Math.max(1, wallHeight));
-	}
-	
-	public void setWallWidth(int wallWidth) {
-		dimensions.setZ(Math.max(1, wallWidth));
-	}
-	
-	public void setWallComposition(ArrayList<MaterialData> composition) {
-		wallComposition = composition;
-	}
-	
-	public void setClip(Clip clip) {
+	public Maze setClip(Clip clip) {
 		
 		if(getClip().size() != 0)
 			Renderer.hideMaze(this);
 
 		this.clip = clip;
 		isStarted = true;
-		Renderer.showMaze(this);
+		Renderer.displayMaze(this);
+		
+		return this;
 	}
 	
-	public void reset() {
+	public Stack<Vec2> getExits() {
 		
-		Renderer.hideMaze(this);
+		Stack<Vec2> deepCopy = new Stack<>(); 
+		
+		for(Vec2 exit : exits)
+			deepCopy.push(exit.clone());
+		
+		return deepCopy;
+	}
+	
+	public boolean hasExits() {
+		return !exits.isEmpty();
+	}
+	
+	public Vec2 getMainExit() {
+		return hasExits() ? exits.peek().clone() : null;
+	}
+	
+	public ActionHistory getActionHistory() {
+		return history;
+	}
+	
+	public int getWallWidth() {
+		return wallWidth;
+	}
+	
+	public void setWallWidth(int blocks) {
+		wallWidth = Math.max(1, blocks);
+	}
+	
+	public int getWallHeight() {
+		return wallHeight;
+	}
+	
+	public void setWallHeight(int blocks) {
+		wallHeight = Math.max(1, blocks);
+	}
+	
+	public int getPathWidth() {
+		return pathWidth;
+	}
+	
+	public void setPathWidth(int blocks) {
+		pathWidth = Math.max(1, blocks);
+	}
 
-		clip = new Clip(getWorld());
-		exits.clear();
-		history.clear();
-		isStarted = false; 
+	public int getPathLength() {
+		return pathLength;
 	}
 	
-	public boolean exitsContain(Location loc) {
+	public void setPathLength(int blocks) {
+		pathLength = Math.max(1, blocks);
+	}
+
+	public List<Material> getWallMaterials() {
+		return wallMaterials;
+	}
+	
+	public void setWallMaterials(List<Material> materials) {
+		wallMaterials = materials;
+	}
+	
+	public List<BlockState> getBuiltBlocks() {
+		return builtBlocks;
+	}
+	
+	public void setConstructedBlocks(List<BlockState> builtBlocks) {
+		
+		this.builtBlocks = builtBlocks;
+		
+		if(builtBlocks != null)
+			isConstructed = true;
+		else
+			isConstructed = false;
+	}
+	
+	public boolean exitsContain(Vec2 loc) {
 		return exits.contains(loc);
-	}
-	
-	public boolean canBeExit(Block block) {
-		
-		MazePoint point = new MazePoint(block.getLocation());
-		
-		if(!isHighlighted(point.getBlock())) {
-			return false;
-		}
-		
-		return sealsMaze(point, new ClipAction(), Directions.cardinalValues());
-	}
-	
-	public boolean isHighlighted(Block block) {
-		
-		MazePoint point = new MazePoint(block.getLocation());
-		
-		if(!getClip().borderContains(point)) {
-			return false;
-		}
-		
-		for(MazePoint borderPoint : getClip().getBorder()) {
-			if(borderPoint.equals(point) && borderPoint.getY() == point.getY()) {
-				return true;
-			}
-		}
-		
-		return false;
 	}
 
 	public boolean isExit(Block block) {
 		
-		MazePoint point = new MazePoint(block.getLocation());
+		Vec2 blockVec = new Vec2(block);
 		
-		for(MazePoint exit : exits) {
-			if(point.equals(exit) && point.getY() == exit.getY())
-				return true;
-		}
+		return exits.contains(blockVec) && getClip().getHeight(blockVec) == block.getY();
+	}
+	
+	public boolean canBeExit(Block block) {
 		
-		return false;
+		if(!getClip().isBorderBlock(block))
+			return false;
+		
+		return sealsMaze(block.getLocation(), Directions.cardinalValues());
 	}
 	
 	public void toggleExit(Block block) {
 		
-		if(!isHighlighted(block)) {
+		if(!getClip().isBorderBlock(block))
 			return;
-		}
-
-		MazePoint newExit = new MazePoint(block.getLocation());
+		
+		Vec2 clickedLoc = new Vec2(block);
 		
 		if(!canBeExit(block)) {
 			Renderer.sendBlockDelayed(getPlayer(), block.getLocation(), Constants.MAZE_BORDER);
@@ -191,216 +199,175 @@ public class Maze {
 		
 		if(isExit(block)) {
 			
-			exits.remove(newExit);
-			Renderer.sendBlockDelayed(getPlayer(), newExit, Constants.MAZE_BORDER);
+			exits.remove(clickedLoc);
+			Renderer.sendBlockDelayed(getPlayer(), block.getLocation(), Constants.MAZE_BORDER);
 
-			if(!exits.isEmpty()) {
-				Renderer.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_MAIN_EXIT);
-			}
+			if(hasExits())
+				Renderer.sendBlockDelayed(getPlayer(), getClip().getLocation(getMainExit()), Constants.MAZE_MAIN_EXIT);
 			
 		}else {
 
-			if(!exits.isEmpty()) {
-				Renderer.sendBlockDelayed(getPlayer(), exits.get(exits.size()-1), Constants.MAZE_EXIT);
-			}
+			if(hasExits())
+				Renderer.sendBlockDelayed(getPlayer(), getClip().getLocation(getMainExit()), Constants.MAZE_EXIT);
 			
-			exits.add(newExit);
-			Renderer.sendBlockDelayed(getPlayer(), newExit, Constants.MAZE_MAIN_EXIT);
+			exits.push(clickedLoc);
+			Renderer.sendBlockDelayed(getPlayer(), block.getLocation(), Constants.MAZE_MAIN_EXIT);
 		}
 	}
 
-	//TODO move updateHeight() from Maze and ClippingTool to Clip class
-	public Block updateHeight(Block block) {
-		
-		MazePoint updated = Utils.nearestSurface(block.getLocation());
-		
-		if(getClip().removeFilling(updated)) {
-			getClip().addFilling(updated);
-		
-		}else
-			return null;
-		
-		if(getClip().removeBorder(updated)) {
-			getClip().addBorder(updated);
-		}
-
-		return updated.getBlock();
-	}
-	
 	public void processAction(ClipAction action, boolean saveToHistory) {
 		
-		getClip().removeFilling(action.getRemovedFill());
-		getClip().removeBorder(action.getRemovedBorder());
+		if(isConstructed())
+			throw notAlterableException;
 		
-		for(MazePoint point : action.getAddedFill())
-			getClip().addFilling(point);
+		for(Vec2 border : action.getRemovedBorder())
+			getClip().removeBorder(border);
 		
-		for(MazePoint point : action.getAddedBorder())
-			getClip().addBorder(point);
-		
-		if(saveToHistory)
-			history.pushAction(action);
+		for(Vec2 fill : action.getRemovedFill().keySet())
+			getClip().removeFill(fill);
 
-		Renderer.showMazeAction(this, action);
+		getClip().addAllFill(action.getAddedFill());
+		
+		for(Vec2 border : action.getAddedBorder())
+			getClip().addBorder(border);
+		
+		exits.removeAll(action.getRemovedExits());
+
+		if(saveToHistory)
+			getActionHistory().pushAction(action);
+		
+		Renderer.displayMazeAction(this, action);
 	}
 	
-	public ClipAction getAddition(Clip clip) {
+	public ClipAction getAddition(Clip otherClip) {
+	
+		if(!getWorld().equals(otherClip.getWorld()))
+			return null;
 		
-		ClipAction addition = new ClipAction();
-		
-		if(!getWorld().equals(clip.getWorld()))
-			return addition;
-		
-		addProtrudingShapeParts(clip, addition);
+		ClipAction addition = new ClipAction(getClip());
+
+		addProtrudingFill(otherClip, addition);
 		
 		//return if the shapes is totally covered by the maze
 		if(addition.getAddedFill().isEmpty())
-			return addition;
-		
-		removeEnclosedBorder(clip, addition);
-		removeExitsInsideClip(clip, addition);
+			return null;
+
+		addProtrudingBorder(otherClip, addition);
+		removeEnclosedBorder(otherClip, addition);
+		removeExitsInsideClip(otherClip, addition);
 		return addition;
 	}
 	
-	private void addProtrudingShapeParts(Clip clip, ClipAction addition) {
-		//check for new border blocks
-		for(Chunk chunk : clip.getBorderChunks()) {
+	private void addProtrudingFill(Clip otherClip, ClipAction addition) {
+
+		for(Entry<Vec2, Integer> otherFill : otherClip.getFillSet()) {
 			
-			for(MazePoint borderPoint : clip.getBorder(chunk)) {
-				if(!getClip().contains(borderPoint)) {
-					addition.addBorder(borderPoint);
-				}
-			}
-		}
-		
-		//add new fill blocks
-		for(Chunk chunk : clip.getChunks()) {
-			
-			for(MazePoint fillPoint : clip.getFilling(chunk)) {
-				if(!getClip().contains(fillPoint)) {
-					addition.addFill(fillPoint);
-				}
-			}
+			if(!getClip().contains(otherFill.getKey()))
+				addition.addFill(otherFill.getKey(), otherFill.getValue());
 		}
 	}
 	
-	private void removeEnclosedBorder(Clip clip, ClipAction addition) {
+	private void addProtrudingBorder(Clip otherClip, ClipAction addition) {
+	
+		for(Vec2 otherBorder : otherClip.getBorder()) {
+			
+			if(!getClip().contains(otherBorder))
+				addition.addBorder(otherBorder);
+		}
+	}
+	
+	private void removeEnclosedBorder(Clip otherClip, ClipAction addition) {
 		
-		for(Chunk chunk : clip.getChunks()) {
+		for(Vec2 ownBorder : getClip().getBorder()) {
 			
-			if(!getClip().getBorderChunks().contains(chunk)) {
-				continue;
-			}
-			
-			for(MazePoint ownBorder : getClip().getBorder(chunk)) {
-				
-				if(!clip.contains(ownBorder) ||
-					clip.borderContains(ownBorder) &&
-					sealsMaze(ownBorder, addition, Directions.values())) {
-					continue;
-				}
-				
+			if(otherClip.contains(ownBorder) &&
+			  !otherClip.borderContains(ownBorder) ||
+			  !sealsMaze(ownBorder, addition, Directions.values()))
 				addition.removeBorder(ownBorder);
-			}
 		}
 	}
 	
-	private void removeExitsInsideClip(Clip clip, ClipAction changes) {
+	private void removeExitsInsideClip(Clip otherClip, ClipAction changes) {
 	
-		for(MazePoint exit : exits) {
-			if(clip.contains(exit)) {
+		for(Vec2 exit : exits) {
+			
+			if(otherClip.contains(exit))
 				changes.removeExit(exit);
-			}
 		}
 	}
 	
 	public ClipAction getDeletion(Clip clip) {
 		
-		ClipAction deletion = new ClipAction();
-		
 		if(!getWorld().equals(clip.getWorld()))
-			return deletion;
+			return null;
 		
-		removeIntrudingShapeParts(clip, deletion);
+		ClipAction deletion = new ClipAction(getClip());
+		
+		removeOverlappingFill(clip, deletion);
 		
 		if(deletion.getRemovedFill().isEmpty())
-			return deletion;
+			return null;
 		
+		//the order of these steps has not to be changed
+		addIntersectingBorder(clip, deletion);
 		removeExcludedBorder(clip, deletion);
 		removeExitsInsideClip(clip, deletion);
 		return deletion;
 	}
 	
-	private void removeIntrudingShapeParts(Clip clip, ClipAction deletion) {
-		//remove all fill from the shape
-		for(Chunk chunk : clip.getChunks()) {
+	private void removeOverlappingFill(Clip otherClip, ClipAction deletion) {
+		
+		for(Entry<Vec2, Integer> otherFill : otherClip.getFillSet()) {
 			
-			if(!getClip().getChunks().contains(chunk)) {
-				continue;
-			}
-			
-			for(MazePoint point : clip.getFilling(chunk))
-				if(getClip().contains(point) && !clip.borderContains(point))
-					deletion.removeFill(point);
-		}
-		//get new border where shape is cutting into maze
-		for(Chunk chunk : clip.getBorderChunks()) {
-			
-			if(!getClip().getChunks().contains(chunk)) {
-				continue;
-			}
-			
-			for(MazePoint point : clip.getBorder(chunk))
-				if(getClip().contains(point) && !getClip().borderContains(point))
-					deletion.addBorder(point);
+			if(!otherClip.borderContains(otherFill.getKey()) && getClip().contains(otherFill.getKey()))
+				deletion.removeFill(otherFill.getKey(), otherFill.getValue());
 		}
 	}
-	
-	private void removeExcludedBorder(Clip clip, ClipAction deletion) {
+
+	private void addIntersectingBorder(Clip otherClip, ClipAction deletion) {
 		
-		for(Chunk chunk : clip.getBorderChunks()) {
+		for(Vec2 otherBorder : otherClip.getBorder()) {
 			
-			if(!getClip().getBorderChunks().contains(chunk)) {
-				continue;
-			}
+			if(!getClip().borderContains(otherBorder) && getClip().contains(otherBorder))
+				deletion.addBorder(otherBorder);
+		}
+	}
+
+	private void removeExcludedBorder(Clip otherClip, ClipAction deletion) {
+		
+		for(Vec2 ownBorder : getClip().getBorder()) {
 			
-			for(MazePoint ownBorder : getClip().getBorder(chunk)) {
-				
-				if(!clip.contains(ownBorder) ||
-					clip.borderContains(ownBorder) &&
-					sealsMaze(ownBorder, deletion, Directions.values())) {
-					continue;
-				}
-				
+			if(!otherClip.borderContains(ownBorder) && !sealsMaze(ownBorder, deletion, Directions.values()))
 				deletion.removeBorder(ownBorder);
-				deletion.removeFill(ownBorder);
-			}
 		}
 	}
 
 	public ClipAction getExpansion(Block block) {
 		
-		if(!isHighlighted(block))
+		if(!getClip().isBorderBlock(block))
 			return null;
 		
-		MazePoint point = new MazePoint(block.getLocation());
-		ClipAction expansion = new ClipAction();
+		Vec2 blockVec = new Vec2(block);
+		ClipAction expansion = new ClipAction(getClip());
 		
-		expandBorder(point, expansion);
-		removeIntrusiveBorder(point, expansion);
+		expandBorder(blockVec, expansion);
+		removeIntrusiveBorder(blockVec, expansion);
 		
 		return expansion;
 	}
 	
-	private void expandBorder(MazePoint point, ClipAction expansion) {
+	private void expandBorder(Vec2 loc, ClipAction expansion) {
 		
-		expansion.removeBorder(point);
+		expansion.removeBorder(loc);
 		
 		for(Directions dir : Directions.values()) {
-			MazePoint neighbor = Utils.nearestSurface(point.clone().add(dir.toVec3()));
+			
+			Vec2 neighbor = loc.clone().add(dir.toVec2());
+			int height = Utils.nearestSurfaceY(neighbor, getClip().getHeight(loc), getWorld());
 			
 			if(!getClip().contains(neighbor)) {
-				expansion.addFill(neighbor);
+				
+				expansion.addFill(neighbor, height);
 				expansion.addBorder(neighbor);
 				
 			}else if(exitsContain(neighbor) && !sealsMaze(neighbor, expansion, Directions.cardinalValues()))
@@ -408,97 +375,116 @@ public class Maze {
 		}
 	}
 	
-	private void removeIntrusiveBorder(MazePoint point, ClipAction expansion) {
+	private void removeIntrusiveBorder(Vec2 loc, ClipAction expansion) {
 		//look for neighbors, that are now intruding the border unnecessarily
 		for(Directions dir : Directions.values()) {
-			MazePoint neighbor = Utils.nearestSurface(point.clone().add(dir.toVec3()));
 			
-			if(!getClip().borderContains(neighbor) && !expansion.getAddedBorder().contains(neighbor))
-				continue;
-			
-			if(!sealsMaze(neighbor, expansion, Directions.values()))
+			Vec2 neighbor = loc.clone().add(dir.toVec2());
+
+			if(getClip().borderContains(neighbor) && !sealsMaze(neighbor, expansion, Directions.values()))
 				expansion.removeBorder(neighbor);
 		}
 	}
 	
 	public ClipAction getErasure(Block block) {
 		
-		if(!isHighlighted(block))
+		if(!getClip().isBorderBlock(block))
 			return null;
 		
-		MazePoint point = new MazePoint(block.getLocation());
-		ClipAction action = new ClipAction();
+		Vec2 blockVec = new Vec2(block);
+		ClipAction action = new ClipAction(getClip());
 		
-		action.removeBorder(point);
+		action.removeBorder(blockVec);
 		
-		reduceBorder(point, action);
-		removeProtrusiveBorder(point, action);
-		
+		reduceBorder(blockVec, action);
+		removeProtrusiveBorder(blockVec, action);
 		return action;
 	}
 	
 	
-	private void reduceBorder(MazePoint point, ClipAction action) {
+	private void reduceBorder(Vec2 loc, ClipAction erasure) {
 		
-		if(exitsContain(point))
-			action.removeExit(point);
+		if(exitsContain(loc))
+			erasure.removeExit(loc);
 		
-		action.removeBorder(point);
-		action.removeFill(point);
+		erasure.removeBorder(loc);
+		erasure.removeFill(loc, getClip().getHeight(loc));
 		
-		if(!sealsMaze(point, action, Directions.values()))
+		if(!sealsMaze(loc, erasure, Directions.values()))
 			return;
 		
 		for(Directions dir : Directions.values()) {
-			MazePoint neighbor = point.clone().add(dir.toVec3());
+			Vec2 neighbor = loc.clone().add(dir.toVec2());
 			
 			if(getClip().contains(neighbor) && !getClip().borderContains(neighbor))
-				action.addBorder(neighbor);
+				erasure.addBorder(neighbor);
 			
-			if(exitsContain(neighbor) && !sealsMaze(neighbor, action, Directions.cardinalValues()))
-				action.removeExit(neighbor);
+			if(exitsContain(neighbor) && !sealsMaze(neighbor, erasure, Directions.cardinalValues()))
+				erasure.removeExit(neighbor);
 		}
 	}
 	
-	private void removeProtrusiveBorder(MazePoint point, ClipAction changes) {
-		//detect outstanding neighbor borders of the block (in cardinal directions)
+	private void removeProtrusiveBorder(Vec2 loc, ClipAction erasure) {
+		//detect outstanding neighbor borders of the block
 		for(Directions dir : Directions.values()) {
-			MazePoint neighbor = Utils.nearestSurface(point.clone().add(dir.toVec3()));
-			
-			if(!getClip().borderContains(neighbor))
-				continue;
+
+			Vec2 neighbor = loc.clone().add(dir.toVec2());
 			
 			//remove the neighbor if it still stands out
-			if(!sealsMaze(neighbor, changes, Directions.values())) {
-				changes.removeBorder(neighbor);
-				changes.removeFill(neighbor);
+			if(getClip().borderContains(neighbor) && !sealsMaze(neighbor, erasure, Directions.values())) {
+				
+				int height = getClip().getHeight(neighbor);
+				erasure.removeBorder(neighbor);
+				erasure.removeFill(neighbor, height);
 			}
 		}
 	}
 	
-	public boolean sealsMaze(MazePoint point, Directions[] directions) {
-		return sealsMaze(point, new ClipAction(), directions);
+	public boolean sealsMaze(Location loc, Directions[] directions) {
+		return sealsMaze(new Vec2(loc), new ClipAction(getClip()), directions);
 	}
 	
-	public boolean sealsMaze(MazePoint point, ClipAction changes, Directions[] directions) {
+	public boolean sealsMaze(Vec2 loc, ClipAction changes, Directions[] directions) {
 		
-		boolean
-			touchesFill = false,
-			touchesExternal = false;
+		boolean touchesFill = false;
+		boolean touchesExternal = false;
 		
 		for(Directions dir : directions) {
-			MazePoint neighbor = point.clone().add(dir.toVec3());
-			if(!changes.clipWillContain(clip, neighbor)) {
+			
+			Vec2 neighbor = loc.clone().add(dir.toVec2());
+			
+			if(!changes.clipWillContain(neighbor))
 				touchesExternal = true;
 
-			}else if(!changes.clipBorderWillContain(clip, neighbor)) {
+			else if(!changes.clipBorderWillContain(getClip(), neighbor))
 				touchesFill = true;
-			}
 			
-			if(touchesFill && touchesExternal) {
+			if(touchesFill && touchesExternal)
 				return true;
-			}
 		}
+		
 		return false;
+	}
+
+	public void updateHeights() {
+		
+		if(isConstructed())
+			throw notAlterableException;
+
+		for(Entry<Vec2, Integer> fill : getClip().getFillSet())
+			getClip().addFill(fill.getKey(), Utils.nearestSurfaceY(fill.getKey(), fill.getValue(), getWorld()));
+	}
+	
+	public Location updateHeight(Block block) {
+		
+		if(isConstructed())
+			throw notAlterableException;
+		
+		Location updatedBlock = Utils.nearestSurface(block.getLocation());
+		Vec2 blockVec = new Vec2(block);
+		
+		getClip().addFill(blockVec, updatedBlock.getBlockY());
+			
+		return updatedBlock;
 	}
 }

@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,22 +13,22 @@ import me.gorgeousone.tangledmaze.command.MazeCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 
-public class MazeCommandHandler implements CommandExecutor {
+public class CommandHandler implements CommandExecutor {
 
-	private ArrayList<MazeCommand> mazeCommands;
+	private List<MazeCommand> mazeCommands;
 
-	public MazeCommandHandler() {
+	public CommandHandler() {
 		mazeCommands = new ArrayList<>();
 	}
-
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
 		
-		if(!sender.hasPermission(Constants.BUILD_PERM)) {
+		if(!sender.hasPermission(Constants.BUILD_PERM))
 			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
-		}
 		
 		if(arguments.length < 1) {
+			
 			HelpCommand.sendHelpPage(sender, 1);
 			return true;
 		}
@@ -36,7 +37,7 @@ public class MazeCommandHandler implements CommandExecutor {
 		
 		for(MazeCommand mazeCommand : mazeCommands) {
 			
-			if(mazeCommand.isCommand(subCommandName)) {
+			if(mazeCommand.getName().equalsIgnoreCase(subCommandName)) {
 				mazeCommand.execute(sender, getSubArguents(arguments));
 				return true;
 			}
@@ -45,15 +46,18 @@ public class MazeCommandHandler implements CommandExecutor {
 		return false;
 	}
 	
+	public List<MazeCommand> getCommands() {
+		return mazeCommands;
+	}
+
 	public void registerCommand(MazeCommand command) {
 		mazeCommands.add(command);
 	}
 	
 	private String[] getSubArguents(String[] arguments) {
 		
-		if(arguments.length < 2) {
+		if(arguments.length < 2)
 			return new String[] {};
-		}
 		
 		return Arrays.copyOfRange(arguments, 1, arguments.length);
 	}

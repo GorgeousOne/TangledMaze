@@ -13,8 +13,10 @@ import me.gorgeousone.tangledmaze.util.Utils;
 
 public class HelpCommand extends MazeCommand {
 	
+	private static int commandCount = 11;
+	private static int pageCount = commandCount + 1;
+	
 	private static RawMessage[] pageLinks;
-//	private static TextMessage[] helpPages;
 	private static HelpPage[] pages;
 	
 	public HelpCommand() {
@@ -37,12 +39,11 @@ public class HelpCommand extends MazeCommand {
 	
 	public static void sendHelpPage(CommandSender sender, int pageNumber) {
 		
-		if(pageNumber < 1 || pageNumber > pages.length+1) {
+		if(pageNumber < 1 || pageNumber > pageCount)
 			return;
-		}
 		
 		sender.sendMessage("");
-		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + (pages.length+1));
+		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + pageCount);
 		sender.sendMessage("");
 		
 		if(pageNumber == 1) {
@@ -56,9 +57,22 @@ public class HelpCommand extends MazeCommand {
 			pages[pageNumber-2].send(sender);
 	}
 	
+	private int getPageNumber(String[] arguments) {
+		
+		if(arguments.length == 0)
+			return 1;
+		
+		try {
+			return Utils.limit(Integer.parseInt(arguments[0]), 1, pages.length+1);
+		
+		} catch (NumberFormatException ex) {
+			return 1;
+		}
+	}
+
 	private void createPageLinks() {
 		
-		pageLinks = new RawMessage[9];
+		pageLinks = new RawMessage[commandCount];
 		
 		for(int i = 0; i < pageLinks.length; i++) {
 			pageLinks[i] = new RawMessage();
@@ -73,12 +87,14 @@ public class HelpCommand extends MazeCommand {
 		pageLinks[5].last().append("/maze add / cut").color(Color.GREEN);
 		pageLinks[6].last().append("/maze undo").color(Color.GREEN);
 		pageLinks[7].last().append("/maze pathwidth / wallwidth / wallheight <integer>").color(Color.GREEN);
-		pageLinks[8].last().append("/maze build <block> ...").color(Color.GREEN);
+		pageLinks[8].last().append("/maze pathlength <integer>").color(Color.GREEN);
+		pageLinks[9].last().append("/maze build <block> ...").color(Color.GREEN);
+		pageLinks[10].last().append("/maze unbuild").color(Color.GREEN);
 	}
 	
 	private void listHelpPages() {
 		
-		pages = new HelpPage[9];
+		pages = new HelpPage[commandCount];
 		pages[0] = new HelpPage(Messages.COMMAND_WAND);
 		pages[1] = new HelpPage(Messages.COMMAND_START);
 		pages[2] = new HelpPage(Messages.COMMAND_DISCARD);
@@ -87,20 +103,8 @@ public class HelpCommand extends MazeCommand {
 		pages[5] = new HelpPage(Messages.COMMAND_ADD_CUT);
 		pages[6] = new HelpPage(Messages.COMMAND_UNDO);
 		pages[7] = new HelpPage(Messages.COMMAND_DIMENSIONS);
-		pages[8] = new HelpPage(Messages.COMMAND_BUILD);
-
-	}
-	
-	private int getPageNumber(String[] arguments) {
-		
-		if(arguments.length == 0)
-			return 1;
-		
-		try {
-			return Utils.limitInt(Integer.parseInt(arguments[0]), 1, pages.length+1);
-		
-		} catch (NumberFormatException ex) {
-			return 1;
-		}
+		pages[8] = new HelpPage(Messages.COMMAND_PATHLENGTH);
+		pages[9] = new HelpPage(Messages.COMMAND_BUILD);
+		pages[10] = new HelpPage(Messages.COMMAND_UNBUILD);
 	}
 }

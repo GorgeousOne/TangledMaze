@@ -1,5 +1,7 @@
 package me.gorgeousone.tangledmaze.handler;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -9,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.Renderer;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 
 public abstract class MazeHandler {
@@ -42,15 +43,31 @@ public abstract class MazeHandler {
 		mazes.remove(player.getUniqueId());
 	}
 	
-	public static void buildMaze(Maze maze, MazeGenerator generator) {
+	public static void buildMaze(Maze maze, PathGenerator pathGenerator, BlockGenerator blockGenerator) {
 		Renderer.hideMaze(maze);
 		
-		BukkitRunnable async = new BukkitRunnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
-				generator.buildMaze(maze);
+				
+				BuildMap buildMap = new BuildMap(maze);
+				
+				pathGenerator.generatePaths(buildMap);
+				blockGenerator.generateBlocks(buildMap);
 			}
-		};
-		async.runTaskAsynchronously(TangledMain.getInstance());
+		}.runTaskAsynchronously(TangledMain.getInstance());
+	}
+	
+	public static void unbuilMaze(Maze maze, BlockGenerator blockGenerator) {
+		
+		blockGenerator.updateBlocksContinuously(maze.getBuiltBlocks(), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				maze.setConstructedBlocks(null);
+				maze.updateHeights();
+				Renderer.displayMaze(maze);
+			}
+		});
 	}
 }

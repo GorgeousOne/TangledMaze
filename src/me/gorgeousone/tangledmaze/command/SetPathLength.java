@@ -1,7 +1,5 @@
 package me.gorgeousone.tangledmaze.command;
 
-import me.gorgeousone.tangledmaze.util.Utils;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,40 +8,42 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
+import me.gorgeousone.tangledmaze.util.Utils;
 
-public class SetWallHeight extends MazeCommand {
-
-	public SetWallHeight() {
-		super("wallheight", "/tangledmaze wallheight <integer>", 1, true, null);
+public class SetPathLength extends MazeCommand {
+	
+	public SetPathLength() {
+		super("pathlength", "/tangledmaze pathlength <integer>", 1, true, null);
 	}
 	
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
-
+		
 		if(!super.execute(sender, arguments))
 			return false;
 		
 		Player player = (Player) sender;
 		
-		String wallHeightString = arguments[0];
-		int wallHeight;
-
+		String pathLengthString = arguments[0];
+		int pathLength;
+		
 		try {
-			wallHeight = Utils.limit(Integer.parseInt(wallHeightString), 1, Constants.MAX_WALLHEIGHT);
+			pathLength = Utils.limit(Integer.parseInt(pathLengthString), 1, Constants.MAX_PATHLENGTH);
 			
 		} catch (NumberFormatException ex) {
 			
-			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", wallHeightString));
+			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", pathLengthString));
 			return false;
 		}
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
-		if(maze.getWallHeight() == wallHeight)
+		if(maze.getWallHeight() == pathLength)
 			return false;
 		
-		maze.setWallHeight(wallHeight);
-		Messages.MESSAGE_WALLHEIGHT_CHANGED.send(player, new PlaceHolder("number", wallHeight));
+		maze.setPathLength(pathLength);
+		Messages.MESSAGE_PATHLENGTH_CHANGED.send(player, new PlaceHolder("number", pathLength));
+		
 		return true;
 	}
 }

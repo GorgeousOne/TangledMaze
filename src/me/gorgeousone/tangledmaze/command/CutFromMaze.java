@@ -7,6 +7,7 @@ import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
@@ -19,9 +20,8 @@ public class CutFromMaze extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
 		Player player = (Player) sender;
 		
@@ -49,14 +49,13 @@ public class CutFromMaze extends MazeCommand {
 		
 		Maze maze = MazeHandler.getMaze(player);
 		ClipAction action = maze.getDeletion(clipboard.getClip());
-		
-		if(action == null) {
 
-			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
-			return false;
-		}
-
+		Renderer.hideClipboard(clipboard, true);
 		clipboard.reset();
+
+		if(action == null)
+			return false;
+
 		maze.processAction(action, true);
 		return true;
 	}

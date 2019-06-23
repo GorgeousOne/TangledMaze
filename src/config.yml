@@ -1,6 +1,1 @@
-language: english
-wand-item: gold_spade
-maze:
-    maximum-pathwidth: 50
-    maximum-wallwidth: 50
-    maximum-wallheight: 100
+wand-item: golden_shovel

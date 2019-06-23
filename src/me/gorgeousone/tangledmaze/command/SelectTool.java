@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.*;
@@ -27,6 +28,7 @@ public class SelectTool extends MazeCommand {
 		String toolType = arguments[0];
 		
 		switch (toolType.toLowerCase()) {
+		
 		case "rect":
 		case "rectangle":
 		case "square":
@@ -60,7 +62,7 @@ public class SelectTool extends MazeCommand {
 			break;
 			
 		default:
-			player.sendMessage("/tangledmaze help 5");
+			player.sendMessage("/tangledmaze help 6");
 			return false;
 		}
 		
@@ -97,7 +99,11 @@ public class SelectTool extends MazeCommand {
 		}
 		
 		if(ToolHandler.hasClipboard(player)) {
-			ToolHandler.getClipboard(player).reset();
+			
+			ClippingTool clipboard = ToolHandler.getClipboard(player);
+			
+			Renderer.hideClipboard(clipboard, true);
+			clipboard.reset();
 		}
 		
 		ToolHandler.setTool(player, type);

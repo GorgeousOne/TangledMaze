@@ -55,7 +55,7 @@ public class PlayerListener implements Listener {
 		Player player = e.getPlayer();
 			
 		if(player.hasPermission(Constants.BUILD_PERM)) {
-			MazeHandler.getMaze(player).reset();
+			MazeHandler.setMaze(player, new Maze(player));
 			ToolHandler.resetToDefaultTool(player);
 		}
 	}

@@ -9,8 +9,8 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class ExitSettingTool extends Tool {
 	
-	public ExitSettingTool(Player p) {
-		super(p);
+	public ExitSettingTool(Player builder) {
+		super(builder);
 	}
 	
 	@Override

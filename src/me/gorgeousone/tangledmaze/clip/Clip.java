@@ -1,207 +1,170 @@
 package me.gorgeousone.tangledmaze.clip;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
-import me.gorgeousone.tangledmaze.util.MazePoint;
+import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class Clip {
 	
 	private World world;
-	private TreeSet<MazePoint> fill, border;
-	private HashSet<Chunk> fillChunks, borderChunks;
-	
-	private int size, borderSize;
+	private Map<Vec2, Integer> fill;
+	private Set<Vec2> border;
 	
 	public Clip(World world) {
 
 		this.world = world;
 		
-		fill = new TreeSet<>();
+		fill = new TreeMap<>();
 		border = new TreeSet<>();
-		
-		fillChunks = new HashSet<>();
-		borderChunks = new HashSet<>();
 	}
 	
 	public World getWorld() {
 		return world;
 	}
 	
-	public int size() {
-		return size;
+	public Set<Entry<Vec2, Integer>> getFillSet() {
+		return fill.entrySet();
 	}
 	
-	public int borderSize() {
-		return borderSize;
+	public Set<Vec2> getFill() {
+		return fill.keySet();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public HashSet<Chunk> getChunks() {
-		return (HashSet<Chunk>) fillChunks.clone();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public HashSet<Chunk> getBorderChunks() {
-		return (HashSet<Chunk>) borderChunks.clone();
-	}
-	
-	public TreeSet<MazePoint> getFilling() {
-		return fill;
+	public Set<Vec2> getFill(Chunk chunk) {
+		return getLocsInChunk((TreeSet<Vec2>) fill.keySet(), chunk);
 	}
 
-	public TreeSet<MazePoint> getBorder() {
+	public void addFill(Vec2 loc, int height) {
+		fill.put(loc, height);
+	}
+	
+	public void addAllFill(Map<Vec2, Integer> locs) {
+		fill.putAll(locs);
+	}
+	
+	public void removeFill(Vec2 loc) {
+
+		if(fill.remove(loc) != null)
+			removeBorder(loc);
+	}
+		
+	public void removeFill(Location loc) {
+		removeFill(new Vec2(loc));
+	}
+	
+	public Set<Vec2> getBorder() {
 		return border;
 	}
-	
-	public TreeSet<MazePoint> getFilling(Chunk chunk) {
-		return getPointsInChunk(fill, chunk);
+
+	public Set<Vec2> getBorder(Chunk chunk) {
+		return getLocsInChunk((TreeSet<Vec2>) getBorder(), chunk);
 	}
-	
-	public TreeSet<MazePoint> getBorder(Chunk chunk) {
-		return getPointsInChunk(border, chunk);
-	}
-	
-	public boolean addFilling(MazePoint point) {
+
+	public void addBorder(Vec2 loc) {
 		
-		if (getWorld() != point.getWorld()) {
+		if(fill.containsKey(loc))
+			border.add(loc);
+	}
+	
+	public void removeBorder(Vec2 loc) {
+		border.remove(loc);
+	}
+	
+	public void removeBorder(Location loc) {
+		border.remove(new Vec2(loc));
+	}
+	
+	public int size() {
+		return fill.size();
+	}
+
+	public int borderSize() {
+		return border.size();
+	}
+	
+	public int getHeight(Vec2 loc) {
+		return fill.get(loc);
+	}
+	
+	public Location getLocation(Vec2 loc) {
+		return new Location(getWorld(), loc.getX(), getHeight(loc), loc.getZ());
+	}
+	
+	public Set<Location> getBorderBlocks() {
+		
+		Set<Location> blocks = new HashSet<>();
+		
+		for(Vec2 border : getBorder())
+			blocks.add(new Location(getWorld(), border.getX(), getHeight(border), border.getZ()));
+		
+		return blocks;
+	}
+
+	public Set<Location> getBorderBlocks(Chunk chunk) {
+		
+		Set<Location> blocks = new HashSet<>();
+		
+		for(Vec2 border : getBorder(chunk))
+			blocks.add(new Location(getWorld(), border.getX(), getHeight(border), border.getZ()));
+		
+		return blocks;
+	}
+
+	public boolean isBorderBlock(Block block) {
+		
+		if(block.getWorld() != getWorld())
 			return false;
-		}
 		
-		if(fill.add(point)) {
-			
-			fillChunks.add(point.getChunk());
-			size++;
-			return true;
-		}
-
-		return false;
+		Vec2 blockVec = new Vec2(block);
+		
+		return borderContains(blockVec) && getHeight(blockVec) == block.getY();
 	}
 	
-	public boolean removeFilling(MazePoint point) {
-		
-		if(fill.remove(point)) {
-			
-			if(getFilling(point.getChunk()).isEmpty()) {
-				fillChunks.remove(point.getChunk());
-			}
-			
-			size--;
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public void removeFilling(Collection<MazePoint> points) {
-		
-		HashSet<Chunk> chunks = new HashSet<>();
-		
-		for(MazePoint point : points) {	
+	public boolean contains(Location loc) {
 
-			if(fill.remove(point)) {
-				chunks.add(point.getChunk());
-				size--;
-			}
-		}
-		
-		for(Chunk chunk : chunks) {
-			
-			if(getFilling(chunk).isEmpty()) {
-				fillChunks.remove(chunk);
-			}
-		}
-	}
-	
-	public boolean addBorder(MazePoint point) {
-
-		if (getWorld() != point.getWorld()) {
+		if(loc.getWorld() != getWorld())
 			return false;
-		}
-		
-		if(border.add(point)) {
-			borderChunks.add(point.getChunk());
-			borderSize++;
-			return true;
-		}
-		
-		return false;
+
+		return contains(new Vec2(loc));
 	}
 	
-	public boolean removeBorder(MazePoint point) {
-		
-		if(border.remove(point)) {
-			
-			if(getBorder(point.getChunk()).isEmpty()) {
-				borderChunks.remove(point.getChunk());
-			}
-
-			borderSize--;
-			return true;
-		}
-		
-		return false;
+	public boolean contains(Vec2 loc) {
+		return fill.containsKey(loc);
 	}
 	
-	public void removeBorder(Collection<MazePoint> points) {
-		
-		HashSet<Chunk> chunks = new HashSet<>();
-		
-		for(MazePoint point : points) {	
-
-			if(border.remove(point)) {
-				chunks.add(point.getChunk());
-				size--;
-			}
-		}
-		
-		for(Chunk chunk : chunks) {
-			
-			if(getBorder(chunk).isEmpty()) {
-				fillChunks.remove(chunk);
-			}
-		}
-	}
-
-	public boolean contains(MazePoint point) {
-
-		if(point.getWorld() != getWorld()) {
-			return false;
-		}
-
-		return fill.contains(point);
+	public boolean borderContains(Location loc) {
+		return borderContains(new Vec2(loc));
 	}
 	
-	public boolean borderContains(MazePoint point) {
-
-		if(point.getWorld() != getWorld()) {
-			return false;
-		}
-
-		return border.contains(point);
+	public boolean borderContains(Vec2 loc) {
+		return border.contains(loc);
 	}
 	
-	private TreeSet<MazePoint> getPointsInChunk(TreeSet<MazePoint> set, Chunk chunk) {
+	private Set<Vec2> getLocsInChunk(TreeSet<Vec2> set, Chunk chunk) {
+	
+		int chunkMinX = chunk.getX() * 16,
+			chunkMinZ = chunk.getZ() * 16,
+			chunkMaxX = chunkMinX + 15,
+			chunkMaxZ = chunkMinZ + 15;
 		
-		int chunkX = chunk.getX() * 16,
-			chunkZ = chunk.getZ() * 16,
-			chunkX2 = chunkX + 15,
-			chunkZ2 = chunkZ + 15;
-		
-		MazePoint
-			chunkStart = new MazePoint(null, chunkX, 0, chunkZ),
-			chunkEnd   = new MazePoint(null, chunkX2, 0, chunkZ2);
+		Vec2 chunkStart = new Vec2(chunkMinX, chunkMinZ);
+		Vec2 chunkEnd   = new Vec2(chunkMaxX, chunkMaxZ);
 					
-		TreeSet<MazePoint>
-			subSet = (TreeSet<MazePoint>) set.subSet(chunkStart, chunkEnd),
-			chunkSet = new TreeSet<>();
+		TreeSet<Vec2> subSet = (TreeSet<Vec2>) set.subSet(chunkStart, chunkEnd);
+		TreeSet<Vec2> chunkSet = new TreeSet<>();
 		
-		for(int iterZ = chunkZ; iterZ <= chunkZ2; iterZ++) {
-
+		for(int iterZ = chunkMinZ; iterZ <= chunkMaxZ; iterZ++) {
+	
 			chunkStart.setZ(iterZ);
 			chunkEnd.setZ(iterZ);
 			chunkSet.addAll(subSet.subSet(chunkStart, chunkEnd));

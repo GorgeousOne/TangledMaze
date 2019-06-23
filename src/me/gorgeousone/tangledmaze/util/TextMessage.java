@@ -23,7 +23,7 @@ public class TextMessage {
 			
 		paragraphs = alteredMessage.split("\\\\n");
 
-		if(paragraphs.length < 2 || !readColorCodes) {
+		if(paragraphs.length < 2) {
 			return;
 		}
 
@@ -41,8 +41,13 @@ public class TextMessage {
 	
 	public void send(CommandSender sender, PlaceHolder placeHolder) {
 		
-		for(String paragraph : paragraphs) {
-			sender.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
+		if(placeHolder == null) {
+			
+			send(sender);
+			return;
 		}
+		
+		for(String paragraph : paragraphs)
+			sender.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
 	}
 }

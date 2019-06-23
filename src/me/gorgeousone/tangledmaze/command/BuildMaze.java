@@ -1,36 +1,40 @@
 package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import me.gorgeousone.tangledmaze.generation.MazeGenerator;
+import me.gorgeousone.tangledmaze.generation.BlockGenerator;
+import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.MaterialReader;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
+import me.gorgeousone.tangledmaze.util.TextException;
 
-@SuppressWarnings("deprecation")
 public class BuildMaze extends MazeCommand {
 
-	private MazeGenerator generator;
+	private PathGenerator pathGenerator;
+	private BlockGenerator blockGenerator;
 
 	public BuildMaze() {
 		
 		super("build", "/tangledmaze build <block> ...", 1, true, null);
 		
-		generator = new MazeGenerator();
+		pathGenerator = new PathGenerator();
+		blockGenerator = new BlockGenerator();
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
 		if(!super.execute(sender, arguments)) {
-			return true;
+			return false;
 		}
 		
 		Player player = (Player) sender;
@@ -50,39 +54,46 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		if(maze.getExits().isEmpty()) {
+		if(!maze.hasExits()) {
 			Messages.ERROR_NO_MAZE_EXIT_SET.send(player);
 			player.sendMessage("/tangledmaze select exit");
 			return false;
 		}
 		
-		ArrayList<MaterialData> composition;
+		List<Material> wallMaterials;
 		
 		try {
-			composition = getWallComposition(arguments);
-		
-		} catch (Exception e) {
-			player.sendMessage(e.getMessage());
+			wallMaterials = getWallMaterials(arguments);
+			
+		} catch (TextException ex) {
+			
+			ex.getText().send(player, ex.getPlaceHolder());
 			return false;
 		}
 		
-		maze.setWallComposition(composition);
+		maze.setWallMaterials(wallMaterials);
 
-		MazeHandler.buildMaze(maze, generator);
+		MazeHandler.buildMaze(maze, pathGenerator, blockGenerator);
 		Messages.MESSAGE_MAZE_BUILDING_STARTED.send(player);
 
 		ToolHandler.resetToDefaultTool(player);
-		MazeHandler.setMaze(player, new Maze(player));
 		return true;
 	}
 	
-	private static ArrayList<MaterialData> getWallComposition(String[] serializedMaterialData) {
-		ArrayList<MaterialData> composition = new ArrayList<>();
+	private static List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
 		
-		for(String materialData : serializedMaterialData) {
-			composition.add(MaterialReader.readMaterialData(materialData));
+		List<Material> wallMaterials = new ArrayList<>();
+		
+		for(String materialString : serializedMaterials) {
+			
+			Material material = Material.matchMaterial(materialString);
+			
+			if(material == null || !material.isBlock())
+				throw new TextException(Messages.ERROR_NO_MATCHING_BLOCK_TYPE, new PlaceHolder("block", materialString));
+			else
+				wallMaterials.add(material);
 		}
 		
-		return composition;
+		return wallMaterials;
 	}
 }

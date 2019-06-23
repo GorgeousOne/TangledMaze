@@ -2,9 +2,11 @@ package me.gorgeousone.tangledmaze.shape;
 
 import java.util.ArrayList;
 
+import org.bukkit.Location;
+
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.util.MazePoint;
 import me.gorgeousone.tangledmaze.util.Utils;
+import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class Rectangle implements Shape {
 	
@@ -14,44 +16,40 @@ public class Rectangle implements Shape {
 	}
 	
 	@Override
-	public Clip createClip(ArrayList<MazePoint> vertices) {
+	public Clip createClip(ArrayList<Location> vertices) {
 		
 		if(vertices.size() < 2)
 			throw new IllegalArgumentException("A rectangle needs 2 vertices to be determined.");
 		
-		MazePoint
-			vertex0 = vertices.get(0),
-			vertex2 = vertices.get(1);
+		Location vertex0 = vertices.get(0);
+		Location vertex2 = vertices.get(1);
 
 		vertices.clear();
 		vertices.addAll(Shape.createRectangularVertices(vertex0, vertex2));
 		
-		MazePoint
-			minVertex = vertices.get(0).clone(),
-			maxVertex = vertices.get(2).clone().add(1, 0, 1);
-		
+		Vec2 minVertex = new Vec2(vertices.get(0));
+		Vec2 maxVertex = new Vec2(vertices.get(2)).add(1, 1);
 		Clip clip = new Clip(vertex0.getWorld());
 		
 		int maxY = Utils.getMaxHeight(vertices);
 		
-		for(int x = minVertex.getBlockX(); x < maxVertex.getX(); x++) {
-			for(int z = minVertex.getBlockZ(); z < maxVertex.getZ(); z++) {
+		for(int x = minVertex.getX(); x < maxVertex.getX(); x++) {
+			for(int z = minVertex.getZ(); z < maxVertex.getZ(); z++) {
 				
-				MazePoint point = new MazePoint(minVertex.getWorld(), x, maxY, z);
-				point = Utils.nearestSurface(point);
+				Vec2 loc = new Vec2(x, z);
+				int height = Utils.nearestSurfaceY(loc, maxY, clip.getWorld());
 				
-				clip.addFilling(point);
-				
-				if(isBorder(x, z, minVertex, maxVertex)) {
-					clip.addBorder(point);
-				}
+				clip.addFill(loc, height);
+
+				if(isBorder(x, z, minVertex, maxVertex))
+					clip.addBorder(loc);
 			}
 		}
-
+		
 		return clip;
 	}
 	
-	private boolean isBorder(int x, int z, MazePoint minVertex, MazePoint maxVertex) {
+	private boolean isBorder(int x, int z, Vec2 minVertex, Vec2 maxVertex) {
 		return
 			x == minVertex.getX() || x == maxVertex.getX() - 1 ||
 			z == minVertex.getZ() || z == maxVertex.getZ() - 1;

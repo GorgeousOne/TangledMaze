@@ -13,17 +13,17 @@ public abstract class MazeCommand {
 	
 	private String name;
 	private List<String> aliases;
-	private String permission;
+	private String extraPermission;
 	private String usage;
 
 	private int argumentCount;
 	private boolean requieresPlayer;
 	
-	public MazeCommand(String name, String usage, int argumentCount, boolean requieresPlayer, String permission, String... aliases) {
+	public MazeCommand(String name, String usage, int argumentCount, boolean requieresPlayer, String extraPermission, String... aliases) {
 		
 		this.name = name.toLowerCase();
 		this.aliases = createAliases(aliases);
-		this.permission = permission;
+		this.extraPermission = extraPermission;
 		this.usage = usage;
 		this.argumentCount = argumentCount;
 		this.requieresPlayer = requieresPlayer;
@@ -33,24 +33,24 @@ public abstract class MazeCommand {
 		return name;
 	}
 	
-	public List<String> getAliases() {
-		return aliases;
-	}
-	
-	public String getPermission() {
-		return permission;
-	}
-	
-	public int getArgumentCount() {
-		return argumentCount;
-	}
-	
 	public String getUsage() {
 		return usage;
 	}
-	
+
+	public int getArgumentCount() {
+		return argumentCount;
+	}
+
 	public boolean isPlayerRequiered() {
 		return requieresPlayer;
+	}
+
+	public String getExtraPermission() {
+		return extraPermission;
+	}
+
+	public List<String> getAliases() {
+		return aliases;
 	}
 	
 	public boolean isCommand(String name) {
@@ -59,13 +59,12 @@ public abstract class MazeCommand {
 	
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		//TODO localize messages
-		if(requieresPlayer && !(sender instanceof Player)) {
+		if(requieresPlayer && !(sender instanceof Player))
 			return false;
-		}
 		
-		if(permission != null && !sender.hasPermission(permission)) {
+		if(extraPermission != null && !sender.hasPermission(extraPermission)) {
 			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
+			return false;
 		}
 		
 		if(arguments.length < argumentCount) {

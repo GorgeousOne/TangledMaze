@@ -1,6 +1,7 @@
 name: TangledMaze
-version: 1.2.1
+version: 1.2.4
 authors: [GorgeousOne]
+api-version: 1.13
 
 main: me.gorgeousone.tangledmaze.core.TangledMain
 
@@ -9,6 +10,7 @@ commands:
     usage: /<command> help
     description: 'Main command for all sub-commands: reload, wand, start, select, add, cut, discard, build, teleport.'
     aliases: [maze, tm]
+    default: op
   
 permissions:
   tangledmaze.reload:
