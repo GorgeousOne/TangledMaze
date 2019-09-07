@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import me.gorgeousone.tangledmaze.generation.*;
+
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.TangledMain;
-
+import me.gorgeousone.tangledmaze.data.Constants;
 public abstract class MazeHandler {
 	
 	private static HashMap<UUID, Maze> mazes = new HashMap<>();
@@ -22,6 +23,15 @@ public abstract class MazeHandler {
 	}
 	
 	public static Maze getMaze(Player player) {
+		
+		if(!player.hasPermission(Constants.BUILD_PERM))
+			return null;
+		
+		UUID uuid = player.getUniqueId();
+		
+		if(!mazes.containsKey(uuid))
+			mazes.put(uuid, new Maze(player));
+		
 		return mazes.get(player.getUniqueId());
 	}
 	
@@ -64,7 +74,7 @@ public abstract class MazeHandler {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
-				maze.setConstructedBlocks(null);
+				maze.setBuiltBlocks(null);
 				maze.updateHeights();
 				Renderer.displayMaze(maze);
 			}

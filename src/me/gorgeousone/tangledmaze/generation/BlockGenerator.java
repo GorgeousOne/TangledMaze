@@ -71,7 +71,7 @@ public class BlockGenerator {
 			}
 		}
 		
-		maze.setConstructedBlocks(backupBlocks);
+		maze.setBuiltBlocks(backupBlocks);
 		updateBlocksContinuously(blocksToUpdate, null);
 	}
 

@@ -1,18 +1,20 @@
 package me.gorgeousone.tangledmaze.handler;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
 
 public abstract class ToolHandler {
 	
-	private static HashMap<UUID, Tool> tools = new HashMap<>();
+	private static Map<UUID, Tool> tools = new HashMap<>();
 
 	public static boolean hasClipboard(Player player) {
 		return
@@ -21,11 +23,20 @@ public abstract class ToolHandler {
 	}
 	
 	public static Tool getTool(Player player) {
+		
+		if(!player.hasPermission(Constants.BUILD_PERM))
+			return null;
+		
+		UUID uuid = player.getUniqueId();
+		
+		if(!tools.containsKey(uuid))
+			tools.put(uuid, new ClippingTool(player, Shape.RECT));
+		
 		return tools.get(player.getUniqueId());
 	}
 	
-	public static ArrayList<Tool> getTools() {
-		return new ArrayList<>(tools.values());
+	public static Collection<Tool> getPlayersTools() {
+		return tools.values();
 	}
 	
 	public static ClippingTool getClipboard(Player p) {
@@ -47,7 +58,6 @@ public abstract class ToolHandler {
 			ClippingTool clipboard = getClipboard(player);
 			
 			if(clipboard.isStarted()) {
-				
 				Renderer.hideClipboard(clipboard, true);
 				clipboard.reset();
 			}

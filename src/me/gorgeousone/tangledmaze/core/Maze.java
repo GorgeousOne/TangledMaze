@@ -39,7 +39,6 @@ public class Maze {
 	
 	private boolean isStarted, isConstructed;
 	
-	
 	public Maze(World world) {
 		
 		clip = new Clip(world);
@@ -156,7 +155,7 @@ public class Maze {
 		return builtBlocks;
 	}
 	
-	public void setConstructedBlocks(List<BlockState> builtBlocks) {
+	public void setBuiltBlocks(List<BlockState> builtBlocks) {
 		
 		this.builtBlocks = builtBlocks;
 		

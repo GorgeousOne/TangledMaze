@@ -108,7 +108,7 @@ public class BlockUpdateListener implements Listener {
 
 		HashSet<ClippingTool> affectedClipboards = new HashSet<>();
 
-		for(Tool tool : ToolHandler.getTools()) {
+		for(Tool tool : ToolHandler.getPlayersTools()) {
 
 			if(!(tool instanceof ClippingTool))
 				continue;

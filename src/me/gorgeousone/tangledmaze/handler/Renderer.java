@@ -145,6 +145,7 @@ public abstract class Renderer implements Listener {
 			player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
 	}
 	
+	//Displays only single blocks covered by something like a falling block (it doesn't work xD)
 	public static void redisplayClipboardBorder(ClippingTool clipboard, Location loc) {
 		
 		Player player = clipboard.getPlayer();
@@ -195,7 +196,6 @@ public abstract class Renderer implements Listener {
 			
 			Location block = action.getBorder(loc);
 			player.sendBlockChange(block, block.getBlock().getType(), (byte) 0);
-			
 		}
 	}
 	

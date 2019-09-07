@@ -25,7 +25,7 @@ public class StartMaze extends MazeCommand {
 		
 		Player player = (Player) sender;
 		
-		if(!ToolHandler.hasClipboard(player) || ToolHandler.getClipboard(player).getVertices().isEmpty()) {
+		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
 			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
 			player.sendMessage("/tangledmaze wand");
 			return false;
