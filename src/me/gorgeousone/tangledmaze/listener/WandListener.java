@@ -25,7 +25,7 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")
-public class ToolActionListener implements Listener{
+public class WandListener implements Listener{
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
@@ -92,7 +92,7 @@ public class ToolActionListener implements Listener{
 				
 		Maze maze = MazeHandler.getMaze(player);
 			
-		if(!maze.isConstructed() || !Renderer.isMazeVisible(maze))
+		if(maze.isStarted() && !maze.isConstructed() && !Renderer.isMazeVisible(maze))
 			Renderer.displayMaze(MazeHandler.getMaze(player));
 		
 		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
@@ -103,6 +103,7 @@ public class ToolActionListener implements Listener{
 	public void onPickUp(PlayerPickupItemEvent e) {
 
 		if(Utils.isMazeWand(e.getItem().getItemStack())) {
+			
 			Player player = e.getPlayer();
 			
 			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))

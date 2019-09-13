@@ -20,9 +20,8 @@ public class SetPathWidth extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
 		Player player = (Player) sender;
 		
@@ -34,7 +33,7 @@ public class SetPathWidth extends MazeCommand {
 		
 		} catch (NumberFormatException ex) {
 			
-			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", pathWidthString));
+			Messages.ERROR_INVALID_NUMBER.sendTo(player, new PlaceHolder("number", pathWidthString));
 			return false;
 		}
 		
@@ -44,7 +43,7 @@ public class SetPathWidth extends MazeCommand {
 			return false;
 			
 		maze.setPathWidth(pathWidth);
-		Messages.MESSAGE_PATHWIDTH_CHANGED.send(player, new PlaceHolder("number", pathWidth));
+		Messages.MESSAGE_PATHWIDTH_CHANGED.sendTo(player, new PlaceHolder("number", pathWidth));
 		return true;
 	}
 }

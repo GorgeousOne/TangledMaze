@@ -3,6 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
@@ -66,7 +67,7 @@ public class SelectTool extends MazeCommand {
 			return false;
 		}
 		
-		Messages.MESSAGE_TOOL_SWITCHED.send(player, new PlaceHolder("tool", ToolHandler.getTool(player).getName()));
+		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", ToolHandler.getTool(player).getName()));
 		return true;
 	}
 	
@@ -92,9 +93,16 @@ public class SelectTool extends MazeCommand {
 		if(ToolHandler.getTool(player).getClass().equals(type.getClass()))
 			return false;
 		
-		if(!MazeHandler.getMaze(player).isStarted()) {
-			Messages.MESSAGE_TOOL_FOR_MAZE_ONLY.send(player);
+		Maze maze = MazeHandler.getMaze(player);
+		
+		if(!maze.isStarted()) {
+			Messages.MESSAGE_TOOL_FOR_MAZE_ONLY.sendTo(player);
 			player.sendMessage("/tangledmaze start");
+			return false;
+		}
+		
+		if(maze.isConstructed()) {
+			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
 			return false;
 		}
 		

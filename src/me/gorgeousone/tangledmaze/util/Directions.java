@@ -41,7 +41,7 @@ public enum Directions {
 		return facing.getZ() != 0;
 	}
 	
-	public Vec2 toVec2() {
+	public Vec2 getVec2() {
 		return facing.clone();
 	}
 	

@@ -9,6 +9,7 @@ import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 
 public class Undo extends MazeCommand {
 
@@ -23,12 +24,11 @@ public class Undo extends MazeCommand {
 			return false;
 		
 		Player player = (Player) sender;
-		
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted() || maze.isConstructed()) {
 			
-			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
 			return false;
 		}
 		
@@ -39,7 +39,7 @@ public class Undo extends MazeCommand {
 		
 		ClipAction action = maze.getActionHistory().popLastAction().invert();
 		maze.processAction(action, false);
-
+		Renderer.displayMazeAction(maze, action);
 		return true;
 	}
 	
@@ -58,11 +58,13 @@ public class Undo extends MazeCommand {
 		Maze maze = MazeHandler.getMaze(p);
 		
 		if(maze.getActionHistory().isEmpty()) {
-			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to be undone...");
+			p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "There is nothing left to undone...");
 			
 		}else {
-			ClipAction action = maze.getActionHistory().popLastAction().invert();
-			maze.processAction(action, false);
+			ClipAction undo = maze.getActionHistory().popLastAction().invert();
+			
+			maze.processAction(undo, false);
+			Renderer.displayMazeAction(maze, undo);
 		}
 	}
 }

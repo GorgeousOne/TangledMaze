@@ -1,7 +1,7 @@
 name: TangledMaze
-version: 1.2.4
+version: 1.2.5
 authors: [GorgeousOne]
-api-version: 1.13
+api-version: 1.14
 
 main: me.gorgeousone.tangledmaze.core.TangledMain
 

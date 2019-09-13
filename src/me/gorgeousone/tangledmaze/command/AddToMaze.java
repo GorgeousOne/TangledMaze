@@ -27,14 +27,14 @@ public class AddToMaze extends MazeCommand {
 		
 		if(!MazeHandler.getMaze(player).isStarted()) {
 			
-			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
 		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
 			
-			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
+			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze wand");
 			return false;
 		}
@@ -42,11 +42,17 @@ public class AddToMaze extends MazeCommand {
 		ClippingTool clipboard = ToolHandler.getClipboard(player);
 		
 		if(!clipboard.isComplete()) {
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
 			return false;
 		}
 		
 		Maze maze = MazeHandler.getMaze(player);
+		
+		if(maze.isConstructed()) {
+			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
+			return false;
+		}
+		
 		ClipAction action = maze.getAddition(clipboard.getClip());
 
 		if(action == null)
@@ -54,7 +60,7 @@ public class AddToMaze extends MazeCommand {
 		
 		if(action.getAddedFill().size() == clipboard.getClip().size()) {
 
-			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.send(player);
+			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.sendTo(player);
 			return false;
 		}
 		
@@ -62,6 +68,7 @@ public class AddToMaze extends MazeCommand {
 		clipboard.reset();
 		
 		maze.processAction(action, true);
+		Renderer.displayMazeAction(maze, action);
 		return true;
 	}
 }

@@ -106,7 +106,7 @@ public class TangledMain extends JavaPlugin {
 		
 		PluginManager manager = Bukkit.getPluginManager();
 		
-		manager.registerEvents(new ToolActionListener(), this);
+		manager.registerEvents(new WandListener(), this);
 		manager.registerEvents(new PlayerListener(), this);
 		manager.registerEvents(new BlockUpdateListener(), this);
 	}

@@ -33,13 +33,13 @@ public class Messages {
 			MESSAGE_PATHLENGTH_CHANGED,
 			MESSAGE_MAZE_BUILDING_STARTED,
 			MESSAGE_MAZE_UNBUILDING_STARTED,
+			MESSAGE_MAZE_ALREADY_BUILT,
 			MESSAGE_NO_MAZE_TO_UNBUILD,
 			ERROR_NO_BUILD_PERMISSION,
 			ERROR_CLIPBOARD_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_FINISHED,
 			ERROR_MAZE_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_TOUCHING_MAZE,
-			ERROR_NO_MAZE_BORDER_CLICKED,
 			ERROR_NO_MAZE_EXIT_SET,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
@@ -80,6 +80,7 @@ public class Messages {
 		MESSAGE_PATHLENGTH_CHANGED      = new TextMessage(Constants.prefix + messages.getString("maze-pathlength-changed"), false);
 		MESSAGE_MAZE_BUILDING_STARTED   = new TextMessage(Constants.prefix + messages.getString("maze-building-started"), false);
 		MESSAGE_MAZE_UNBUILDING_STARTED = new TextMessage(Constants.prefix + messages.getString("maze-unbuilding-started"), false);
+		MESSAGE_MAZE_ALREADY_BUILT      = new TextMessage(Constants.prefix + messages.getString("maze-already-built"), false);
 		MESSAGE_NO_MAZE_TO_UNBUILD      = new TextMessage(Constants.prefix + messages.getString("no-maze-to-unbuild"), false);
 	
 		ConfigurationSection errors = langConfig.getConfigurationSection("errors");
@@ -89,7 +90,6 @@ public class Messages {
 		ERROR_CLIPBOARD_NOT_FINISHED      = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-finished"), false);
 		ERROR_MAZE_NOT_STARTED            = new TextMessage(ChatColor.RED + errors.getString("maze-not-started"), false);
 		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-touching-maze"), false);
-		ERROR_NO_MAZE_BORDER_CLICKED      = new TextMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + errors.getString("no-maze-border-clicked"), false);
 		ERROR_NO_MAZE_EXIT_SET            = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED   = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE      = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);

@@ -14,6 +14,6 @@ public class HelpPage {
 	public void send(CommandSender sender) {
 		
 		for(TextMessage text : description)
-			text.send(sender);
+			text.sendTo(sender);
 	}
 }

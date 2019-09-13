@@ -32,7 +32,7 @@ public class SetPathLength extends MazeCommand {
 			
 		} catch (NumberFormatException ex) {
 			
-			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", pathLengthString));
+			Messages.ERROR_INVALID_NUMBER.sendTo(player, new PlaceHolder("number", pathLengthString));
 			return false;
 		}
 		
@@ -42,7 +42,7 @@ public class SetPathLength extends MazeCommand {
 			return false;
 		
 		maze.setPathLength(pathLength);
-		Messages.MESSAGE_PATHLENGTH_CHANGED.send(player, new PlaceHolder("number", pathLength));
+		Messages.MESSAGE_PATHLENGTH_CHANGED.sendTo(player, new PlaceHolder("number", pathLength));
 		
 		return true;
 	}

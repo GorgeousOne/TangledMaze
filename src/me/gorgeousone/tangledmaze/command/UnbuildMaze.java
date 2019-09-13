@@ -6,17 +6,13 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.generation.BlockGenerator;
+import me.gorgeousone.tangledmaze.handler.BuildHandler;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
 public class UnbuildMaze extends MazeCommand {
 	
-	private BlockGenerator blockGenerator;
-	
 	public UnbuildMaze() {
-		
 		super("unbuild", "/tangledmaze unbuild", 0, true, null);
-		blockGenerator = new BlockGenerator();
 	}
 	
 	@Override
@@ -29,13 +25,12 @@ public class UnbuildMaze extends MazeCommand {
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isConstructed()) {
-			
-			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.send(player);
+			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.sendTo(player);
 			return true;
 		}
 		
-		MazeHandler.unbuilMaze(maze, blockGenerator);
-		Messages.MESSAGE_MAZE_UNBUILDING_STARTED.send(player);
+		BuildHandler.unbuildMaze(maze);
+		Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(player);
 		return true;
 	}
 }

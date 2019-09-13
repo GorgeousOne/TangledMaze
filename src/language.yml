@@ -25,6 +25,7 @@ messages:
     maze-pathlength-changed: Path length set to %number% blocks.
     maze-building-started: Started building your maze.
     maze-unbuilding-started: Started unbuilding your maze.
+    maze-already-built: Your maze is already built.
     no-maze-to-unbuild: You have not built a maze yet that could be unbuild. 
 errors:
     insufficient-permission: You do not have the permission for this command.
@@ -32,7 +33,6 @@ errors:
     clipboard-not-finished: Please finish your clipboard first.
     maze-not-started: Please start a maze first.
     clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
-    no-maze-border-clicked: This block is not the border of your maze...
     no-maze-exit-set: Please mark an exit at the border of your maze first.
     no-build-blocks-specified: Please specify a block(s) from which your maze will be built.
     argument-not-matching-block: '%block% is not a block name.'

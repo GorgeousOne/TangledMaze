@@ -63,7 +63,7 @@ public abstract class MazeCommand {
 			return false;
 		
 		if(extraPermission != null && !sender.hasPermission(extraPermission)) {
-			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
+			Messages.ERROR_NO_BUILD_PERMISSION.sendTo(sender);
 			return false;
 		}
 		

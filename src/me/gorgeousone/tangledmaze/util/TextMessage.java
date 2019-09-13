@@ -32,18 +32,18 @@ public class TextMessage {
 		}
 	}
 	
-	public void send(CommandSender sender) {
+	public void sendTo(CommandSender sender) {
 		
 		for(String paragraph : paragraphs) {
 			sender.sendMessage(paragraph);
 		}
 	}
 	
-	public void send(CommandSender sender, PlaceHolder placeHolder) {
+	public void sendTo(CommandSender sender, PlaceHolder placeHolder) {
 		
 		if(placeHolder == null) {
 			
-			send(sender);
+			sendTo(sender);
 			return;
 		}
 		

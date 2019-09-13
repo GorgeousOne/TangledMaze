@@ -4,19 +4,18 @@ import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.generation.path.PathSegment;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public class BuildMap {
+public class TerrainMap {
 	
 	private Maze maze;
-	private MazeFillType[][] shapeMap;
+	private MazeAreaType[][] shapeMap;
 	private int[][] groundHeightMap, mazeHeightMap;
 	
 	private Vec2 minimum, maximum;
 	private Vec2 pathStart;
 	
-	public BuildMap(Maze maze) {
+	public TerrainMap(Maze maze) {
 		
 		this.maze = maze;
 		
@@ -50,11 +49,11 @@ public class BuildMap {
 			point.getZ() >= getMinZ() && point.getZ() < getMaxZ();
 	}
 	
-	public MazeFillType getType(int x, int z) {
+	public MazeAreaType getType(int x, int z) {
 		return shapeMap[x-getMinX()][z-getMinZ()];
 	}
 	
-	public MazeFillType getType(Vec2 point) {
+	public MazeAreaType getType(Vec2 point) {
 		return getType(point.getX(), point.getZ());
 	}
 
@@ -82,11 +81,11 @@ public class BuildMap {
 		return pathStart;
 	}
 	
-	public void setType(int x, int z, MazeFillType type) {
+	public void setType(int x, int z, MazeAreaType type) {
 		shapeMap[x-getMinX()][z-getMinZ()] = type;
 	}
 
-	public void setType(Vec2 point, MazeFillType type) {
+	public void setType(Vec2 point, MazeAreaType type) {
 		setType(point.getX(), point.getZ(), type);
 	}
 	
@@ -110,7 +109,7 @@ public class BuildMap {
 		this.pathStart = pathStart;
 	}
 	
-	public void mapSegment(PathSegment segment, MazeFillType type) {
+	public void mapSegment(PathSegment segment, MazeAreaType type) {
 		
 		for(Vec2 point : segment.getFill()) {
 			
@@ -124,13 +123,13 @@ public class BuildMap {
 		for(int x = getMinX(); x < getMaxX(); x++) {
 			for(int z = getMinZ(); z < getMaxZ(); z++) {
 				
-				MazeFillType fillType = getType(x, z);
+				MazeAreaType fillType = getType(x, z);
 				
-				if(fillType == MazeFillType.UNDEFINED)
-					setType(x, z, MazeFillType.WALL);
+				if(fillType == MazeAreaType.UNDEFINED)
+					setType(x, z, MazeAreaType.WALL);
 					
-				else if(fillType == MazeFillType.EXIT)
-					setType(x, z, MazeFillType.PATH);
+				else if(fillType == MazeAreaType.EXIT)
+					setType(x, z, MazeAreaType.PATH);
 			}
 		}
 	}
@@ -141,7 +140,7 @@ public class BuildMap {
 		minimum = getMinLoc();
 		maximum = getMaxLoc();
 		
-		shapeMap = new MazeFillType
+		shapeMap = new MazeAreaType
 			[maximum.getX() - minimum.getX()]
 			[maximum.getZ() - minimum.getZ()];
 		
@@ -158,7 +157,7 @@ public class BuildMap {
 		
 		for(int x = getMinX(); x < getMaxX(); x++) {
 			for(int z = getMinZ(); z < getMaxZ(); z++) {
-				setType(x, z, MazeFillType.NOT_MAZE);
+				setType(x, z, MazeAreaType.NOT_MAZE);
 			}
 		}
 		
@@ -168,14 +167,14 @@ public class BuildMap {
 		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
 		for(Entry<Vec2, Integer> loc : clip.getFillSet()) {
 			
-			setType(loc.getKey(), MazeFillType.UNDEFINED);
+			setType(loc.getKey(), MazeAreaType.UNDEFINED);
 			setGroundHeight(loc.getKey(), loc.getValue());
 			setMazeHeight(loc.getKey(), loc.getValue() + wallHeight);
 		}
 		
 		//mark the border in mazeMap as walls
 		for(Vec2 loc : maze.getClip().getBorder())
-			setType(loc, MazeFillType.WALL);
+			setType(loc, MazeAreaType.WALL);
 	}
 	
 	private Vec2 getMinLoc() {

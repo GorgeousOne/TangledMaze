@@ -27,14 +27,14 @@ public class CutFromMaze extends MazeCommand {
 		
 		if(!MazeHandler.getMaze(player).isStarted()) {
 			
-			Messages.ERROR_MAZE_NOT_STARTED.send(player);
+			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
 		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
 			
-			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
+			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze wand");
 			return false;
 		}
@@ -43,11 +43,17 @@ public class CutFromMaze extends MazeCommand {
 
 		if(!clipboard.isComplete()) {
 			
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
 			return false;
 		}
 		
 		Maze maze = MazeHandler.getMaze(player);
+		
+		if(maze.isConstructed()) {
+			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
+			return false;
+		}
+		
 		ClipAction action = maze.getDeletion(clipboard.getClip());
 
 		Renderer.hideClipboard(clipboard, true);
@@ -57,6 +63,7 @@ public class CutFromMaze extends MazeCommand {
 			return false;
 
 		maze.processAction(action, true);
+		Renderer.displayMazeAction(maze, action);
 		return true;
 	}
 }

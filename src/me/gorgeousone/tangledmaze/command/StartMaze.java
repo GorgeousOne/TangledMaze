@@ -19,14 +19,14 @@ public class StartMaze extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
 		Player player = (Player) sender;
 		
 		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
-			Messages.ERROR_CLIPBOARD_NOT_STARTED.send(player);
+			
+			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze wand");
 			return false;
 		}
@@ -34,21 +34,25 @@ public class StartMaze extends MazeCommand {
 		ClippingTool clipboard = ToolHandler.getClipboard(player);
 		
 		if(!clipboard.isComplete()) {
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.send(player);
+			
+			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
 			return false;
 		}
 		
 		Renderer.hideClipboard(clipboard, false);
-
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.isConstructed()) {
+
 			maze = new Maze(player).setClip(clipboard.getClip());
 			MazeHandler.setMaze(player, maze);
 			
-		}else
+		}else {
+			Renderer.hideMaze(maze);
 			maze.setClip(clipboard.getClip());
+		}
 		
+		Renderer.displayMaze(maze);
 		clipboard.reset();
 		return true;
 	}

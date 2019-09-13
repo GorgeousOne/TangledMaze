@@ -82,27 +82,27 @@ public class ClippingTool extends Tool {
 	}
 	
 	@Override
-	public void interact(Block clicked, Action interaction) {
+	public void interact(Block clickedBlock, Action interaction) {
 		
-		if(clicked.getWorld() != getWorld())
+		if(clickedBlock.getWorld() != getWorld())
 			reset();
 		
 		if(vertices.size() < shape.getVertexCount()-1) {
-			vertices.add(Utils.nearestSurface(clicked.getLocation()));
+			vertices.add(Utils.nearestSurface(clickedBlock.getLocation()));
 			
 		}else if(vertices.size() == shape.getVertexCount()-1) {
 
-			vertices.add(Utils.nearestSurface(clicked.getLocation()));
+			vertices.add(Utils.nearestSurface(clickedBlock.getLocation()));
 			calculateShape();
 			
 		}else {
 
 			if(isResizing) {
-				resizeShape(clicked);
+				resizeShape(clickedBlock);
 			
-			}else if(isVertex(clicked)) {
+			}else if(isVertex(clickedBlock)) {
 
-				indexOfResizedVertex = indexOfVertex(clicked);
+				indexOfResizedVertex = indexOfVertex(clickedBlock);
 				isResizing = true;
 				return;
 				
@@ -110,7 +110,7 @@ public class ClippingTool extends Tool {
 
 				Renderer.hideClipboard(this, true);
 				reset();
-				vertices.add(Utils.nearestSurface(clicked.getLocation()));
+				vertices.add(Utils.nearestSurface(clickedBlock.getLocation()));
 			}
 		}
 		

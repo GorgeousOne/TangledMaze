@@ -69,7 +69,7 @@ public class Circle implements Shape {
 	private static boolean isEllipseBorder(float x, float z, float distortionZ, float radius) {
 		
 		for(Directions dir : Directions.values()) {
-			Vec2 dirVec = dir.toVec2();
+			Vec2 dirVec = dir.getVec2();
 			
 			if(!isInEllipse(x + dirVec.getX(), z + dirVec.getZ(), distortionZ, radius)) {
 				return true;

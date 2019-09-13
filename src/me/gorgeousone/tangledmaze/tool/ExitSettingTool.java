@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
+import me.gorgeousone.tangledmaze.handler.Renderer;
 
 public class ExitSettingTool extends Tool {
 	
@@ -19,9 +21,30 @@ public class ExitSettingTool extends Tool {
 	}
 	
 	@Override
-	public void interact(Block clicked, Action interaction) {
+	public void interact(Block clickedBlock, Action interaction) {
 		
 		Maze maze = MazeHandler.getMaze(getPlayer());
-		maze.toggleExit(clicked);
+		
+		if(!maze.getClip().isBorderBlock(clickedBlock))
+			return;
+		
+		if(maze.isExit(clickedBlock)) {
+			
+			maze.removeExit(clickedBlock);
+			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
+
+			if(maze.hasExits())
+				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
+			
+		}else if(maze.canBeExit(clickedBlock)) {
+			
+			if(maze.hasExits())
+				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_EXIT);
+			
+			maze.addExit(clickedBlock);
+			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
+
+		}else
+			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
 	}
 }

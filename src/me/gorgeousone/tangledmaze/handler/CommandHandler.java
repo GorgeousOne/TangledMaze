@@ -25,7 +25,7 @@ public class CommandHandler implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
 		
 		if(!sender.hasPermission(Constants.BUILD_PERM))
-			Messages.ERROR_NO_BUILD_PERMISSION.send(sender);
+			Messages.ERROR_NO_BUILD_PERMISSION.sendTo(sender);
 		
 		if(arguments.length < 1) {
 			

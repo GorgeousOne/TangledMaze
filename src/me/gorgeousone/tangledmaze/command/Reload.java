@@ -20,7 +20,7 @@ public class Reload extends MazeCommand {
 		}
 		
 		TangledMain.getInstance().reloadPlugin();
-		Messages.MESSAGE_PLUGIN_RELOADED.send(sender);
+		Messages.MESSAGE_PLUGIN_RELOADED.sendTo(sender);
 		return true;
 	}
 }

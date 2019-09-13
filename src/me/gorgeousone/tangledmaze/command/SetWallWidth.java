@@ -33,7 +33,7 @@ public class SetWallWidth extends MazeCommand {
 		
 		}catch (NumberFormatException ex) {
 			
-			Messages.ERROR_INVALID_NUMBER.send(player, new PlaceHolder("number", wallWidthString));
+			Messages.ERROR_INVALID_NUMBER.sendTo(player, new PlaceHolder("number", wallWidthString));
 			return false;
 		}
 		
@@ -43,7 +43,7 @@ public class SetWallWidth extends MazeCommand {
 			return false;
 			
 		maze.setWallWidth(wallWidth);
-		Messages.MESSAGE_WALLWIDTH_CHANGED.send(player, new PlaceHolder("number", wallWidth));
+		Messages.MESSAGE_WALLWIDTH_CHANGED.sendTo(player, new PlaceHolder("number", wallWidth));
 		return true;
 	}
 }

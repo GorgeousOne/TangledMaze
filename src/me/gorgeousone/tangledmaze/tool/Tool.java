@@ -22,5 +22,5 @@ public abstract class Tool {
 
 	public abstract String getName();
 	
-	public abstract void interact(Block clicked, Action interaction);
+	public abstract void interact(Block clickedBlock, Action interaction);
 }

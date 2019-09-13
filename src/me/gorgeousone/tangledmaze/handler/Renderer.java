@@ -26,15 +26,13 @@ public abstract class Renderer implements Listener {
 	public static void reload() {
 
 		for (ClippingTool selection : clipVisibilities.keySet()) {
-			if (isClipboardVisible(selection)) {
+			if (isClipboardVisible(selection))
 				hideClipboard(selection, false);
-			}
 		}
 		
 		for(Maze maze : mazeVisibilities.keySet()) {
-			if(isMazeVisible(maze)) {
+			if(isMazeVisible(maze))
 				hideMaze(maze);
-			}
 		}
 	}
 	
@@ -135,7 +133,7 @@ public abstract class Renderer implements Listener {
 	@SuppressWarnings("deprecation")
 	public static void hideMaze(Maze maze) {
 		
-		if(maze.isConstructed() || !isMazeVisible(maze))
+		if(maze.isConstructed())
 			return;
 		
 		mazeVisibilities.put(maze, false);

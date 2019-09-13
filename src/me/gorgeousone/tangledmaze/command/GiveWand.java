@@ -15,11 +15,9 @@ public class GiveWand extends MazeCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, arguments)) {
+		if(!super.execute(sender, arguments))
 			return false;
-		}
 		
-		//TODO localize message
 		Player player = (Player) sender;
 		player.getInventory().addItem(Utils.getMazeWand());
 		return true;

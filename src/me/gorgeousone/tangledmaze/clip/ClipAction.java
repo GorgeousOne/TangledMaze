@@ -64,6 +64,9 @@ public class ClipAction {
 	
 	public void removeFill(Vec2 loc, int height) {
 		removedFill.put(loc, height);
+		
+		if(clip.borderContains(loc))
+			removeBorder(loc);
 	}
 	
 	public void addBorder(Vec2 loc) {
@@ -126,7 +129,7 @@ public class ClipAction {
 		return getClip().contains(loc) && !getRemovedFill().containsKey(loc) || getAddedFill().containsKey(loc);
 	}
 	
-	public boolean clipBorderWillContain(Clip clip, Vec2 loc) {
+	public boolean clipBorderWillContain(Vec2 loc) {
 		return getAddedBorder().contains(loc) || !getRemovedBorder().contains(loc) && getClip().borderContains(loc);
 	}
 }

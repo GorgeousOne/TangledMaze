@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation.path;
+package me.gorgeousone.tangledmaze.generation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class PathSegment {
 	
 	public void expand(int blocks) {	
 		
-		Vec2 expansion = facing.toVec2().clone().mult(blocks);
+		Vec2 expansion = facing.getVec2().clone().mult(blocks);
 		
 		size.add(expansion.getAbs());
 		end.add(expansion);
@@ -65,7 +65,7 @@ public class PathSegment {
 	
 	private void calculateDimensions(int length, int width, boolean isExit) {
 		
-		Vec2 deltaStartToEnd = facing.toVec2().clone().mult(length - width);
+		Vec2 deltaStartToEnd = facing.getVec2().clone().mult(length - width);
 		
 		end = start.clone().add(deltaStartToEnd);
 		relativeMin = new Vec2();
