@@ -25,9 +25,9 @@ public abstract class Renderer implements Listener {
 	
 	public static void reload() {
 
-		for (ClippingTool selection : clipVisibilities.keySet()) {
-			if (isClipboardVisible(selection))
-				hideClipboard(selection, false);
+		for (ClippingTool clipboard : clipVisibilities.keySet()) {
+			if (isClipboardVisible(clipboard))
+				hideClipboard(clipboard, false);
 		}
 		
 		for(Maze maze : mazeVisibilities.keySet()) {
@@ -87,22 +87,22 @@ public abstract class Renderer implements Listener {
 		clipVisibilities.put(clipboard, false);
 		Player player = clipboard.getPlayer();
 		
+		for(Location vertex : clipboard.getVertices())
+			player.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
+		
 		if(clipboard.isComplete()) {
 			
 			for(Location loc : clipboard.getClip().getBorderBlocks())
 				player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
 		}
 		
-		for(Location vertex : clipboard.getVertices())
-			player.sendBlockChange(vertex, vertex.getBlock().getType(), vertex.getBlock().getData());
-		
-		if(!updateMaze)
-			return;
-		
-		Maze maze = MazeHandler.getMaze(player);
-		
-		if(maze.isStarted() && isMazeVisible(maze))
-			redisplayMaze(maze, clipboard);
+		if(updateMaze) {
+			
+			Maze maze = MazeHandler.getMaze(player);
+			
+			if(maze.isStarted() && isMazeVisible(maze))
+				redisplayMaze(maze, clipboard);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -191,7 +191,7 @@ public abstract class Renderer implements Listener {
 			player.sendBlockChange(action.getBorder(loc), Constants.MAZE_BORDER, (byte) 0);
 		
 		for(Vec2 loc : action.getRemovedBorder()) {
-			
+			System.out.println(loc.toString());
 			Location block = action.getBorder(loc);
 			player.sendBlockChange(block, block.getBlock().getType(), (byte) 0);
 		}
@@ -215,7 +215,7 @@ public abstract class Renderer implements Listener {
 		for(Location border : hiddenClipboard.getClip().getBorderBlocks()) {
 			
 			if(maze.getClip().isBorderBlock(border.getBlock()))
-				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER , (byte) 0);
+				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER, (byte) 0);
 		}
 	}
 	

@@ -24,7 +24,7 @@ public class PathGenerator {
 		
 		generateExits(terrainMap);
 		generatePathMap(terrainMap);
-		terrainMap.flip();
+		terrainMap.flipMap();
 	}
 	
 	private void generateExits(TerrainMap terrainMap) {
@@ -42,7 +42,7 @@ public class PathGenerator {
 		
 		Vec2 pathStart = entrance.getEnd();
 		
-		terrainMap.setStart(pathStart);
+		terrainMap.setPathStart(pathStart);
 		terrainMap.mapSegment(entrance, MazeAreaType.PATH);
 		
 		if(maze.getExits().size() < 2)
@@ -320,7 +320,7 @@ public class PathGenerator {
 				continue;
 			
 			//check if location next to exit is inside maze
-			if(terrainMap.getType(neighbor) == MazeAreaType.UNDEFINED)
+			if(terrainMap.getAreaType(neighbor) == MazeAreaType.UNDEFINED)
 				return dir;
 		}
 		
@@ -334,8 +334,8 @@ public class PathGenerator {
 			if(!terrainMap.contains(point))
 				return false;
 			
-			if(terrainMap.getType(point) != MazeAreaType.UNDEFINED &&
-			   terrainMap.getType(point) != MazeAreaType.EXIT) {
+			if(terrainMap.getAreaType(point) != MazeAreaType.UNDEFINED &&
+			   terrainMap.getAreaType(point) != MazeAreaType.EXIT) {
 				return false;
 			}
 		}

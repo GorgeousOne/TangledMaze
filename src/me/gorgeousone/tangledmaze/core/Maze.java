@@ -308,6 +308,7 @@ public class Maze {
 		Iterator<Vec2> iterator = deletion.getAddedBorder().iterator();
 		
 		while (iterator.hasNext()) {
+			
 			Vec2 newBorder = iterator.next();
 			
 			if(!touchesFill(newBorder, deletion, Directions.values())) {
@@ -321,11 +322,12 @@ public class Maze {
 		
 		for(Vec2 ownBorder : getClip().getBorder()) {
 			
-			if(!deletion.getRemovedBorder().contains(ownBorder) &&
-				otherClip.contains(ownBorder) &&
-			   !touchesFill(ownBorder, deletion, Directions.values()))
+			if(otherClip.contains(ownBorder) && !touchesFill(ownBorder, deletion, Directions.values())) {
 				deletion.removeBorder(ownBorder);
+				deletion.removeFill(ownBorder, getClip().getHeight(ownBorder));
+			}
 		}
+		
 	}
 	
 	public ClipAction getExpansion(Block block) {

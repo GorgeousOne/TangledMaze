@@ -57,10 +57,8 @@ public abstract class ToolHandler {
 			
 			ClippingTool clipboard = getClipboard(player);
 			
-			if(clipboard.isStarted()) {
-				Renderer.hideClipboard(clipboard, true);
-				clipboard.reset();
-			}
+			Renderer.hideClipboard(clipboard, true);
+			clipboard.reset();
 		
 		}else {
 			setTool(player, new ClippingTool(player, Shape.RECT));

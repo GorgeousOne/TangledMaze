@@ -21,7 +21,10 @@ public class PlayerListener implements Listener {
 		Player player = e.getPlayer();
 		
 		if(player.hasPermission(Constants.BUILD_PERM)) {
-			BuildHandler.removeMaze(MazeHandler.getMaze(player));
+			
+			Maze maze = MazeHandler.getMaze(player);
+			Renderer.unregisterMaze(maze);
+			BuildHandler.removeMaze(maze);
 			ToolHandler.removeTool(player);
 			MazeHandler.removeMaze(player);
 		}

@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.tool;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -148,6 +149,16 @@ public class ClippingTool extends Tool {
 		return vertices;
 	}
 	
+	public boolean verticesContain(Vec2 loc) {
+		
+		for(Location vertex : vertices) {
+			if(vertex.getX() == loc.getX() && vertex.getZ() == loc.getZ())
+				return true;
+		}
+		
+		return false;
+	}
+	
 	public boolean isVertex(Block block) {
 		
 		if(getWorld() != block.getWorld())
@@ -180,7 +191,7 @@ public class ClippingTool extends Tool {
 		Location updatedBlock = null;
 
 		if(isVertex(block)) {
-			
+			Bukkit.broadcastMessage("is vertex");
 			updatedBlock = Utils.nearestSurface(block.getLocation());
 			vertices.get(indexOfVertex(block)).setY(updatedBlock.getBlockY());
 		}
@@ -190,9 +201,7 @@ public class ClippingTool extends Tool {
 		else
 			updatedBlock = Utils.nearestSurface(block.getLocation());
 
-		Vec2 blockVec = new Vec2(block);
-		
-		getClip().addFill(blockVec, updatedBlock.getBlockY());
+		getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
 		
 		return updatedBlock;
 	}

@@ -10,7 +10,7 @@ public class TerrainMap {
 	
 	private Maze maze;
 	private MazeAreaType[][] shapeMap;
-	private int[][] groundHeightMap, mazeHeightMap;
+	private int[][] floorHeightMap, wallHeightMap;
 	
 	private Vec2 minimum, maximum;
 	private Vec2 pathStart;
@@ -49,63 +49,67 @@ public class TerrainMap {
 			point.getZ() >= getMinZ() && point.getZ() < getMaxZ();
 	}
 	
-	public MazeAreaType getType(int x, int z) {
+	public MazeAreaType getAreaType(int x, int z) {
 		return shapeMap[x-getMinX()][z-getMinZ()];
 	}
 	
-	public MazeAreaType getType(Vec2 point) {
-		return getType(point.getX(), point.getZ());
+	public MazeAreaType getAreaType(Vec2 point) {
+		return getAreaType(point.getX(), point.getZ());
 	}
 
-	public int getGroundHeight(int x, int z) {
-		return groundHeightMap[x-getMinX()][z-getMinZ()];
+	public int getFloorHeight(Vec2 point) {
+		return getFloorHeight(point.getX(), point.getZ());
 	}
 	
-	public int getGroundHeight(Vec2 point) {
-		return getGroundHeight(point.getX(), point.getZ());
-	}
-	
-	public int getMazeHeight(int x, int z) {
-		return mazeHeightMap[x-getMinX()][z-getMinZ()];
-	}
-	
-	public int getMazeHeight(Vec2 point) {
-		return getMazeHeight(point.getX(), point.getZ());
+	public int getFloorHeight(int x, int z) {
+		return floorHeightMap[x-getMinX()][z-getMinZ()];
 	}
 	
 	public int getWallHeight(Vec2 point) {
-		return getMazeHeight(point) - getGroundHeight(point);
+		return getWallHeight(point.getX(), point.getZ());
+		
+	}
+	public int getWallHeight(int x, int z) {
+		return wallHeightMap[x-getMinX()][z-getMinZ()];
+	}
+	
+	public int getCeilHeight(int x, int z) {
+		return getFloorHeight(x, z) + getWallHeight(x, z);
+	}
+	
+	public int getCeilHeight(Vec2 point) {
+		return getFloorHeight(point) + getWallHeight(point);
 	}
 	
 	public Vec2 getStart() {
 		return pathStart;
 	}
 	
-	public void setType(int x, int z, MazeAreaType type) {
-		shapeMap[x-getMinX()][z-getMinZ()] = type;
-	}
-
 	public void setType(Vec2 point, MazeAreaType type) {
 		setType(point.getX(), point.getZ(), type);
 	}
 	
-	public void setGroundHeight(int x, int z, int newY) {
-		groundHeightMap[x-getMinX()][z-getMinZ()] = newY;
-	}
-	
-	public void setGroundHeight(Vec2 point, int newY) {
-		setGroundHeight(point.getX(), point.getZ(), newY);
+	public void setType(int x, int z, MazeAreaType type) {
+		shapeMap[x-getMinX()][z-getMinZ()] = type;
 	}
 
-	public void setMazeHeight(int x, int z, int newY) {
-		mazeHeightMap[x-getMinX()][z-getMinZ()] = newY;
+	public void setFloorHeight(Vec2 point, int newY) {
+		setFloorHeight(point.getX(), point.getZ(), newY);
 	}
 
-	public void setMazeHeight(Vec2 point, int newY) {
-		setMazeHeight(point.getX(), point.getZ(), newY);
+	public void setFloorHeight(int x, int z, int newY) {
+		floorHeightMap[x-getMinX()][z-getMinZ()] = newY;
 	}
 	
-	public void setStart(Vec2 pathStart) {
+	public void setWallHeight(Vec2 point, int newHeight) {
+		setWallHeight(point.getX(), point.getZ(), newHeight);
+	}
+	
+	public void setWallHeight(int x, int z, int newHeight) {
+		wallHeightMap[x-getMinX()][z-getMinZ()] = newHeight;
+	}
+	
+	public void setPathStart(Vec2 pathStart) {
 		this.pathStart = pathStart;
 	}
 	
@@ -118,12 +122,12 @@ public class TerrainMap {
 		}
 	}
 	
-	public void flip() {
+	public void flipMap() {
 		
 		for(int x = getMinX(); x < getMaxX(); x++) {
 			for(int z = getMinZ(); z < getMaxZ(); z++) {
 				
-				MazeAreaType fillType = getType(x, z);
+				MazeAreaType fillType = getAreaType(x, z);
 				
 				if(fillType == MazeAreaType.UNDEFINED)
 					setType(x, z, MazeAreaType.WALL);
@@ -134,7 +138,6 @@ public class TerrainMap {
 		}
 	}
 	
-	//TODO overthink map size calculation
 	private void calculateMapSize() {
 		
 		minimum = getMinLoc();
@@ -144,11 +147,11 @@ public class TerrainMap {
 			[maximum.getX() - minimum.getX()]
 			[maximum.getZ() - minimum.getZ()];
 		
-		groundHeightMap = new int
+		floorHeightMap = new int
 			[maximum.getX() - minimum.getX()]
 			[maximum.getZ() - minimum.getZ()];
 		
-		mazeHeightMap = new int
+		wallHeightMap = new int
 			[maximum.getX() - minimum.getX()]
 			[maximum.getZ() - minimum.getZ()];
 	}
@@ -164,12 +167,12 @@ public class TerrainMap {
 		int wallHeight = maze.getWallHeight();
 		Clip clip = maze.getClip();
 		
-		//mark the maze's area in mazeMap as undefined area (open for paths and walls)
+		//mark the maze's area in mazeMap as undefined area (open to become paths and walls)
 		for(Entry<Vec2, Integer> loc : clip.getFillSet()) {
 			
 			setType(loc.getKey(), MazeAreaType.UNDEFINED);
-			setGroundHeight(loc.getKey(), loc.getValue());
-			setMazeHeight(loc.getKey(), loc.getValue() + wallHeight);
+			setFloorHeight(loc.getKey(), loc.getValue());
+			setWallHeight(loc.getKey(), wallHeight);
 		}
 		
 		//mark the border in mazeMap as walls
@@ -180,14 +183,12 @@ public class TerrainMap {
 	private Vec2 getMinLoc() {
 		
 		Vec2 minimum = null;
-//		Vec2 maximum = null;
 
 		for(Vec2 loc : maze.getClip().getFill()) {
 			
 			if(minimum == null) {
 				
 				minimum = loc.clone();
-//				maximum = loc.clone();
 				continue;
 			}
 			
@@ -205,18 +206,18 @@ public class TerrainMap {
 		
 		Vec2 maximum = null;
 		
-		for(Vec2 chunk : maze.getClip().getFill()) {
+		for(Vec2 loc : maze.getClip().getFill()) {
 			
 			if(maximum == null) {
-				maximum = chunk.clone();
+				maximum = loc.clone();
 				continue;
 			}
 			
-			if(chunk.getX() > maximum.getX())
-				maximum.setX(chunk.getX());
+			if(loc.getX() > maximum.getX())
+				maximum.setX(loc.getX());
 				
-			if(chunk.getZ() > maximum.getZ())
-				maximum.setZ(chunk.getZ());
+			if(loc.getZ() > maximum.getZ())
+				maximum.setZ(loc.getZ());
 		}
 		
 		return maximum.add(1, 1);

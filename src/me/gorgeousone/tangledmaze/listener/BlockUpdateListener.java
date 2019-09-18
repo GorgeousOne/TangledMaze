@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.listener;
 
 import org.bukkit.event.block.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -27,6 +28,7 @@ public class BlockUpdateListener implements Listener {
 	//TODO hide mazes and clipboards only if owner breaks a block
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent e) {
+		Bukkit.broadcastMessage(e.getBlock().getRelative(BlockFace.DOWN).getLocation().toVector().toString());
 		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);
 	}
 
@@ -75,8 +77,7 @@ public class BlockUpdateListener implements Listener {
 	//falling sand/gravel... and maybe endermen
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
-		//TODO hide block under falling sand and make sand elements border
-		checkForUpdates(e.getBlock(), true);
+		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);
 	}
 
 	private void checkForUpdates(Block block, boolean hideAffectedElements) {
@@ -85,10 +86,8 @@ public class BlockUpdateListener implements Listener {
 		HashSet<Maze> affectedMazes = getAffectedMazes(loc);
 		HashSet<ClippingTool> affectedClipboards = getAffectedClipboards(loc);
 
-		if(affectedClipboards.isEmpty() && affectedMazes.isEmpty())
-			return;
-
-		update(block, affectedMazes, affectedClipboards, hideAffectedElements);
+		if(!affectedClipboards.isEmpty() || !affectedMazes.isEmpty())
+			update(block, affectedMazes, affectedClipboards, hideAffectedElements);
 	}
 
 	private HashSet<Maze> getAffectedMazes(Vec2 loc) {
@@ -115,7 +114,7 @@ public class BlockUpdateListener implements Listener {
 
 			ClippingTool clipboard = (ClippingTool) tool;
 
-			if(clipboard.getClip().contains(loc))
+			if(clipboard.getClip().contains(loc) || clipboard.verticesContain(loc))
 				affectedClipboards.add(clipboard);
 		}
 
@@ -140,8 +139,9 @@ public class BlockUpdateListener implements Listener {
 				}
 
 				for(ClippingTool clipboard : affectedClipboards) {
-
-					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(changedBlock))
+					
+					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) &&
+							(clipboard.getClip().isBorderBlock(changedBlock) ||clipboard.isVertex(changedBlock)))
 						Renderer.hideClipboard(clipboard, true);
 
 					Location updatedBlock = clipboard.updateHeight(changedBlock);

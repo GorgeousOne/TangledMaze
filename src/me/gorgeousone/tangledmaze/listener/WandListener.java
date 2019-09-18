@@ -64,7 +64,7 @@ public class WandListener implements Listener{
 			
 			Maze maze = MazeHandler.getMaze(player);
 
-			if(Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(block))
+			if(maze.isStarted() && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(block))
 				Renderer.hideMaze(maze);
 			
 			if(!ToolHandler.hasClipboard(player))
@@ -73,7 +73,7 @@ public class WandListener implements Listener{
 			ClippingTool clipboard = ToolHandler.getClipboard(player);
 			
 			if(Renderer.isClipboardVisible(clipboard) && (clipboard.isVertex(block) || clipboard.getClip().isBorderBlock(block)))
-				Renderer.hideClipboard(clipboard, false);
+				Renderer.hideClipboard(clipboard, true);
 		}
 	}
 	

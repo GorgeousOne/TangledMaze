@@ -43,12 +43,14 @@ public abstract class AbstractWallGen {
 		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
 				
-				if(terrainMap.getType(x, z) != MazeAreaType.WALL)
+				if(terrainMap.getAreaType(x, z) != MazeAreaType.WALL)
 					continue;
 				
-				for(int height = terrainMap.getGroundHeight(x, z) + 1; height <= terrainMap.getMazeHeight(x, z); height++) {
+				int floorHeight = terrainMap.getFloorHeight(x, z);
+				
+				for(int relHeight = 1; relHeight <= terrainMap.getWallHeight(x, z); relHeight++) {
 					
-					Block block = new Location(maze.getWorld(), x, height, z).getBlock();
+					Block block = new Location(maze.getWorld(), x, floorHeight + relHeight, z).getBlock();
 					
 					if(Utils.canBeOverbuild(block.getType())) {
 						
