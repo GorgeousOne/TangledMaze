@@ -1,5 +1,7 @@
 package me.gorgeousone.tangledmaze.util;
 
+import org.bukkit.command.CommandSender;
+
 public class TextException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
@@ -18,5 +20,9 @@ public class TextException extends Exception {
 
 	public PlaceHolder getPlaceHolder() {
 		return placeHolder;
+	}
+	
+	public void sendTextTo(CommandSender receiver) {
+		getText().sendTo(receiver, getPlaceHolder());
 	}
 }

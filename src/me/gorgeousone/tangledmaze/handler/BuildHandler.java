@@ -66,9 +66,10 @@ public final class BuildHandler {
 		if(!maze.isConstructed())
 			return;
 		
-		List<BlockState> blocksToUpdate = builtWallBlocks.get(maze);
+		List<BlockState> blocksToUpdate = getBuiltWallBlocks(maze);
 		
 		BukkitRunnable builder = new BukkitRunnable() {
+			
 			@Override
 			public void run() {
 				
@@ -84,7 +85,8 @@ public final class BuildHandler {
 				}
 				
 				this.cancel();
-				builtWallBlocks.remove(maze);
+				
+				removeMaze(maze);
 				maze.setConstructed(false);
 				maze.updateHeights();
 				

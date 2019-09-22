@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -39,10 +40,10 @@ public class SetPathWidth extends MazeCommand {
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
-		if(maze.getPathWidth() == pathWidth)
+		if(maze.getDimension(MazeDimension.PATH_WIDTH) == pathWidth)
 			return false;
-			
-		maze.setPathWidth(pathWidth);
+		
+		maze.setDimension(MazeDimension.PATH_WIDTH, pathWidth);
 		Messages.MESSAGE_PATHWIDTH_CHANGED.sendTo(player, new PlaceHolder("number", pathWidth));
 		return true;
 	}

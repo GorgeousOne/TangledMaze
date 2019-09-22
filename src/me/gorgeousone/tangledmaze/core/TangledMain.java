@@ -73,7 +73,7 @@ public class TangledMain extends JavaPlugin {
 		commandHandler.registerCommand(new SetPathWidth());
 		commandHandler.registerCommand(new SetPathLength());
 		commandHandler.registerCommand(new TpToMaze());
-		commandHandler.registerCommand(new BuildMaze());
+		commandHandler.registerCommand(new BuildCommand());
 		commandHandler.registerCommand(new UnbuildMaze());
 		commandHandler.registerCommand(new Undo());
 	}

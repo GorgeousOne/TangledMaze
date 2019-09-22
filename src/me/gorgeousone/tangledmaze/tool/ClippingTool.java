@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
+import me.gorgeousone.tangledmaze.clip.shape.ClipShape;
 import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class ClippingTool extends Tool {
 	
-	private Shape shape;
+	private ClipShape shape;
 	
 	private Clip clip;
 	private ArrayList<Location> vertices;
@@ -25,7 +25,7 @@ public class ClippingTool extends Tool {
 	private boolean isComplete, isResizing;
 	private int indexOfResizedVertex;
 	
-	public ClippingTool(World world, Shape type) {
+	public ClippingTool(World world, ClipShape type) {
 		
 		super(null);
 		
@@ -34,7 +34,7 @@ public class ClippingTool extends Tool {
 		vertices = new ArrayList<>();
 	}
 	
-	public ClippingTool(Player builder, Shape type) {
+	public ClippingTool(Player builder, ClipShape type) {
 		super(builder);
 		
 		clip = new Clip(builder.getWorld()); 
@@ -51,7 +51,7 @@ public class ClippingTool extends Tool {
 		return clip.getWorld();
 	}
 	
-	public Shape getType() {
+	public ClipShape getType() {
 		return shape;
 	}
 
@@ -67,7 +67,7 @@ public class ClippingTool extends Tool {
 		return clip;
 	}
 	
-	public void setType(Shape shape) {
+	public void setType(ClipShape shape) {
 		
 		Renderer.hideClipboard(this, true);
 		this.shape = shape;

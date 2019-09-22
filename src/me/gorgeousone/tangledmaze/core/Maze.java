@@ -1,6 +1,8 @@
 package me.gorgeousone.tangledmaze.core;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.UUID;
@@ -26,10 +28,7 @@ public class Maze {
 	private Clip clip;
 	private Stack<Vec2> exits;
 	
-	private int wallWidth;
-	private int wallHeight;
-	private int pathWidth;
-	private int pathLength;
+	private Map<MazeDimension, Integer> dimensions;
 	
 	private boolean isStarted, isConstructed;
 	
@@ -39,10 +38,10 @@ public class Maze {
 		history = new ActionHistory();
 		exits = new Stack<>();
 		
-		wallWidth = 1;
-		wallHeight = 2;
-		pathWidth = 1;
-		pathLength = 5;
+		dimensions = new HashMap<>();
+		
+		for(MazeDimension dimension : MazeDimension.values())
+			dimensions.put(dimension, dimension.getDefault());
 	}
 
 	public Maze(Player builder) {
@@ -103,36 +102,12 @@ public class Maze {
 		return history;
 	}
 	
-	public int getWallWidth() {
-		return wallWidth;
+	public int getDimension(MazeDimension size) {
+		return dimensions.get(size);
 	}
 	
-	public void setWallWidth(int blocks) {
-		wallWidth = Math.max(1, blocks);
-	}
-	
-	public int getWallHeight() {
-		return wallHeight;
-	}
-	
-	public void setWallHeight(int blocks) {
-		wallHeight = Math.max(1, blocks);
-	}
-	
-	public int getPathWidth() {
-		return pathWidth;
-	}
-	
-	public void setPathWidth(int blocks) {
-		pathWidth = Math.max(1, blocks);
-	}
-
-	public int getPathLength() {
-		return pathLength;
-	}
-	
-	public void setPathLength(int blocks) {
-		pathLength = Math.max(1, blocks);
+	public void setDimension(MazeDimension size, int newValue) {
+		dimensions.put(size, newValue);
 	}
 	
 	public void setConstructed(boolean state) {
@@ -494,9 +469,8 @@ public class Maze {
 			throw notAlterableException;
 		
 		Location updatedBlock = Utils.nearestSurface(block.getLocation());
-		Vec2 blockVec = new Vec2(block);
 		
-		getClip().addFill(blockVec, updatedBlock.getBlockY());
+		getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
 			
 		return updatedBlock;
 	}

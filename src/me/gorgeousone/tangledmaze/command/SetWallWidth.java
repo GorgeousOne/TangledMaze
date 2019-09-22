@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -39,10 +40,10 @@ public class SetWallWidth extends MazeCommand {
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
-		if(maze.getWallWidth() == wallWidth)
+		if(maze.getDimension(MazeDimension.WALL_WIDTH) == wallWidth)
 			return false;
-			
-		maze.setWallWidth(wallWidth);
+		
+		maze.setDimension(MazeDimension.WALL_WIDTH, wallWidth);
 		Messages.MESSAGE_WALLWIDTH_CHANGED.sendTo(player, new PlaceHolder("number", wallWidth));
 		return true;
 	}

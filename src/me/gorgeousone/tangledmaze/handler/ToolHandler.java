@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.clip.shape.ClipShape;
 import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
 
@@ -30,7 +30,7 @@ public abstract class ToolHandler {
 		UUID uuid = player.getUniqueId();
 		
 		if(!tools.containsKey(uuid))
-			tools.put(uuid, new ClippingTool(player, Shape.RECT));
+			tools.put(uuid, new ClippingTool(player, ClipShape.RECT));
 		
 		return tools.get(player.getUniqueId());
 	}
@@ -61,7 +61,7 @@ public abstract class ToolHandler {
 			clipboard.reset();
 		
 		}else {
-			setTool(player, new ClippingTool(player, Shape.RECT));
+			setTool(player, new ClippingTool(player, ClipShape.RECT));
 		}
 	}
 	

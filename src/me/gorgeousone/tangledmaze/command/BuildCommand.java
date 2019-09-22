@@ -20,15 +20,15 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.TextException;
 
-public class BuildMaze extends MazeCommand {
+public class BuildCommand extends MazeCommand {
 
 	private PathGenerator pathGenerator;
 	private TerrainEditor terrainEditor;
 	private WallGenerator wallGenerator;
 
-	public BuildMaze() {
+	public BuildCommand() {
 		
-		super("build", "/tangledmaze build <block> ...", 1, true, null);
+		super("build", "/tangledmaze build <maze/floor/ceiling> <block> ...", 1, true, null);
 		
 		pathGenerator = new PathGenerator();
 		terrainEditor = new TerrainEditor();
@@ -58,14 +58,33 @@ public class BuildMaze extends MazeCommand {
 			return false;
 		}
 		
-		if(maze.isConstructed()) {
-			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
-			return false;
-		}
-		
 		if(!maze.hasExits()) {
 			Messages.ERROR_NO_MAZE_EXIT_SET.sendTo(player);
 			player.sendMessage("/tangledmaze select exit");
+			return false;
+		}
+		
+		switch (arguments[0]) {
+		
+		case "floor":
+			
+			if(!maze.isConstructed())
+			break;
+		
+		case "ceiling":
+
+			if(!maze.isConstructed())
+			break;
+			
+		case "maze":
+			break;
+
+		default:
+			break;
+		}
+		
+		if(maze.isConstructed()) {
+			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
 			return false;
 		}
 		
@@ -76,7 +95,7 @@ public class BuildMaze extends MazeCommand {
 			
 		} catch (TextException ex) {
 			
-			ex.getText().sendTo(player, ex.getPlaceHolder());
+			ex.sendTextTo(player);
 			return false;
 		}
 
@@ -88,7 +107,11 @@ public class BuildMaze extends MazeCommand {
 		return true;
 	}
 	
-	private static List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
+//	private void buildMaze(player, maze, ) {
+//		
+//	}
+	
+	private List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
 		
 		List<Material> wallMaterials = new ArrayList<>();
 		

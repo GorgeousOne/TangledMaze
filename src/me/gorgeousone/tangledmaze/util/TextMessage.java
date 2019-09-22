@@ -32,22 +32,21 @@ public class TextMessage {
 		}
 	}
 	
-	public void sendTo(CommandSender sender) {
+	public void sendTo(CommandSender receiver) {
 		
 		for(String paragraph : paragraphs) {
-			sender.sendMessage(paragraph);
+			receiver.sendMessage(paragraph);
 		}
 	}
 	
-	public void sendTo(CommandSender sender, PlaceHolder placeHolder) {
+	public void sendTo(CommandSender receiver, PlaceHolder placeHolder) {
 		
 		if(placeHolder == null) {
-			
-			sendTo(sender);
+			sendTo(receiver);
 			return;
 		}
 		
 		for(String paragraph : paragraphs)
-			sender.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
+			receiver.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
 	}
 }

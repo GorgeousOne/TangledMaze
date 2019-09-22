@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public abstract class Renderer implements Listener {
 	
 	private static HashMap<ClippingTool, Boolean> clipVisibilities = new HashMap<>();
@@ -60,7 +61,7 @@ public abstract class Renderer implements Listener {
 		return mazeVisibilities.get(maze);
 	}
 	
-	@SuppressWarnings("deprecation")
+	//displays a clipboard to it's owner with block changes
 	public static void displayClipboard(ClippingTool clipboard) {
 
 		clipVisibilities.put(clipboard, true);
@@ -81,7 +82,7 @@ public abstract class Renderer implements Listener {
 		}.runTask(TangledMain.getInstance());
 	}
 	
-	@SuppressWarnings("deprecation")
+	//hides a clipboard completely with the option to redisplay previously covered maze parts
 	public static void hideClipboard(ClippingTool clipboard, boolean updateMaze) {
 		
 		clipVisibilities.put(clipboard, false);
@@ -105,7 +106,7 @@ public abstract class Renderer implements Listener {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
+	//displays a maze to it's owner with block changes
 	public static void displayMaze(Maze maze) {
 		
 		if(maze.isConstructed())
@@ -130,7 +131,7 @@ public abstract class Renderer implements Listener {
 		}.runTask(TangledMain.getInstance());
 	}
 	
-	@SuppressWarnings("deprecation")
+	//hides a maze
 	public static void hideMaze(Maze maze) {
 		
 		if(maze.isConstructed())
@@ -143,8 +144,8 @@ public abstract class Renderer implements Listener {
 			player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
 	}
 	
-	//Displays only single blocks covered by something like a falling block (it doesn't work xD)
-	public static void redisplayClipboardBorder(ClippingTool clipboard, Location loc) {
+	//displays single blocks of a clipboard (which might covered by e.g. falling block)
+	public static void redisplayClipboardBlock(ClippingTool clipboard, Location loc) {
 		
 		Player player = clipboard.getPlayer();
 		
@@ -155,7 +156,8 @@ public abstract class Renderer implements Listener {
 			sendBlockDelayed(player, loc, Constants.CLIPBOARD_BORDER);
 	}
 
-	public static void redisplayMazeBorder(Maze maze, Location loc) {
+	//displays single blocks of a maze
+	public static void redisplayMazeBlock(Maze maze, Location loc) {
 		
 		Player player = maze.getPlayer();
 		
@@ -171,7 +173,7 @@ public abstract class Renderer implements Listener {
 			sendBlockDelayed(player, loc, Constants.MAZE_BORDER);
 	}
 	
-	@SuppressWarnings("deprecation")
+	//
 	public static void displayMazeAction(Maze maze, ClipAction action) {
 		
 		Player player = maze.getPlayer();
@@ -198,7 +200,6 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//Displays maze parts that were covered under a clipboard.
-	@SuppressWarnings("deprecation")
 	private static void redisplayMaze(Maze maze, ClippingTool hiddenClipboard) {
 		
 		Player player = maze.getPlayer();
@@ -223,7 +224,6 @@ public abstract class Renderer implements Listener {
 
 		new BukkitRunnable() {
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				player.sendBlockChange(loc, mat, (byte) 0);
@@ -235,7 +235,6 @@ public abstract class Renderer implements Listener {
 		
 		new BukkitRunnable() {
 		
-			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				

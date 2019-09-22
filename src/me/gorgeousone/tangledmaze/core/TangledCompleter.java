@@ -40,7 +40,6 @@ public class TangledCompleter implements TabCompleter {
 		if(!player.hasPermission(Constants.BUILD_PERM))
 			return null;
 		
-		
 		List<String> options = new ArrayList<>();
 		
 		switch (args.length) {

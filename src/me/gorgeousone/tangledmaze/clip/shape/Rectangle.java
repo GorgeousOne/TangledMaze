@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.shape;
+package me.gorgeousone.tangledmaze.clip.shape;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public class Rectangle implements Shape {
+public class Rectangle extends ClipShape {
 	
 	@Override
 	public int getVertexCount() {
@@ -25,7 +25,7 @@ public class Rectangle implements Shape {
 		Location vertex2 = vertices.get(1);
 
 		vertices.clear();
-		vertices.addAll(Shape.createRectangularVertices(vertex0, vertex2));
+		vertices.addAll(ClipShape.createRectangularVertices(vertex0, vertex2));
 		
 		Vec2 minVertex = new Vec2(vertices.get(0));
 		Vec2 maxVertex = new Vec2(vertices.get(2)).add(1, 1);

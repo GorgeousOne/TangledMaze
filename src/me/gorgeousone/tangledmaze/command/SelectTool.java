@@ -3,12 +3,12 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.clip.shape.ClipShape;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.shape.Shape;
 import me.gorgeousone.tangledmaze.tool.*;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
@@ -34,7 +34,7 @@ public class SelectTool extends MazeCommand {
 		case "rectangle":
 		case "square":
 			
-			if(!switchClipShape(player, Shape.RECT))
+			if(!switchClipShape(player, ClipShape.RECT))
 				return true;
 			
 			break;
@@ -42,7 +42,7 @@ public class SelectTool extends MazeCommand {
 		case "circle":
 		case "ellipse":
 			
-			if(!switchClipShape(player, Shape.CIRCLE))
+			if(!switchClipShape(player, ClipShape.CIRCLE))
 				return true;
 			
 			break;
@@ -71,7 +71,7 @@ public class SelectTool extends MazeCommand {
 		return true;
 	}
 	
-	private boolean switchClipShape(Player player, Shape type) {
+	private boolean switchClipShape(Player player, ClipShape type) {
 		
 		if(!ToolHandler.hasClipboard(player)) {
 			ToolHandler.setTool(player, new ClippingTool(player, type));

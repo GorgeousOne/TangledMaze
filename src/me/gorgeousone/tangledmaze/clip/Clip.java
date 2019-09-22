@@ -150,7 +150,7 @@ public class Clip {
 		return border.contains(loc);
 	}
 	
-	private Set<Vec2> getLocsInChunk(TreeSet<Vec2> set, Chunk chunk) {
+	private Set<Vec2> getLocsInChunk(TreeSet<Vec2> locSet, Chunk chunk) {
 	
 		int chunkMinX = chunk.getX() * 16,
 			chunkMinZ = chunk.getZ() * 16,
@@ -160,7 +160,7 @@ public class Clip {
 		Vec2 chunkStart = new Vec2(chunkMinX, chunkMinZ);
 		Vec2 chunkEnd   = new Vec2(chunkMaxX, chunkMaxZ);
 					
-		TreeSet<Vec2> subSet = (TreeSet<Vec2>) set.subSet(chunkStart, chunkEnd);
+		TreeSet<Vec2> subSet = (TreeSet<Vec2>) locSet.subSet(chunkStart, chunkEnd);
 		TreeSet<Vec2> chunkSet = new TreeSet<>();
 		
 		for(int iterZ = chunkMinZ; iterZ <= chunkMaxZ; iterZ++) {

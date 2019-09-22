@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.shape;
+package me.gorgeousone.tangledmaze.clip.shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,14 +9,14 @@ import org.bukkit.World;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.util.Utils;
 
-public interface Shape {
+public abstract class ClipShape {
 	
 	public static final Rectangle RECT = new Rectangle();
 	public static final Circle CIRCLE = new Circle();
 	
-	public int getVertexCount();
+	public abstract int getVertexCount();
 	
-	public Clip createClip(ArrayList<Location> vertices);
+	public abstract Clip createClip(ArrayList<Location> vertices);
 	
 	public static ArrayList<Location> createRectangularVertices(Location vertex0, Location vertex2) {
 		

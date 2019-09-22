@@ -10,7 +10,6 @@ import org.bukkit.event.block.Action;
 public abstract class Tool {
 	
 	private UUID player;
-	
 
 	public Tool(Player builder) {
 		this.player = builder.getUniqueId();

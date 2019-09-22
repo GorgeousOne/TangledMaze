@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class TerrainMap {
@@ -164,7 +165,7 @@ public class TerrainMap {
 			}
 		}
 		
-		int wallHeight = maze.getWallHeight();
+		int wallHeight = maze.getDimension(MazeDimension.WALL_HEIGHT);
 		Clip clip = maze.getClip();
 		
 		//mark the maze's area in mazeMap as undefined area (open to become paths and walls)

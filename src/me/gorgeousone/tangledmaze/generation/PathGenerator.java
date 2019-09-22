@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -31,8 +32,8 @@ public class PathGenerator {
 	
 		Maze maze = terrainMap.getMaze();
 		
-		int pathWidth = maze.getPathWidth(),
-			wallWidth = maze.getWallWidth();
+		int pathWidth = maze.getDimension(MazeDimension.PATH_WIDTH);
+		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
 		
 		PathSegment entrance = createEntranceSegment(
 				maze.getMainExit(),
@@ -193,9 +194,9 @@ public class PathGenerator {
 		ArrayList<Vec2> pathEnds = new ArrayList<>();
 		pathEnds.add(terrainMap.getStart());
 		
-		int wallWidth  = maze.getWallWidth();
-		int	pathWidth  = maze.getPathWidth();
-		int pathLength = maze.getPathLength();
+		int pathWidth = maze.getDimension(MazeDimension.PATH_WIDTH);
+		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
+		int pathLength = maze.getDimension(MazeDimension.PATH_LENGTH);
 		
 		int maxLinkedPathsCount = 3;
 		int linkedPathsCount = 0;

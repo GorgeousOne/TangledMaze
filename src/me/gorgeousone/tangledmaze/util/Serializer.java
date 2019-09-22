@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 
 public final class Serializer {
 
@@ -18,10 +19,9 @@ public final class Serializer {
 		config.set(path + ".world", maze.getWorld());
 		saveClip(maze.getClip(), config, path + ".clip");
 		config.set(path + ".exits", maze.getExits());
-
-		config.set(path + ".path-width", maze.getPathWidth());
-		config.set(path + ".wall-width", maze.getWallWidth());
-		config.set(path + ".wall-height", maze.getWallHeight());
+		
+		for(MazeDimension dimension : MazeDimension.values())
+			config.set(path + "." + dimension.name().toLowerCase().replace("_", "-"), maze.getDimension(dimension));
 	}
 	
 	public static void saveClip(Clip clip, FileConfiguration config, String path) {
@@ -39,9 +39,8 @@ public final class Serializer {
 		maze.setClip(loadClip(config, path + ".clip"));
 		maze.getExits().addAll((List<Vec2>) config.getList(path + ".exits"));
 		
-		maze.setPathWidth(config.getInt(path + ".path-width", 1));
-		maze.setWallWidth(config.getInt(path + ".wall-width", 1));
-		maze.setWallHeight(config.getInt(path + ".wall-height", 2));
+		for(MazeDimension dimension : MazeDimension.values())
+			maze.setDimension(dimension, config.getInt(path + "." + dimension.name().toLowerCase().replace("_", "-"), dimension.getDefault()));
 		
 		return maze;
 	}

@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -39,10 +40,10 @@ public class SetWallHeight extends MazeCommand {
 		
 		Maze maze = MazeHandler.getMaze(player);
 		
-		if(maze.getWallHeight() == wallHeight)
+		if(maze.getDimension(MazeDimension.WALL_HEIGHT) == wallHeight)
 			return false;
 		
-		maze.setWallHeight(wallHeight);
+		maze.setDimension(MazeDimension.WALL_HEIGHT, wallHeight);
 		Messages.MESSAGE_WALLHEIGHT_CHANGED.sendTo(player, new PlaceHolder("number", wallHeight));
 		return true;
 	}

@@ -1,7 +1,6 @@
 package me.gorgeousone.tangledmaze.listener;
 
 import org.bukkit.event.block.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,7 +27,6 @@ public class BlockUpdateListener implements Listener {
 	//TODO hide mazes and clipboards only if owner breaks a block
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent e) {
-		Bukkit.broadcastMessage(e.getBlock().getRelative(BlockFace.DOWN).getLocation().toVector().toString());
 		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);
 	}
 
@@ -135,7 +133,7 @@ public class BlockUpdateListener implements Listener {
 					Location updatedBlock = maze.updateHeight(changedBlock);
 					
 					if(!hideAffectedElements && updatedBlock != null && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock.getBlock()))
-						Renderer.redisplayMazeBorder(maze, updatedBlock);
+						Renderer.redisplayMazeBlock(maze, updatedBlock);
 				}
 
 				for(ClippingTool clipboard : affectedClipboards) {
@@ -147,7 +145,7 @@ public class BlockUpdateListener implements Listener {
 					Location updatedBlock = clipboard.updateHeight(changedBlock);
 
 					if(!hideAffectedElements && updatedBlock != null && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(updatedBlock.getBlock()))
-						Renderer.redisplayClipboardBorder(clipboard, updatedBlock);
+						Renderer.redisplayClipboardBlock(clipboard, updatedBlock);
 				}
 			}
 		}.runTask(TangledMain.getInstance());

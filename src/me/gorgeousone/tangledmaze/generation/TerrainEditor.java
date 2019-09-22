@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.generation;
 
+import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -7,19 +8,17 @@ public class TerrainEditor {
 	
 	public void editTerrain(TerrainMap terrainMap) {
 		
-		cullSpikes2(terrainMap);
-//		raiseTooLowWalls(terrainMap);
+		levelOffSpikes(terrainMap);
+		raiseLowWalls(terrainMap);
 	}
 	
-	private void cullSpikes2(TerrainMap terrainMap) {
-		
-//		int wallHeight = terrainMap.getMaze().getWallHeight();
+	protected void levelOffSpikes(TerrainMap terrainMap) {
 		
 		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
 				
 				int floorHeight = terrainMap.getFloorHeight(x, z);
-				int maxNeighborFloorHeight = getHighestNeighborFloor(x, z, terrainMap);
+				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap));
 				
 				if(floorHeight >= maxNeighborFloorHeight + 2)
 					terrainMap.setFloorHeight(x, z, floorHeight + getAverageHeightDiffToNeighborFloors(terrainMap, x, z));
@@ -27,127 +26,79 @@ public class TerrainEditor {
 		}
 	}
 	
-	private int getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
+	protected void raiseLowWalls(TerrainMap terrainMap) {
 		
-		int maxHeight = 0;
+		int wallHeight = terrainMap.getMaze().getDimension(MazeDimension.WALL_HEIGHT);
+		
+		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
+			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
+			
+				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
+					continue;
+				
+				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
+				
+				if(maxNeighborPath == null)
+					continue;
+				
+				int floorHeight = terrainMap.getFloorHeight(x, z);
+				int maxNeighborFloorHeight = terrainMap.getFloorHeight(maxNeighborPath);
+				
+				if(maxNeighborFloorHeight > floorHeight)
+					terrainMap.setWallHeight(x, z, wallHeight + maxNeighborFloorHeight - floorHeight);
+			}
+		}
+	}
+	
+//	protected int getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
+//		
+//		int maxHeight = 0;
+//		
+//		for(Directions dir : Directions.values()) {
+//			
+//			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
+//			
+//			if(!terrainMap.contains(neighbor) || terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE)
+//				continue;
+//			
+//			int neighborHeight = terrainMap.getFloorHeight(neighbor);
+//			
+//			if(neighborHeight > maxHeight)
+//				maxHeight = neighborHeight;
+//		}
+//
+//		return maxHeight;
+//	}
+	
+	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
+		return getHighestNeighborFloor(x, z, terrainMap, null);
+	}
+	
+	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap, MazeAreaType areaType) {
+		
+		Vec2 maxNeighborFloor = null;
+		int maxFloorHeight = 0;
 		
 		for(Directions dir : Directions.values()) {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 			
-			if(!terrainMap.contains(neighbor) || terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE)
+			if(!terrainMap.contains(neighbor) || areaType != null && terrainMap.getAreaType(neighbor) != areaType)
 				continue;
 			
-			int neighborHeight = terrainMap.getFloorHeight(neighbor);
+			int neighborFloorHeight = terrainMap.getFloorHeight(neighbor);
 			
-			if(neighborHeight > maxHeight) {
-				maxHeight = neighborHeight;
-			}
-		}
-
-		return maxHeight;
-	}
-	
-	/*
-	 * This method changes the height of the fllor or of the ceiling in 2 cases:
-	 * 
-	 * 1. If the floor height differs in average to neighbor floor heights the method will try to smooth
-	 *    the floor height at that point
-	 *    
-	 * 2. If the ceiling height of a point
-	 */
-//	private void cullSpikes(TerrainMap terrainMap) {
-//		
-//		int wallHeight = terrainMap.getMaze().getWallHeight();
-//
-//		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-//			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
-//				
-//				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
-//					continue;
-//				
-//				Vec2 maxCeilHeightNeighbor = getHighestNeighborCeil(x, z, terrainMap, null);
-//				
-//				int ceilHeight = terrainMap.getCeilHeight(x, z);
-//				int defaultCeilHeight = terrainMap.getFloorHeight(maxCeilHeightNeighbor) + wallHeight;
-//				
-//				
-//				if(ceilHeight <= defaultCeilHeight)
-//					continue;
-//				
-//				int averageFloorDiffToNeighbors = getAverageFloorHeightDiffToNeighbors(terrainMap, x, z);
-//				
-//				//adapt floor height of path locations to surrounding floor heights
-//				if(terrainMap.getAreaType(x, z) == MazeAreaType.PATH)
-//					terrainMap.setFloorHeight(x, z, terrainMap.getFloorHeight(x, z) + averageFloorDiffToNeighbors);
-//				
-//				//adapt wall height of wall points to default wall height or neighbor wall heights
-//				else
-//					terrainMap.setCeilHeight(x, z, Math.min(defaultCeilHeight, ceilHeight + averageFloorDiffToNeighbors));
-//			}
-//		}
-//	}
-	
-	//raises walls with a low height to surrounding paths
-//	private void raiseTooLowWalls(TerrainMap terrainMap) {
-//		
-//		int wallHeight = terrainMap.getMaze().getWallHeight();
-//
-//		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-//			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
-//				
-//				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
-//					continue;
-//				
-//				Vec2 maxNeighbor = getHighestNeighborCeil(x, z, terrainMap, MazeAreaType.PATH);
-//				
-//				if(maxNeighbor == null)
-//					continue;
-//				
-//				int maxNeighborsWallHeight = terrainMap.getWallHeight(maxNeighbor);
-//		
-//				if(maxNeighborsWallHeight <= 0)
-//					continue;
-//				
-//				int mazeHeight = terrainMap.getCeilHeight(x, z),
-//					maxNeighborsGroundHeight = terrainMap.getFloorHeight(maxNeighbor);
-//				
-//				if(mazeHeight < maxNeighborsGroundHeight + wallHeight)
-//					terrainMap.setCeilHeight(x, z, maxNeighborsGroundHeight + wallHeight);
-//			}
-//		}
-//	}
-	
-	
-	private Vec2 getHighestNeighborCeil(int x, int z, TerrainMap terrainMap, MazeAreaType areaTypeLimit) {
-		
-		Vec2 maxNeighbor = null;
-		int maxHeight = 0;
-		
-		for(Directions dir : Directions.values()) {
-			
-			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
-			
-			if(!terrainMap.contains(neighbor))
-				continue;
-			
-			if(terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE || areaTypeLimit != null &&
-			   terrainMap.getAreaType(neighbor) != areaTypeLimit) {
-				continue;
-			}
-			
-			int neighborHeight = terrainMap.getCeilHeight(neighbor);
-			
-			if(maxNeighbor == null || neighborHeight > maxHeight) {
-				maxNeighbor = neighbor;
-				maxHeight = neighborHeight;
+			if(neighborFloorHeight > maxFloorHeight) {
+				
+				maxNeighborFloor = neighbor;
+				maxFloorHeight = neighborFloorHeight;
 			}
 		}
 		
-		return maxNeighbor;
+		return maxNeighborFloor;
 	}
-
-	private int getAverageHeightDiffToNeighborFloors(TerrainMap terrainMap, int x, int z) {
+	
+	protected int getAverageHeightDiffToNeighborFloors(TerrainMap terrainMap, int x, int z) {
 		
 		int floorHeight = terrainMap.getFloorHeight(x, z);
 		int heightDiff = 0;
