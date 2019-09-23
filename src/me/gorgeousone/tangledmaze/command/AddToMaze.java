@@ -6,9 +6,7 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
 public class AddToMaze extends MazeCommand {
@@ -25,33 +23,15 @@ public class AddToMaze extends MazeCommand {
 		
 		Player player = (Player) sender;
 		
-		if(!MazeHandler.getMaze(player).isStarted()) {
-			
-			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
-			player.sendMessage("/tangledmaze start");
+		Maze maze = getStartedMaze(player, false, true);
+		
+		if(maze == null)
 			return false;
-		}
 		
-		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
-			
-			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
-			player.sendMessage("/tangledmaze wand");
+		ClippingTool clipboard = getCompletedClipboard(player);
+		
+		if(clipboard == null)
 			return false;
-		}
-		
-		ClippingTool clipboard = ToolHandler.getClipboard(player);
-		
-		if(!clipboard.isComplete()) {
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
-			return false;
-		}
-		
-		Maze maze = MazeHandler.getMaze(player);
-		
-		if(maze.isConstructed()) {
-			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
-			return false;
-		}
 		
 		ClipAction action = maze.getAddition(clipboard.getClip());
 

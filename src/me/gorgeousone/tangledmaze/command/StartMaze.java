@@ -4,10 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
 public class StartMaze extends MazeCommand {
@@ -24,20 +22,10 @@ public class StartMaze extends MazeCommand {
 		
 		Player player = (Player) sender;
 		
-		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
-			
-			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
-			player.sendMessage("/tangledmaze wand");
-			return false;
-		}
+		ClippingTool clipboard = getCompletedClipboard(player);
 		
-		ClippingTool clipboard = ToolHandler.getClipboard(player);
-		
-		if(!clipboard.isComplete()) {
-			
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
+		if(clipboard == null)
 			return false;
-		}
 		
 		Renderer.hideClipboard(clipboard, false);
 		Maze maze = MazeHandler.getMaze(player);

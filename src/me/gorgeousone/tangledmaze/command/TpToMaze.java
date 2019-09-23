@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -27,22 +25,19 @@ public class TpToMaze extends MazeCommand {
 		}
 		
 		Player player = (Player) sender;
-		Maze maze = MazeHandler.getMaze(player);
 		
-		if(!maze.isStarted()) {
-
-			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
-			player.sendMessage("/tangledmaze start");
+		Maze maze = getStartedMaze(player, false, false);
+		
+		if(maze == null)
 			return false;
-		}
 		
 		Vec2 firstLoc = ((TreeSet<Vec2>) maze.getClip().getBorder()).first();
 		
-		Location target = maze.getClip().getLocation(firstLoc);
-		target.add(0.5, 2, 0.5);
-		target.setDirection(player.getLocation().getDirection());
+		Location tpLoc = maze.getClip().getLocation(firstLoc);
+		tpLoc.add(0.5, 2, 0.5);
+		tpLoc.setDirection(player.getLocation().getDirection());
 		
-		player.teleport(target);
+		player.teleport(tpLoc);
 		Renderer.displayMaze(maze);
 		return true;
 	}

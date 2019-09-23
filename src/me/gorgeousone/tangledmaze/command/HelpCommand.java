@@ -51,7 +51,7 @@ public class HelpCommand extends MazeCommand {
 			sender.sendMessage(ChatColor.GREEN + "List of all /tangledmaze commands: ");
 			
 			for(RawMessage pageLink : pageLinks)
-				pageLink.send(sender);
+				pageLink.sendTo(sender);
 		
 		}else
 			pages[pageNumber-2].send(sender);

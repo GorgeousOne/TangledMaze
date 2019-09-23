@@ -28,7 +28,7 @@ public class RawMessage {
 		return rawElements.isEmpty() ? null : rawElements.get(rawElements.size()-1);
 	}
 	
-	public void send(CommandSender sender) {
+	public void sendTo(CommandSender sender) {
 		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " " + this.toString());
 	}
 	

@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
-import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
@@ -42,51 +41,29 @@ public class BuildCommand extends MazeCommand {
 			return false;
 		
 		Player player = (Player) sender;
-		Maze maze = MazeHandler.getMaze(player);
+		Maze maze = getStartedMaze(player, true, true);
 		
-		if(!maze.isStarted()) {
-			
-			if(!ToolHandler.hasClipboard(player)) {
-				
-				Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
-				player.sendMessage("/tangledmaze wand");
-				return false;	
-			}
-			
-			Messages.ERROR_CLIPBOARD_NOT_FINISHED.sendTo(player);
-			player.sendMessage("/tangledmaze start");
+		if(maze == null)
 			return false;
-		}
 		
-		if(!maze.hasExits()) {
-			Messages.ERROR_NO_MAZE_EXIT_SET.sendTo(player);
-			player.sendMessage("/tangledmaze select exit");
-			return false;
-		}
-		
-		switch (arguments[0]) {
-		
-		case "floor":
-			
-			if(!maze.isConstructed())
-			break;
-		
-		case "ceiling":
-
-			if(!maze.isConstructed())
-			break;
-			
-		case "maze":
-			break;
-
-		default:
-			break;
-		}
-		
-		if(maze.isConstructed()) {
-			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
-			return false;
-		}
+//		switch (arguments[0]) {
+//		
+//		case "floor":
+//			
+//			if(!maze.isConstructed())
+//			break;
+//		
+//		case "ceiling":
+//
+//			if(!maze.isConstructed())
+//			break;
+//			
+//		case "maze":
+//			break;
+//
+//		default:
+//			break;
+//		}
 		
 		List<Material> wallMaterials;
 		
@@ -106,10 +83,6 @@ public class BuildCommand extends MazeCommand {
 		ToolHandler.resetToDefaultTool(player);
 		return true;
 	}
-	
-//	private void buildMaze(player, maze, ) {
-//		
-//	}
 	
 	private List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
 		

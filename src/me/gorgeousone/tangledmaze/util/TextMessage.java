@@ -8,7 +8,6 @@ public class TextMessage {
 	private String[] paragraphs;
 
 	public TextMessage(String message, boolean readColorCodes) {
-
 		setText(message, readColorCodes);
 	}
 	
@@ -23,30 +22,29 @@ public class TextMessage {
 			
 		paragraphs = alteredMessage.split("\\\\n");
 
-		if(paragraphs.length < 2) {
+		if(paragraphs.length < 2)
 			return;
-		}
 
-		for(int i = 1; i < paragraphs.length; i++) {
+		for(int i = 1; i < paragraphs.length; i++)
 			paragraphs[i] = ChatColor.getLastColors(paragraphs[i-1]) + paragraphs[i];
-		}
 	}
 	
 	public void sendTo(CommandSender receiver) {
 		
-		for(String paragraph : paragraphs) {
+		for(String paragraph : paragraphs)
 			receiver.sendMessage(paragraph);
-		}
 	}
 	
-	public void sendTo(CommandSender receiver, PlaceHolder placeHolder) {
+	public void sendTo(CommandSender receiver, PlaceHolder... placeHolders) {
 		
-		if(placeHolder == null) {
-			sendTo(receiver);
-			return;
+		for(String paragraph : paragraphs) {
+			
+			String alteredParagraph = paragraph;
+			
+			for(PlaceHolder placeHolder : placeHolders)
+				alteredParagraph = placeHolder.apply(alteredParagraph);
+			
+			receiver.sendMessage(alteredParagraph);
 		}
-		
-		for(String paragraph : paragraphs)
-			receiver.sendMessage(paragraph.replaceAll("%" + placeHolder.getKey() + "%", placeHolder.getValueString()));
 	}
 }

@@ -24,12 +24,6 @@ public class Constants {
 			ChatColor.DARK_GREEN + "] " +
 			ChatColor.YELLOW;
 	
-	public static int
-			MAX_WALLWIDTH = 255,
-			MAX_WALLHEIGHT = 255,
-			MAX_PATHWIDTH = 255,
-			MAX_PATHLENGTH = 10;
-	
 	public static final Material
 			MAZE_BORDER = Material.REDSTONE_BLOCK,
 			MAZE_MAIN_EXIT = Material.DIAMOND_BLOCK,

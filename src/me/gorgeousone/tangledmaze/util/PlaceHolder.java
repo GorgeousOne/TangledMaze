@@ -2,6 +2,8 @@ package me.gorgeousone.tangledmaze.util;
 
 public class PlaceHolder {
 	
+	private static char holderChar = '%';
+	
 	private String key;
 	private Object value;
 	
@@ -14,7 +16,11 @@ public class PlaceHolder {
 		return key;
 	}
 
-	public String getValueString() {
+	public String getValue() {
 		return value.toString();
+	}
+	
+	public String apply(String message) {
+		return message.replaceAll(holderChar + getKey() + holderChar, getValue());
 	}
 }

@@ -7,7 +7,6 @@ public class HelpPage {
 	private TextMessage[] description;
 	
 	public HelpPage(TextMessage... description) {
-		
 		this.description = description;
 	}
 	

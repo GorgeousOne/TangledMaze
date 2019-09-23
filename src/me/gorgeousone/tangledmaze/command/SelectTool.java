@@ -34,7 +34,7 @@ public class SelectTool extends MazeCommand {
 		case "rectangle":
 		case "square":
 			
-			if(!switchClipShape(player, ClipShape.RECT))
+			if(!switchToClipShape(player, ClipShape.RECT))
 				return true;
 			
 			break;
@@ -42,14 +42,14 @@ public class SelectTool extends MazeCommand {
 		case "circle":
 		case "ellipse":
 			
-			if(!switchClipShape(player, ClipShape.CIRCLE))
+			if(!switchToClipShape(player, ClipShape.CIRCLE))
 				return true;
 			
 			break;
 		
 		case "brush":
 			
-			if(!switchMazeTool(player, new BrushTool(player)))
+			if(!switchToMazeTool(player, new BrushTool(player)))
 				return true;
 			
 			break;
@@ -57,7 +57,7 @@ public class SelectTool extends MazeCommand {
 		case "exit":
 		case "entrance":
 			
-			if(!switchMazeTool(player, new ExitSettingTool(player)))
+			if(!switchToMazeTool(player, new ExitSettingTool(player)))
 				return true;
 			
 			break;
@@ -71,7 +71,7 @@ public class SelectTool extends MazeCommand {
 		return true;
 	}
 	
-	private boolean switchClipShape(Player player, ClipShape type) {
+	private boolean switchToClipShape(Player player, ClipShape type) {
 		
 		if(!ToolHandler.hasClipboard(player)) {
 			ToolHandler.setTool(player, new ClippingTool(player, type));
@@ -88,7 +88,7 @@ public class SelectTool extends MazeCommand {
 		return true;
 	}
 	
-	private boolean switchMazeTool(Player player, Tool type) {
+	private boolean switchToMazeTool(Player player, Tool type) {
 
 		if(ToolHandler.getTool(player).getClass().equals(type.getClass()))
 			return false;
@@ -96,13 +96,15 @@ public class SelectTool extends MazeCommand {
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted()) {
+			
 			Messages.MESSAGE_TOOL_FOR_MAZE_ONLY.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
 		if(maze.isConstructed()) {
-			Messages.MESSAGE_MAZE_ALREADY_BUILT.sendTo(player);
+			
+			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 			return false;
 		}
 		
