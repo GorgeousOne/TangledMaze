@@ -9,7 +9,6 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.Utils;
-import net.md_5.bungee.api.ChatColor;
 
 public class SetDimension extends MazeCommand {
 	
@@ -28,7 +27,7 @@ public class SetDimension extends MazeCommand {
 		MazeDimension dimension = MazeDimension.match(arguments[0]);
 		
 		if(dimension == null) {
-			sender.sendMessage(ChatColor.RED + "\"" + arguments[0] + "\" is not a dimension.");
+			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", arguments[0]));
 			return false;
 		}
 		

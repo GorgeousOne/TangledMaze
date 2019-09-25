@@ -40,7 +40,8 @@ public class Messages {
 			ERROR_MAZE_ALREADY_BUILT,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
-			ERROR_INVALID_NUMBER;
+			ERROR_INVALID_NUMBER,
+			ERROR_INVALID_DIMENSION;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -88,5 +89,6 @@ public class Messages {
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED   = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE      = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
 		ERROR_INVALID_NUMBER              = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
+		ERROR_INVALID_DIMENSION           = new TextMessage(ChatColor.RED + errors.getString("invalid-dimension"), false);
 	}
 }
