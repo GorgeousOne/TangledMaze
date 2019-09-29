@@ -40,14 +40,15 @@ public class Messages {
 			ERROR_MAZE_ALREADY_BUILT,
 			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
 			ERROR_NO_MATCHING_BLOCK_TYPE,
+			ERROR_MAZE_NOT_BUILT,
 			ERROR_INVALID_NUMBER,
-			ERROR_INVALID_DIMENSION;
+			ERROR_INVALID_DIMENSION,
+			ERROR_INVALID_MAZE_PART;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
 		ConfigurationSection helpPages = langConfig.getConfigurationSection("help-pages");
 		
-		//TODO I will come back in 3 years and laugh about how silly I implemented this here
 		COMMAND_WAND       = new TextMessage(ChatColor.DARK_GREEN + "/maze wand\n" + ChatColor.GREEN + helpPages.getString("wand-command") , false);
 		COMMAND_START      = new TextMessage(ChatColor.DARK_GREEN + "/maze start\n" + ChatColor.GREEN + helpPages.getString("start-command"), true);
 		COMMAND_DISCARD    = new TextMessage(ChatColor.DARK_GREEN + "/maze discard\n"+ ChatColor.GREEN + helpPages.getString("discard-command"), true);
@@ -88,7 +89,9 @@ public class Messages {
 		ERROR_MAZE_ALREADY_BUILT          = new TextMessage(ChatColor.RED + errors.getString("maze-already-built"), false);
 		ERROR_NO_BUILD_BLOCKS_SPECIFIED   = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
 		ERROR_NO_MATCHING_BLOCK_TYPE      = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
+		ERROR_MAZE_NOT_BUILT              = new TextMessage(ChatColor.RED + errors.getString("maze-not-built"), false);
 		ERROR_INVALID_NUMBER              = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
 		ERROR_INVALID_DIMENSION           = new TextMessage(ChatColor.RED + errors.getString("invalid-dimension"), false);
+		ERROR_INVALID_MAZE_PART           = new TextMessage(ChatColor.RED + errors.getString("invalid-maze-part"), false);
 	}
 }

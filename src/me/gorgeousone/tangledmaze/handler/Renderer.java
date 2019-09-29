@@ -18,6 +18,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This class handles the visibility of every maze and clipboard (Clip of Clippingtool).
+ * There are different methods for showing and hiding a maze or clipboard,
+ * also to display changed that happened in a MazeAction or refresh a maze when hiding a clipboard.
+ */
 @SuppressWarnings("deprecation")
 public abstract class Renderer implements Listener {
 	
@@ -27,7 +32,7 @@ public abstract class Renderer implements Listener {
 	public static void reload() {
 
 		for (ClippingTool clipboard : clipVisibilities.keySet()) {
-			if (isClipboardVisible(clipboard))
+			if(isClipboardVisible(clipboard))
 				hideClipboard(clipboard, false);
 		}
 		

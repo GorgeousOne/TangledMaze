@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.argument;
+package me.gorgeousone.tangledmaze.command.api.argument;
 
 public enum ArgType {
 

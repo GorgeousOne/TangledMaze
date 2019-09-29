@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.command;
+package me.gorgeousone.tangledmaze.command.api.command;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,6 +15,12 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
+/**
+ * This is the beginning of a lot of unnecessary code.
+ * I mean it is kind of useful because I can create child commands, aliases, argument nuber checks and tab lists on the go but
+ * yeah it feels somehow unneccessary that this "api" is like at least 10 pages extra code.
+ * But it's more soft coded so it's also cool in a way.
+ */
 public abstract class BasicCommand {
 	
 	private String name;
@@ -92,7 +98,6 @@ public abstract class BasicCommand {
 		sender.sendMessage(ChatColor.RED + "Usage: " + getUsage());
 	}
 	
-	//TODO think about more appropiate place for this?
 	protected Maze getStartedMaze(Player player, boolean withExits, boolean notConstructed) {
 		
 		Maze maze = MazeHandler.getMaze(player);
@@ -138,5 +143,4 @@ public abstract class BasicCommand {
 		
 		return clipboard;
 	}
-
 }

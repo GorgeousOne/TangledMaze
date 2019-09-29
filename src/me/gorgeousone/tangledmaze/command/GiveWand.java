@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
+import me.gorgeousone.tangledmaze.command.api.command.BasicCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.util.Utils;
 

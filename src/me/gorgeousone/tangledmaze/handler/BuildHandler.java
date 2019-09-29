@@ -11,23 +11,22 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.generation.WallGenerator;
-import me.gorgeousone.tangledmaze.generation.TerrainMap;
+import me.gorgeousone.tangledmaze.mapmaking.TerrainEditor;
+import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.FloorGenerator;
 import me.gorgeousone.tangledmaze.generation.PathGenerator;
-import me.gorgeousone.tangledmaze.generation.TerrainEditor;
 
+/**
+ * This class handles the process of constructing the maze.
+ * It stores information about mazes that can be accessed by the generators and
+ * for unbuilding the maze again.
+ */
 public final class BuildHandler {
 	
 	private static Map<Maze, List<BlockState>> builtWallBlocks = new HashMap<>();
-
-	private BuildHandler() {}
+	private static Map<Maze, TerrainMap> terrainMaps = new HashMap<>();
 	
-	public static void removeMaze(Maze maze) {
-		builtWallBlocks.remove(maze);
-	}
-	
-	public static boolean isConstructed(Maze maze) {
-		return builtWallBlocks.containsKey(maze);
-	}
+ 	private BuildHandler() {}
 	
 	public static void setBuiltWallBlocks(Maze maze, List<BlockState> wallBlocks) {
 		builtWallBlocks.put(maze, wallBlocks);
@@ -35,6 +34,10 @@ public final class BuildHandler {
 	
 	public static List<BlockState> getBuiltWallBlocks(Maze maze) {
 		return builtWallBlocks.get(maze);
+	}
+	
+	public static TerrainMap getTerrainMap(Maze maze) {
+		return terrainMaps.get(maze);
 	}
 	
 	public static void buildMaze(
@@ -54,11 +57,31 @@ public final class BuildHandler {
 			public void run() {
 				
 				TerrainMap terrainMap = new TerrainMap(maze);
+				terrainMaps.put(maze, terrainMap);
+				
 				pathGenerator.generatePaths(terrainMap);
 				terrainEditor.editTerrain(terrainMap);
-				blockGenerator.generateWalls(terrainMap, wallMaterials);
+				blockGenerator.generatePart(terrainMap, wallMaterials);
 			}
 		}.runTaskAsynchronously(TangledMain.getInstance());
+	}
+	
+	public static void buildMazeFloor(
+			Maze maze,
+			List<Material> blockMaterials,
+			FloorGenerator generator) {
+		
+		if(!maze.isConstructed())
+			return;
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				generator.generatePart(terrainMaps.get(maze), blockMaterials);
+			}
+			
+		}.runTaskAsynchronously(TangledMain.getInstance());
+		
 	}
 	
 	public static void unbuildMaze(Maze maze) {
@@ -85,21 +108,30 @@ public final class BuildHandler {
 				}
 				
 				this.cancel();
-				
 				removeMaze(maze);
-				maze.setConstructed(false);
-				maze.updateHeights();
-				
-				new BukkitRunnable() {
-					
-					@Override
-					public void run() {
-						Renderer.displayMaze(maze);
-					}
-				}.runTaskLater(TangledMain.getInstance(), 2);
+				reactivateMaze(maze);
 			}
 		};
 		
 		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
+	}
+	
+	public static void removeMaze(Maze maze) {
+		builtWallBlocks.remove(maze);
+		terrainMaps.remove(maze);
+	}
+	
+	private static void reactivateMaze(Maze maze) {
+
+		maze.setConstructed(false);
+		maze.updateHeights();
+		
+		new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				Renderer.displayMaze(maze);
+			}
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 }

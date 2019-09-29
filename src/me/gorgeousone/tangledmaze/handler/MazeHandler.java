@@ -9,6 +9,10 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 
+/**
+ * This class stores mazes in relation to players.
+ * Listeners, commands and tools can access a maze by it's owner here.
+ */
 public final class MazeHandler {
 	
 	private static HashMap<UUID, Maze> mazes = new HashMap<>();

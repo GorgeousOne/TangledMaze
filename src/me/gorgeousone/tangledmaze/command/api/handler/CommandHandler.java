@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.handler;
+package me.gorgeousone.tangledmaze.command.api.handler;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
+import me.gorgeousone.tangledmaze.command.api.command.BasicCommand;
 
 public class CommandHandler implements CommandExecutor {
 

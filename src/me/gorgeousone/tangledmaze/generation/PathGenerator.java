@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.mapmaking.MazeAreaType;
+import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;

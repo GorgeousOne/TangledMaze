@@ -1,12 +1,20 @@
-package me.gorgeousone.tangledmaze.generation;
+package me.gorgeousone.tangledmaze.mapmaking;
 
 import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.generation.PathSegment;
 import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
+/**
+ * A terrain map contains different information about a maze that the generators access.
+ * There are different 2d-arrays for accessing and changing:
+ * - the determined y-coordinates at each position of the underlying floor (can be changed if trees are leveld off)
+ * - the type of maze at each block (in the beginning mostly "undefined", later rather "path" or "wall")
+ * - the height of the soon constructed wall at each block (also changed related to trees and slop of terrain)
+ */
 public class TerrainMap {
 	
 	private Maze maze;
@@ -17,9 +25,8 @@ public class TerrainMap {
 	private Vec2 pathStart;
 	
 	public TerrainMap(Maze maze) {
-		
+
 		this.maze = maze;
-		
 		calculateMapSize();
 		copyMazeOntoMap();
 	}

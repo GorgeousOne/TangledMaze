@@ -1,5 +1,5 @@
 help-pages:
-    wand-command: 'This command gives you the most legendary tool ever sighted (by me): The Maze Wand! \n\nClick two blocks on the ground to create clipboard (that''s a rectangle or circle). Click and drag a blue corner of the clipboard to resize it. This clipboard can be converted to a maze floor with /tangledmaze start.'
+    wand-command: 'This command gives you the most legendary tool ever seen - by me: The Maze Wand! \n\nClick two blocks on the ground to create clipboard (that''s a rectangle or circle). Click and drag a blue corner of the clipboard to resize it. This clipboard can be converted to a maze floor with /tangledmaze start.'
     start-command: Converts your clipboard into the floor plan of a maze. This floor plan can now be edited by adding/cutting away other clipboards from it (/tangledmaze add/cut) or with the brush tool (/tangledmaze select brush).
     discard-command: Discards your floor plan and your clipboard.
     select-command: 'Lets you choose between different tools to edit floor plan of your maze. Following tools can be selected:'
@@ -31,6 +31,9 @@ errors:
     clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
     no-maze-exit-set: Please mark an exit at the border of your maze first.
     maze-already-built: Your maze is already built.
-    no-build-blocks-specified: Please specify a block(s) from which your maze will be built.
+    no-build-blocks-specified: Please specify blocks from which your maze will be built.
     argument-not-matching-block: '%block% is not a block name.'
+    maze-not-built: Please build your maze first.
     invalid-number: '%number% is not a valid number.'
+    invalid-dimension: '%dimension% is not a valid dimension.'
+    invalid-maze-part: '%mazepart% is not a valid maze part.'

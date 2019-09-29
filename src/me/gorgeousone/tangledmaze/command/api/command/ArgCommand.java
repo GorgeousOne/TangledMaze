@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.command;
+package me.gorgeousone.tangledmaze.command.api.command;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import me.gorgeousone.tangledmaze.commandapi.argument.ArgType;
-import me.gorgeousone.tangledmaze.commandapi.argument.ArgValue;
-import me.gorgeousone.tangledmaze.commandapi.argument.Argument;
+import me.gorgeousone.tangledmaze.command.api.argument.ArgType;
+import me.gorgeousone.tangledmaze.command.api.argument.ArgValue;
+import me.gorgeousone.tangledmaze.command.api.argument.Argument;
 
 public abstract class ArgCommand extends BasicCommand {
 	

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation;
+package me.gorgeousone.tangledmaze.mapmaking;
 
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.util.MazeDimension;

@@ -9,8 +9,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.command.*;
-import me.gorgeousone.tangledmaze.commandapi.handler.CommandCompleter;
-import me.gorgeousone.tangledmaze.commandapi.handler.CommandHandler;
+import me.gorgeousone.tangledmaze.command.api.handler.CommandCompleter;
+import me.gorgeousone.tangledmaze.command.api.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.data.*;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.listener.*;
@@ -19,7 +19,9 @@ public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
 	
-	private CommandHandler commandHandler;
+	private File langFile;
+	private YamlConfiguration defLangConfig;
+	private YamlConfiguration langConfig;
 	
 	@Override
 	public void onEnable() {
@@ -27,8 +29,8 @@ public class TangledMain extends JavaPlugin {
 		plugin = this;
 		
 		loadConfig();
-		loadLanguage();
-
+		loadLangConfig();
+		
 		Constants.loadConstants();
 		Settings.loadSettings(getConfig());
 		
@@ -38,9 +40,7 @@ public class TangledMain extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		
 		Renderer.reload();
-		super.onDisable();
 	}
 	
 	public static TangledMain getInstance() {
@@ -49,11 +49,20 @@ public class TangledMain extends JavaPlugin {
 	
 	public void reloadPlugin() {
 		
+		reloadLanguage();
 		reloadConfig();
 		Settings.loadSettings(getConfig());
-		loadLanguage();
 	}
 	
+	private void registerListeners() {
+		
+		PluginManager manager = Bukkit.getPluginManager();
+		
+		manager.registerEvents(new WandListener(), this);
+		manager.registerEvents(new PlayerListener(), this);
+		manager.registerEvents(new BlockUpdateListener(), this);
+	}
+
 	private void registerCommands() {
 		
 		MazeCommand mazeCommand = new MazeCommand();
@@ -72,11 +81,11 @@ public class TangledMain extends JavaPlugin {
 		mazeCommand.addChild(new UnbuildMaze(mazeCommand));
 		mazeCommand.addChild(new UndoCommand(mazeCommand));
 
-		commandHandler = new CommandHandler();
-		commandHandler.registerCommand(mazeCommand);
+		CommandHandler cmdHandler = new CommandHandler();
+		cmdHandler.registerCommand(mazeCommand);
 		
-		getCommand("tangledmaze").setExecutor(commandHandler);
-		getCommand("tangledmaze").setTabCompleter(new CommandCompleter(commandHandler));
+		getCommand("tangledmaze").setExecutor(cmdHandler);
+		getCommand("tangledmaze").setTabCompleter(new CommandCompleter(cmdHandler));
 	}
 	
 	private void loadConfig() {
@@ -86,29 +95,26 @@ public class TangledMain extends JavaPlugin {
 		saveConfig();
 	}
 
-	private void loadLanguage() {
+	private void loadLangConfig() {
 
-		File langFile = new File(getDataFolder() + File.separator + "language.yml");
-		YamlConfiguration defLangConfig = Utils.getDefaultConfig("language.yml");
+		langFile = new File(getDataFolder() + File.separator + "language.yml");
+		defLangConfig = Utils.getDefaultConfig("language.yml");
 
 		if(!langFile.exists())
 			Utils.saveConfig(defLangConfig, langFile);
 
-		YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langFile);
-		
+		langConfig = YamlConfiguration.loadConfiguration(langFile);
 		langConfig.setDefaults(defLangConfig);
 		langConfig.options().copyDefaults(true);
 		
 		Utils.saveConfig(langConfig, langFile);
 		Messages.loadMessages(langConfig);
+		
+		reloadLanguage();
 	}
-
-	private void registerListeners() {
-		
-		PluginManager manager = Bukkit.getPluginManager();
-		
-		manager.registerEvents(new WandListener(), this);
-		manager.registerEvents(new PlayerListener(), this);
-		manager.registerEvents(new BlockUpdateListener(), this);
+	
+	private void reloadLanguage() {
+		Utils.saveConfig(langConfig, langFile);
+		Messages.loadMessages(langConfig);
 	}
 }

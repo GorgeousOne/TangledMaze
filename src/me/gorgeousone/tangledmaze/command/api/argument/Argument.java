@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.argument;
+package me.gorgeousone.tangledmaze.command.api.argument;
 
 import java.util.ArrayList;
 import java.util.Arrays;

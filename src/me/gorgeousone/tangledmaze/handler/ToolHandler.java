@@ -12,6 +12,11 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
 
+/**
+ * This class stores tools in relation to players.
+ * Listeners and commands can get information about what kind of tool a player is using.
+ * There is an unsafe shortcut method for getting clipboards :)
+ */
 public abstract class ToolHandler {
 	
 	private static Map<UUID, Tool> tools = new HashMap<>();
@@ -40,8 +45,8 @@ public abstract class ToolHandler {
 	}
 	
 	public static ClippingTool getClipboard(Player p) {
-		Tool sel = tools.get(p.getUniqueId());
-		return sel instanceof ClippingTool? (ClippingTool) sel : null;
+		Tool clipboard = tools.get(p.getUniqueId());
+		return clipboard instanceof ClippingTool? (ClippingTool) clipboard : null;
 	}
 	
 	public static void setTool(Player p, Tool tool) {

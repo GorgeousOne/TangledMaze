@@ -22,9 +22,12 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 
 import java.util.HashSet;
 
+/**
+ * This class is responsible for hiding mazes and clipboards whenever a border block of them
+ * is broken/somehow changed, touched or breathed at. 
+ */
 public class BlockUpdateListener implements Listener {
 
-	//TODO hide mazes and clipboards only if owner breaks a block
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent e) {
 		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);

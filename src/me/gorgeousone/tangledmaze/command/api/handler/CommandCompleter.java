@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commandapi.handler;
+package me.gorgeousone.tangledmaze.command.api.handler;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
+import me.gorgeousone.tangledmaze.command.api.command.BasicCommand;
 
 public class CommandCompleter implements TabCompleter {
 	
