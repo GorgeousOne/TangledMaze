@@ -3,16 +3,16 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 
-public class UnbuildMaze extends MazeCommand {
+public class UnbuildMaze extends BasicCommand {
 	
-	public UnbuildMaze() {
-		super("unbuild", "/tangledmaze unbuild", 0, true, null);
+	public UnbuildMaze(MazeCommand mazeCommand) {
+		super("unbuild", null, mazeCommand);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.*;
 import me.gorgeousone.tangledmaze.util.Directions;
+import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 

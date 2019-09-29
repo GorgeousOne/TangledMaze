@@ -4,15 +4,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
-public class AddToMaze extends MazeCommand {
+public class AddToMaze extends BasicCommand {
 
-	public AddToMaze() {
-		super("add", "/tangledmaze add", 0, true, null, "merge");
+	public AddToMaze(MazeCommand mazeCommand) {
+		super("add", null, mazeCommand);
+		addAlias("merge");
 	}
 	
 	@Override

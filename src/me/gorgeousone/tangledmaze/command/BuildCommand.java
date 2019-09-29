@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import me.gorgeousone.tangledmaze.generation.WallGenerator;
@@ -11,6 +12,10 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgType;
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgValue;
+import me.gorgeousone.tangledmaze.commandapi.argument.Argument;
+import me.gorgeousone.tangledmaze.commandapi.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
@@ -19,26 +24,25 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.TextException;
 
-public class BuildCommand extends MazeCommand {
+public class BuildCommand extends ArgCommand {
 
 	private PathGenerator pathGenerator;
 	private TerrainEditor terrainEditor;
 	private WallGenerator wallGenerator;
 
-	public BuildCommand() {
+	public BuildCommand(MazeCommand mazeCommand) {
+		super("build", null, mazeCommand);
 		
-		super("build", "/tangledmaze build <maze/floor/ceiling> <block> ...", 1, true, null);
-		
+		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "ceiling"));
+		addArg(new Argument("blocks...", ArgType.STRING));
+
 		pathGenerator = new PathGenerator();
 		terrainEditor = new TerrainEditor();
 		wallGenerator = new WallGenerator();
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
-		
-		if(!super.execute(sender, arguments))
-			return false;
+	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
 		
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, true, true);
@@ -46,29 +50,29 @@ public class BuildCommand extends MazeCommand {
 		if(maze == null)
 			return false;
 		
-//		switch (arguments[0]) {
-//		
-//		case "floor":
-//			
-//			if(!maze.isConstructed())
-//			break;
-//		
-//		case "ceiling":
-//
-//			if(!maze.isConstructed())
-//			break;
-//			
-//		case "maze":
-//			break;
-//
-//		default:
-//			break;
-//		}
+		switch (args[0].getString()) {
+		
+		case "floor":
+			
+			if(!maze.isConstructed())
+			break;
+		
+		case "ceiling":
+
+			if(!maze.isConstructed())
+			break;
+			
+		case "maze":
+			break;
+
+		default:
+			break;
+		}
 		
 		List<Material> wallMaterials;
 		
 		try {
-			wallMaterials = getWallMaterials(arguments);
+			wallMaterials = getWallMaterials(Arrays.copyOfRange(args, 1, args.length));
 			
 		} catch (TextException ex) {
 			
@@ -84,12 +88,13 @@ public class BuildCommand extends MazeCommand {
 		return true;
 	}
 	
-	private List<Material> getWallMaterials(String[] serializedMaterials) throws TextException {
+	private List<Material> getWallMaterials(ArgValue[] serializedMaterials) throws TextException {
 		
 		List<Material> wallMaterials = new ArrayList<>();
 		
-		for(String materialString : serializedMaterials) {
+		for(ArgValue materialValue : serializedMaterials) {
 			
+			String materialString = materialValue.getString();
 			Material material = Material.matchMaterial(materialString);
 			
 			if(material == null || !material.isBlock())

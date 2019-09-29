@@ -3,15 +3,16 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 
-public class DiscardMaze extends MazeCommand {
+public class DiscardMaze extends BasicCommand {
 	
-	public DiscardMaze() {
-		super("discard", "/tangledmaze discard", 0, true, null);
+	public DiscardMaze(MazeCommand mazeCommand) {
+		super("discard", null, mazeCommand);
 	}
 	
 	@Override

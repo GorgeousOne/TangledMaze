@@ -3,6 +3,10 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgType;
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgValue;
+import me.gorgeousone.tangledmaze.commandapi.argument.Argument;
+import me.gorgeousone.tangledmaze.commandapi.command.ArgCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
@@ -11,7 +15,7 @@ import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
 import me.gorgeousone.tangledmaze.util.HelpPage;
 import me.gorgeousone.tangledmaze.util.Utils;
 
-public class HelpCommand extends MazeCommand {
+public class HelpCommand extends ArgCommand {
 	
 	private static int commandCount = 11;
 	private static int pageCount = commandCount + 1;
@@ -19,12 +23,20 @@ public class HelpCommand extends MazeCommand {
 	private static RawMessage[] pageLinks;
 	private static HelpPage[] pages;
 	
-	public HelpCommand() {
-		
-		super("help", "/tangledmaze help <page>", 0, false, null, "?");
+	public HelpCommand(MazeCommand mazeCommand) {
+		super("help", null, mazeCommand);
+
+		addAlias("?");
+		addArg(new Argument("page", ArgType.INTEGER));
 		
 		createPageLinks();
 		listHelpPages();
+	}
+	
+	@Override
+	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
+		
+		return false;
 	}
 	
 	@Override

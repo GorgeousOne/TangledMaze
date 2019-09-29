@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.MazeDimension;
 
 public final class Serializer {
 

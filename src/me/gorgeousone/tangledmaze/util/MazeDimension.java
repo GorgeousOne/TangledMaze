@@ -1,4 +1,6 @@
-package me.gorgeousone.tangledmaze.core;
+package me.gorgeousone.tangledmaze.util;
+
+import java.util.Arrays;
 
 public enum MazeDimension {
 
@@ -24,23 +26,27 @@ public enum MazeDimension {
 		return maxValue;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase().replaceAll("_", " ");
-	}
+//	@Override
+//	public String toString() {
+//		return name().toLowerCase().replaceAll("_", " ");
+//	}
 	
-	public String toCommandArg() {
-		return super.toString().toLowerCase().replaceAll("_", "");
+	public String commandName() {
+		return name().toLowerCase().replaceAll("_", "");
 	}
 	
 	public static MazeDimension match(String playerInput) {
 		
 		for(MazeDimension dimension : MazeDimension.values()) {
 			
-			if(dimension.toCommandArg().equalsIgnoreCase(playerInput))
+			if(dimension.commandName().equalsIgnoreCase(playerInput))
 				return dimension;
 		}
 		
 		return null;
+	}
+	
+	public static String[] getCommandNames() {
+		return Arrays.stream(values()).map(MazeDimension::commandName).toArray(String[]::new);
 	}
 }

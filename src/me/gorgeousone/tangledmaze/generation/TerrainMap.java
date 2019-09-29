@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.MazeDimension;
+import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class TerrainMap {

@@ -4,6 +4,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.shape.ClipShape;
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgType;
+import me.gorgeousone.tangledmaze.commandapi.argument.ArgValue;
+import me.gorgeousone.tangledmaze.commandapi.argument.Argument;
+import me.gorgeousone.tangledmaze.commandapi.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -12,10 +16,18 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.*;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
-public class SelectTool extends MazeCommand {
+public class SelectTool extends ArgCommand {
 
-	public SelectTool() {
-		super("select", "/tangledmaze select <tool>", 1, true, null);
+	public SelectTool(MazeCommand mazeCommand) {
+		
+		super("select", null);
+		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
+//		super("select", "/tangledmaze select <tool>", 1, true, null);
+	}
+	
+	@Override
+	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
+		return false;
 	}
 	
 	@Override

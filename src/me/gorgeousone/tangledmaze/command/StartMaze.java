@@ -3,15 +3,16 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
-public class StartMaze extends MazeCommand {
+public class StartMaze extends BasicCommand {
 	
-	public StartMaze() {
-		super("start", "/tangledmaze start", 0, true, null);
+	public StartMaze(MazeCommand mazeCommand) {
+		super("start", null, mazeCommand);
 	}
 	
 	@Override

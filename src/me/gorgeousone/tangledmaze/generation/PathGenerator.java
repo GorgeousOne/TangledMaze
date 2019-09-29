@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Directions;
+import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class PathGenerator {

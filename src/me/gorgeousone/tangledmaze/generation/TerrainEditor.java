@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.generation;
 
-import me.gorgeousone.tangledmaze.core.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Directions;
+import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class TerrainEditor {
@@ -16,7 +16,10 @@ public class TerrainEditor {
 		
 		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
-				
+
+				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
+					continue;
+
 				int floorHeight = terrainMap.getFloorHeight(x, z);
 				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap));
 				

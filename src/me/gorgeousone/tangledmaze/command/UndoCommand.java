@@ -5,16 +5,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 
-public class Undo extends MazeCommand {
+public class UndoCommand extends BasicCommand {
 
-	public Undo() {
-		super("undo", "/tangledmaze undo", 0, true, null);
+	public UndoCommand(MazeCommand mazeCommand) {
+		super("undo", null, mazeCommand);
 	}
 	
 	@Override

@@ -9,8 +9,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.command.*;
+import me.gorgeousone.tangledmaze.commandapi.handler.CommandCompleter;
+import me.gorgeousone.tangledmaze.commandapi.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.data.*;
-import me.gorgeousone.tangledmaze.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.listener.*;
 
@@ -33,9 +34,6 @@ public class TangledMain extends JavaPlugin {
 		
 		registerListeners();
 		registerCommands();
-
-		getCommand("tangledmaze").setExecutor(commandHandler);
-		getCommand("tangledmaze").setTabCompleter(new TangledCompleter(commandHandler.getCommands()));
 	}
 	
 	@Override
@@ -58,21 +56,27 @@ public class TangledMain extends JavaPlugin {
 	
 	private void registerCommands() {
 		
-		commandHandler = new CommandHandler();
+		MazeCommand mazeCommand = new MazeCommand();
 
-		commandHandler.registerCommand(new HelpCommand());
-		commandHandler.registerCommand(new Reload());
-		commandHandler.registerCommand(new GiveWand());
-		commandHandler.registerCommand(new StartMaze());
-		commandHandler.registerCommand(new DiscardMaze());
-		commandHandler.registerCommand(new SelectTool());
-		commandHandler.registerCommand(new AddToMaze());
-		commandHandler.registerCommand(new CutFromMaze());
-		commandHandler.registerCommand(new SetDimension());
-		commandHandler.registerCommand(new TpToMaze());
-		commandHandler.registerCommand(new BuildCommand());
-		commandHandler.registerCommand(new UnbuildMaze());
-		commandHandler.registerCommand(new Undo());
+		mazeCommand.addChild(new HelpCommand(mazeCommand));
+		mazeCommand.addChild(new Reload(mazeCommand));
+		mazeCommand.addChild(new GiveWand(mazeCommand));
+		mazeCommand.addChild(new StartMaze(mazeCommand));
+		mazeCommand.addChild(new DiscardMaze(mazeCommand));
+		mazeCommand.addChild(new SelectTool(mazeCommand));
+		mazeCommand.addChild(new AddToMaze(mazeCommand));
+		mazeCommand.addChild(new CutFromMaze(mazeCommand));
+		mazeCommand.addChild(new SetDimension(mazeCommand));
+		mazeCommand.addChild(new TpToMaze(mazeCommand));
+		mazeCommand.addChild(new BuildCommand(mazeCommand));
+		mazeCommand.addChild(new UnbuildMaze(mazeCommand));
+		mazeCommand.addChild(new UndoCommand(mazeCommand));
+
+		commandHandler = new CommandHandler();
+		commandHandler.registerCommand(mazeCommand);
+		
+		getCommand("tangledmaze").setExecutor(commandHandler);
+		getCommand("tangledmaze").setTabCompleter(new CommandCompleter(commandHandler));
 	}
 	
 	private void loadConfig() {

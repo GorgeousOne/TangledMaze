@@ -6,15 +6,16 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.gorgeousone.tangledmaze.commandapi.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-public class TpToMaze extends MazeCommand {
+public class TpToMaze extends BasicCommand {
 	
-	public TpToMaze() {
-		super("teleport", "/tangledmaze teleport", 0, true, Constants.MAZE_TP_PERM, "tp");
+	public TpToMaze(MazeCommand mazeCommand) {
+		super("teleport", Constants.MAZE_TP_PERM, mazeCommand);
 	}
 	
 	@Override
