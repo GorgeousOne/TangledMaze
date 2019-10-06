@@ -185,7 +185,7 @@ public class Maze {
 			return null;
 
 		addOtherProtrudingBorder(otherClip, addition);
-		removeOwnEnclosedBorder(otherClip, addition);
+		removeOwnEnclosedBorder(addition);
 		removeNewEnclosedBorder(addition);
 		removeExitsInsideClip(otherClip, addition);
 		return addition;
@@ -212,7 +212,7 @@ public class Maze {
 	}
 	
 	//then own outdated border is being removed. there are also cases where thicker border next to the actual clip has to be removed
-	private void removeOwnEnclosedBorder(Clip otherClip, ClipAction addition) {
+	private void removeOwnEnclosedBorder(ClipAction addition) {
 		
 		for(Vec2 ownBorder : getClip().getBorder()) {
 			
@@ -223,15 +223,7 @@ public class Maze {
 	
 	//now the recently added border needs undergo another check, if it is actually sufficient and also not too thick
 	private void removeNewEnclosedBorder(ClipAction addition) {
-		
-		Iterator<Vec2> iterator = addition.getAddedBorder().iterator();
-		
-		while (iterator.hasNext()) {
-		    Vec2 newBorder = iterator.next();
-		    
-		    if(!touchesExternal(newBorder, addition, Directions.values()))
-		        iterator.remove();
-		}
+		addition.getAddedBorder().removeIf(newBorder -> !touchesExternal(newBorder, addition, Directions.values()));
 	}
 	
 	private void removeExitsInsideClip(Clip otherClip, ClipAction changes) {

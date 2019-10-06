@@ -14,11 +14,11 @@ public class TextException extends Exception {
 		this.placeHolder = placeHolder;
 	}
 
-	public TextMessage getText() {
+	private TextMessage getText() {
 		return text;
 	}
 
-	public PlaceHolder getPlaceHolder() {
+	private PlaceHolder getPlaceHolder() {
 		return placeHolder;
 	}
 	

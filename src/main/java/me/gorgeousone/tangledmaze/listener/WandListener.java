@@ -114,11 +114,13 @@ public class WandListener implements Listener{
 		}
 	}
 	
-//	@EventHandler
-//	public void onChunkLoad(ChunkLoadEvent e) {
-//		Renderer.updateChunk(e.getChunk());
-//	}
-	
+/*
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		Renderer.updateChunk(e.getChunk());
+	}
+*/
+
 	private void destroyMazeWand(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);

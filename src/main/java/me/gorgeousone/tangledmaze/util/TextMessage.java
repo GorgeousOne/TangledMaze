@@ -11,7 +11,7 @@ public class TextMessage {
 		setText(message, readColorCodes);
 	}
 	
-	public void setText(String message, boolean readColorCodes) {
+	private void setText(String message, boolean readColorCodes) {
 		
 		String alteredMessage;
 		

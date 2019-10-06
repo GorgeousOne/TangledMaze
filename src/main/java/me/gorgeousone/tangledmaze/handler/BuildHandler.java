@@ -121,7 +121,6 @@ public final class BuildHandler {
 				allBlocks.addAll(getWallBlocks(maze));
 				allBlocks.addAll(getFloorBlocks(maze));
 				
-				maze.getPlayer().sendMessage(getWallBlocks(maze).size() + " + " + getFloorBlocks(maze).size() + " blocks");
 				return allBlocks;
 			}
 
