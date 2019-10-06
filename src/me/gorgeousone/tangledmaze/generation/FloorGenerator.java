@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -22,8 +23,8 @@ public class FloorGenerator extends AbstractGenerator {
 	}
 	
 	@Override
-	protected void setBlockMaterial(BlockState block) {
-		block.setType(getWallMaterials().get(rnd.nextInt(getWallMaterials().size())));
+	protected void chooseBlockMaterial(BlockState block,  List<Material> blockMaterials) {
+		block.setType(blockMaterials.get(rnd.nextInt(blockMaterials.size())));
 	}
 	
 	@Override
@@ -47,7 +48,7 @@ public class FloorGenerator extends AbstractGenerator {
 			}
 		}
 
-		BuildHandler.setBuiltWallBlocks(maze, backupBlocks);
+		BuildHandler.setBuiltFloorBlocks(maze, backupBlocks);
 		return blocksToUpdate;
 	}
 }

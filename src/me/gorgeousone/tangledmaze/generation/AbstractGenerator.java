@@ -12,27 +12,18 @@ import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
 
 public abstract class AbstractGenerator {
 	
-	private List<Material> blockMaterials;
-	
-	public void generatePart(TerrainMap terrainMap, List<Material> blockMaterials) {
-		
-		setWallMaterials(blockMaterials);
-		updateBlocksContinuously(getRelevantBlocks(terrainMap), null);
+	public void generatePart(TerrainMap terrainMap, List<Material> blockMaterials, ActionListener callback) {
+		updateBlocksContinuously(getRelevantBlocks(terrainMap), blockMaterials, callback);
 	}
 	
-	protected List<Material> getWallMaterials() {
-		return blockMaterials;
-	}
-
-	protected void setWallMaterials(List<Material> wallMaterials) {
-		this.blockMaterials = wallMaterials;
-	}
-	
-	protected abstract void setBlockMaterial(BlockState block);
+	protected abstract void chooseBlockMaterial(BlockState block, List<Material> blockMaterials);
 
 	protected abstract List<BlockState> getRelevantBlocks(TerrainMap terrainMap);
 
-	protected void updateBlocksContinuously(List<BlockState> blocksToUpdate, ActionListener callback) {
+	protected void updateBlocksContinuously(
+			List<BlockState> blocksToUpdate,
+			List<Material> blockMaterials,
+			ActionListener callback) {
 		
 		BukkitRunnable builder = new BukkitRunnable() {
 			@Override
@@ -43,7 +34,7 @@ public abstract class AbstractGenerator {
 				while(!blocksToUpdate.isEmpty()) {
 					
 					BlockState block = blocksToUpdate.get(0);
-					setBlockMaterial(block);
+					chooseBlockMaterial(block, blockMaterials);
 					
 					block.update(true, false);
 					blocksToUpdate.remove(0);

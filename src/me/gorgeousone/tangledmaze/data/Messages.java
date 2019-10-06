@@ -59,7 +59,7 @@ public class Messages {
 		COMMAND_PATHLENGTH = new TextMessage(ChatColor.DARK_GREEN + "/maze pathlength <integer>\n" + ChatColor.GREEN + helpPages.getString("pathlength-command"), true);
 		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
 		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
-		COMMAND_UNBUILD    = new TextMessage(ChatColor.DARK_GREEN + "/maze unbuild\n" + ChatColor.GREEN + helpPages.getString("unbuild-command"), true);
+		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze unbuild\n" + ChatColor.GREEN + helpPages.getString("unbuild-command"), true);
 
 		ConfigurationSection tools = helpPages.getConfigurationSection("tools");
 

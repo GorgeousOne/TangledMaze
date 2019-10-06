@@ -1,6 +1,9 @@
 package me.gorgeousone.tangledmaze.handler;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,17 +16,20 @@ import me.gorgeousone.tangledmaze.core.TangledMain;
 import me.gorgeousone.tangledmaze.generation.WallGenerator;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainEditor;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.AbstractGenerator;
 import me.gorgeousone.tangledmaze.generation.FloorGenerator;
 import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
 /**
- * This class handles the process of constructing the maze.
- * It stores information about mazes that can be accessed by the generators and
+ * This class handles the process of constructing and deconstructing mazes.
+ * It stores information about mazes that can be accessed by generators and
  * for unbuilding the maze again.
  */
 public final class BuildHandler {
 	
 	private static Map<Maze, List<BlockState>> builtWallBlocks = new HashMap<>();
+	private static Map<Maze, List<BlockState>> builtFloorBlocks = new HashMap<>();
+
 	private static Map<Maze, TerrainMap> terrainMaps = new HashMap<>();
 	
  	private BuildHandler() {}
@@ -32,12 +38,25 @@ public final class BuildHandler {
 		builtWallBlocks.put(maze, wallBlocks);
 	}
 	
-	public static List<BlockState> getBuiltWallBlocks(Maze maze) {
+	public static List<BlockState> getWallBlocks(Maze maze) {
 		return builtWallBlocks.get(maze);
+	}
+
+	public static void setBuiltFloorBlocks(Maze maze, List<BlockState> blocks) {
+		builtFloorBlocks.put(maze, blocks);
+	}
+
+	public static List<BlockState> getFloorBlocks(Maze maze) {
+		return builtFloorBlocks.get(maze);
 	}
 	
 	public static TerrainMap getTerrainMap(Maze maze) {
 		return terrainMaps.get(maze);
+	}
+	
+	public static void removeMaze(Maze maze) {
+		builtWallBlocks.remove(maze);
+		terrainMaps.remove(maze);
 	}
 	
 	public static void buildMaze(
@@ -61,7 +80,7 @@ public final class BuildHandler {
 				
 				pathGenerator.generatePaths(terrainMap);
 				terrainEditor.editTerrain(terrainMap);
-				blockGenerator.generatePart(terrainMap, wallMaterials);
+				blockGenerator.generatePart(terrainMap, wallMaterials, null);
 			}
 		}.runTaskAsynchronously(TangledMain.getInstance());
 	}
@@ -77,7 +96,7 @@ public final class BuildHandler {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				generator.generatePart(terrainMaps.get(maze), blockMaterials);
+				generator.generatePart(terrainMaps.get(maze), blockMaterials, null);
 			}
 			
 		}.runTaskAsynchronously(TangledMain.getInstance());
@@ -86,43 +105,39 @@ public final class BuildHandler {
 	
 	public static void unbuildMaze(Maze maze) {
 		
-		if(!maze.isConstructed())
+		if(!maze.isConstructed() || !builtWallBlocks.containsKey(maze))
 			return;
 		
-		List<BlockState> blocksToUpdate = getBuiltWallBlocks(maze);
-		
-		BukkitRunnable builder = new BukkitRunnable() {
-			
+		AbstractGenerator degenerator = new AbstractGenerator() {
+
 			@Override
-			public void run() {
+			protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {}
+
+			@Override
+			protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
 				
-				long timer = System.currentTimeMillis();
+				List<BlockState> allBlocks = new LinkedList<>();
 				
-				while(!blocksToUpdate.isEmpty()) {
-					
-					blocksToUpdate.get(0).update(true, false);
-					blocksToUpdate.remove(0);
-					
-					if(System.currentTimeMillis() - timer >= 49)
-						return;
-				}
+				allBlocks.addAll(getWallBlocks(maze));
+				allBlocks.addAll(getFloorBlocks(maze));
 				
-				this.cancel();
-				removeMaze(maze);
-				reactivateMaze(maze);
+				maze.getPlayer().sendMessage(getWallBlocks(maze).size() + " + " + getFloorBlocks(maze).size() + " blocks");
+				return allBlocks;
 			}
+
 		};
 		
-		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
-	}
-	
-	public static void removeMaze(Maze maze) {
-		builtWallBlocks.remove(maze);
-		terrainMaps.remove(maze);
+		degenerator.generatePart(null, null, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				reactivateMaze(maze);
+			}
+		});
 	}
 	
 	private static void reactivateMaze(Maze maze) {
 
+		removeMaze(maze);
 		maze.setConstructed(false);
 		maze.updateHeights();
 		
