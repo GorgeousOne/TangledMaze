@@ -24,32 +24,30 @@ public abstract class AbstractGenerator {
 			List<BlockState> blocksToUpdate,
 			List<Material> blockMaterials,
 			ActionListener callback) {
-		
-		BukkitRunnable builder = new BukkitRunnable() {
+
+		new BukkitRunnable() {
 			@Override
 			public void run() {
-				
+
 				long timer = System.currentTimeMillis();
-				
+
 				while(!blocksToUpdate.isEmpty()) {
-					
+
 					BlockState block = blocksToUpdate.get(0);
 					chooseBlockMaterial(block, blockMaterials);
-					
+
 					block.update(true, false);
 					blocksToUpdate.remove(0);
-					
+
 					if(System.currentTimeMillis() - timer >= 49)
 						return;
 				}
-				
+
 				this.cancel();
-				
+
 				if(callback != null)
 					callback.actionPerformed(null);
 			}
-		};
-		
-		builder.runTaskTimer(TangledMain.getInstance(), 0, 1);
+		}.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}
 }

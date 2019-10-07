@@ -25,7 +25,8 @@ public class TangledMain extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		
+
+		super.onEnable();
 		plugin = this;
 		
 		loadConfig();
@@ -41,6 +42,7 @@ public class TangledMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Renderer.reload();
+		super.onDisable();
 	}
 	
 	public static TangledMain getInstance() {

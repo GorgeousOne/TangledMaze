@@ -75,17 +75,17 @@ public class TerrainMap {
 	
 	public int getWallHeight(Vec2 point) {
 		return getWallHeight(point.getX(), point.getZ());
-		
 	}
+
 	public int getWallHeight(int x, int z) {
 		return wallHeightMap[x-getMinX()][z-getMinZ()];
 	}
 	
-	public int getCeilHeight(int x, int z) {
+	public int getRoofHeight(int x, int z) {
 		return getFloorHeight(x, z) + getWallHeight(x, z);
 	}
 	
-	public int getCeilHeight(Vec2 point) {
+	public int getRoofHeight(Vec2 point) {
 		return getFloorHeight(point) + getWallHeight(point);
 	}
 	

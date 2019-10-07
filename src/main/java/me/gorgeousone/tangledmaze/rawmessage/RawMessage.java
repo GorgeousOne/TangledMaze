@@ -36,8 +36,11 @@ public class RawMessage {
 	public String toString() {
 		StringBuilder message = new StringBuilder(start);
 		
-		for(RawElement collection : rawElements)
-			message.append("{" + collection.toString() + "},");
+		for(RawElement collection : rawElements) {
+			message.append("{");
+			message.append(collection.toString());
+			message.append("},");
+		}
 
 		message.deleteCharAt(message.length()-1);
 		message.append(end);

@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.generation;
 
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -22,7 +23,13 @@ public class WallGenerator extends AbstractGenerator {
 	public WallGenerator() {
 		rnd = new Random();
 	}
-	
+
+	@Override
+	public void generatePart(TerrainMap terrainMap, List<Material> blockMaterials, ActionListener callback) {
+		super.generatePart(terrainMap, blockMaterials, callback);
+		terrainMap.getMaze().setConstructed(true);
+	}
+
 	@Override
 	protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {
 		block.setType(blockMaterials.get(rnd.nextInt(blockMaterials.size())));

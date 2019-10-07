@@ -8,7 +8,7 @@ public enum MazeDimension {
 	WALL_WIDTH(1, 128),
 	PATH_WIDTH(1, 128),
 	PATH_LENGTH(5, 10),
-	CEILING_WIDTH(1, 128);
+	ROOF_WIDTH(1, 128);
 	
 	private int defaultValue;
 	private int maxValue;
@@ -26,10 +26,10 @@ public enum MazeDimension {
 		return maxValue;
 	}
 
-//	@Override
-//	public String toString() {
-//		return name().toLowerCase().replaceAll("_", " ");
-//	}
+	@Override
+	public String toString() {
+		return name().toLowerCase().replaceAll("_", " ");
+	}
 	
 	public String commandName() {
 		return name().toLowerCase().replaceAll("_", "");

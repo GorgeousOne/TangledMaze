@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.gorgeousone.tangledmaze.generation.RoofGenerator;
 import me.gorgeousone.tangledmaze.generation.WallGenerator;
 import me.gorgeousone.tangledmaze.generation.FloorGenerator;
 import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
+import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,17 +33,19 @@ public class BuildCommand extends ArgCommand {
 	private TerrainEditor terrainEditor;
 	private WallGenerator wallGenerator;
 	private FloorGenerator floorGenerator;
-	
+	private RoofGenerator roofGenerator;
+
 	public BuildCommand(MazeCommand mazeCommand) {
 		super("build", null, mazeCommand);
 		
-		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "ceiling"));
+		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "roof"));
 		addArg(new Argument("blocks...", ArgType.STRING));
 
 		pathGenerator = new PathGenerator();
 		terrainEditor = new TerrainEditor();
 		wallGenerator = new WallGenerator();
 		floorGenerator = new FloorGenerator();
+		roofGenerator = new RoofGenerator();
 	}
 
 	@Override
@@ -73,17 +77,18 @@ public class BuildCommand extends ArgCommand {
 				Messages.ERROR_MAZE_NOT_BUILT.sendTo(player);
 				return false;
 			}
-		
-			buildFloor(maze, blockMaterials);
+
+			floorGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockMaterials, null);
 			break;
 		
-		case "ceiling":
+		case "roof":
 
 			if(!maze.isConstructed()) {
 				Messages.ERROR_MAZE_NOT_BUILT.sendTo(player);
 				return false;
 			}
-			
+
+			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockMaterials, null);
 			break;
 			
 		case "maze":
@@ -92,8 +97,18 @@ public class BuildCommand extends ArgCommand {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				return false;
 			}
-			
-			buildMaze(maze, blockMaterials);
+
+			Renderer.hideMaze(maze);
+			TerrainMap terrainMap = new TerrainMap(maze);
+
+			pathGenerator.generatePaths(terrainMap);
+			terrainEditor.editTerrain(terrainMap);
+			wallGenerator.generatePart(terrainMap, blockMaterials, null);
+			BuildHandler.setTerrainMap(maze, terrainMap);
+
+			ToolHandler.resetToDefaultTool(maze.getPlayer());
+			Messages.MESSAGE_MAZE_BUILDING_STARTED.sendTo(maze.getPlayer());
+
 			break;
 
 		default:
@@ -104,20 +119,6 @@ public class BuildCommand extends ArgCommand {
 		return true;
 	}
 	
-	private void buildMaze(Maze maze, List<Material> blockMaterials) {
-		
-		Renderer.hideMaze(maze);
-		BuildHandler.buildMaze(maze, blockMaterials, pathGenerator, terrainEditor, wallGenerator);
-		
-		Messages.MESSAGE_MAZE_BUILDING_STARTED.sendTo(maze.getPlayer());
-		ToolHandler.resetToDefaultTool(maze.getPlayer());
-	}
-
-	private void buildFloor(Maze maze, List<Material> blockMaterials) {
-		
-		BuildHandler.buildMazeFloor(maze, blockMaterials, floorGenerator);
-	}
-
 	private List<Material> getWallMaterials(ArgValue[] serializedMaterials) throws TextException {
 		
 		List<Material> wallMaterials = new ArrayList<>();

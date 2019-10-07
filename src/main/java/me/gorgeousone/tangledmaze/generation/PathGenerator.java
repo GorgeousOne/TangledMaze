@@ -74,15 +74,13 @@ public class PathGenerator {
 			Directions facing,
 			int pathWidth,
 			int wallWidth) {
-		
-		PathSegment entranceSegment = new PathSegment(
+
+		return new PathSegment(
 			entrance,
 			wallWidth + pathWidth,
 			pathWidth,
 			facing,
 			true);
-		
-		return entranceSegment;
 	}
 	
 	private PathSegment createExitSegment(
@@ -106,35 +104,35 @@ public class PathGenerator {
 				getExitOffsetToPathGrid(exitSegment.getStart().getX(), facing, pathGridOffsetX, pathWidth, wallWidth) :
 				getExitOffsetToPathGrid(exitSegment.getStart().getZ(), facing, pathGridOffsetZ, pathWidth, wallWidth));
 		
-		
+
 //		if(!segmentIsFree(terrainMap, exitSegment))
 //			return null;
 
 //		terrainMap.mapSegment(exitSegment, MazeFillType.EXIT);
-//		
+//
 //		Vec2 verticalOffset = facing.isXAligned() ?
 //				getVerticalOffsetToPathGrid(exitSegment.getEnd().getZ(), facing, pathGridOffsetZ, pathWidth, wallWidth) :
 //				getVerticalOffsetToPathGrid(exitSegment.getEnd().getX(), facing, pathGridOffsetX, pathWidth, wallWidth);
-//		
+//
 //		System.out.println(facing + " " + facing.toVec2().toString());
 //		System.out.println(Directions.cardinalValueOf(verticalOffset) + " " + verticalOffset.toString());
-//		
+//
 //		if(!verticalOffset.isZero()) {
-//			
+//
 //			exitSegment = new PathSegment(
 //					exitSegment.getEnd(),
 //					pathWidth,
 //					pathWidth,
 //					Directions.cardinalValueOf(verticalOffset),
 //					false);
-//			
+//
 //			exitSegment.expand(verticalOffset.length());
-//			
+//
 //			if(!segmentIsFree(terrainMap, exitSegment))
 //				return null;
-//			
+//
 //		}
-		
+
 		terrainMap.mapSegment(exitSegment, MazeAreaType.EXIT);
 		return exitSegment;
 	}
