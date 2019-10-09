@@ -1,0 +1,44 @@
+help-pages:
+    wand-command: 'This command gives you the most legendary tool (I have) ever discovered: The Maze Wand! \n\nClick two blocks on the ground to create clipboard (that''s a rectangle or circle). Click and drag a blue corner of the clipboard to resize it. This clipboard can be converted to a maze floor plan with /tangledmaze start.'
+    start-command: Converts your clipboard into the floor plan of a maze. This floor plan can now be edited by adding and cutting away other clipboards from it (/tangledmaze add/cut) or with the brush tool (/tangledmaze select brush).
+    discard-command: Discards your currently selected floor plan and your clipboard.
+    select-command: 'Lets you choose between different tools to edit floor plan of your maze. Following tools can be selected:\n'
+    tools:
+        rectangle: The shape of your clipboard will change to a rectangle.
+        circle: Your clipboard will change to a circle.
+        brush: Left click on the outline of your floor plan to reduce it at that block. Right click on the outline to expand it at that block.
+        exit: Sets entrances and exits for your maze. Click on the outline of your floor plan to set an exit, click it a second time to delete it again. The diamond exit shows where maze generator will start making paths from.
+    add-cut-command: 'Adds or cuts away your clipboard from your floor plan. This only works if the clipboard is touching your maze. Areas cut off from the main part of your maze with the diamond exit won''t be generated with paths (just don''t).'
+    undo-command: Undoes the last change of your floor plan like adding or cutting a clipboard away or the usage of the brush tool.
+    set-dimension-command: 'With this command you can specify the dimensions in blocks for the different parts of a maze:\n'
+    dimensions:
+        wall-height: Height of walls.
+        path-width: Width of each path.
+        wall-width: Width of walls between two paths.
+        path-length: The expansion each path segment will aim for in one direction (in junctions).
+        roof-width: Width of the roof.
+    build-command: 'Builds the specified part of the maze out of a mixture of blocks you enter. Type in names of blocks you want your maze to be built with, for example:\n &2/maze build roof yellow_terracotta orange_terracotta'
+    teleport-command: Teleports you back to your floor plan (if you have the permission for that).
+    unbuild-command: Unbuilds a part of your maze or the whole maze (If you didn't start a new floor plan already). Then you can also edit it further and rebuild it.
+messages:
+    plugin-reloaded: Reloaded Tangled Maze.
+    tool-switched: Switched tool to %tool%.
+    tool-for-floor-plan-only: This tool can only be used for a floor plan of a maze.
+    dimension-changed: Set %dimension% to %number% blocks.
+    maze-building-started: Started building your maze.
+    maze-unbuilding-started: Started unbuilding your maze.
+    no-maze-to-unbuild: You have not built a maze yet that could be unbuild. 
+errors:
+    insufficient-permission: You do not have the permission for this command.
+    clipboard-not-started: Please select an area with a maze wand first.
+    clipboard-not-completed: Please finish your clipboard first.
+    maze-not-started: Please start a maze first.
+    clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
+    no-maze-exit-set: Please mark an exit at the border of your maze first.
+    maze-part-already-built: Your maze is already built.
+    no-build-blocks-specified: Please specify blocks from which your maze will be built.
+    argument-not-matching-block: '%block% is not a block name.'
+    maze-not-built: Please build your maze first.
+    invalid-number: '%number% is not a valid number.'
+    invalid-dimension: '%dimension% is not a valid dimension.'
+    invalid-maze-part: '%mazepart% is not a valid maze part.'
