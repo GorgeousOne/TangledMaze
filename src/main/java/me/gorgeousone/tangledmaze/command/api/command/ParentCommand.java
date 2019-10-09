@@ -33,20 +33,17 @@ public abstract class ParentCommand extends BasicCommand {
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String[] args) {
+	public boolean onExecute(CommandSender sender, String[] arguments) {
 		
-		if(!super.execute(sender, args))
-			return false;
-		
-		if(args.length == 0) {
+		if(arguments.length == 0) {
 			sendUsage(sender);
 			return false;
 		}
 		
 		for(BasicCommand child : getChildren()) {
 			
-			if(child.matches(args[0]))
-				return child.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+			if(child.matches(arguments[0]))
+				return child.onExecute(sender, Arrays.copyOfRange(arguments, 1, arguments.length));
 		}
 		
 		sendUsage(sender);
@@ -63,9 +60,9 @@ public abstract class ParentCommand extends BasicCommand {
 	}
 
 	@Override
-	public List<String> getTabList(String[] args) {
-		
-		if(args.length == 1) {
+	public List<String> getTabList(String[] arguments) {
+
+		if(arguments.length == 1) {
 			
 			List<String> tabList = new LinkedList<>();
 			
@@ -77,8 +74,8 @@ public abstract class ParentCommand extends BasicCommand {
 		
 		for(BasicCommand child : getChildren()) {
 			
-			if(child.matches(args[0]))
-				return child.getTabList(Arrays.copyOfRange(args, 1, args.length));
+			if(child.matches(arguments[0]))
+				return child.getTabList(Arrays.copyOfRange(arguments, 1, arguments.length));
 		}
 		
 		return new LinkedList<>();

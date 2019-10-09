@@ -14,10 +14,7 @@ public class GiveWand extends BasicCommand {
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
-		
-		if(!super.execute(sender, arguments))
-			return false;
+	public boolean onExecute(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		player.getInventory().addItem(Utils.getMazeWand());

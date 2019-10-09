@@ -17,8 +17,8 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
 /**
  * This is the beginning of a lot of unnecessary code.
- * I mean it is kind of useful because I can create child commands, aliases, argument nuber checks and tab lists on the go but
- * yeah it feels somehow unneccessary that this "api" is like at least 10 pages extra code.
+ * I mean it is kind of useful because I can create child commands, aliases, number inputs and tab lists on the go but
+ * yeah it feels somehow unnecessary that this "api" is like at least 10 pages extra code.
  * But it's more soft coded so it's also cool in a way.
  */
 public abstract class BasicCommand {
@@ -66,23 +66,25 @@ public abstract class BasicCommand {
 	public ParentCommand getParent() {
 		return parent;
 	}
-	
-	public boolean execute(CommandSender sender, String[] args) {
+
+	protected abstract boolean onExecute(CommandSender sender, String[] arguments);
+
+	public void execute(CommandSender sender, String[] arguments) {
 		
 		if(!(sender instanceof Player)) {
 			sender.sendMessage("Only players can execute this command.");
-			return false;
+			return;
 		}
 		
-		if(permission != null && !sender.hasPermission(permission)) {
+		if(permission != null && !sender.hasPermission(getPermission())) {
 			sender.sendMessage(ChatColor.RED + "You do not have the permission for this command.");
-			return false;
+			return;
 		}
-		
-		return true;
+
+		onExecute(sender, arguments);
 	}
 	
-	public List<String> getTabList(String[] args) {
+	public List<String> getTabList(String[] arguments) {
 		return new LinkedList<>();
 	}
 
@@ -103,21 +105,18 @@ public abstract class BasicCommand {
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted()) {
-			
 			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return null;
 		}
 		
 		if(withExits && !maze.hasExits()) {
-			
 			Messages.ERROR_NO_MAZE_EXIT_SET.sendTo(player);
 			player.sendMessage("/tangledmaze select exit");
 			return null;
 		}
 		
 		if(notConstructed && maze.isConstructed()) {
-			
 			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 			return null;
 		}

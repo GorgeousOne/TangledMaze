@@ -16,11 +16,8 @@ public class DiscardMaze extends BasicCommand {
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
+	public boolean onExecute(CommandSender sender, String[] arguments) {
 
-		if(!super.execute(sender, arguments))
-			return false;
-		
 		Player player = (Player) sender;
 		
 		Renderer.hideMaze(MazeHandler.getMaze(player));

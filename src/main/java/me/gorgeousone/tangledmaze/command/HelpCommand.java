@@ -27,32 +27,21 @@ public class HelpCommand extends ArgCommand {
 		super("help", null, mazeCommand);
 
 		addAlias("?");
-		addArg(new Argument("page", ArgType.INTEGER));
+		addArg(new Argument("page", ArgType.INTEGER, new ArgValue(ArgType.INTEGER, "1")));
 		
 		createPageLinks();
 		listHelpPages();
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
-		
-		return false;
-	}
-	
-	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
-		
-		if(!super.execute(sender, arguments))
-			return false;
-		
-		sendHelpPage(sender, getPageNumber(arguments));
+	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+
+		int pageNumber = Utils.limit(arguments[0].getInt(), 1, pageCount);
+		sendHelpPage(sender, pageNumber);
 		return true;
 	}
 	
 	public static void sendHelpPage(CommandSender sender, int pageNumber) {
-		
-		if(pageNumber < 1 || pageNumber > pageCount)
-			return;
 		
 		sender.sendMessage("");
 		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + pageCount);
@@ -69,19 +58,6 @@ public class HelpCommand extends ArgCommand {
 			pages[pageNumber-2].send(sender);
 	}
 	
-	private int getPageNumber(String[] arguments) {
-		
-		if(arguments.length == 0)
-			return 1;
-		
-		try {
-			return Utils.limit(Integer.parseInt(arguments[0]), 1, pages.length+1);
-		
-		} catch (NumberFormatException ex) {
-			return 1;
-		}
-	}
-
 	private void createPageLinks() {
 		
 		pageLinks = new RawMessage[commandCount];
@@ -90,33 +66,44 @@ public class HelpCommand extends ArgCommand {
 			pageLinks[i] = new RawMessage();
 			pageLinks[i].add("page " + (i+2) + " ").color(Color.LIGHT_GREEN).click("/maze help " + (i+2), ClickAction.RUN);
 		}
-		
-		pageLinks[0].last().append("/maze wand").color(Color.GREEN);
-		pageLinks[1].last().append("/maze start").color(Color.GREEN);
-		pageLinks[2].last().append("/maze discard").color(Color.GREEN);
-		pageLinks[3].last().append("/maze teleport").color(Color.GREEN);
-		pageLinks[4].last().append("/maze select <tool>").color(Color.GREEN);
-		pageLinks[5].last().append("/maze add / cut").color(Color.GREEN);
-		pageLinks[6].last().append("/maze undo").color(Color.GREEN);
-		pageLinks[7].last().append("/maze pathwidth / wallwidth / wallheight <integer>").color(Color.GREEN);
-		pageLinks[8].last().append("/maze pathlength <integer>").color(Color.GREEN);
-		pageLinks[9].last().append("/maze build <block> ...").color(Color.GREEN);
-		pageLinks[10].last().append("/maze unbuild").color(Color.GREEN);
+
+		int iter = -1;
+
+		pageLinks[++iter].last().append("/maze wand").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze start").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze discard").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze teleport").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze select <tool>").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze add / cut").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze undo").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze set <dimensions> <integer>").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze build <part> <block1> ...").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze unbuild <part>").color(Color.GREEN);
 	}
 	
 	private void listHelpPages() {
 		
 		pages = new HelpPage[commandCount];
-		pages[0] = new HelpPage(Messages.COMMAND_WAND);
-		pages[1] = new HelpPage(Messages.COMMAND_START);
-		pages[2] = new HelpPage(Messages.COMMAND_DISCARD);
-		pages[3] = new HelpPage(Messages.COMMAND_TELEPORT);
-		pages[4] = new HelpPage(Messages.COMMAND_SELECT, Messages.TOOL_RECT, Messages.TOOL_CIRCLE, Messages.TOOL_BRUSH, Messages.TOOL_EXIT);
-		pages[5] = new HelpPage(Messages.COMMAND_ADD_CUT);
-		pages[6] = new HelpPage(Messages.COMMAND_UNDO);
-		pages[7] = new HelpPage(Messages.COMMAND_DIMENSIONS);
-		pages[8] = new HelpPage(Messages.COMMAND_PATHLENGTH);
-		pages[9] = new HelpPage(Messages.COMMAND_BUILD);
-		pages[10] = new HelpPage(Messages.COMMAND_UNBUILD);
+		int iter = -1;
+
+		pages[++iter] = new HelpPage(Messages.COMMAND_WAND);
+		pages[++iter] = new HelpPage(Messages.COMMAND_START);
+		pages[++iter] = new HelpPage(Messages.COMMAND_DISCARD);
+		pages[++iter] = new HelpPage(Messages.COMMAND_TELEPORT);
+		pages[++iter] = new HelpPage(Messages.COMMAND_SELECT,
+				Messages.TOOL_RECT,
+				Messages.TOOL_CIRCLE,
+				Messages.TOOL_BRUSH,
+				Messages.TOOL_EXIT);
+		pages[++iter] = new HelpPage(Messages.COMMAND_ADD_CUT);
+		pages[++iter] = new HelpPage(Messages.COMMAND_UNDO);
+		pages[++iter] = new HelpPage(Messages.COMMAND_DIMENSIONS,
+				Messages.DIMENSION_WALL_HEIGHT,
+				Messages.DIMENSION_PATH_WIDTH,
+				Messages.DIMENSION_WALL_WIDTH,
+				Messages.DIMENSION_ROOF_WIDTH,
+				Messages.DIMENSION_PATH_LENGTH);
+		pages[++iter] = new HelpPage(Messages.COMMAND_BUILD);
+		pages[++iter] = new HelpPage(Messages.COMMAND_UNBUILD);
 	}
 }

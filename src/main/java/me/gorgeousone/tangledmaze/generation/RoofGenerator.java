@@ -53,7 +53,7 @@ public class RoofGenerator extends AbstractGenerator {
 			}
 		}
 
-		BuildHandler.setBuiltFloorBlocks(maze, backupBlocks);
+		BuildHandler.setBuiltRoofBlocks(maze, backupBlocks);
 		return blocksToUpdate;
 	}
 }

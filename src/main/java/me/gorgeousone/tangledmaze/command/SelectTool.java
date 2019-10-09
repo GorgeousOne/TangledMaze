@@ -19,70 +19,55 @@ import me.gorgeousone.tangledmaze.util.PlaceHolder;
 public class SelectTool extends ArgCommand {
 
 	public SelectTool(MazeCommand mazeCommand) {
-		
-		super("select", null);
+		super("select", null, mazeCommand);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
-//		super("select", "/tangledmaze select <tool>", 1, true, null);
 	}
 	
 	@Override
 	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
-		return false;
-	}
-	
-	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
-	
-		if(!super.execute(sender, arguments)) {
-			return false;
-		}
-		
+
 		Player player = (Player) sender;
-		String toolType = arguments[0];
-		
+		String toolType = args[0].getString();
+
 		switch (toolType.toLowerCase()) {
-		
-		case "rect":
-		case "rectangle":
-		case "square":
-			
-			if(!switchToClipShape(player, ClipShape.RECT))
-				return true;
-			
-			break;
-			
-		case "circle":
-		case "ellipse":
-			
-			if(!switchToClipShape(player, ClipShape.CIRCLE))
-				return true;
-			
-			break;
-		
-		case "brush":
-			
-			if(!switchToMazeTool(player, new BrushTool(player)))
-				return true;
-			
-			break;
-			
-		case "exit":
-		case "entrance":
-			
-			if(!switchToMazeTool(player, new ExitSettingTool(player)))
-				return true;
-			
-			break;
-			
-		default:
-			player.sendMessage("/tangledmaze help 6");
-			return false;
+
+			case "rect":
+			case "rectangle":
+			case "square":
+
+				if(!switchToClipShape(player, ClipShape.RECT))
+					return true;
+				break;
+
+			case "circle":
+			case "ellipse":
+
+				if(!switchToClipShape(player, ClipShape.CIRCLE))
+					return true;
+				break;
+
+			case "brush":
+
+				if(!switchToMazeTool(player, new BrushTool(player)))
+					return true;
+				break;
+
+			case "exit":
+			case "entrance":
+
+				if(!switchToMazeTool(player, new ExitSettingTool(player)))
+					return true;
+				break;
+
+			default:
+				player.sendMessage("/tangledmaze help 6");
+				return false;
 		}
-		
+
 		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", ToolHandler.getTool(player).getName()));
 		return true;
 	}
-	
+
 	private boolean switchToClipShape(Player player, ClipShape type) {
 		
 		if(!ToolHandler.hasClipboard(player)) {
@@ -92,10 +77,9 @@ public class SelectTool extends ArgCommand {
 		
 		ClippingTool clip = ToolHandler.getClipboard(player);
 		
-		if(clip.getType().getClass().equals(type.getClass())) {
+		if(clip.getType().getClass().equals(type.getClass()))
 			return false;
-		}
-		
+
 		clip.setType(type);
 		return true;
 	}
@@ -108,22 +92,18 @@ public class SelectTool extends ArgCommand {
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(!maze.isStarted()) {
-			
 			Messages.MESSAGE_TOOL_FOR_MAZE_ONLY.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return false;
 		}
 		
 		if(maze.isConstructed()) {
-			
 			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 			return false;
 		}
 		
 		if(ToolHandler.hasClipboard(player)) {
-			
 			ClippingTool clipboard = ToolHandler.getClipboard(player);
-			
 			Renderer.hideClipboard(clipboard, true);
 			clipboard.reset();
 		}

@@ -24,6 +24,11 @@ public class Messages {
 			TOOL_CIRCLE,
 			TOOL_BRUSH,
 			TOOL_EXIT,
+			DIMENSION_WALL_HEIGHT,
+			DIMENSION_PATH_WIDTH,
+			DIMENSION_WALL_WIDTH,
+			DIMENSION_ROOF_WIDTH,
+			DIMENSION_PATH_LENGTH,
 			MESSAGE_PLUGIN_RELOADED,
 			MESSAGE_TOOL_SWITCHED,
 			MESSAGE_TOOL_FOR_MAZE_ONLY,
@@ -55,7 +60,7 @@ public class Messages {
 		COMMAND_SELECT     = new TextMessage(ChatColor.DARK_GREEN + "/maze select <tool>\n" + ChatColor.GREEN + helpPages.getString("select-command"), true);
 		COMMAND_ADD_CUT    = new TextMessage(ChatColor.DARK_GREEN + "/maze add / cut\n" + ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
 		COMMAND_UNDO       = new TextMessage(ChatColor.DARK_GREEN + "/maze undo\n" + ChatColor.GREEN + helpPages.getString("undo-command"), true);
-		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze pathwidth / wallwidth / wallheight <integer>\n" + ChatColor.GREEN + helpPages.getString("pathwidth-wallwidth-wallheight-command"), true);
+		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze set <dimension> <integer>\n" + ChatColor.GREEN + helpPages.getString("set-dimension-command"), true);
 		COMMAND_PATHLENGTH = new TextMessage(ChatColor.DARK_GREEN + "/maze pathlength <integer>\n" + ChatColor.GREEN + helpPages.getString("pathlength-command"), true);
 		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
 		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
@@ -67,7 +72,15 @@ public class Messages {
 		TOOL_CIRCLE = new TextMessage(ChatColor.DARK_GREEN + "circle\n" + ChatColor.GREEN + tools.getString("circle"), false);
 		TOOL_BRUSH  = new TextMessage(ChatColor.DARK_GREEN + "brush\n" + ChatColor.GREEN + tools.getString("brush"), false);
 		TOOL_EXIT   = new TextMessage(ChatColor.DARK_GREEN + "exit\n" + ChatColor.GREEN + tools.getString("exit"), false);
-		
+
+		ConfigurationSection dimensions = helpPages.getConfigurationSection("dimensions");
+
+		DIMENSION_WALL_HEIGHT = new TextMessage(ChatColor.DARK_GREEN + "wall height\n" + ChatColor.GREEN + dimensions.getString("wall-height"), false);
+		DIMENSION_PATH_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "path width\n" + ChatColor.GREEN + dimensions.getString("path-width"), false);
+		DIMENSION_WALL_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "wall width\n" + ChatColor.GREEN + dimensions.getString("wall-width"), false);
+		DIMENSION_ROOF_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "roof width\n" + ChatColor.GREEN + dimensions.getString("roof-width"), false);
+		DIMENSION_PATH_LENGTH = new TextMessage(ChatColor.DARK_GREEN + "path length\n" + ChatColor.GREEN + dimensions.getString("path-length"), false);
+
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
 		
 		MESSAGE_PLUGIN_RELOADED         = new TextMessage(Constants.prefix + messages.getString("plugin-reloaded"), false);

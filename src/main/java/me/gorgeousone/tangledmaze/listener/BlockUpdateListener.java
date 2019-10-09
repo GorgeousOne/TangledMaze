@@ -41,9 +41,8 @@ public class BlockUpdateListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockExplode(EntityExplodeEvent e) {
 
-		for(Block block : e.blockList()) {
+		for(Block block : e.blockList())
 			checkForUpdates(block, false);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -75,7 +74,7 @@ public class BlockUpdateListener implements Listener {
 		checkForUpdates(e.getBlock(), false);
 	}
 
-	//falling sand/gravel... and maybe endermen
+	//falling sand... and maybe endermen
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
 		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);

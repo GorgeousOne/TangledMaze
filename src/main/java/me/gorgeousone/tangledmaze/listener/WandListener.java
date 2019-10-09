@@ -105,7 +105,8 @@ public class WandListener implements Listener{
 		if(Utils.isMazeWand(e.getItem().getItemStack())) {
 			
 			Player player = e.getPlayer();
-			
+
+			player.sendMessage(MazeHandler.hasMaze(player) + " have maze");
 			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))
 				Renderer.displayMaze(MazeHandler.getMaze(player));
 			

@@ -15,7 +15,8 @@ import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
 
 public class PlayerListener implements Listener {
-	
+
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		
 		Player player = e.getPlayer();

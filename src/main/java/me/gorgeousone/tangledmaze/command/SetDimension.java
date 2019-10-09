@@ -27,7 +27,6 @@ public class SetDimension extends ArgCommand {
 	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
 		
 		Player player = (Player) sender;
-		
 		MazeDimension dimension = MazeDimension.match(args[0].getString());
 		
 		if(dimension == null) {

@@ -84,7 +84,7 @@ public abstract class Renderer implements Listener {
 				for(Location vertex : clipboard.getVertices())
 					player.sendBlockChange(vertex, Constants.CLIPBOARD_CORNER, (byte) 0);
 			}
-		}.runTask(TangledMain.getInstance());
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
 	//hides a clipboard completely with the option to redisplay previously covered maze parts
@@ -133,7 +133,7 @@ public abstract class Renderer implements Listener {
 				if(maze.hasExits())
 					player.sendBlockChange(maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_MAIN_EXIT, (byte) 0);
 			}
-		}.runTask(TangledMain.getInstance());
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
 	//hides a maze
@@ -165,7 +165,6 @@ public abstract class Renderer implements Listener {
 	public static void redisplayMazeBlock(Maze maze, Location loc) {
 		
 		Player player = maze.getPlayer();
-		
 		Vec2 locVec = new Vec2(loc);
 		
 		if(locVec.equals(maze.getMainExit()))
@@ -233,7 +232,7 @@ public abstract class Renderer implements Listener {
 			public void run() {
 				player.sendBlockChange(loc, mat, (byte) 0);
 			}
-		}.runTask(TangledMain.getInstance());
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
 	public static void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
@@ -246,6 +245,6 @@ public abstract class Renderer implements Listener {
 				for(Location loc : locs)
 					player.sendBlockChange(loc, mat, (byte) 0);
 			}
-		}.runTask(TangledMain.getInstance());
+		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 }

@@ -30,11 +30,13 @@ public final class BuildHandler {
  	private BuildHandler() {}
 
 	public static void setBuiltWallBlocks(Maze maze, List<BlockState> wallBlocks) {
-		builtWallBlocks.put(maze, wallBlocks);
+		if(!builtWallBlocks.containsKey(maze))
+			builtWallBlocks.put(maze, wallBlocks);
 	}
 
-	public static void setBuiltFloorBlocks(Maze maze, List<BlockState> blocks) {
-		builtFloorBlocks.put(maze, blocks);
+	public static void setBuiltFloorBlocks(Maze maze, List<BlockState> floorBlocks) {
+ 		if(!builtFloorBlocks.containsKey(maze))
+			builtFloorBlocks.put(maze, floorBlocks);
 	}
 
 	public static void setBuiltRoofBlocks(Maze maze, List<BlockState> blocks) {
@@ -63,15 +65,25 @@ public final class BuildHandler {
 	
 	public static void removeMaze(Maze maze) {
 		builtWallBlocks.remove(maze);
+		removeFloor(maze);
+		removeRoof(maze);
 		terrainMaps.remove(maze);
+	}
+
+	public static void removeFloor(Maze maze) {
+		builtFloorBlocks.remove(maze);
+	}
+
+	public static void removeRoof(Maze maze) {
+		builtRoofBlocks.remove(maze);
 	}
 
 	public static void unbuildMaze(Maze maze) {
 		
-		if(!maze.isConstructed() || !builtWallBlocks.containsKey(maze))
+		if(!maze.isConstructed())
 			return;
 		
-		AbstractGenerator degenerator = new AbstractGenerator() {
+		new AbstractGenerator() {
 
 			@Override
 			protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {}
@@ -81,20 +93,18 @@ public final class BuildHandler {
 				
 				List<BlockState> allBlocks = new LinkedList<>();
 
-				try {
+				if(getWallBlocks(maze) != null)
 					allBlocks.addAll(getWallBlocks(maze));
+				if(getFloorBlocks(maze) != null)
 					allBlocks.addAll(getFloorBlocks(maze));
+				if(getRoofBlocks(maze) != null)
 					allBlocks.addAll(getRoofBlocks(maze));
-				}catch(NullPointerException ignored) {}
 
 				return allBlocks;
 			}
-
-		};
-		
-		degenerator.generatePart(null, null, action -> reactivateMaze(maze));
+		}.generatePart(null, null, action -> reactivateMaze(maze));
 	}
-	
+
 	private static void reactivateMaze(Maze maze) {
 
 		removeMaze(maze);

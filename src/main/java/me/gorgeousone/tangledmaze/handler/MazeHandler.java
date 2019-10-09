@@ -19,10 +19,6 @@ public final class MazeHandler {
 
 	private MazeHandler() {}
 	
-	public static void reload() {
-		mazes.clear();
-	}
-	
 	public static Maze getMaze(Player player) {
 		
 		if(!player.hasPermission(Constants.BUILD_PERM))

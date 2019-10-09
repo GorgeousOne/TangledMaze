@@ -2,6 +2,8 @@ package me.gorgeousone.tangledmaze.core;
 
 import java.io.File;
 
+import me.gorgeousone.tangledmaze.handler.BuildHandler;
+import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

@@ -13,12 +13,7 @@ public class TextMessage {
 	
 	private void setText(String message, boolean readColorCodes) {
 		
-		String alteredMessage;
-		
-		if(readColorCodes)
-			alteredMessage = ChatColor.translateAlternateColorCodes('&', message);
-		else
-			alteredMessage = message;
+		String alteredMessage = readColorCodes ? ChatColor.translateAlternateColorCodes('&', message) : message;
 			
 		paragraphs = alteredMessage.split("\\\\n");
 

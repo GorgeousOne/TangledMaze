@@ -11,15 +11,10 @@ public class Reload extends BasicCommand {
 	
 	public Reload(MazeCommand mazeCommand) {
 		super("reload",	Constants.RELOAD_PERM, mazeCommand);
-//		super("reload", "/tangledmaze reload", 0, false, Constants.RELOAD_PERM, "rl");
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String[] arguments) {
-		
-		if(!super.execute(sender, arguments)) {
-			return false;
-		}
+	public boolean onExecute(CommandSender sender, String[] arguments) {
 		
 		TangledMain.getInstance().reloadPlugin();
 		Messages.MESSAGE_PLUGIN_RELOADED.sendTo(sender);

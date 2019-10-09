@@ -38,7 +38,7 @@ public class BuildCommand extends ArgCommand {
 	public BuildCommand(MazeCommand mazeCommand) {
 		super("build", null, mazeCommand);
 		
-		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "roof"));
+		addArg(new Argument("part", ArgType.STRING, "walls", "floor", "roof"));
 		addArg(new Argument("blocks...", ArgType.STRING));
 
 		pathGenerator = new PathGenerator();
@@ -58,23 +58,27 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		
 		String mazePart = args[0].getString();
-		
 		List<Material> blockMaterials;
-		
+
 		try {
 			blockMaterials = getWallMaterials(Arrays.copyOfRange(args, 1, args.length));
-			
+
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
 			return false;
 		}
 
 		switch (mazePart) {
-		
 		case "floor":
-			
+
 			if(!maze.isConstructed()) {
 				Messages.ERROR_MAZE_NOT_BUILT.sendTo(player);
+				return false;
+			}
+
+			if(BuildHandler.getFloorBlocks(maze) != null) {
+				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
+				player.sendMessage("/tangledmaze unbuild floor");
 				return false;
 			}
 
@@ -88,11 +92,18 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
+			if(BuildHandler.getRoofBlocks(maze) != null) {
+				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
+				player.sendMessage("/tangledmaze unbuild roof");
+				return false;
+			}
+
 			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockMaterials, null);
 			break;
 			
+		case "walls":
 		case "maze":
-			
+
 			if(maze.isConstructed()) {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				return false;
@@ -118,22 +129,22 @@ public class BuildCommand extends ArgCommand {
 		
 		return true;
 	}
-	
+
 	private List<Material> getWallMaterials(ArgValue[] serializedMaterials) throws TextException {
-		
+
 		List<Material> wallMaterials = new ArrayList<>();
-		
+
 		for(ArgValue materialValue : serializedMaterials) {
-			
+
 			String materialString = materialValue.getString();
 			Material material = Material.matchMaterial(materialString);
-			
+
 			if(material == null || !material.isBlock())
 				throw new TextException(Messages.ERROR_NO_MATCHING_BLOCK_TYPE, new PlaceHolder("block", materialString));
 			else
 				wallMaterials.add(material);
 		}
-		
+
 		return wallMaterials;
 	}
 }
