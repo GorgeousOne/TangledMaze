@@ -42,7 +42,7 @@ public abstract class AbstractGenerator {
 					blocksToUpdate.remove(0);
 
 					if(isLeaves(block))
-						makeLeavesPersistant(block.getBlock());
+						setLeavesPersistant(block.getBlock());
 
 					if(System.currentTimeMillis() - timer >= 49)
 						return;
@@ -60,7 +60,7 @@ public abstract class AbstractGenerator {
 		return block.getType().name().endsWith("LEAVES");
 	}
 
-	protected void makeLeavesPersistant(Block block) {
+	protected void setLeavesPersistant(Block block) {
 		Leaves leaves = (Leaves) block.getBlockData();
 		leaves.setPersistent(true);
 		block.setBlockData(leaves);
