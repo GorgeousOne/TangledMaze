@@ -4,7 +4,9 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.type.Leaves;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
@@ -39,6 +41,9 @@ public abstract class AbstractGenerator {
 					block.update(true, false);
 					blocksToUpdate.remove(0);
 
+					if(isLeaves(block))
+						makeLeavesPersistant(block.getBlock());
+
 					if(System.currentTimeMillis() - timer >= 49)
 						return;
 				}
@@ -49,5 +54,15 @@ public abstract class AbstractGenerator {
 					callback.actionPerformed(null);
 			}
 		}.runTaskTimer(TangledMain.getInstance(), 0, 1);
+	}
+
+	protected boolean isLeaves(BlockState block) {
+		return block.getType().name().endsWith("LEAVES");
+	}
+
+	protected void makeLeavesPersistant(Block block) {
+		Leaves leaves = (Leaves) block.getBlockData();
+		leaves.setPersistent(true);
+		block.setBlockData(leaves);
 	}
 }
