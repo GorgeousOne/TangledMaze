@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import me.gorgeousone.tangledmaze.util.BlockType;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -86,7 +87,7 @@ public final class BuildHandler {
 		new AbstractGenerator() {
 
 			@Override
-			protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {}
+			protected void assignBlockType(BlockState block, List<BlockType> blockMaterials) {}
 
 			@Override
 			protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {

@@ -10,7 +10,8 @@ import me.gorgeousone.tangledmaze.generation.FloorGenerator;
 import me.gorgeousone.tangledmaze.generation.PathGenerator;
 
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
-import org.bukkit.Material;
+import me.gorgeousone.tangledmaze.util.BlockType;
+import me.gorgeousone.tangledmaze.util.BlockTypeReader;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,13 +59,18 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		
 		String mazePart = args[0].getString();
-		List<Material> blockMaterials;
+		List<BlockType> blockTypes;
 
 		try {
-			blockMaterials = getWallMaterials(Arrays.copyOfRange(args, 1, args.length));
+			blockTypes = deserializeBlockTypes(Arrays.copyOfRange(args, 1, args.length));
 
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
+			return false;
+		}
+
+		if(blockTypes.isEmpty()) {
+			player.sendMessage("mhh...");
 			return false;
 		}
 
@@ -82,7 +88,7 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			floorGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockMaterials, null);
+			floorGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
 			break;
 		
 		case "roof":
@@ -98,7 +104,7 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockMaterials, null);
+			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
 			break;
 			
 		case "walls":
@@ -114,7 +120,7 @@ public class BuildCommand extends ArgCommand {
 
 			pathGenerator.generatePaths(terrainMap);
 			terrainEditor.editTerrain(terrainMap);
-			wallGenerator.generatePart(terrainMap, blockMaterials, null);
+			wallGenerator.generatePart(terrainMap, blockTypes, null);
 			BuildHandler.setTerrainMap(maze, terrainMap);
 
 			ToolHandler.resetToDefaultTool(maze.getPlayer());
@@ -130,19 +136,20 @@ public class BuildCommand extends ArgCommand {
 		return true;
 	}
 
-	private List<Material> getWallMaterials(ArgValue[] serializedMaterials) throws TextException {
+	private List<BlockType> deserializeBlockTypes(ArgValue[] serializedMaterials) throws TextException {
 
-		List<Material> wallMaterials = new ArrayList<>();
+		List<BlockType> wallMaterials = new ArrayList<>();
 
-		for(ArgValue materialValue : serializedMaterials) {
+		for(ArgValue stringMat : serializedMaterials) {
 
-			String materialString = materialValue.getString();
-			Material material = Material.matchMaterial(materialString);
-
-			if(material == null || !material.isBlock())
-				throw new TextException(Messages.ERROR_NO_MATCHING_BLOCK_TYPE, new PlaceHolder("block", materialString));
-			else
-				wallMaterials.add(material);
+			wallMaterials.add(BlockTypeReader.read(stringMat.getString()));
+//			String materialString = materialValue.getString();
+//			Material material = Material.matchMaterial(materialString);
+//
+//			if(material == null || !material.isBlock())
+//				throw new TextException(Messages.ERROR_INVALID_BLOCK_NAME, new PlaceHolder("block", materialString));
+//			else
+//				wallMaterials.add(material);
 		}
 
 		return wallMaterials;

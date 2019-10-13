@@ -43,12 +43,14 @@ public class Messages {
 			ERROR_CLIPBOARD_NOT_TOUCHING_MAZE,
 			ERROR_NO_MAZE_EXIT_SET,
 			ERROR_MAZE_ALREADY_BUILT,
-			ERROR_NO_BUILD_BLOCKS_SPECIFIED,
-			ERROR_NO_MATCHING_BLOCK_TYPE,
 			ERROR_MAZE_NOT_BUILT,
 			ERROR_INVALID_NUMBER,
 			ERROR_INVALID_DIMENSION,
-			ERROR_INVALID_MAZE_PART;
+			ERROR_INVALID_MAZE_PART,
+			ERROR_INVALID_BLOCK_NAME,
+			ERROR_INVALID_BLOCK_PROPERTY,
+			ERROR_INVALID_BLOCK_PROPERTY_VALUE,
+			ERROR_MISSING_BLOCK_PROPERTY_VALUE;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -76,9 +78,9 @@ public class Messages {
 		ConfigurationSection dimensions = helpPages.getConfigurationSection("dimensions");
 
 		DIMENSION_WALL_HEIGHT = new TextMessage(ChatColor.DARK_GREEN + "wall height\n" + ChatColor.GREEN + dimensions.getString("wall-height"), false);
-		DIMENSION_PATH_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "path width\n" + ChatColor.GREEN + dimensions.getString("path-width"), false);
-		DIMENSION_WALL_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "wall width\n" + ChatColor.GREEN + dimensions.getString("wall-width"), false);
-		DIMENSION_ROOF_WIDTH = new TextMessage(ChatColor.DARK_GREEN + "roof width\n" + ChatColor.GREEN + dimensions.getString("roof-width"), false);
+		DIMENSION_PATH_WIDTH  = new TextMessage(ChatColor.DARK_GREEN + "path width\n" + ChatColor.GREEN + dimensions.getString("path-width"), false);
+		DIMENSION_WALL_WIDTH  = new TextMessage(ChatColor.DARK_GREEN + "wall width\n" + ChatColor.GREEN + dimensions.getString("wall-width"), false);
+		DIMENSION_ROOF_WIDTH  = new TextMessage(ChatColor.DARK_GREEN + "roof width\n" + ChatColor.GREEN + dimensions.getString("roof-width"), false);
 		DIMENSION_PATH_LENGTH = new TextMessage(ChatColor.DARK_GREEN + "path length\n" + ChatColor.GREEN + dimensions.getString("path-length"), false);
 
 		ConfigurationSection messages = langConfig.getConfigurationSection("messages");
@@ -93,18 +95,20 @@ public class Messages {
 	
 		ConfigurationSection errors = langConfig.getConfigurationSection("errors");
 		
-		ERROR_NO_BUILD_PERMISSION         = new TextMessage(ChatColor.RED + errors.getString("insufficient-permission"), false);
-		ERROR_CLIPBOARD_NOT_STARTED       = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-started"), false);
-		ERROR_CLIPBOARD_NOT_COMPLETED     = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-completed"), false);
-		ERROR_MAZE_NOT_STARTED            = new TextMessage(ChatColor.RED + errors.getString("maze-not-started"), false);
-		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-touching-maze"), false);
-		ERROR_NO_MAZE_EXIT_SET            = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
-		ERROR_MAZE_ALREADY_BUILT          = new TextMessage(ChatColor.RED + errors.getString("maze-already-built"), false);
-		ERROR_NO_BUILD_BLOCKS_SPECIFIED   = new TextMessage(ChatColor.RED + errors.getString("no-build-blocks-specified"), false);
-		ERROR_NO_MATCHING_BLOCK_TYPE      = new TextMessage(ChatColor.RED + errors.getString("argument-not-matching-block"), false);
-		ERROR_MAZE_NOT_BUILT              = new TextMessage(ChatColor.RED + errors.getString("maze-not-built"), false);
-		ERROR_INVALID_NUMBER              = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
-		ERROR_INVALID_DIMENSION           = new TextMessage(ChatColor.RED + errors.getString("invalid-dimension"), false);
-		ERROR_INVALID_MAZE_PART           = new TextMessage(ChatColor.RED + errors.getString("invalid-maze-part"), false);
+		ERROR_NO_BUILD_PERMISSION          = new TextMessage(ChatColor.RED + errors.getString("insufficient-permission"), false);
+		ERROR_CLIPBOARD_NOT_STARTED        = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-started"), false);
+		ERROR_CLIPBOARD_NOT_COMPLETED      = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-completed"), false);
+		ERROR_MAZE_NOT_STARTED             = new TextMessage(ChatColor.RED + errors.getString("maze-not-started"), false);
+		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE  = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-touching-maze"), false);
+		ERROR_NO_MAZE_EXIT_SET             = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
+		ERROR_MAZE_ALREADY_BUILT           = new TextMessage(ChatColor.RED + errors.getString("maze-already-built"), false);
+		ERROR_MAZE_NOT_BUILT               = new TextMessage(ChatColor.RED + errors.getString("maze-not-built"), false);
+		ERROR_INVALID_NUMBER               = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
+		ERROR_INVALID_DIMENSION            = new TextMessage(ChatColor.RED + errors.getString("invalid-dimension"), false);
+		ERROR_INVALID_MAZE_PART            = new TextMessage(ChatColor.RED + errors.getString("invalid-maze-part"), false);
+		ERROR_INVALID_BLOCK_NAME           = new TextMessage(ChatColor.RED + errors.getString("invalid-block-name"), false);
+		ERROR_INVALID_BLOCK_PROPERTY       = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property"), false);
+		ERROR_INVALID_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property-value"), false);
+		ERROR_MISSING_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("missing-block-property-value"), false);
 	}
 }

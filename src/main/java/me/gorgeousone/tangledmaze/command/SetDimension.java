@@ -34,18 +34,7 @@ public class SetDimension extends ArgCommand {
 			return false;
 		}
 		
-		String stringDimValue = args[1].getString();
-		int newDimValue;
-		
-		try {
-			newDimValue = Utils.limit(Integer.parseInt(stringDimValue), 1, dimension.getMaxValue());
-			
-		} catch (NumberFormatException ex) {
-			
-			Messages.ERROR_INVALID_NUMBER.sendTo(player, new PlaceHolder("number", stringDimValue));
-			return false;
-		}
-		
+		int newDimValue = args[1].getInt();
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getDimension(dimension) != newDimValue) {

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import me.gorgeousone.tangledmaze.util.BlockType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,16 +26,11 @@ public class WallGenerator extends AbstractGenerator {
 	}
 
 	@Override
-	public void generatePart(TerrainMap terrainMap, List<Material> blockMaterials, ActionListener callback) {
-		super.generatePart(terrainMap, blockMaterials, callback);
+	public void generatePart(TerrainMap terrainMap, List<BlockType> blockTypes, ActionListener callback) {
+		super.generatePart(terrainMap, blockTypes, callback);
 		terrainMap.getMaze().setConstructed(true);
 	}
 
-	@Override
-	protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {
-		block.setType(blockMaterials.get(rnd.nextInt(blockMaterials.size())));
-	}
-	
 	protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
 		
 		List<BlockState> blocksToUpdate = new LinkedList<>();

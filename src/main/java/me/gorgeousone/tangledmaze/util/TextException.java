@@ -4,25 +4,16 @@ import org.bukkit.command.CommandSender;
 
 public class TextException extends Exception {
 	
-	private static final long serialVersionUID = 1L;
 	private TextMessage text;
-	private PlaceHolder placeHolder;
+	private PlaceHolder[] placeHolders;
 	
-	public TextException(TextMessage message, PlaceHolder placeHolder) {
-		
+	public TextException(TextMessage message, PlaceHolder... placeHolders) {
+
 		this.text = message;
-		this.placeHolder = placeHolder;
+		this.placeHolders = placeHolders;
 	}
 
-	private TextMessage getText() {
-		return text;
-	}
-
-	private PlaceHolder getPlaceHolder() {
-		return placeHolder;
-	}
-	
 	public void sendTextTo(CommandSender receiver) {
-		getText().sendTo(receiver, getPlaceHolder());
+		text.sendTo(receiver, placeHolders);
 	}
 }

@@ -1,73 +1,64 @@
 package me.gorgeousone.tangledmaze.util;
 
+import me.gorgeousone.tangledmaze.data.Messages;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 public final class BlockTypeReader {
-
-	private static HashMap<String, String> blockDataTypes = new HashMap<>();
-
-	static {
-		blockDataTypes.put("east", "facing");
-		blockDataTypes.put(	"south", "facing");
-		blockDataTypes.put(	"west", "facing");
-		blockDataTypes.put(	"north", "facing");
-		blockDataTypes.put(	"top", "half");
-		blockDataTypes.put(	"bottom", "half");
-		blockDataTypes.put(	"x", "axis");
-		blockDataTypes.put(	"y", "axis");
-		blockDataTypes.put(	"z", "axis");
-	}
 
 	private BlockTypeReader() {}
 
-	public static BlockTypeWrapper readBlockType(String  argument) {
+	public static BlockType read(String  argument) throws TextException {
 
 		String[] split = argument.split(":");
-		Material material = Material.matchMaterial(split[0]);
+		String stringMat = split[0];
+		Material material = Material.matchMaterial(stringMat);
 
-		if(material == null || !material.isBlock())
-			throw new IllegalArgumentException("false material");
+		if (material == null || !material.isBlock())
+			throw new TextException(
+					Messages.ERROR_INVALID_BLOCK_NAME,
+					new PlaceHolder("block", stringMat));
 
 		BlockData blockData = material.createBlockData();
-		Set<String> usedDataTypes = new HashSet<>();
 
-		if(split.length < 2)
-			return null;
+		if(material.name().contains("LEAVES"))
+			blockData = blockData.merge(material.createBlockData("[persistent=true]"));
 
-		System.out.println(" --- test --- ");
+		if (split.length < 2)
+			return new BlockType(material, blockData);
 
-		for(int i = 1; i < split.length; i++) {
+		for (int i = 1; i < split.length; i++) {
 
-			String dataValue = split[i];
-			String dataType = blockDataTypes.get(dataValue);
-			System.out.println(dataValue);
+			String blockProperty = split[i];
 
-			blockData = blockData.merge(material.createBlockData("[" + dataType + "=" + dataValue + "]"));
-			usedDataTypes.add(dataType);
+			try {
+				blockData = blockData.merge(material.createBlockData("[" + blockProperty + "]"));
+			}catch (IllegalArgumentException ex) {
+				createPlayerMessageFromException(ex.getCause().getLocalizedMessage(), stringMat, blockProperty.split("="));
+			}
 		}
 
-		System.out.println(blockData.getAsString());
-		return null;
+		return new BlockType(material, blockData);
 	}
 
-//	private static BlockFace readCardinalFace(String face) {
-//
-//		if(face.length() == 1 && cardinalBlockFaces.containsKey(face.charAt(0)))
-//			return cardinalBlockFaces.get(face.charAt(0));
-//		else
-//			throw new IllegalArgumentException("false facing");
-//	}
-//
-//	private static BlockFace readHalfFace(String face) {
-//
-//		if(face.length() == 1 && halfBlockFaces.containsKey(face.charAt(0)))
-//			return halfBlockFaces.get(face.charAt(0));
-//		else
-//			throw new IllegalArgumentException("false half");
-//	}
+	private static void createPlayerMessageFromException(String exceptionMessage, String material, String[] blockProperty) throws TextException {
+
+		if(exceptionMessage.contains("does not have property"))
+			throw new TextException(
+					Messages.ERROR_INVALID_BLOCK_PROPERTY,
+					new PlaceHolder("block", material),
+					new PlaceHolder("property", blockProperty[0]));
+
+		else if(exceptionMessage.contains("Expected value for property"))
+			throw new TextException(
+					Messages.ERROR_MISSING_BLOCK_PROPERTY_VALUE,
+					new PlaceHolder("property", blockProperty[0]));
+
+		else if(exceptionMessage.contains("does not accept"))
+			throw new TextException(
+					Messages.ERROR_INVALID_BLOCK_PROPERTY_VALUE,
+					new PlaceHolder("block", material),
+					new PlaceHolder("property", blockProperty[0]),
+					new PlaceHolder("value", blockProperty[1]));
+	}
 }

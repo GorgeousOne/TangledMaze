@@ -106,7 +106,6 @@ public class WandListener implements Listener{
 			
 			Player player = e.getPlayer();
 
-			player.sendMessage(MazeHandler.hasMaze(player) + " have maze");
 			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))
 				Renderer.displayMaze(MazeHandler.getMaze(player));
 			
@@ -115,13 +114,6 @@ public class WandListener implements Listener{
 		}
 	}
 	
-/*
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent e) {
-		Renderer.updateChunk(e.getChunk());
-	}
-*/
-
 	private void destroyMazeWand(Player p, ItemStack wand) {
 		
 		p.getInventory().remove(wand);

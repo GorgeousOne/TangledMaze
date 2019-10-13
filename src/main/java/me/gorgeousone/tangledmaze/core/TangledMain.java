@@ -39,17 +39,8 @@ public class TangledMain extends JavaPlugin {
 		registerListeners();
 		registerCommands();
 
-//		Block block = Bukkit.getWorld("world").getBlockAt(1,2,3);
-//		block.setType(Material.FURNACE);
-//
-//		Furnace furnace = (Furnace) block.getBlockData();
-//		furnace.setFacing(BlockFace.WEST);
-//		System.out.println("--- test data --- : " + furnace.getAsString(true));
-//
-//		BlockData exampleData = Material.CARVED_PUMPKIN.createBlockData("[half=up]");
-//		System.out.println("--- test data --- : " + exampleData.getAsString(true));
 
-		BlockTypeReader.readBlockType("oak_stairs:east:top");
+//		BlockTypeReader.readBlockType("oak_stairs:east:x");
 	}
 	
 	@Override
