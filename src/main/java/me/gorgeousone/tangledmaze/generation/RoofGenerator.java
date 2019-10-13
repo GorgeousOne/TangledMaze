@@ -23,11 +23,6 @@ public class RoofGenerator extends AbstractGenerator {
 	}
 	
 	@Override
-	protected void chooseBlockMaterial(BlockState block,  List<Material> blockMaterials) {
-		block.setType(blockMaterials.get(rnd.nextInt(blockMaterials.size())));
-	}
-	
-	@Override
 	protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
 
 		List<BlockState> blocksToUpdate = new LinkedList<>();
