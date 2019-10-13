@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.mapmaking;
 
 import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.MazeDimension;
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class TerrainEditor {
@@ -30,48 +30,28 @@ public class TerrainEditor {
 	}
 	
 	protected void raiseLowWalls(TerrainMap terrainMap) {
-		
+
 		int wallHeight = terrainMap.getMaze().getDimension(MazeDimension.WALL_HEIGHT);
-		
-		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
-			
-				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
+
+		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
+			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
+
+				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
 					continue;
-				
+
 				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
-				
-				if(maxNeighborPath == null)
+
+				if (maxNeighborPath == null)
 					continue;
-				
+
 				int floorHeight = terrainMap.getFloorHeight(x, z);
 				int maxNeighborFloorHeight = terrainMap.getFloorHeight(maxNeighborPath);
-				
-				if(maxNeighborFloorHeight > floorHeight)
+
+				if (maxNeighborFloorHeight > floorHeight)
 					terrainMap.setWallHeight(x, z, wallHeight + maxNeighborFloorHeight - floorHeight);
 			}
 		}
 	}
-	
-//	protected int getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
-//		
-//		int maxHeight = 0;
-//		
-//		for(Directions dir : Directions.values()) {
-//			
-//			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
-//			
-//			if(!terrainMap.contains(neighbor) || terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE)
-//				continue;
-//			
-//			int neighborHeight = terrainMap.getFloorHeight(neighbor);
-//			
-//			if(neighborHeight > maxHeight)
-//				maxHeight = neighborHeight;
-//		}
-//
-//		return maxHeight;
-//	}
 	
 	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
 		return getHighestNeighborFloor(x, z, terrainMap, null);
@@ -80,7 +60,7 @@ public class TerrainEditor {
 	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap, MazeAreaType areaType) {
 		
 		Vec2 maxNeighborFloor = null;
-		int maxFloorHeight = 0;
+		int maxNeighborFloorHeight = 0;
 		
 		for(Directions dir : Directions.values()) {
 			
@@ -91,10 +71,10 @@ public class TerrainEditor {
 			
 			int neighborFloorHeight = terrainMap.getFloorHeight(neighbor);
 			
-			if(neighborFloorHeight > maxFloorHeight) {
+			if(neighborFloorHeight > maxNeighborFloorHeight) {
 				
 				maxNeighborFloor = neighbor;
-				maxFloorHeight = neighborFloorHeight;
+				maxNeighborFloorHeight = neighborFloorHeight;
 			}
 		}
 		

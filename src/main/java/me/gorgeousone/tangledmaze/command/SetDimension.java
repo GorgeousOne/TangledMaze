@@ -10,9 +10,8 @@ import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
-import me.gorgeousone.tangledmaze.util.MazeDimension;
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
-import me.gorgeousone.tangledmaze.util.Utils;
 
 public class SetDimension extends ArgCommand {
 	

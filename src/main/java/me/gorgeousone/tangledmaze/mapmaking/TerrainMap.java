@@ -4,8 +4,7 @@ import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.generation.PathSegment;
-import me.gorgeousone.tangledmaze.util.MazeDimension;
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 /**

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation;
+package me.gorgeousone.tangledmaze.mapmaking;
 
 import java.util.HashSet;
 import java.util.Set;

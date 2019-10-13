@@ -2,6 +2,7 @@ package me.gorgeousone.tangledmaze.util;
 
 import java.util.List;
 
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;

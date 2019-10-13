@@ -1,15 +1,12 @@
 package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import me.gorgeousone.tangledmaze.generation.RoofGenerator;
-import me.gorgeousone.tangledmaze.generation.WallGenerator;
-import me.gorgeousone.tangledmaze.generation.FloorGenerator;
-import me.gorgeousone.tangledmaze.generation.PathGenerator;
+import me.gorgeousone.tangledmaze.generation.typechoosing.RandomBlockTypeChooser;
 
-import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.handler.Renderer;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.BlockType;
 import me.gorgeousone.tangledmaze.util.BlockTypeReader;
 import org.bukkit.command.CommandSender;
@@ -22,31 +19,16 @@ import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
-import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.mapmaking.TerrainEditor;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildCommand extends ArgCommand {
-
-	private PathGenerator pathGenerator;
-	private TerrainEditor terrainEditor;
-	private WallGenerator wallGenerator;
-	private FloorGenerator floorGenerator;
-	private RoofGenerator roofGenerator;
 
 	public BuildCommand(MazeCommand mazeCommand) {
 		super("build", null, mazeCommand);
 		
 		addArg(new Argument("part", ArgType.STRING, "walls", "floor", "roof"));
 		addArg(new Argument("blocks...", ArgType.STRING));
-
-		pathGenerator = new PathGenerator();
-		terrainEditor = new TerrainEditor();
-		wallGenerator = new WallGenerator();
-		floorGenerator = new FloorGenerator();
-		roofGenerator = new RoofGenerator();
 	}
 
 	@Override
@@ -59,18 +41,14 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		
 		String mazePart = args[0].getString();
-		List<BlockType> blockTypes;
+		List<BlockType> blockTypeList = new ArrayList<>();
 
 		try {
-			blockTypes = deserializeBlockTypes(Arrays.copyOfRange(args, 1, args.length));
+			for(int i = 1; i < args.length; i++)
+				blockTypeList.add(BlockTypeReader.read(args[i].getString()));
 
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
-			return false;
-		}
-
-		if(blockTypes.isEmpty()) {
-			player.sendMessage("mhh...");
 			return false;
 		}
 
@@ -82,13 +60,13 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			if(BuildHandler.getFloorBlocks(maze) != null) {
+			if(BuildHandler.hasFloor(maze)) {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				player.sendMessage("/tangledmaze unbuild floor");
 				return false;
 			}
 
-			floorGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
+			BuildHandler.buildFloor(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 		
 		case "roof":
@@ -98,13 +76,13 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			if(BuildHandler.getRoofBlocks(maze) != null) {
+			if(BuildHandler.hasRoof(maze)) {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				player.sendMessage("/tangledmaze unbuild roof");
 				return false;
 			}
 
-			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
+			BuildHandler.buildRoof(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 			
 		case "walls":
@@ -116,16 +94,8 @@ public class BuildCommand extends ArgCommand {
 			}
 
 			Renderer.hideMaze(maze);
-			TerrainMap terrainMap = new TerrainMap(maze);
-
-			pathGenerator.generatePaths(terrainMap);
-			terrainEditor.editTerrain(terrainMap);
-			wallGenerator.generatePart(terrainMap, blockTypes, null);
-			BuildHandler.setTerrainMap(maze, terrainMap);
-
-			ToolHandler.resetToDefaultTool(maze.getPlayer());
-			Messages.MESSAGE_MAZE_BUILDING_STARTED.sendTo(maze.getPlayer());
-
+			ToolHandler.removeTool(maze.getPlayer());
+			BuildHandler.buildWalls(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 
 		default:
@@ -134,24 +104,5 @@ public class BuildCommand extends ArgCommand {
 		}
 		
 		return true;
-	}
-
-	private List<BlockType> deserializeBlockTypes(ArgValue[] serializedMaterials) throws TextException {
-
-		List<BlockType> wallMaterials = new ArrayList<>();
-
-		for(ArgValue stringMat : serializedMaterials) {
-
-			wallMaterials.add(BlockTypeReader.read(stringMat.getString()));
-//			String materialString = materialValue.getString();
-//			Material material = Material.matchMaterial(materialString);
-//
-//			if(material == null || !material.isBlock())
-//				throw new TextException(Messages.ERROR_INVALID_BLOCK_NAME, new PlaceHolder("block", materialString));
-//			else
-//				wallMaterials.add(material);
-		}
-
-		return wallMaterials;
 	}
 }
