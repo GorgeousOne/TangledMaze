@@ -37,27 +37,23 @@ public enum Directions {
 	/**
 	 * Returns if the z coordinate of the direction's vector is not 0
 	 */
-	public boolean isZAligned() {
-		return facing.getZ() != 0;
-	}
+//	public boolean isZAligned() {
+//		return facing.getZ() != 0;
+//	}
 	
 	public Vec2 getVec2() {
 		return facing.clone();
-	}
-	
-	public Vector toVec3() {
-		return facing.toVec3();
 	}
 	
 	public static Directions[] cardinalValues() {
 		return new Directions[] {EAST, WEST, SOUTH, NORTH};
 	}
 	
-	public static Directions cardinalValueOf(Vec2 vec) {
-		
-		if(vec.getX() != 0)
-			return vec.getX() > 0 ? EAST : WEST;
-					
-		return vec.getZ() > 0 ? SOUTH : NORTH;
-	}
+//	public static Directions cardinalValueOf(Vec2 vec) {
+//
+//		if(vec.getX() != 0)
+//			return vec.getX() > 0 ? EAST : WEST;
+//
+//		return vec.getZ() > 0 ? SOUTH : NORTH;
+//	}
 }

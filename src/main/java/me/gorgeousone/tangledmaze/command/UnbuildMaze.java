@@ -6,6 +6,7 @@ import me.gorgeousone.tangledmaze.command.api.argument.Argument;
 import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
 import me.gorgeousone.tangledmaze.generation.AbstractGenerator;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.util.BlockType;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -48,7 +49,7 @@ public class UnbuildMaze extends ArgCommand {
 				if(BuildHandler.getFloorBlocks(maze) != null) {
 					new AbstractGenerator() {
 						@Override
-						protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {}
+						protected void assignBlockType(BlockState block, List<BlockType> blockTypes) {}
 
 						@Override
 						protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
@@ -68,7 +69,7 @@ public class UnbuildMaze extends ArgCommand {
 				if(BuildHandler.getRoofBlocks(maze) != null) {
 					new AbstractGenerator() {
 						@Override
-						protected void chooseBlockMaterial(BlockState block, List<Material> blockMaterials) {}
+						protected void assignBlockType(BlockState block, List<BlockType> blockTypes) {}
 
 						@Override
 						protected List<BlockState> getRelevantBlocks(TerrainMap terrainMap) {

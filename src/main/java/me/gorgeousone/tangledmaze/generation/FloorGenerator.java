@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import me.gorgeousone.tangledmaze.util.BlockType;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -20,11 +20,6 @@ public class FloorGenerator extends AbstractGenerator {
 	
 	public FloorGenerator() {
 		rnd = new Random();
-	}
-	
-	@Override
-	protected void chooseBlockMaterial(BlockState block,  List<Material> blockMaterials) {
-		block.setType(blockMaterials.get(rnd.nextInt(blockMaterials.size())));
 	}
 	
 	@Override

@@ -20,15 +20,11 @@ public class UndoCommand extends BasicCommand {
 	public boolean onExecute(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
-		Maze maze = MazeHandler.getMaze(player);
+		Maze maze = getStartedMaze(player, false, true);
 
-		if(!maze.isStarted() || maze.isConstructed()) {
-			
-			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
+		if(maze == null)
 			return false;
-		}
-		
-		
+
 		if(maze.getActionHistory().isEmpty())
 			return false;
 

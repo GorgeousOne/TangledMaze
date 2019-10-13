@@ -3,10 +3,8 @@ package me.gorgeousone.tangledmaze.generation;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+import me.gorgeousone.tangledmaze.util.BlockType;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.type.Leaves;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.gorgeousone.tangledmaze.core.TangledMain;
@@ -14,17 +12,22 @@ import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
 
 public abstract class AbstractGenerator {
 	
-	public void generatePart(TerrainMap terrainMap, List<Material> blockMaterials, ActionListener callback) {
-		updateBlocksContinuously(getRelevantBlocks(terrainMap), blockMaterials, callback);
+	public void generatePart(TerrainMap terrainMap, List<BlockType> blockTypes, ActionListener callback) {
+		updateBlocksContinuously(getRelevantBlocks(terrainMap), blockTypes, callback);
 	}
-	
-	protected abstract void chooseBlockMaterial(BlockState block, List<Material> blockMaterials);
 
 	protected abstract List<BlockState> getRelevantBlocks(TerrainMap terrainMap);
 
+	protected void assignBlockType(BlockState block, List<BlockType> blockBlockTypes) {
+
+		BlockType random = blockBlockTypes.get((int) (Math.random() * blockBlockTypes.size()));
+		block.setType(random.getMaterial());
+		block.setBlockData(random.getData());
+	}
+
 	protected void updateBlocksContinuously(
 			List<BlockState> blocksToUpdate,
-			List<Material> blockMaterials,
+			List<BlockType> blockTypes,
 			ActionListener callback) {
 
 		new BukkitRunnable() {
@@ -36,13 +39,10 @@ public abstract class AbstractGenerator {
 				while(!blocksToUpdate.isEmpty()) {
 
 					BlockState block = blocksToUpdate.get(0);
-					chooseBlockMaterial(block, blockMaterials);
+					assignBlockType(block, blockTypes);
 
 					block.update(true, false);
 					blocksToUpdate.remove(0);
-
-					if(isLeaves(block))
-						makeLeavesPersistant(block.getBlock());
 
 					if(System.currentTimeMillis() - timer >= 49)
 						return;
@@ -54,15 +54,5 @@ public abstract class AbstractGenerator {
 					callback.actionPerformed(null);
 			}
 		}.runTaskTimer(TangledMain.getInstance(), 0, 1);
-	}
-
-	protected boolean isLeaves(BlockState block) {
-		return block.getType().name().endsWith("LEAVES");
-	}
-
-	protected void makeLeavesPersistant(Block block) {
-		Leaves leaves = (Leaves) block.getBlockData();
-		leaves.setPersistent(true);
-		block.setBlockData(leaves);
 	}
 }
