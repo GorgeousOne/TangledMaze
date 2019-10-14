@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.UUID;
 
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.*;
 import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 

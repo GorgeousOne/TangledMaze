@@ -25,4 +25,9 @@ public class BlockType {
 	public BlockData getData() {
 		return data;
 	}
+
+	@Override
+	public BlockType clone() {
+		return new BlockType(material, data.clone());
+	}
 }

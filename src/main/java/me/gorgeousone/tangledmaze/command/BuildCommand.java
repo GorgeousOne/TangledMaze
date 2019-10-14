@@ -32,7 +32,7 @@ public class BuildCommand extends ArgCommand {
 	}
 
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
+	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, true, false);
@@ -40,13 +40,14 @@ public class BuildCommand extends ArgCommand {
 		if(maze == null)
 			return false;
 		
-		String mazePart = args[0].getString();
-		List<BlockType> blockTypeList = new ArrayList<>();
+		String mazePart = arguments[0].getString();
+		List<BlockType> blockTypeList = null;
 
 		try {
-			for(int i = 1; i < args.length; i++)
-				blockTypeList.add(BlockTypeReader.read(args[i].getString()));
-
+			blockTypeList = readBlockTypeList(arguments);
+//			for(int i = 1; i < arguments.length; i++)
+//				blockTypeList.add(BlockTypeReader.read(arguments[i].getString()));
+//
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
 			return false;
@@ -100,9 +101,35 @@ public class BuildCommand extends ArgCommand {
 
 		default:
 			Messages.ERROR_INVALID_MAZE_PART.sendTo(player, new PlaceHolder("mazepart", mazePart));
-			break;
+			return false;
 		}
 		
 		return true;
+	}
+
+	private List<BlockType> readBlockTypeList(ArgValue[] arguments) throws TextException {
+
+		List<BlockType> blockTypeList = new ArrayList<>();
+
+		for(int i = 1; i < arguments.length; i++) {
+
+			String[] blockTypeName = arguments[i].getString().split("\\*");
+			int multiplier;
+			BlockType blockType;
+
+			if(blockTypeName.length == 1) {
+				multiplier = 1;
+				blockType = BlockTypeReader.read(blockTypeName[0]);
+
+			}else {
+				multiplier = new ArgValue(ArgType.INTEGER, blockTypeName[0]).getInt();
+				blockType = BlockTypeReader.read(blockTypeName[1]);
+			}
+
+			for(int k = 0; k < multiplier; k++)
+				blockTypeList.add(blockType.clone());
+		}
+
+		return blockTypeList;
 	}
 }

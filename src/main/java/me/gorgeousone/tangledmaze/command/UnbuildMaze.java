@@ -21,7 +21,7 @@ public class UnbuildMaze extends ArgCommand {
 	}
 
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] values) {
+	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
 
 		Player player = (Player) sender;
 		Maze maze = MazeHandler.getMaze(player);
@@ -31,7 +31,7 @@ public class UnbuildMaze extends ArgCommand {
 			return true;
 		}
 
-		String mazePart = values[0].getString();
+		String mazePart = arguments[0].getString();
 
 		switch (mazePart) {
 
