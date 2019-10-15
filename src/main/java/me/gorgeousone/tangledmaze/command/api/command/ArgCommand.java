@@ -55,7 +55,7 @@ public abstract class ArgCommand extends BasicCommand {
 		return this.arguments.get(arguments.length - 1).getTabList();
 	}
 
-	protected abstract boolean onExecute(CommandSender sender, ArgValue[] values);
+	protected abstract boolean onExecute(CommandSender sender, ArgValue[] arguments);
 
 	@Override
 	protected boolean onExecute(CommandSender sender, String[] stringArgs) {
