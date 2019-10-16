@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,11 +27,12 @@ public abstract class Utils {
 		if(item == null)
 			return false;
 		
-		if(item.getType() != Settings.MAZE_WAND_MATERIAL)
+		if(item.getType() != Settings.MAZE_WAND_MATERIAL) {
 			return false;
-
+		}
+		
 		ItemMeta itemMeta = item.getItemMeta();
-
+		
 		return
 			itemMeta.getDisplayName() != null &&
 			itemMeta.getDisplayName().equals(Settings.MAZE_WAND.getItemMeta().getDisplayName());
@@ -56,6 +58,7 @@ public abstract class Utils {
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}
 	
+	//use methos mat.is
 	public static boolean isLikeGround(Material mat) {
 		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
 	}
@@ -141,38 +144,18 @@ public abstract class Utils {
 		return min;
 	}
 
-	public static YamlConfiguration loadDataFile(String fileName) {
-
-		File dataFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + fileName + ".yml");
-
-		if(!dataFile.exists())
-			throw new NullPointerException("No data file found: " + fileName);
-
-		return YamlConfiguration.loadConfiguration(dataFile);
-	}
-
-	public static YamlConfiguration loadDefaultConfig(String configName) {
-		InputStream defConfigStream = TangledMain.getInstance().getResource(configName + ".yml");
+	public static YamlConfiguration getDefaultConfig(String fileName) {
+		
+		InputStream defConfigStream = TangledMain.getInstance().getResource(fileName);
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 
-	public static YamlConfiguration loadConfig(String configName) {
-
-		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
-		YamlConfiguration defConfig = loadDefaultConfig(configName);
-
-		if(!configFile.exists()) {
-			try {
-				defConfig.save(configFile);
-			} catch (IOException ignored) {}
+	public static void saveConfig(FileConfiguration config, File file) {
+		
+		try {
+			config.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-		config.setDefaults(defConfig);
-		config.options().copyDefaults(true);
-
-		return config;
 	}
-
-
 }

@@ -39,7 +39,7 @@ public class TerrainEditor {
 				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
 					continue;
 
-				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap);
+				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
 
 				if (maxNeighborPath == null)
 					continue;

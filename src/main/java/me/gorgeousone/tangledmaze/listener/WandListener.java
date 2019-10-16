@@ -12,6 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,6 +24,7 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
 
+@SuppressWarnings("deprecation")
 public class WandListener implements Listener{
 	
 	@EventHandler
@@ -95,6 +97,21 @@ public class WandListener implements Listener{
 		
 		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
 			Renderer.displayClipboard(ToolHandler.getClipboard(player));
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onPickUp(PlayerPickupItemEvent e) {
+
+		if(Utils.isMazeWand(e.getItem().getItemStack())) {
+			
+			Player player = e.getPlayer();
+
+			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))
+				Renderer.displayMaze(MazeHandler.getMaze(player));
+			
+			if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
+				Renderer.displayClipboard(ToolHandler.getClipboard(player));
+		}
 	}
 	
 	private void destroyMazeWand(Player p, ItemStack wand) {

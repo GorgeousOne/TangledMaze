@@ -23,17 +23,17 @@ public class SetDimension extends ArgCommand {
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
 		
 		Player player = (Player) sender;
-		MazeDimension dimension = MazeDimension.match(arguments[0].getString());
+		MazeDimension dimension = MazeDimension.match(args[0].getString());
 		
 		if(dimension == null) {
-			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", arguments[0].toString()));
+			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", args[0].toString()));
 			return false;
 		}
 		
-		int newDimValue = arguments[1].getInt();
+		int newDimValue = args[1].getInt();
 		Maze maze = MazeHandler.getMaze(player);
 		
 		if(maze.getDimension(dimension) != newDimValue) {
