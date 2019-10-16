@@ -144,18 +144,26 @@ public abstract class Utils {
 		return min;
 	}
 
-	public static YamlConfiguration getDefaultConfig(String fileName) {
-		
-		InputStream defConfigStream = TangledMain.getInstance().getResource(fileName);
+	public static YamlConfiguration loadDefaultConfig(String configName) {
+		InputStream defConfigStream = TangledMain.getInstance().getResource(configName + ".yml");
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 
-	public static void saveConfig(FileConfiguration config, File file) {
-		
-		try {
-			config.save(file);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public static YamlConfiguration loadConfig(String configName) {
+
+		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
+		YamlConfiguration defConfig = loadDefaultConfig(configName);
+
+		if(!configFile.exists()) {
+			try {
+				defConfig.save(configFile);
+			} catch (IOException ignored) {}
 		}
+
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+		config.setDefaults(defConfig);
+		config.options().copyDefaults(true);
+
+		return config;
 	}
 }

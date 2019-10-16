@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import me.gorgeousone.tangledmaze.generation.typechoosing.RandomBlockTypeChooser;
@@ -41,13 +42,11 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		
 		String mazePart = arguments[0].getString();
-		List<BlockType> blockTypeList = null;
+		List<BlockType> blockTypeList;
 
 		try {
-			blockTypeList = readBlockTypeList(arguments);
-//			for(int i = 1; i < arguments.length; i++)
-//				blockTypeList.add(BlockTypeReader.read(arguments[i].getString()));
-//
+			blockTypeList = readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length));
+
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
 			return false;
@@ -111,25 +110,21 @@ public class BuildCommand extends ArgCommand {
 
 		List<BlockType> blockTypeList = new ArrayList<>();
 
-		for(int i = 1; i < arguments.length; i++) {
+		for(ArgValue argument : arguments) {
 
-			String[] blockTypeName = arguments[i].getString().split("\\*");
-			int multiplier;
-			BlockType blockType;
+			String[] blockArgument = argument.getString().split("\\*");
 
-			if(blockTypeName.length == 1) {
-				multiplier = 1;
-				blockType = BlockTypeReader.read(blockTypeName[0]);
+			if (blockArgument.length == 1) {
+				blockTypeList.add(BlockTypeReader.read(blockArgument[0]));
 
-			}else {
-				multiplier = new ArgValue(ArgType.INTEGER, blockTypeName[0]).getInt();
-				blockType = BlockTypeReader.read(blockTypeName[1]);
+			} else {
+				int multiplier = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
+				BlockType blockType = BlockTypeReader.read(blockArgument[1]);
+
+				for (int k = 0; k < multiplier; k++)
+					blockTypeList.add(blockType.clone());
 			}
-
-			for(int k = 0; k < multiplier; k++)
-				blockTypeList.add(blockType.clone());
 		}
-
 		return blockTypeList;
 	}
 }

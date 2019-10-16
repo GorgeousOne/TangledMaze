@@ -77,7 +77,6 @@ public class TerrainEditor {
 				maxNeighborFloorHeight = neighborFloorHeight;
 			}
 		}
-		
 		return maxNeighborFloor;
 	}
 	
@@ -97,7 +96,6 @@ public class TerrainEditor {
 			heightDiff += terrainMap.getFloorHeight(neighbor) - floorHeight;
 			neighborsCount++;
 		}
-		
 		return heightDiff / neighborsCount;
 	}
 }

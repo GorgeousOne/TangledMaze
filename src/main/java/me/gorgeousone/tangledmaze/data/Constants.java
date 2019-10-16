@@ -12,7 +12,6 @@ import java.util.TreeSet;
 public class Constants {
 	
 	public static final String
-			INSUFFICIENT_PERMS = ChatColor.RED + "You do not have the Permission for this command.",
 			RELOAD_PERM = "tangledmaze.reload",
 			BUILD_PERM = "tangledmaze.build",
 			WAND_PERM = "tangledmaze.getwand",
@@ -47,10 +46,9 @@ public class Constants {
 			"Artifact Lv. XCIX"
 	};
 	
-	@SuppressWarnings("unchecked")
 	public static void loadConstants() {
 		
-		YamlConfiguration materialLists = Utils.getDefaultConfig("material_lists.yml");
+		YamlConfiguration materialLists = Utils.loadDefaultConfig("material_lists");
 
 		for(String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
 
