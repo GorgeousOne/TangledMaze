@@ -6,8 +6,6 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.command.api.command.BasicCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 
 public class UndoCommand extends BasicCommand {

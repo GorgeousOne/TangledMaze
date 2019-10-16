@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.UUID;
 
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.*;
 import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -108,7 +108,7 @@ public class Maze {
 	}
 	
 	public void setDimension(MazeDimension size, int newValue) {
-		dimensions.put(size, newValue);
+		dimensions.put(size, Utils.limit(newValue, 1, size.getMaxValue()));
 	}
 	
 	public void setConstructed(boolean state) {

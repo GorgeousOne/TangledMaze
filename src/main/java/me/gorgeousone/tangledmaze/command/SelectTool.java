@@ -24,10 +24,10 @@ public class SelectTool extends ArgCommand {
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
+	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
 
 		Player player = (Player) sender;
-		String toolType = args[0].getString();
+		String toolType = arguments[0].getString();
 
 		switch (toolType.toLowerCase()) {
 

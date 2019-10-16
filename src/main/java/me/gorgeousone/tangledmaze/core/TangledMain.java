@@ -1,11 +1,7 @@
 package me.gorgeousone.tangledmaze.core;
 
-import java.io.File;
-
-import me.gorgeousone.tangledmaze.util.BlockTypeReader;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,10 +16,6 @@ public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
 
-	private File langFile;
-	private YamlConfiguration defLangConfig;
-	private YamlConfiguration langConfig;
-	
 	@Override
 	public void onEnable() {
 
@@ -31,16 +23,13 @@ public class TangledMain extends JavaPlugin {
 		plugin = this;
 		
 		loadConfig();
-		loadLangConfig();
+		loadLanguage();
 		
 		Constants.loadConstants();
 		Settings.loadSettings(getConfig());
 		
 		registerListeners();
 		registerCommands();
-
-
-//		BlockTypeReader.readBlockType("oak_stairs:east:x");
 	}
 	
 	@Override
@@ -54,8 +43,8 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	public void reloadPlugin() {
-		
-		reloadLanguage();
+
+		loadLanguage();
 		reloadConfig();
 		Settings.loadSettings(getConfig());
 	}
@@ -63,7 +52,6 @@ public class TangledMain extends JavaPlugin {
 	private void registerListeners() {
 		
 		PluginManager manager = Bukkit.getPluginManager();
-		
 		manager.registerEvents(new WandListener(), this);
 		manager.registerEvents(new PlayerListener(), this);
 		manager.registerEvents(new BlockUpdateListener(), this);
@@ -72,7 +60,6 @@ public class TangledMain extends JavaPlugin {
 	private void registerCommands() {
 		
 		MazeCommand mazeCommand = new MazeCommand();
-
 		mazeCommand.addChild(new HelpCommand(mazeCommand));
 		mazeCommand.addChild(new Reload(mazeCommand));
 		mazeCommand.addChild(new GiveWand(mazeCommand));
@@ -95,32 +82,13 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	private void loadConfig() {
-		
+
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 	}
 
-	private void loadLangConfig() {
-
-		langFile = new File(getDataFolder() + File.separator + "language.yml");
-		defLangConfig = Utils.getDefaultConfig("language.yml");
-
-		if(!langFile.exists())
-			Utils.saveConfig(defLangConfig, langFile);
-
-		langConfig = YamlConfiguration.loadConfiguration(langFile);
-		langConfig.setDefaults(defLangConfig);
-		langConfig.options().copyDefaults(true);
-		
-		Utils.saveConfig(langConfig, langFile);
-		Messages.loadMessages(langConfig);
-		
-		reloadLanguage();
-	}
-	
-	private void reloadLanguage() {
-		Utils.saveConfig(langConfig, langFile);
-		Messages.loadMessages(langConfig);
+	private void loadLanguage() {
+		Messages.loadMessages(Utils.loadConfig("language"));
 	}
 }

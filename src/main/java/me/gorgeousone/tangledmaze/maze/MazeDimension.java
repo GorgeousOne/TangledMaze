@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.util;
+package me.gorgeousone.tangledmaze.maze;
 
 import java.util.Arrays;
 
@@ -38,11 +38,9 @@ public enum MazeDimension {
 	public static MazeDimension match(String playerInput) {
 		
 		for(MazeDimension dimension : MazeDimension.values()) {
-			
 			if(dimension.commandName().equalsIgnoreCase(playerInput))
 				return dimension;
 		}
-		
 		return null;
 	}
 	

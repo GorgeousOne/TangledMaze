@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.gorgeousone.tangledmaze.generation.RoofGenerator;
-import me.gorgeousone.tangledmaze.generation.WallGenerator;
-import me.gorgeousone.tangledmaze.generation.FloorGenerator;
-import me.gorgeousone.tangledmaze.generation.PathGenerator;
+import me.gorgeousone.tangledmaze.generation.typechoosing.RandomBlockTypeChooser;
 
-import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.handler.Renderer;
+import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.util.BlockType;
 import me.gorgeousone.tangledmaze.util.BlockTypeReader;
 import org.bukkit.command.CommandSender;
@@ -22,35 +20,20 @@ import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
-import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.mapmaking.TerrainEditor;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildCommand extends ArgCommand {
-
-	private PathGenerator pathGenerator;
-	private TerrainEditor terrainEditor;
-	private WallGenerator wallGenerator;
-	private FloorGenerator floorGenerator;
-	private RoofGenerator roofGenerator;
 
 	public BuildCommand(MazeCommand mazeCommand) {
 		super("build", null, mazeCommand);
 		
 		addArg(new Argument("part", ArgType.STRING, "walls", "floor", "roof"));
 		addArg(new Argument("blocks...", ArgType.STRING));
-
-		pathGenerator = new PathGenerator();
-		terrainEditor = new TerrainEditor();
-		wallGenerator = new WallGenerator();
-		floorGenerator = new FloorGenerator();
-		roofGenerator = new RoofGenerator();
 	}
 
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] args) {
+	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, true, false);
@@ -58,19 +41,14 @@ public class BuildCommand extends ArgCommand {
 		if(maze == null)
 			return false;
 		
-		String mazePart = args[0].getString();
-		List<BlockType> blockTypes;
+		String mazePart = arguments[0].getString();
+		List<BlockType> blockTypeList;
 
 		try {
-			blockTypes = deserializeBlockTypes(Arrays.copyOfRange(args, 1, args.length));
+			blockTypeList = readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length));
 
 		} catch (TextException ex) {
 			ex.sendTextTo(player);
-			return false;
-		}
-
-		if(blockTypes.isEmpty()) {
-			player.sendMessage("mhh...");
 			return false;
 		}
 
@@ -82,13 +60,13 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			if(BuildHandler.getFloorBlocks(maze) != null) {
+			if(BuildHandler.hasFloor(maze)) {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				player.sendMessage("/tangledmaze unbuild floor");
 				return false;
 			}
 
-			floorGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
+			BuildHandler.buildFloor(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 		
 		case "roof":
@@ -98,13 +76,13 @@ public class BuildCommand extends ArgCommand {
 				return false;
 			}
 
-			if(BuildHandler.getRoofBlocks(maze) != null) {
+			if(BuildHandler.hasRoof(maze)) {
 				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 				player.sendMessage("/tangledmaze unbuild roof");
 				return false;
 			}
 
-			roofGenerator.generatePart(BuildHandler.getTerrainMap(maze), blockTypes, null);
+			BuildHandler.buildRoof(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 			
 		case "walls":
@@ -116,42 +94,37 @@ public class BuildCommand extends ArgCommand {
 			}
 
 			Renderer.hideMaze(maze);
-			TerrainMap terrainMap = new TerrainMap(maze);
-
-			pathGenerator.generatePaths(terrainMap);
-			terrainEditor.editTerrain(terrainMap);
-			wallGenerator.generatePart(terrainMap, blockTypes, null);
-			BuildHandler.setTerrainMap(maze, terrainMap);
-
-			ToolHandler.resetToDefaultTool(maze.getPlayer());
-			Messages.MESSAGE_MAZE_BUILDING_STARTED.sendTo(maze.getPlayer());
-
+			ToolHandler.removeTool(maze.getPlayer());
+			BuildHandler.buildWalls(maze, blockTypeList, new RandomBlockTypeChooser());
 			break;
 
 		default:
 			Messages.ERROR_INVALID_MAZE_PART.sendTo(player, new PlaceHolder("mazepart", mazePart));
-			break;
+			return false;
 		}
 		
 		return true;
 	}
 
-	private List<BlockType> deserializeBlockTypes(ArgValue[] serializedMaterials) throws TextException {
+	private List<BlockType> readBlockTypeList(ArgValue[] arguments) throws TextException {
 
-		List<BlockType> wallMaterials = new ArrayList<>();
+		List<BlockType> blockTypeList = new ArrayList<>();
 
-		for(ArgValue stringMat : serializedMaterials) {
+		for(ArgValue argument : arguments) {
 
-			wallMaterials.add(BlockTypeReader.read(stringMat.getString()));
-//			String materialString = materialValue.getString();
-//			Material material = Material.matchMaterial(materialString);
-//
-//			if(material == null || !material.isBlock())
-//				throw new TextException(Messages.ERROR_INVALID_BLOCK_NAME, new PlaceHolder("block", materialString));
-//			else
-//				wallMaterials.add(material);
+			String[] blockArgument = argument.getString().split("\\*");
+
+			if (blockArgument.length == 1) {
+				blockTypeList.add(BlockTypeReader.read(blockArgument[0]));
+
+			} else {
+				int multiplier = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
+				BlockType blockType = BlockTypeReader.read(blockArgument[1]);
+
+				for (int k = 0; k < multiplier; k++)
+					blockTypeList.add(blockType.clone());
+			}
 		}
-
-		return wallMaterials;
+		return blockTypeList;
 	}
 }
