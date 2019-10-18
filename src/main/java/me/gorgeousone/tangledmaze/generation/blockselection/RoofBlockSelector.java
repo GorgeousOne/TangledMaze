@@ -48,7 +48,7 @@ public class RoofBlockSelector extends AbstractBlockSelector{
 
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 
-			if(!terrainMap.contains(neighbor))
+			if(!terrainMap.contains(neighbor) || terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE)
 				continue;
 
 			int neighborRoofHeight = terrainMap.getRoofHeight(neighbor);

@@ -48,10 +48,10 @@ public final class BlockGenerator {
 						return;
 				}
 
+				this.cancel();
+
 				if(callback != null)
 					callback.actionPerformed(null);
-
-				this.cancel();
 			}
 		}.runTaskTimer(TangledMain.getInstance(), 0, 1);
 	}

@@ -148,16 +148,15 @@ public final class BuildHandler {
 
 	private static void reactivateMaze(Maze maze) {
 
-		removeMaze(maze);
-		maze.setConstructed(false);
-		maze.updateHeights();
-		
 		new BukkitRunnable() {
 			
 			@Override
 			public void run() {
+				removeMaze(maze);
+				maze.setConstructed(false);
+				maze.updateHeights();
 				Renderer.displayMaze(maze);
 			}
-		}.runTaskLater(TangledMain.getInstance(), 2);
+		}.runTaskLater(TangledMain.getInstance(), 20);
 	}
 }

@@ -35,14 +35,15 @@ public class SetDimension extends ArgCommand {
 		
 		int newDimValue = args[1].getInt();
 		Maze maze = MazeHandler.getMaze(player);
-		
-		if(maze.getDimension(dimension) != newDimValue) {
-			maze.setDimension(dimension, newDimValue);
-		
+
+		int oldDimensionValue = (maze.getDimension(dimension));
+		maze.setDimension(dimension, newDimValue);
+
+		if(oldDimensionValue != newDimValue) {
 			Messages.MESSAGE_DIMENSION_CHANGED.sendTo(
 					player,
 					new PlaceHolder("dimension", dimension.toString()), 
-					new PlaceHolder("number", newDimValue));
+					new PlaceHolder("number", maze.getDimension(dimension)));
 		}
 		
 		return true;

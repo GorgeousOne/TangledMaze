@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import me.gorgeousone.tangledmaze.command.api.argument.ArgType;
@@ -73,7 +74,7 @@ public abstract class ArgCommand extends BasicCommand {
 
 		} catch (IllegalArgumentException ex) {
 
-			sender.sendMessage(ex.getMessage());
+			sender.sendMessage(ChatColor.RED + "Usage: " + ex.getMessage());
 			return false;
 		}
 
