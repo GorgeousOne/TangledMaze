@@ -214,7 +214,7 @@ public class PathGenerator {
 			}
 			
 			Collections.shuffle(shuffledCardinalDirs);
-			PathSegment newPath = createPathSegment(terrainMap, currentPathEnd, wallWidth, pathWidth, pathLength);
+			PathSegment newPath = createPathSegment(terrainMap, currentPathEnd, wallWidth, pathWidth);
 
 			if(newPath == null) {
 			
@@ -242,8 +242,7 @@ public class PathGenerator {
 			TerrainMap terrainMap,
 			Vec2 lastPathEnd,
 			int wallWidth,
-			int pathWidth,
-			int pathLength) {
+			int pathWidth) {
 		
 		Collections.shuffle(shuffledCardinalDirs);
 		

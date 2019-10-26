@@ -25,7 +25,7 @@ import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
 
 @SuppressWarnings("deprecation")
-public class WandListener implements Listener{
+public class WandListener implements Listener {
 	
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {

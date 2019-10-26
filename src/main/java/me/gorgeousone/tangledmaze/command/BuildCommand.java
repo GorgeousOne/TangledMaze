@@ -2,14 +2,15 @@ package me.gorgeousone.tangledmaze.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import me.gorgeousone.tangledmaze.generation.typechoosing.RandomBlockTypeChooser;
 
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.BlockType;
-import me.gorgeousone.tangledmaze.util.BlockTypeReader;
+import me.gorgeousone.tangledmaze.util.*;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,8 +21,6 @@ import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
-import me.gorgeousone.tangledmaze.util.PlaceHolder;
-import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildCommand extends ArgCommand {
 
@@ -118,13 +117,50 @@ public class BuildCommand extends ArgCommand {
 				blockTypeList.add(BlockTypeReader.read(blockArgument[0]));
 
 			} else {
-				int multiplier = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
+				ArgValue countValue = new ArgValue(ArgType.INTEGER, blockArgument[0]);
+				int count = Utils.limit(countValue.getInt(), 1, 100);
+
 				BlockType blockType = BlockTypeReader.read(blockArgument[1]);
 
-				for (int k = 0; k < multiplier; k++)
+				for (int k = 0; k < count; k++)
 					blockTypeList.add(blockType.clone());
 			}
 		}
 		return blockTypeList;
+	}
+
+	@Override
+	public List<String> getTabList(String[] arguments) {
+
+		if (arguments.length < getArgs().size())
+			return super.getTabList(arguments);
+
+		List<String> tabList =new LinkedList<>();
+
+		String tabbedArg = arguments[arguments.length-1];
+		String materialString = "";
+		String restString = "";
+
+		if(tabbedArg.endsWith("*"))
+			restString = tabbedArg;
+
+		else if(!tabbedArg.equals("")) {
+			String[] argParts = (tabbedArg).split("\\*");
+			materialString = argParts[argParts.length-1];
+			restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length-1)) + "*";
+		}
+
+		for(Material material : Material.values()) {
+
+			if(!material.isBlock())
+				continue;
+
+			String materialName = material.name().toLowerCase();
+
+			if(materialName.startsWith(materialString))
+				tabList.add(restString + materialName);
+		}
+
+		return tabList;
 	}
 }

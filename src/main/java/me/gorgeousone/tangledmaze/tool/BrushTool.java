@@ -24,7 +24,7 @@ public class BrushTool extends Tool {
 	public void interact(Block clickedBlock, Action interaction) {
 
 		Maze maze = MazeHandler.getMaze(getPlayer());
-		ClipAction brushing = null;
+		ClipAction brushing;
 		
 		if(interaction == Action.RIGHT_CLICK_BLOCK)
 			brushing = maze.getErasure(clickedBlock);

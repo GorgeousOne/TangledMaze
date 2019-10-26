@@ -23,6 +23,28 @@ public final class BlockGenerator {
 			TerrainMap terrainMap,
 			ActionListener callback) {
 
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+
+				if(blockTypeChooser != null) {
+					for (BlockState block : blocksToUpdate) {
+
+						BlockType blockType = blockTypeChooser.chooseBlockType(block, blockTypeList, terrainMap);
+						block.setType(blockType.getMaterial());
+						block.setBlockData(blockType.getData());
+					}
+				}
+
+				updateBlocks(blocksToUpdate, callback);
+			}
+		}.runTaskAsynchronously(TangledMain.getInstance());
+	}
+
+	private static void updateBlocks(
+			Set<BlockState> blocksToUpdate,
+			ActionListener callback) {
+
 		Iterator<BlockState> iter = blocksToUpdate.iterator();
 
 		new BukkitRunnable() {
@@ -32,17 +54,7 @@ public final class BlockGenerator {
 				long timer = System.currentTimeMillis();
 
 				while(iter.hasNext()) {
-
-					BlockState nextBlock = iter.next();
-
-					if(blockTypeChooser != null) {
-						BlockType blockType = blockTypeChooser.chooseBlockType(nextBlock, blockTypeList, terrainMap);
-						nextBlock.setType(blockType.getMaterial());
-						nextBlock.setBlockData(blockType.getData());
-					}
-
-					nextBlock.update(true, false);
-					iter.remove();
+					iter.next().update(true, false);
 
 					if(System.currentTimeMillis() - timer >= 49)
 						return;

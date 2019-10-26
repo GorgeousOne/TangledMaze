@@ -18,7 +18,8 @@ public class TerrainMap {
 	
 	private Maze maze;
 	private MazeAreaType[][] shapeMap;
-	private int[][] floorHeightMap, wallHeightMap;
+	private int[][] floorHeightMap;
+	private int[][] wallHeightMap;
 	
 	private Vec2 minimum, maximum;
 	private Vec2 pathStart;

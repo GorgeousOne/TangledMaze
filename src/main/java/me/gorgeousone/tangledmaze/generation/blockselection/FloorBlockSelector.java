@@ -22,7 +22,7 @@ public class FloorBlockSelector extends AbstractBlockSelector {
 		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
 
-				if(terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
+				if(terrainMap.getAreaType(x, z) != MazeAreaType.PATH)
 					continue;
 
 				int floorHeight = terrainMap.getFloorHeight(x, z);

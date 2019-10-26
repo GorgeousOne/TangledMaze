@@ -7,13 +7,17 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import me.gorgeousone.tangledmaze.util.Vec2;
 
+/**A class for storing a 2D area. The area consists of a map with (unique) {@link Vec2}s for the x- and z-coordinate of each location
+ * mapped to an int as a y-coordinate. Additionally there is a list of Vec2s for the border for the area.
+ * Clips are typically created with ClipShape classes, e.g. {@link me.gorgeousone.tangledmaze.clip.shape.Rectangle}.
+ * See {@link me.gorgeousone.tangledmaze.core.Maze} and {@link me.gorgeousone.tangledmaze.tool.ClippingTool} for uses of this class.
+ */
 public class Clip {
 	
 	private World world;
@@ -40,10 +44,6 @@ public class Clip {
 		return fill.keySet();
 	}
 	
-	public Set<Vec2> getFill(Chunk chunk) {
-		return getLocsInChunk((TreeSet<Vec2>) fill.keySet(), chunk);
-	}
-
 	public void addFill(Vec2 loc, int height) {
 		fill.put(loc, height);
 	}
@@ -58,16 +58,8 @@ public class Clip {
 			removeBorder(loc);
 	}
 		
-	public void removeFill(Location loc) {
-		removeFill(new Vec2(loc));
-	}
-	
 	public Set<Vec2> getBorder() {
 		return border;
-	}
-
-	public Set<Vec2> getBorder(Chunk chunk) {
-		return getLocsInChunk((TreeSet<Vec2>) getBorder(), chunk);
 	}
 
 	public void addBorder(Vec2 loc) {
@@ -78,10 +70,6 @@ public class Clip {
 	
 	public void removeBorder(Vec2 loc) {
 		border.remove(loc);
-	}
-	
-	public void removeBorder(Location loc) {
-		border.remove(new Vec2(loc));
 	}
 	
 	public int size() {
@@ -110,16 +98,6 @@ public class Clip {
 		return blocks;
 	}
 
-	public Set<Location> getBorderBlocks(Chunk chunk) {
-		
-		Set<Location> blocks = new HashSet<>();
-		
-		for(Vec2 border : getBorder(chunk))
-			blocks.add(new Location(getWorld(), border.getX(), getHeight(border), border.getZ()));
-		
-		return blocks;
-	}
-
 	public boolean isBorderBlock(Block block) {
 		
 		if(block.getWorld() != getWorld())
@@ -142,34 +120,7 @@ public class Clip {
 		return fill.containsKey(loc);
 	}
 	
-	public boolean borderContains(Location loc) {
-		return borderContains(new Vec2(loc));
-	}
-	
 	public boolean borderContains(Vec2 loc) {
 		return border.contains(loc);
-	}
-	
-	private Set<Vec2> getLocsInChunk(TreeSet<Vec2> locSet, Chunk chunk) {
-	
-		int chunkMinX = chunk.getX() * 16,
-			chunkMinZ = chunk.getZ() * 16,
-			chunkMaxX = chunkMinX + 15,
-			chunkMaxZ = chunkMinZ + 15;
-		
-		Vec2 chunkStart = new Vec2(chunkMinX, chunkMinZ);
-		Vec2 chunkEnd   = new Vec2(chunkMaxX, chunkMaxZ);
-					
-		TreeSet<Vec2> subSet = (TreeSet<Vec2>) locSet.subSet(chunkStart, chunkEnd);
-		TreeSet<Vec2> chunkSet = new TreeSet<>();
-		
-		for(int iterZ = chunkMinZ; iterZ <= chunkMaxZ; iterZ++) {
-	
-			chunkStart.setZ(iterZ);
-			chunkEnd.setZ(iterZ);
-			chunkSet.addAll(subSet.subSet(chunkStart, chunkEnd));
-		}
-		
-		return chunkSet;
 	}
 }

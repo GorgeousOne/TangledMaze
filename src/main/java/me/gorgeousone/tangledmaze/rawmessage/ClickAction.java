@@ -8,7 +8,7 @@ public enum ClickAction {
 		
 	private String action;
 	
-	private ClickAction(String action) {
+	ClickAction(String action) {
 		this.action = action;
 	}
 	

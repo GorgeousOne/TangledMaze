@@ -14,13 +14,14 @@ public abstract class ClipShape {
 	public static final Rectangle RECT = new Rectangle();
 	public static final Circle CIRCLE = new Circle();
 	
+	@SuppressWarnings("SameReturnValue")
 	public abstract int getVertexCount();
 	
 	public abstract Clip createClip(ArrayList<Location> vertices);
 	
 	public static ArrayList<Location> createRectangularVertices(Location vertex0, Location vertex2) {
 		
-		ArrayList<Location> vertices = new ArrayList<>();
+		ArrayList<Location> vertices;
 		World world = vertex0.getWorld();
 		
 		int maxY = Math.max(vertex0.getBlockY(), vertex2.getBlockY());

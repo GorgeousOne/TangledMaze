@@ -58,7 +58,7 @@ public class HoverText {
 		StringBuilder hoverText = new StringBuilder(",\"hoverEvent\":{\"action\":\"show_text\",\"value\":[");
 		
 		for(ColorText element : texts)
-			hoverText.append("{" + element.toString() + "},");
+			hoverText.append("{").append(element.toString()).append("},");
 
 		hoverText.deleteCharAt(hoverText.length()-1);
 		hoverText.append("]}");

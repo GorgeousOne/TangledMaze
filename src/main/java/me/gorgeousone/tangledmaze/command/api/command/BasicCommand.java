@@ -29,11 +29,11 @@ public abstract class BasicCommand {
 	private Set<String> aliases;
 	private ParentCommand parent;
 	
-	public BasicCommand(String name, String permission) {
+	protected BasicCommand(String name, String permission) {
 		this(name, permission, null);
 	}
 
-	public BasicCommand(String name, String permission, ParentCommand parent) {
+	protected BasicCommand(String name, String permission, ParentCommand parent) {
 		
 		this.name = name;
 		this.permission = permission;
@@ -69,19 +69,19 @@ public abstract class BasicCommand {
 
 	protected abstract boolean onExecute(CommandSender sender, String[] arguments);
 
-	public void execute(CommandSender sender, String[] arguments) {
+	public boolean execute(CommandSender sender, String[] arguments) {
 		
 		if(!(sender instanceof Player)) {
 			sender.sendMessage("Only players can execute this command.");
-			return;
+			return false;
 		}
 		
 		if(permission != null && !sender.hasPermission(getPermission())) {
 			sender.sendMessage(ChatColor.RED + "You do not have the permission for this command.");
-			return;
+			return false;
 		}
 
-		onExecute(sender, arguments);
+		return onExecute(sender, arguments);
 	}
 	
 	public List<String> getTabList(String[] arguments) {

@@ -15,11 +15,11 @@ public abstract class ArgCommand extends BasicCommand {
 
 	private List<Argument> arguments;
 
-	public ArgCommand(String name, String permission) {
+	protected ArgCommand(String name, String permission) {
 		this(name, permission, null);
 	}
 
-	public ArgCommand(String name, String permission, ParentCommand parent) {
+	protected ArgCommand(String name, String permission, ParentCommand parent) {
 
 		super(name, permission, parent);
 		this.arguments = new ArrayList<>();
@@ -50,13 +50,13 @@ public abstract class ArgCommand extends BasicCommand {
 	@Override
 	public List<String> getTabList(String[] arguments) {
 
-		if (this.arguments.size() < arguments.length)
+		if (getArgs().size() < arguments.length)
 			return new LinkedList<>();
 
 		return this.arguments.get(arguments.length - 1).getTabList();
 	}
 
-	protected abstract boolean onExecute(CommandSender sender, ArgValue[] values);
+	protected abstract boolean onExecute(CommandSender sender, ArgValue[] arguments);
 
 	@Override
 	protected boolean onExecute(CommandSender sender, String[] stringArgs) {

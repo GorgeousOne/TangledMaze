@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
 
+@SuppressWarnings("ALL")
 public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 	
 	private int x, z;
@@ -115,6 +116,7 @@ public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 		return "vec2[x:" + x + ",z:" + z + "]";
 	}
 	
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public Vec2 clone() {
 		return new Vec2(x, z);
@@ -154,8 +156,8 @@ public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 		
 		Map<String, Object> data = new HashMap<>();
 		
-		data.put("x", Integer.valueOf(x));
-	    data.put("z", Integer.valueOf(z));
+		data.put("x", x);
+	    data.put("z", z);
 	    
 		return data;
 	}

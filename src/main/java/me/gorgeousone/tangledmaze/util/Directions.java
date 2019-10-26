@@ -1,7 +1,5 @@
 package me.gorgeousone.tangledmaze.util;
 
-import org.bukkit.util.Vector;
-
 public enum Directions {
 	
 	//putting opposite values next to each other can help quicken methods like Maze.sealsMaze();
@@ -15,7 +13,7 @@ public enum Directions {
 	NORTH_EAST(new Vec2( 1, -1));
 
 	private Vec2 facing;
-	
+
 	Directions(Vec2 facing) {
 		this.facing = facing;
 	}

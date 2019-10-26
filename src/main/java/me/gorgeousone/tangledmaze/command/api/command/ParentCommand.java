@@ -7,16 +7,17 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class ParentCommand extends BasicCommand {
 	
 	private List<BasicCommand> children;
 	private String childrenType;
 	
-	public ParentCommand(String name, String permission, String childrenType) {
+	protected ParentCommand(String name, String permission, String childrenType) {
 		this(name, permission, childrenType, null);
 	}
-	
-	public ParentCommand(String name, String permission, String childrenType, ParentCommand parent) {
+
+	protected ParentCommand(String name, String permission, String childrenType, ParentCommand parent) {
 		
 		super(name, permission, parent);
 
@@ -33,7 +34,7 @@ public abstract class ParentCommand extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onExecute(CommandSender sender, String[] arguments) {
+	protected boolean onExecute(CommandSender sender, String[] arguments) {
 		
 		if(arguments.length == 0) {
 			sendUsage(sender);
@@ -43,7 +44,7 @@ public abstract class ParentCommand extends BasicCommand {
 		for(BasicCommand child : getChildren()) {
 			
 			if(child.matches(arguments[0]))
-				return child.onExecute(sender, Arrays.copyOfRange(arguments, 1, arguments.length));
+				return child.execute(sender, Arrays.copyOfRange(arguments, 1, arguments.length));
 		}
 		
 		sendUsage(sender);

@@ -8,7 +8,7 @@ public enum ArgType {
 	
 	private String simpleName;
 	
-	private ArgType(String simpleName) {
+	ArgType(String simpleName) {
 		this.simpleName = simpleName;
 	}
 	

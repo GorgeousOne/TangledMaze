@@ -25,11 +25,11 @@ import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
  */
 public final class BuildHandler {
 	
-	private static Map<Maze, Set<BlockState>> builtWallBlocks = new HashMap<>();
-	private static Map<Maze, Set<BlockState>> builtFloorBlocks = new HashMap<>();
-	private static Map<Maze, Set<BlockState>> builtRoofBlocks = new HashMap<>();
+	private static final Map<Maze, Set<BlockState>> builtWallBlocks = new HashMap<>();
+	private static final Map<Maze, Set<BlockState>> builtFloorBlocks = new HashMap<>();
+	private static final Map<Maze, Set<BlockState>> builtRoofBlocks = new HashMap<>();
 
-	private static Map<Maze, TerrainMap> terrainMaps = new HashMap<>();
+	private static final Map<Maze, TerrainMap> terrainMaps = new HashMap<>();
 	
  	private BuildHandler() {}
 

@@ -13,7 +13,7 @@ public enum MazeDimension {
 	private int defaultValue;
 	private int maxValue;
 	
-	private MazeDimension(int defaultValue, int maxValue) {
+	MazeDimension(int defaultValue, int maxValue) {
 		this.defaultValue = defaultValue;
 		this.maxValue = maxValue;
 	}

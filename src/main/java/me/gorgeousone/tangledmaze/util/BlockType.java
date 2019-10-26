@@ -1,7 +1,6 @@
 package me.gorgeousone.tangledmaze.util;
 
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 
 public class BlockType {
@@ -26,6 +25,7 @@ public class BlockType {
 		return data;
 	}
 
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public BlockType clone() {
 		return new BlockType(material, data.clone());

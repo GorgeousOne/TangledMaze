@@ -71,7 +71,7 @@ public class RawElement {
 		StringBuilder out = new StringBuilder("\"text\":\"\",\"extra\":[");
 		
 		for(ColorText text : texts)
-			out.append("{" + text.toString() + "},");
+			out.append("{").append(text.toString()).append("},");
 
 		out.deleteCharAt(out.length()-1);
 		out.append("]");

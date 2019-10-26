@@ -27,7 +27,7 @@ public enum Color {
 	
 	private String format;
 	
-	private Color(String format) {
+	Color(String format) {
 		this.format = format;
 	}
 	

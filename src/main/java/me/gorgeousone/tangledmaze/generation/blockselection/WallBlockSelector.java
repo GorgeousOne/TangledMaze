@@ -24,7 +24,7 @@ public class WallBlockSelector extends AbstractBlockSelector {
 
 				int floorHeight = terrainMap.getFloorHeight(x, z);
 
-				for(int relHeight = 1; relHeight <= terrainMap.getWallHeight(x, z); relHeight++) {
+				for(int relHeight = 0; relHeight <= terrainMap.getWallHeight(x, z); relHeight++) {
 
 					Block block = new Location(terrainMap.getMaze().getWorld() , x, floorHeight + relHeight, z).getBlock();
 

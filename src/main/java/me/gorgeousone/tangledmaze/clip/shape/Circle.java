@@ -10,9 +10,7 @@ import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
 public class Circle extends ClipShape {
-	
-	private static float circleSmoothing = -0.25f;
-	
+
 	@Override
 	public int getVertexCount() {
 		return 2;
@@ -41,9 +39,10 @@ public class Circle extends ClipShape {
 		
 		int maxY = Utils.getMaxHeight(vertices);
 		
-		for(float x = (float) -radiusX; x <= radiusX; x++) {
-			for(float z = (float) -radiusZ; z <= radiusZ; z++) {
-				
+		for(float x = -radiusX; x <= radiusX; x++) {
+			for(float z = -radiusZ; z <= radiusZ; z++) {
+
+				float circleSmoothing = -0.25f;
 				if(!isInEllipse(x+0.5f, z+0.5f, distortionZ, radiusX + circleSmoothing))
 					continue;
 				
