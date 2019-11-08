@@ -14,10 +14,10 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.command.api.argument.ArgType;
-import me.gorgeousone.tangledmaze.command.api.argument.ArgValue;
-import me.gorgeousone.tangledmaze.command.api.argument.Argument;
-import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
+import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
+import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
 import me.gorgeousone.tangledmaze.core.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
@@ -27,7 +27,7 @@ public class BuildCommand extends ArgCommand {
 	public BuildCommand(MazeCommand mazeCommand) {
 		super("build", null, mazeCommand);
 		
-		addArg(new Argument("part", ArgType.STRING, "walls", "floor", "roof"));
+		addArg(new Argument("part", ArgType.STRING,"walls", "floor", "roof"));
 		addArg(new Argument("blocks...", ArgType.STRING));
 	}
 
@@ -46,8 +46,12 @@ public class BuildCommand extends ArgCommand {
 		try {
 			blockTypeList = readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length));
 
-		} catch (TextException ex) {
-			ex.sendTextTo(player);
+		}catch(TextException textEx) {
+			textEx.sendTextTo(player);
+			return false;
+
+		}catch (Exception ex) {
+			player.sendMessage(ex.getMessage());
 			return false;
 		}
 
@@ -145,9 +149,12 @@ public class BuildCommand extends ArgCommand {
 			restString = tabbedArg;
 
 		else if(!tabbedArg.equals("")) {
+
 			String[] argParts = (tabbedArg).split("\\*");
 			materialString = argParts[argParts.length-1];
-			restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length-1)) + "*";
+
+			if(argParts.length > 1)
+				restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length-1)) + "*";
 		}
 
 		for(Material material : Material.values()) {

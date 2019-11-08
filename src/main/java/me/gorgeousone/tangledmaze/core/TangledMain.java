@@ -6,8 +6,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.command.*;
-import me.gorgeousone.tangledmaze.command.api.handler.CommandCompleter;
-import me.gorgeousone.tangledmaze.command.api.handler.CommandHandler;
+import me.gorgeousone.tangledmaze.command.framework.handler.CommandCompleter;
+import me.gorgeousone.tangledmaze.command.framework.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.data.*;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.listener.*;

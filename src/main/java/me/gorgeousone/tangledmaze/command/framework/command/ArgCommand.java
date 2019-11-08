@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.command.api.command;
+package me.gorgeousone.tangledmaze.command.framework.command;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -7,9 +7,9 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import me.gorgeousone.tangledmaze.command.api.argument.ArgType;
-import me.gorgeousone.tangledmaze.command.api.argument.ArgValue;
-import me.gorgeousone.tangledmaze.command.api.argument.Argument;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
+import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
 
 public abstract class ArgCommand extends BasicCommand {
 

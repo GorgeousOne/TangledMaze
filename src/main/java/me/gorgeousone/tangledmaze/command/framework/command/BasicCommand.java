@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.command.api.command;
+package me.gorgeousone.tangledmaze.command.framework.command;
 
 import java.util.HashSet;
 import java.util.LinkedList;

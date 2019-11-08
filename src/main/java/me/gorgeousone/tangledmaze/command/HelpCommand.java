@@ -3,10 +3,10 @@ package me.gorgeousone.tangledmaze.command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import me.gorgeousone.tangledmaze.command.api.argument.ArgType;
-import me.gorgeousone.tangledmaze.command.api.argument.ArgValue;
-import me.gorgeousone.tangledmaze.command.api.argument.Argument;
-import me.gorgeousone.tangledmaze.command.api.command.ArgCommand;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
+import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
+import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
+import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;

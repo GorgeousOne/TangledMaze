@@ -36,7 +36,6 @@ public class Maze {
 		clip = new Clip(world);
 		history = new ActionHistory();
 		exits = new Stack<>();
-
 		dimensions = new HashMap<>();
 
 		for(MazeDimension dimension : MazeDimension.values())
