@@ -13,7 +13,7 @@ import org.bukkit.block.Block;
 
 import me.gorgeousone.tangledmaze.util.Vec2;
 
-/**A class for storing a 2D area. The area consists of a map with (unique) {@link Vec2}s for the x- and z-coordinate of each location
+/*A class for storing a 2D area. The area consists of a map with (unique) {@link Vec2}s for the x- and z-coordinate of each location
  * mapped to an int as a y-coordinate. Additionally there is a list of Vec2s for the border for the area.
  * Clips are typically created with ClipShape classes, e.g. {@link me.gorgeousone.tangledmaze.clip.shape.Rectangle}.
  * See {@link me.gorgeousone.tangledmaze.core.Maze} and {@link me.gorgeousone.tangledmaze.tool.ClippingTool} for uses of this class.
@@ -27,7 +27,6 @@ public class Clip {
 	public Clip(World world) {
 
 		this.world = world;
-		
 		fill = new TreeMap<>();
 		border = new TreeSet<>();
 	}
@@ -36,7 +35,7 @@ public class Clip {
 		return world;
 	}
 	
-	public Set<Entry<Vec2, Integer>> getFillSet() {
+	public Set<Entry<Vec2, Integer>> getFillEntries() {
 		return fill.entrySet();
 	}
 	
@@ -44,32 +43,35 @@ public class Clip {
 		return fill.keySet();
 	}
 	
-	public void addFill(Vec2 loc, int height) {
-		fill.put(loc, height);
+	public void addFill(Vec2 point, int height) {
+		fill.put(point, height);
 	}
 	
-	public void addAllFill(Map<Vec2, Integer> locs) {
-		fill.putAll(locs);
+	public void addAllFill(Map<Vec2, Integer> points) {
+		fill.putAll(points);
 	}
 	
-	public void removeFill(Vec2 loc) {
-
-		if(fill.remove(loc) != null)
-			removeBorder(loc);
+	public void removeFill(Vec2 point) {
+		if(fill.remove(point) != null)
+			removeBorder(point);
 	}
 		
 	public Set<Vec2> getBorder() {
 		return border;
 	}
 
-	public void addBorder(Vec2 loc) {
+	public void addBorder(Vec2 point) {
 		
-		if(fill.containsKey(loc))
-			border.add(loc);
+		if(fill.containsKey(point))
+			border.add(point);
+	}
+
+	public void addAllBorder(Set<Vec2> points) {
+		border.addAll(points);
 	}
 	
-	public void removeBorder(Vec2 loc) {
-		border.remove(loc);
+	public void removeBorder(Vec2 point) {
+		border.remove(point);
 	}
 	
 	public int size() {
@@ -80,12 +82,12 @@ public class Clip {
 		return border.size();
 	}
 	
-	public int getHeight(Vec2 loc) {
-		return fill.get(loc);
+	public int getHeight(Vec2 point) {
+		return fill.get(point);
 	}
 	
-	public Location getLocation(Vec2 loc) {
-		return new Location(getWorld(), loc.getX(), getHeight(loc), loc.getZ());
+	public Location getLocation(Vec2 point) {
+		return new Location(getWorld(), point.getX(), getHeight(point), point.getZ());
 	}
 	
 	public Set<Location> getBorderBlocks() {
@@ -104,23 +106,22 @@ public class Clip {
 			return false;
 		
 		Vec2 blockVec = new Vec2(block);
-		
 		return borderContains(blockVec) && getHeight(blockVec) == block.getY();
 	}
 	
-	public boolean contains(Location loc) {
+	public boolean contains(Location point) {
 
-		if(loc.getWorld() != getWorld())
+		if(point.getWorld() != getWorld())
 			return false;
 
-		return contains(new Vec2(loc));
+		return contains(new Vec2(point));
 	}
 	
-	public boolean contains(Vec2 loc) {
-		return fill.containsKey(loc);
+	public boolean contains(Vec2 point) {
+		return fill.containsKey(point);
 	}
 	
-	public boolean borderContains(Vec2 loc) {
-		return border.contains(loc);
+	public boolean borderContains(Vec2 point) {
+		return border.contains(point);
 	}
 }

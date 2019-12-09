@@ -9,7 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
@@ -25,20 +25,22 @@ public abstract class BasicCommand {
 	
 	private String name;
 	private String permission;
+	private boolean isPlayerRequired;
 
 	private Set<String> aliases;
 	private ParentCommand parent;
-	
-	protected BasicCommand(String name, String permission) {
-		this(name, permission, null);
+
+	protected BasicCommand(String name, String permission, boolean isPlayerRequired) {
+		this(name, permission, isPlayerRequired,null);
 	}
 
-	protected BasicCommand(String name, String permission, ParentCommand parent) {
+	protected BasicCommand(String name, String permission, boolean isPlayerRequired, ParentCommand parent) {
 		
 		this.name = name;
 		this.permission = permission;
+		this.isPlayerRequired = isPlayerRequired;
 		this.parent = parent;
-		
+
 		aliases = new HashSet<>();
 		aliases.add(name);
 	}
@@ -67,21 +69,21 @@ public abstract class BasicCommand {
 		return parent;
 	}
 
-	protected abstract boolean onExecute(CommandSender sender, String[] arguments);
+	protected abstract boolean onCommand(CommandSender sender, String[] arguments);
 
-	public boolean execute(CommandSender sender, String[] arguments) {
+	public void execute(CommandSender sender, String[] arguments) {
 		
-		if(!(sender instanceof Player)) {
-			sender.sendMessage("Only players can execute this command.");
-			return false;
+		if(isPlayerRequired && !(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + "Only players can execute this command.");
+			return;
 		}
 		
 		if(permission != null && !sender.hasPermission(getPermission())) {
 			sender.sendMessage(ChatColor.RED + "You do not have the permission for this command.");
-			return false;
+			return;
 		}
 
-		return onExecute(sender, arguments);
+		onCommand(sender, arguments);
 	}
 	
 	public List<String> getTabList(String[] arguments) {

@@ -33,7 +33,7 @@ public class Messages {
 			MESSAGE_TOOL_SWITCHED,
 			MESSAGE_TOOL_FOR_MAZE_ONLY,
 			MESSAGE_DIMENSION_CHANGED,
-			MESSAGE_MAZE_BUILDING_STARTED,
+			MESSAGE_MAZE_BUILDING_COMPLETED,
 			MESSAGE_MAZE_UNBUILDING_STARTED,
 			MESSAGE_NO_MAZE_TO_UNBUILD,
 			ERROR_NO_BUILD_PERMISSION,
@@ -50,7 +50,8 @@ public class Messages {
 			ERROR_INVALID_BLOCK_NAME,
 			ERROR_INVALID_BLOCK_PROPERTY,
 			ERROR_INVALID_BLOCK_PROPERTY_VALUE,
-			ERROR_MISSING_BLOCK_PROPERTY_VALUE;
+			ERROR_MISSING_BLOCK_PROPERTY_VALUE,
+			ERROR_SAVE_FILE_CORRUPTED;
 
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -89,7 +90,7 @@ public class Messages {
 		MESSAGE_TOOL_SWITCHED           = new TextMessage(Constants.prefix + messages.getString("tool-switched"), false);
 		MESSAGE_TOOL_FOR_MAZE_ONLY      = new TextMessage(Constants.prefix + messages.getString("tool-for-floor-plan-only"), false);
 		MESSAGE_DIMENSION_CHANGED       = new TextMessage(Constants.prefix + messages.getString("dimension-changed"), false);
-		MESSAGE_MAZE_BUILDING_STARTED   = new TextMessage(Constants.prefix + messages.getString("maze-building-started"), false);
+		MESSAGE_MAZE_BUILDING_COMPLETED   = new TextMessage(Constants.prefix + messages.getString("maze-building-completed"), false);
 		MESSAGE_MAZE_UNBUILDING_STARTED = new TextMessage(Constants.prefix + messages.getString("maze-unbuilding-started"), false);
 		MESSAGE_NO_MAZE_TO_UNBUILD      = new TextMessage(Constants.prefix + messages.getString("no-maze-to-unbuild"), false);
 	
@@ -110,5 +111,6 @@ public class Messages {
 		ERROR_INVALID_BLOCK_PROPERTY       = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property"), false);
 		ERROR_INVALID_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property-value"), false);
 		ERROR_MISSING_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("missing-block-property-value"), false);
+		ERROR_SAVE_FILE_CORRUPTED          = new TextMessage(ChatColor.RED + errors.getString("save-file-corrupted"), false);
 	}
 }

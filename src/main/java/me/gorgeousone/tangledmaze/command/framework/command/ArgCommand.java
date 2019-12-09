@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
@@ -15,13 +14,13 @@ public abstract class ArgCommand extends BasicCommand {
 
 	private List<Argument> arguments;
 
-	protected ArgCommand(String name, String permission) {
-		this(name, permission, null);
+	protected ArgCommand(String name, String permission, boolean isPlayerRequired) {
+		this(name, permission, isPlayerRequired, null);
 	}
 
-	protected ArgCommand(String name, String permission, ParentCommand parent) {
+	protected ArgCommand(String name, String permission, boolean isPlayerRequired, ParentCommand parent) {
 
-		super(name, permission, parent);
+		super(name, permission, isPlayerRequired, parent);
 		this.arguments = new ArrayList<>();
 	}
 
@@ -50,16 +49,16 @@ public abstract class ArgCommand extends BasicCommand {
 	@Override
 	public List<String> getTabList(String[] arguments) {
 
-		if (getArgs().size() < arguments.length)
+		if (this.arguments.size() < arguments.length)
 			return new LinkedList<>();
 
 		return this.arguments.get(arguments.length - 1).getTabList();
 	}
 
-	protected abstract boolean onExecute(CommandSender sender, ArgValue[] arguments);
+	protected abstract boolean onCommand(CommandSender sender, ArgValue[] arguments);
 
 	@Override
-	protected boolean onExecute(CommandSender sender, String[] stringArgs) {
+	protected boolean onCommand(CommandSender sender, String[] stringArgs) {
 
 		int argsSize = getArgs().size();
 		int stringArgsLength = stringArgs.length;
@@ -68,44 +67,47 @@ public abstract class ArgCommand extends BasicCommand {
 
 		try {
 			if (stringArgsLength >= argsSize)
-				createMoreValuesThanArgs(values, stringArgs);
+				createMoreValuesThanOwnArgs(values, stringArgs);
 			else
-				createMoreValuesThanInput(values, stringArgs);
+				createMoreValuesThanSenderInput(values, stringArgs);
+
+		}catch (ArrayIndexOutOfBoundsException ex) {
+			sendUsage(sender);
+			return false;
 
 		} catch (IllegalArgumentException ex) {
-
-			sender.sendMessage(ChatColor.RED + "Usage: " + ex.getMessage());
+			sender.sendMessage(ex.getMessage());
 			return false;
 		}
 
-		onExecute(sender, values);
+		onCommand(sender, values);
 		return true;
 	}
 
-	protected void createMoreValuesThanArgs(ArgValue[] values, String[] stringArgs) {
+	protected void createMoreValuesThanOwnArgs(ArgValue[] values, String[] stringArgs) {
 
 		for (int i = 0; i < values.length; i++) {
 
 			values[i] = i < getArgs().size() ?
-					new ArgValue(getArgs().get(i), stringArgs[i]) :
-					new ArgValue(ArgType.STRING, stringArgs[i]);
+					new ArgValue(stringArgs[i], getArgs().get(i)) :
+					new ArgValue(stringArgs[i], ArgType.STRING);
 		}
 	}
 
-	protected void createMoreValuesThanInput(ArgValue[] values, String[] stringArgs) {
+	protected void createMoreValuesThanSenderInput(ArgValue[] values, String[] stringArgs) {
 
 		for (int i = 0; i < values.length; i++) {
 			Argument arg = getArgs().get(i);
 
 			if (i < stringArgs.length) {
-				values[i] = new ArgValue(getArgs().get(i), stringArgs[i]);
+				values[i] = new ArgValue(stringArgs[i], getArgs().get(i));
 				continue;
 			}
 
 			if (arg.hasDefault())
 				values[i] = arg.getDefault();
 			else
-				throw new IllegalArgumentException(getUsage());
+				throw new ArrayIndexOutOfBoundsException();
 		}
 	}
 }

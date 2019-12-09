@@ -17,24 +17,24 @@ import me.gorgeousone.tangledmaze.util.Utils;
 
 public class HelpCommand extends ArgCommand {
 	
-	private static int commandCount = 11;
-	private static int pageCount = commandCount + 1;
+	private static final int commandCount = 11;
+	private static final int pageCount = commandCount + 1;
 	
 	private static RawMessage[] pageLinks;
 	private static HelpPage[] pages;
 	
 	public HelpCommand(MazeCommand mazeCommand) {
-		super("help", null, mazeCommand);
+		super("help", null, false, mazeCommand);
 
 		addAlias("?");
-		addArg(new Argument("page", ArgType.INTEGER, new ArgValue(ArgType.INTEGER, "1")));
+		addArg(new Argument("page", ArgType.INTEGER, new ArgValue("1", ArgType.INTEGER)));
 		
 		createPageLinks();
 		listHelpPages();
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 
 		int pageNumber = Utils.limit(arguments[0].getInt(), 1, pageCount);
 		sendHelpPage(sender, pageNumber);
@@ -67,43 +67,43 @@ public class HelpCommand extends ArgCommand {
 			pageLinks[i].add("page " + (i+2) + " ").color(Color.LIGHT_GREEN).click("/maze help " + (i+2), ClickAction.RUN);
 		}
 
-		int i = -1;
+		int iter = -1;
 
-		pageLinks[++i].last().append("/maze wand").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze start").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze discard").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze teleport").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze select <tool>").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze add / cut").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze undo").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze set <dimension> <integer>").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze build <part> <block1> ...").color(Color.GREEN);
-		pageLinks[++i].last().append("/maze unbuild <part>").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze wand").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze start").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze discard").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze teleport").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze select <tool>").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze add / cut").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze undo").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze set <dimensions> <integer>").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze build <part> <block1> ...").color(Color.GREEN);
+		pageLinks[++iter].last().append("/maze unbuild <part>").color(Color.GREEN);
 	}
 	
 	private void listHelpPages() {
 		
 		pages = new HelpPage[commandCount];
-		int i = -1;
+		int iter = -1;
 
-		pages[++i] = new HelpPage(Messages.COMMAND_WAND);
-		pages[++i] = new HelpPage(Messages.COMMAND_START);
-		pages[++i] = new HelpPage(Messages.COMMAND_DISCARD);
-		pages[++i] = new HelpPage(Messages.COMMAND_TELEPORT);
-		pages[++i] = new HelpPage(Messages.COMMAND_SELECT,
+		pages[++iter] = new HelpPage(Messages.COMMAND_WAND);
+		pages[++iter] = new HelpPage(Messages.COMMAND_START);
+		pages[++iter] = new HelpPage(Messages.COMMAND_DISCARD);
+		pages[++iter] = new HelpPage(Messages.COMMAND_TELEPORT);
+		pages[++iter] = new HelpPage(Messages.COMMAND_SELECT,
 				Messages.TOOL_RECT,
 				Messages.TOOL_CIRCLE,
 				Messages.TOOL_BRUSH,
 				Messages.TOOL_EXIT);
-		pages[++i] = new HelpPage(Messages.COMMAND_ADD_CUT);
-		pages[++i] = new HelpPage(Messages.COMMAND_UNDO);
-		pages[++i] = new HelpPage(Messages.COMMAND_DIMENSIONS,
+		pages[++iter] = new HelpPage(Messages.COMMAND_ADD_CUT);
+		pages[++iter] = new HelpPage(Messages.COMMAND_UNDO);
+		pages[++iter] = new HelpPage(Messages.COMMAND_DIMENSIONS,
 				Messages.DIMENSION_WALL_HEIGHT,
 				Messages.DIMENSION_PATH_WIDTH,
 				Messages.DIMENSION_WALL_WIDTH,
 				Messages.DIMENSION_ROOF_WIDTH,
 				Messages.DIMENSION_PATH_LENGTH);
-		pages[++i] = new HelpPage(Messages.COMMAND_BUILD);
-		pages[++i] = new HelpPage(Messages.COMMAND_UNBUILD);
+		pages[++iter] = new HelpPage(Messages.COMMAND_BUILD);
+		pages[++iter] = new HelpPage(Messages.COMMAND_UNBUILD);
 	}
 }

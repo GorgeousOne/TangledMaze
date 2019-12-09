@@ -1,15 +1,22 @@
 package me.gorgeousone.tangledmaze.command;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import me.gorgeousone.tangledmaze.generation.typechoosing.RandomBlockTypeChooser;
+import me.gorgeousone.tangledmaze.generation.BlockComposition;
+import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
+import me.gorgeousone.tangledmaze.generation.blockselector.FloorBlockSelector;
+import me.gorgeousone.tangledmaze.generation.blockselector.HollowWallSelector;
+import me.gorgeousone.tangledmaze.generation.blockselector.RoofBlockSelector;
+import me.gorgeousone.tangledmaze.generation.blockselector.WallBlockSelector;
+import me.gorgeousone.tangledmaze.generation.datapicker.RandomBlockDataPicker;
 
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.util.*;
+import me.gorgeousone.tangledmaze.maze.MazePart;
+import me.gorgeousone.tangledmaze.util.BlockDataReader;
+import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,33 +25,75 @@ import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
 import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
 import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
+import me.gorgeousone.tangledmaze.util.PlaceHolder;
+import me.gorgeousone.tangledmaze.util.TextException;
 
 public class BuildCommand extends ArgCommand {
 
 	public BuildCommand(MazeCommand mazeCommand) {
-		super("build", null, mazeCommand);
+		super("build", null, true, mazeCommand);
 		
-		addArg(new Argument("part", ArgType.STRING,"walls", "floor", "roof"));
-		addArg(new Argument("blocks...", ArgType.STRING));
+		addArg(new Argument("part", ArgType.STRING, new ArgValue("walls"),"walls", "walls-h", "floor", "roof"));
+		addArg(new Argument("blocks...", ArgType.STRING, new ArgValue("stone")));
 	}
 
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
-		
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, true, false);
 		
 		if(maze == null)
 			return false;
 		
-		String mazePart = arguments[0].getString();
-		List<BlockType> blockTypeList;
+		String stringMazePart = arguments[0].getString();
+
+		MazePart mazePart;
+		AbstractBlockSelector blockSelector;
+
+		switch (stringMazePart) {
+		case "floor":
+
+			mazePart = MazePart.FLOOR;
+			blockSelector = new FloorBlockSelector();
+			break;
+		
+		case "roof":
+
+			mazePart = MazePart.ROOF;
+			blockSelector = new RoofBlockSelector();
+			break;
+
+		case "walls-h":
+
+			mazePart = MazePart.WALLS;
+			blockSelector = new HollowWallSelector();
+			break;
+
+		case "walls":
+		case "maze":
+
+			mazePart = MazePart.WALLS;
+			blockSelector = new WallBlockSelector();
+			break;
+
+		default:
+			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", stringMazePart));
+			return false;
+		}
+
+		if(BuildHandler.hasBlockBackup(maze) && BuildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
+
+			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
+			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
+			return false;
+		}
 
 		try {
-			blockTypeList = readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length));
+			maze.setBlockComposition(readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length)));
 
 		}catch(TextException textEx) {
 			textEx.sendTextTo(player);
@@ -55,88 +104,54 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		}
 
-		switch (mazePart) {
-		case "floor":
+		if(!maze.isConstructed()) {
 
-			if(!maze.isConstructed()) {
-				Messages.ERROR_MAZE_NOT_BUILT.sendTo(player);
+			if(!mazePart.isMazeBuiltBefore()) {
+				Renderer.hideMaze(maze);
+				ToolHandler.removeTool(maze.getPlayer());
+
+			}else {
+				Messages.ERROR_MAZE_NOT_BUILT.sendTo(sender);
 				return false;
 			}
 
-			if(BuildHandler.hasFloor(maze)) {
-				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
-				player.sendMessage("/tangledmaze unbuild floor");
-				return false;
-			}
+		}else if(!mazePart.isMazeBuiltBefore()) {
 
-			BuildHandler.buildFloor(maze, blockTypeList, new RandomBlockTypeChooser());
-			break;
-		
-		case "roof":
-
-			if(!maze.isConstructed()) {
-				Messages.ERROR_MAZE_NOT_BUILT.sendTo(player);
-				return false;
-			}
-
-			if(BuildHandler.hasRoof(maze)) {
-				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
-				player.sendMessage("/tangledmaze unbuild roof");
-				return false;
-			}
-
-			BuildHandler.buildRoof(maze, blockTypeList, new RandomBlockTypeChooser());
-			break;
-			
-		case "walls":
-		case "maze":
-
-			if(maze.isConstructed()) {
-				Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
-				return false;
-			}
-
-			Renderer.hideMaze(maze);
-			ToolHandler.removeTool(maze.getPlayer());
-			BuildHandler.buildWalls(maze, blockTypeList, new RandomBlockTypeChooser());
-			break;
-
-		default:
-			Messages.ERROR_INVALID_MAZE_PART.sendTo(player, new PlaceHolder("mazepart", mazePart));
+			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
 			return false;
 		}
+
+		BuildHandler.buildMazePart(
+				maze,
+				mazePart,
+				blockSelector,
+				new RandomBlockDataPicker());
 		
 		return true;
 	}
 
-	private List<BlockType> readBlockTypeList(ArgValue[] arguments) throws TextException {
+	private BlockComposition readBlockTypeList(ArgValue[] arguments) throws TextException {
 
-		List<BlockType> blockTypeList = new ArrayList<>();
+		BlockComposition composition = new BlockComposition();
 
 		for(ArgValue argument : arguments) {
-
 			String[] blockArgument = argument.getString().split("\\*");
 
-			if (blockArgument.length == 1) {
-				blockTypeList.add(BlockTypeReader.read(blockArgument[0]));
+			if(blockArgument.length == 1) {
+				composition.addBlock(BlockDataReader.read(blockArgument[0]), 1);
 
-			} else {
-				ArgValue countValue = new ArgValue(ArgType.INTEGER, blockArgument[0]);
-				int count = Utils.limit(countValue.getInt(), 1, 100);
-
-				BlockType blockType = BlockTypeReader.read(blockArgument[1]);
-
-				for (int k = 0; k < count; k++)
-					blockTypeList.add(blockType.clone());
+			}else {
+				int amount = new ArgValue(blockArgument[0], ArgType.INTEGER).getInt();
+				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.limit(amount, 1, 1000));
 			}
 		}
-		return blockTypeList;
+		return composition;
 	}
 
 	@Override
 	public List<String> getTabList(String[] arguments) {
 
-		if (arguments.length < getArgs().size())
+		if(arguments.length < getArgs().size())
 			return super.getTabList(arguments);
 
 		List<String> tabList =new LinkedList<>();

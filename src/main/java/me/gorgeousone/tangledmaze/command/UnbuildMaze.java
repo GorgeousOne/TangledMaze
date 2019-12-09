@@ -4,11 +4,12 @@ import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
 import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
 import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
+import me.gorgeousone.tangledmaze.maze.MazePart;
 import me.gorgeousone.tangledmaze.util.PlaceHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.BuildHandler;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
@@ -16,12 +17,12 @@ import me.gorgeousone.tangledmaze.handler.MazeHandler;
 public class UnbuildMaze extends ArgCommand {
 	
 	public UnbuildMaze(MazeCommand mazeCommand) {
-		super("unbuild", null, mazeCommand);
-		addArg(new Argument("part", ArgType.STRING, new ArgValue(ArgType.STRING, "maze"), "maze", "floor", "roof"));
+		super("unbuild", null, true, mazeCommand);
+		addArg(new Argument("part", ArgType.STRING, new ArgValue("maze"), "maze", "floor", "roof"));
 	}
 
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 
 		Player player = (Player) sender;
 		Maze maze = MazeHandler.getMaze(player);
@@ -36,16 +37,19 @@ public class UnbuildMaze extends ArgCommand {
 		switch (mazePart) {
 
 			case "floor":
-				BuildHandler.unbuildFloor(maze);
+				BuildHandler.unbuildMazePart(maze, MazePart.FLOOR);
 				break;
 
 			case "roof":
-				BuildHandler.unbuildRoof(maze);
+				BuildHandler.unbuildMazePart(maze, MazePart.ROOF);
 				break;
 
 			case "maze":
-				BuildHandler.unbuildMaze(maze);
+			case "walls":
 				Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(player);
+				BuildHandler.unbuildMazePart(maze, MazePart.FLOOR);
+				BuildHandler.unbuildMazePart(maze, MazePart.ROOF);
+				BuildHandler.unbuildMazePart(maze, MazePart.WALLS);
 				break;
 
 			default:

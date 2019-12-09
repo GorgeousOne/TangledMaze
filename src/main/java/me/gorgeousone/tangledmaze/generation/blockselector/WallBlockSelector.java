@@ -1,20 +1,22 @@
-package me.gorgeousone.tangledmaze.generation.blockselection;
+package me.gorgeousone.tangledmaze.generation.blockselector;
 
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.mapmaking.MazeAreaType;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.util.BlockDataState;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class WallBlockSelector extends AbstractBlockSelector {
 
-	public Set<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
+	public Set<BlockDataState> getBlocks(TerrainMap terrainMap) {
 
-		Set<BlockState> relevantBlocks = new HashSet<>();
+		Set<BlockDataState> relevantBlocks = new HashSet<>();
+		Maze maze = terrainMap.getMaze();
 
 		for(int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for(int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
@@ -25,11 +27,10 @@ public class WallBlockSelector extends AbstractBlockSelector {
 				int floorHeight = terrainMap.getFloorHeight(x, z);
 
 				for(int relHeight = 0; relHeight <= terrainMap.getWallHeight(x, z); relHeight++) {
-
-					Block block = new Location(terrainMap.getMaze().getWorld() , x, floorHeight + relHeight, z).getBlock();
+					Block block = new Location(maze.getWorld() , x, floorHeight + relHeight, z).getBlock();
 
 					if(Utils.canBeOverbuild(block.getType()))
-						relevantBlocks.add(block.getState());
+						relevantBlocks.add(new BlockDataState(block));
 				}
 			}
 		}

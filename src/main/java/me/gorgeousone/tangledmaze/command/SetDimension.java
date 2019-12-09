@@ -7,7 +7,7 @@ import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
 import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
 import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
@@ -16,14 +16,14 @@ import me.gorgeousone.tangledmaze.util.PlaceHolder;
 public class SetDimension extends ArgCommand {
 	
 	public SetDimension(MazeCommand mazeCommand) {
-		super("set", null, mazeCommand);
+		super("set", null, true, mazeCommand);
 
 		addArg(new Argument("dimension", ArgType.STRING, MazeDimension.getCommandNames()));
 		addArg(new Argument("integer", ArgType.INTEGER));
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 		
 		Player player = (Player) sender;
 		MazeDimension dimension = MazeDimension.match(arguments[0].getString());
@@ -35,15 +35,14 @@ public class SetDimension extends ArgCommand {
 		
 		int newDimValue = arguments[1].getInt();
 		Maze maze = MazeHandler.getMaze(player);
-
-		int oldDimensionValue = (maze.getDimension(dimension));
-		maze.setDimension(dimension, newDimValue);
-
-		if(oldDimensionValue != newDimValue) {
+		
+		if(maze.getDimension(dimension) != newDimValue) {
+			maze.setDimension(dimension, newDimValue);
+		
 			Messages.MESSAGE_DIMENSION_CHANGED.sendTo(
 					player,
 					new PlaceHolder("dimension", dimension.toString()), 
-					new PlaceHolder("number", maze.getDimension(dimension)));
+					new PlaceHolder("number", newDimValue));
 		}
 		
 		return true;

@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class Settings {
+public final class ConfigSettings {
 
 	public static ItemStack MAZE_WAND;
 	public static Material MAZE_WAND_MATERIAL;
 	
-	private Settings() {}
+	private ConfigSettings() {}
 
 	public static void loadSettings(FileConfiguration config) {
 
@@ -29,7 +29,7 @@ public final class Settings {
 	
 	private static void createMazeWand() {
 		
-		MAZE_WAND = new ItemStack(Settings.MAZE_WAND_MATERIAL);
+		MAZE_WAND = new ItemStack(ConfigSettings.MAZE_WAND_MATERIAL);
 		
 		ItemMeta meta = MAZE_WAND.getItemMeta();
 		meta.setDisplayName(ChatColor.DARK_GREEN + "Maze Wand");

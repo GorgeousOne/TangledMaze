@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 
@@ -32,7 +32,6 @@ public class BrushTool extends Tool {
 			brushing = maze.getExpansion(clickedBlock);
 		
 		if(brushing != null) {
-			
 			maze.processAction(brushing, true);
 			Renderer.displayMazeAction(maze, brushing);
 		}

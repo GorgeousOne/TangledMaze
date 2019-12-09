@@ -25,7 +25,7 @@ messages:
     tool-switched: Switched tool to %tool%.
     tool-for-floor-plan-only: This tool can only be used for a floor plan of a maze.
     dimension-changed: Set %dimension% to %number% blocks.
-    maze-building-started: Started building your maze.
+    maze-building-completed: Built maze part with %count% blocks.
     maze-unbuilding-started: Started unbuilding your maze.
     no-maze-to-unbuild: You have not built a maze yet that could be unbuild. 
 errors:
@@ -36,7 +36,7 @@ errors:
     clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
     no-maze-exit-set: Please mark an exit at the border of your maze first.
     maze-part-already-built: Your maze is already built.
-    maze-not-built: Please build your maze first.
+    maze-not-built: Please build the walls of your maze first.
     invalid-number: '''%number%'' is not a valid number.'
     invalid-dimension: '''%dimension%'' is not a valid dimension.'
     invalid-maze-part: '''%mazepart%'' is not a valid maze part.'
@@ -44,3 +44,5 @@ errors:
     invalid-block-property: '''%block%'' does not seem to have the property ''%property%''.'
     invalid-block-property-value: '''%block%'' cannot take ''%value%'' as value for ''%property%''.'
     missing-block-property-value: 'Please complete your added property in the pattern ''%property%=...''.'
+    save-file-missing: No maze with name '%name%' found.
+    save-file-corrupted: Could not load maze %name%. The save file has been corrupted.

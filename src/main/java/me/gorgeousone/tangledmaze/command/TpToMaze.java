@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.command.framework.command.BasicCommand;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.util.Vec2;
@@ -15,11 +15,11 @@ import me.gorgeousone.tangledmaze.util.Vec2;
 public class TpToMaze extends BasicCommand {
 	
 	public TpToMaze(MazeCommand mazeCommand) {
-		super("teleport", Constants.MAZE_TP_PERM, mazeCommand);
+		super("teleport", Constants.MAZE_TP_PERM, true, mazeCommand);
 	}
 	
 	@Override
-	public boolean onExecute(CommandSender sender, String[] arguments) {
+	public boolean onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, false, false);

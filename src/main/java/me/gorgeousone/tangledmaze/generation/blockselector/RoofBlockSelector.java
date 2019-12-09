@@ -1,14 +1,15 @@
-package me.gorgeousone.tangledmaze.generation.blockselection;
+package me.gorgeousone.tangledmaze.generation.blockselector;
 
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.mapmaking.MazeAreaType;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.util.BlockDataState;
 import me.gorgeousone.tangledmaze.util.Directions;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
+import me.gorgeousone.tangledmaze.util.Utils;
 import me.gorgeousone.tangledmaze.util.Vec2;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,9 +17,9 @@ import java.util.Set;
 public class RoofBlockSelector extends AbstractBlockSelector{
 
 	@Override
-	public Set<BlockState> getRelevantBlocks(TerrainMap terrainMap) {
+	public Set<BlockDataState> getBlocks(TerrainMap terrainMap) {
 
-		Set<BlockState> relevantBlocks = new HashSet<>();
+		Set<BlockDataState> relevantBlocks = new HashSet<>();
 		Maze maze = terrainMap.getMaze();
 		int roofWidth = maze.getDimension(MazeDimension.ROOF_WIDTH);
 
@@ -33,7 +34,9 @@ public class RoofBlockSelector extends AbstractBlockSelector{
 
 				for(int y = roofHeight+1; y < maxSurroundingRoofHeight+1 + roofWidth; y++) {
 					Block block = new Location(maze.getWorld(), x, y, z).getBlock();
-					relevantBlocks.add(block.getState());
+
+					if(Utils.canBeOverbuild(block.getType()))
+						relevantBlocks.add(new BlockDataState(block));
 				}
 			}
 		}
@@ -48,7 +51,7 @@ public class RoofBlockSelector extends AbstractBlockSelector{
 
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 
-			if(!terrainMap.contains(neighbor) || terrainMap.getAreaType(neighbor) == MazeAreaType.NOT_MAZE)
+			if(!terrainMap.contains(neighbor))
 				continue;
 
 			int neighborRoofHeight = terrainMap.getRoofHeight(neighbor);

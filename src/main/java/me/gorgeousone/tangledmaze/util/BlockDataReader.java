@@ -4,11 +4,11 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 
-public final class BlockTypeReader {
+public final class BlockDataReader {
 
-	private BlockTypeReader() {}
+	private BlockDataReader() {}
 
-	public static BlockType read(String  argument) throws TextException {
+	public static BlockData read(String argument) throws TextException {
 
 		String[] split = argument.split(":");
 		String stringMat = split[0];
@@ -25,7 +25,7 @@ public final class BlockTypeReader {
 			blockData = blockData.merge(material.createBlockData("[persistent=true]"));
 
 		if (split.length < 2)
-			return new BlockType(material, blockData);
+			return blockData;
 
 		for (int i = 1; i < split.length; i++) {
 
@@ -38,7 +38,7 @@ public final class BlockTypeReader {
 			}
 		}
 
-		return new BlockType(material, blockData);
+		return blockData;
 	}
 
 	private static void createPlayerMessageFromException(String exceptionMessage, String material, String[] blockProperty) throws TextException {
