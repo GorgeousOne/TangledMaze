@@ -1,15 +1,10 @@
 package me.gorgeousone.tangledmaze.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
-public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
+public class Vec2 implements Comparable<Vec2> {
 	
 	private int x, z;
 	
@@ -59,10 +54,6 @@ public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 		return (int) Math.sqrt(x*x + z*z);
 	}
 	
-	public boolean isZero() {
-		return x == 0 && z == 0;
-	}
-	
 	public Vec2 set(int x, int z) {
 		this.x = x;
 		this.z = z;
@@ -107,16 +98,15 @@ public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 		return new Vec2(Math.abs(x), Math.abs(z));
 	}
 	
-	public Vector toVec3() {
-		return new Vector(x, 0, z);
+	public Vector toVec3(double y) {
+		return new Vector(x, y, z);
 	}
 	
 	@Override
 	public String toString() {
-		return "vec2[x:" + x + ",z:" + z + "]";
+		return "vec2[x=" + x + ",z=" + z + "]";
 	}
 	
-	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public Vec2 clone() {
 		return new Vec2(x, z);
@@ -149,23 +139,5 @@ public class Vec2 implements Comparable<Vec2>, ConfigurationSerializable {
 
 		int deltaX = Double.compare(getX(), vec.getX());
 		return deltaX != 0 ? deltaX : Double.compare(getZ(), vec.getZ());
-	}
-	
-	@Override
-	public Map<String, Object> serialize() {
-		
-		Map<String, Object> data = new HashMap<>();
-		
-		data.put("x", x);
-	    data.put("z", z);
-	    
-		return data;
-	}
-	
-	public static Vec2 desrialize(Map<String, Object> data) {
-		
-		return new Vec2(
-				Integer.parseInt(data.get("x").toString()),
-				Integer.parseInt(data.get("z").toString()));
 	}
 }

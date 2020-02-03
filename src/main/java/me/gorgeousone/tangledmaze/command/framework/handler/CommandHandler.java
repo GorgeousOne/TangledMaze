@@ -8,17 +8,24 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import me.gorgeousone.tangledmaze.command.framework.command.BasicCommand;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandHandler implements CommandExecutor {
 
+	private JavaPlugin plugin;
 	private Set<BasicCommand> commands;
+	private CommandCompleter cmdCompleter;
 
-	public CommandHandler() {
-		commands = new HashSet<>();
+	public CommandHandler(JavaPlugin plugin) {
+		this.plugin = plugin;
+		this.commands = new HashSet<>();
+		this.cmdCompleter = new CommandCompleter(this);
 	}
 	
 	public void registerCommand(BasicCommand command) {
 		commands.add(command);
+		plugin.getCommand(command.getName()).setExecutor(this);
+		plugin.getCommand(command.getName()).setTabCompleter(cmdCompleter);
 	}
 	
 	public Set<BasicCommand> getCommands() {
@@ -33,7 +40,6 @@ public class CommandHandler implements CommandExecutor {
 		for(BasicCommand command : commands) {
 			
 			if(command.matches(cmdName)) {
-				
 				command.execute(sender, args);
 				return true;
 			}

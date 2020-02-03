@@ -5,7 +5,7 @@ authors: [mightyone, spthiel, GenerousGuava]
 description: intuitive visual maze generator for every shape and every terrain
 website: https://www.spigotmc.org/resources/tangled-maze-maze-generator-1-13.59284/
 
-main: me.gorgeousone.tangledmaze.core.TangledMain
+main: me.gorgeousone.tangledmaze.TangledMain
 
 commands:
   tangledmaze:

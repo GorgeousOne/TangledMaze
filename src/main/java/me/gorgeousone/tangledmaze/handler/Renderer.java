@@ -2,8 +2,8 @@ package me.gorgeousone.tangledmaze.handler;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipAction;
-import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Vec2;

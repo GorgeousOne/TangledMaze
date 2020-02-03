@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.mapmaking;
 import java.util.Map.Entry;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -18,8 +18,7 @@ public class TerrainMap {
 	
 	private Maze maze;
 	private MazeAreaType[][] shapeMap;
-	private int[][] floorHeightMap;
-	private int[][] wallHeightMap;
+	private int[][] floorHeightMap, wallHeightMap;
 	
 	private Vec2 minimum, maximum;
 	private Vec2 pathStart;
@@ -27,8 +26,12 @@ public class TerrainMap {
 	public TerrainMap(Maze maze) {
 
 		this.maze = maze;
+
 		calculateMapSize();
 		copyMazeOntoMap();
+
+		new PathGenerator().generatePaths(this);
+		new TerrainEditor().editTerrain(this);
 	}
 	
 	public Maze getMaze() {
@@ -124,7 +127,7 @@ public class TerrainMap {
 	public void mapSegment(PathSegment segment, MazeAreaType type) {
 		
 		for(Vec2 point : segment.getFill()) {
-			
+
 			if(contains(point))
 				setType(point.getX(), point.getZ(), type);
 		}
@@ -176,7 +179,7 @@ public class TerrainMap {
 		Clip clip = maze.getClip();
 		
 		//mark the maze's area in mazeMap as undefined area (open to become paths and walls)
-		for(Entry<Vec2, Integer> loc : clip.getFillSet()) {
+		for(Entry<Vec2, Integer> loc : clip.getFillEntries()) {
 			
 			setType(loc.getKey(), MazeAreaType.UNDEFINED);
 			setFloorHeight(loc.getKey(), loc.getValue());

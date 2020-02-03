@@ -11,8 +11,8 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.gorgeousone.tangledmaze.core.Maze;
-import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;

@@ -6,16 +6,21 @@ public class ArgValue {
 
 	private static final String argumentTypeException = ChatColor.RED + "'%value%' is not a %type%.";
 
-	private String stringVal;
 	private int intVal;
 	private double decimalVal;
-	
-	public ArgValue(Argument argument, String value) {
-		this(argument.getType(), value);
+	private String stringVal;
+	private boolean booleanVal;
+
+	public ArgValue(String stringValue) {
+		this(stringValue, ArgType.STRING);
 	}
 
-	public ArgValue(ArgType type, String value) {
-		setValue(type, value);
+	public ArgValue(String value, Argument argument) {
+		this(value, argument.getType());
+	}
+
+	public ArgValue(String value, ArgType type) {
+		setValue(value, type);
 	}
 
 	public String getString() {
@@ -29,8 +34,12 @@ public class ArgValue {
 	public double getDouble() {
 		return decimalVal;
 	}
-	
-	protected void setValue(ArgType type, String value) {
+
+	public boolean getBoolean() {
+		return booleanVal;
+	}
+
+	protected void setValue(String value, ArgType type) {
 		
 		try {
 			switch (type) {
@@ -40,13 +49,17 @@ public class ArgValue {
 			
 			case DECIMAL:
 				decimalVal = Double.parseDouble(value);
-				
+
 			case STRING:
 				stringVal = value;
 				break;
+
+			case BOOLEAN:
+				booleanVal = Boolean.parseBoolean(value);
+				break;
 			}
 			
-		} catch (NumberFormatException ex) {
+		} catch (Exception ex) {
 			throw new IllegalArgumentException(argumentTypeException.replace("%value%", value).replace("%type%", type.simpleName()));
 		}
 	}

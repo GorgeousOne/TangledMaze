@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.core;
+package me.gorgeousone.tangledmaze;
 
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
@@ -6,11 +6,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.gorgeousone.tangledmaze.command.*;
-import me.gorgeousone.tangledmaze.command.framework.handler.CommandCompleter;
 import me.gorgeousone.tangledmaze.command.framework.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.data.*;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.listener.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TangledMain extends JavaPlugin {
 
@@ -26,10 +28,16 @@ public class TangledMain extends JavaPlugin {
 		loadLanguage();
 		
 		Constants.loadConstants();
-		Settings.loadSettings(getConfig());
+		ConfigSettings.loadSettings(getConfig());
 		
 		registerListeners();
 		registerCommands();
+
+		Map<String, String> map = new HashMap<>();
+		map.put("loc", "1234");
+		map.put("height", "255");
+		getConfig().set("test-map", map);
+		saveConfig();
 	}
 	
 	@Override
@@ -46,7 +54,7 @@ public class TangledMain extends JavaPlugin {
 
 		loadLanguage();
 		reloadConfig();
-		Settings.loadSettings(getConfig());
+		ConfigSettings.loadSettings(getConfig());
 	}
 	
 	private void registerListeners() {
@@ -65,20 +73,17 @@ public class TangledMain extends JavaPlugin {
 		mazeCommand.addChild(new GiveWand(mazeCommand));
 		mazeCommand.addChild(new StartMaze(mazeCommand));
 		mazeCommand.addChild(new DiscardMaze(mazeCommand));
+		mazeCommand.addChild(new TpToMaze(mazeCommand));
 		mazeCommand.addChild(new SelectTool(mazeCommand));
 		mazeCommand.addChild(new AddToMaze(mazeCommand));
 		mazeCommand.addChild(new CutFromMaze(mazeCommand));
+		mazeCommand.addChild(new UndoCommand(mazeCommand));
 		mazeCommand.addChild(new SetDimension(mazeCommand));
-		mazeCommand.addChild(new TpToMaze(mazeCommand));
 		mazeCommand.addChild(new BuildCommand(mazeCommand));
 		mazeCommand.addChild(new UnbuildMaze(mazeCommand));
-		mazeCommand.addChild(new UndoCommand(mazeCommand));
 
-		CommandHandler cmdHandler = new CommandHandler();
+		CommandHandler cmdHandler = new CommandHandler(this);
 		cmdHandler.registerCommand(mazeCommand);
-		
-		getCommand("tangledmaze").setExecutor(cmdHandler);
-		getCommand("tangledmaze").setTabCompleter(new CommandCompleter(cmdHandler));
 	}
 	
 	private void loadConfig() {

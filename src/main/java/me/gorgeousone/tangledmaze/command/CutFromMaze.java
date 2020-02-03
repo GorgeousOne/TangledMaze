@@ -5,19 +5,19 @@ import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.ClipAction;
 import me.gorgeousone.tangledmaze.command.framework.command.BasicCommand;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 
 public class CutFromMaze extends BasicCommand {
 
 	public CutFromMaze(MazeCommand mazeCommand) {
-		super("cut", null, mazeCommand);
+		super("cut", null, true, mazeCommand);
 		addAlias("remove");
 	}
 	
 	@Override
-	public boolean onExecute(CommandSender sender, String[] arguments) {
+	public boolean onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = getStartedMaze(player, false, true);

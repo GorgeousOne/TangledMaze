@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.listener;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -12,11 +11,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
@@ -24,15 +22,14 @@ import me.gorgeousone.tangledmaze.handler.ToolHandler;
 import me.gorgeousone.tangledmaze.tool.ClippingTool;
 import me.gorgeousone.tangledmaze.util.Utils;
 
-@SuppressWarnings("deprecation")
-public class WandListener implements Listener {
+public class WandListener implements Listener{
 	
 	@EventHandler
-	public void onItemDamage(PlayerItemDamageEvent e) {
+	public void onItemDamage(PlayerItemDamageEvent event) {
 
-		if(Utils.isMazeWand(e.getItem())) {
-			e.setCancelled(true);
-			e.getPlayer().updateInventory();
+		if(Utils.isMazeWand(event.getItem())) {
+			event.setCancelled(true);
+			event.getPlayer().updateInventory();
 		}
 	}
 	
@@ -52,12 +49,12 @@ public class WandListener implements Listener {
 		if(Utils.isMazeWand(event.getItem())) {
 		
 			event.setCancelled(true);
-			
+
 			if(!player.hasPermission(Constants.BUILD_PERM)) {
 				destroyMazeWand(player, event.getItem());
 				return;
 			}
-			
+
 			ToolHandler.getTool(player).interact(block, action);
 		
 		}else if(player.hasPermission(Constants.BUILD_PERM)) {
@@ -92,35 +89,19 @@ public class WandListener implements Listener {
 				
 		Maze maze = MazeHandler.getMaze(player);
 			
-		if(maze.isStarted() && !maze.isConstructed() && !Renderer.isMazeVisible(maze))
+		if(maze.isStarted() && !maze.isConstructed())
 			Renderer.displayMaze(MazeHandler.getMaze(player));
 		
-		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
+		if(ToolHandler.hasClipboard(player))
 			Renderer.displayClipboard(ToolHandler.getClipboard(player));
 	}
 	
-	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPickUp(PlayerPickupItemEvent e) {
-
-		if(Utils.isMazeWand(e.getItem().getItemStack())) {
-			
-			Player player = e.getPlayer();
-
-			if(MazeHandler.hasMaze(player) && !Renderer.isMazeVisible(MazeHandler.getMaze(player)))
-				Renderer.displayMaze(MazeHandler.getMaze(player));
-			
-			if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
-				Renderer.displayClipboard(ToolHandler.getClipboard(player));
-		}
-	}
-	
-	private void destroyMazeWand(Player p, ItemStack wand) {
+	private void destroyMazeWand(Player player, ItemStack wand) {
 		
-		p.getInventory().remove(wand);
-		p.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool, it broke apart.");
-		p.damage(0);
+		player.getInventory().remove(wand);
+		player.damage(0);
 		
-		p.getWorld().playSound(p.getEyeLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
-		p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 1);
+		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+		player.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, player.getLocation(), 1);
 	}
 }

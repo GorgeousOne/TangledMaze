@@ -10,8 +10,8 @@ import org.bukkit.command.TabCompleter;
 import me.gorgeousone.tangledmaze.command.framework.command.BasicCommand;
 
 public class CommandCompleter implements TabCompleter {
-	
-	CommandHandler cmdHandler;
+
+	private CommandHandler cmdHandler;
 	
 	public CommandCompleter(CommandHandler cmdHandler) {
 		this.cmdHandler = cmdHandler;
@@ -23,7 +23,6 @@ public class CommandCompleter implements TabCompleter {
 		for(BasicCommand command : cmdHandler.getCommands()) {
 			
 			if(command.matches(cmd.getName())) {
-				
 				List<String> tabList = new LinkedList<>();
 				
 				for(String tab : command.getTabList(args)) {

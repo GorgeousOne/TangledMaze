@@ -2,10 +2,11 @@ package me.gorgeousone.tangledmaze.command.framework.argument;
 
 public enum ArgType {
 
-	STRING("string"),
 	INTEGER("integer"),
-	DECIMAL("number");
-	
+	DECIMAL("number"),
+	STRING("string"),
+	BOOLEAN("boolean");
+
 	private String simpleName;
 	
 	ArgType(String simpleName) {

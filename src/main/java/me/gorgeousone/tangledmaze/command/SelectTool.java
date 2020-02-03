@@ -8,7 +8,7 @@ import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
 import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
 import me.gorgeousone.tangledmaze.command.framework.command.ArgCommand;
-import me.gorgeousone.tangledmaze.core.Maze;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
@@ -19,12 +19,12 @@ import me.gorgeousone.tangledmaze.util.PlaceHolder;
 public class SelectTool extends ArgCommand {
 
 	public SelectTool(MazeCommand mazeCommand) {
-		super("select", null, mazeCommand);
+		super("select", null, true, mazeCommand);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
 	}
 	
 	@Override
-	protected boolean onExecute(CommandSender sender, ArgValue[] arguments) {
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 
 		Player player = (Player) sender;
 		String toolType = arguments[0].getString();

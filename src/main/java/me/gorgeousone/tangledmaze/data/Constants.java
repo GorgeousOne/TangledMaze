@@ -12,14 +12,14 @@ import java.util.TreeSet;
 public class Constants {
 	
 	public static final String
-			RELOAD_PERM = "tangledmaze.reload",
 			BUILD_PERM = "tangledmaze.build",
 			WAND_PERM = "tangledmaze.getwand",
-			MAZE_TP_PERM = "tangledmaze.teleport";
-	
+			MAZE_TP_PERM = "tangledmaze.teleport",
+			RELOAD_PERM = "tangledmaze.reload";
+
 	public static final String prefix =
 			ChatColor.DARK_GREEN + "["  +
-			ChatColor.GREEN      + "TM" + 
+			ChatColor.GREEN      + "TM" +
 			ChatColor.DARK_GREEN + "] " +
 			ChatColor.YELLOW;
 	

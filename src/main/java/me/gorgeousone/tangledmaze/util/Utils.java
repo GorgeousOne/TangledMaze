@@ -7,9 +7,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.gorgeousone.tangledmaze.core.TangledMain;
+import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.data.Settings;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.data.ConfigSettings;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,23 +24,19 @@ public abstract class Utils {
 
 	public static boolean isMazeWand(ItemStack item) {
 
-		if(item == null)
+		if(item == null || item.getType() != ConfigSettings.MAZE_WAND_MATERIAL)
 			return false;
-		
-		if(item.getType() != Settings.MAZE_WAND_MATERIAL) {
-			return false;
-		}
 		
 		ItemMeta itemMeta = item.getItemMeta();
 		
 		return
-			itemMeta.getDisplayName() != null &&
-			itemMeta.getDisplayName().equals(Settings.MAZE_WAND.getItemMeta().getDisplayName());
+			itemMeta.hasDisplayName() &&
+			itemMeta.getDisplayName().equals(ConfigSettings.MAZE_WAND.getItemMeta().getDisplayName());
 	}
 
 	public static ItemStack getMazeWand() {
 		
-		ItemStack wand = Settings.MAZE_WAND.clone();
+		ItemStack wand = ConfigSettings.MAZE_WAND.clone();
 		ItemMeta rndMeta = wand.getItemMeta();
 		List<String> lore = rndMeta.getLore();
 
@@ -47,7 +44,6 @@ public abstract class Utils {
 		rndMeta.setLore(lore);
 		
 		wand.setItemMeta(rndMeta);
-		
 		return wand;
 	}
 	
@@ -57,7 +53,6 @@ public abstract class Utils {
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}
 	
-	//use methos mat.is
 	public static boolean isLikeGround(Material mat) {
 		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
 	}
@@ -91,7 +86,6 @@ public abstract class Utils {
 				}
 			}
 		}
-		
 		return loc;
 	}
 	
@@ -141,6 +135,16 @@ public abstract class Utils {
 		}
 		
 		return min;
+	}
+
+	public static YamlConfiguration loadSaveFile(String configName) throws TextException {
+
+		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
+
+		if(!configFile.exists())
+			throw new TextException(Messages.ERROR_INVALID_MAZE_PART);
+
+		return YamlConfiguration.loadConfiguration(new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml"));
 	}
 
 	public static YamlConfiguration loadDefaultConfig(String configName) {

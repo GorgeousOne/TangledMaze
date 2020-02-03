@@ -39,7 +39,7 @@ public class TerrainEditor {
 				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
 					continue;
 
-				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap);
+				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
 
 				if (maxNeighborPath == null)
 					continue;
@@ -65,15 +65,10 @@ public class TerrainEditor {
 		for(Directions dir : Directions.values()) {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
-
-			if(!terrainMap.contains(neighbor))
+			
+			if(!terrainMap.contains(neighbor) || areaType != null && terrainMap.getAreaType(neighbor) != areaType)
 				continue;
-
-			MazeAreaType neighborAreaType = terrainMap.getAreaType(neighbor);
-
-			if(areaType != null && neighborAreaType != areaType || neighborAreaType == MazeAreaType.NOT_MAZE)
-				continue;
-
+			
 			int neighborFloorHeight = terrainMap.getFloorHeight(neighbor);
 			
 			if(neighborFloorHeight > maxNeighborFloorHeight) {
