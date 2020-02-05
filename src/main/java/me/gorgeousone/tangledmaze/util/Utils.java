@@ -53,74 +53,11 @@ public abstract class Utils {
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}
 	
-	public static boolean isLikeGround(Material mat) {
-		return mat.isSolid() && !Constants.NOT_SOLIDS.contains(mat);
-	}
-	
 	public static boolean canBeOverbuild(Material mat) {
 		return !mat.isSolid() || Constants.REPLACEABLE_SOLIDS.contains(mat);
 	}
 
-	public static Location nearestSurface(Location loc) {
-		
-		Location iter = loc.clone();
-		
-		if(isLikeGround(iter.getBlock().getType())) {
-		
-			while(iter.getY() <= 255) {
-				iter.add(0, 1, 0);
-				
-				if(!isLikeGround(iter.getBlock().getType())) {
-					iter.add(0, -1, 0);
-					return iter;
-				}
-			}
-		
-		}else {
-			
-			while(iter.getY() >= 0) {
-				iter.add(0, -1, 0);
-				
-				if(isLikeGround(iter.getBlock().getType())) {
-					return iter;
-				}
-			}
-		}
-		return loc;
-	}
-	
-	public static int nearestSurfaceY(Vec2 loc, int height, World world) {
-		
-		Location iter = new Location(world, loc.getX(), height, loc.getZ());
-		
-		if(isLikeGround(iter.getBlock().getType())) {
-			
-			while(iter.getY() <= 255) {
-				
-				iter.add(0, 1, 0);
-				
-				if(!isLikeGround(iter.getBlock().getType())) {
-					iter.add(0, -1, 0);
-					return iter.getBlockY();
-				}
-			}
-		
-		}else {
-			
-			while(iter.getY() >= 0) {
-				
-				iter.add(0, -1, 0);
-				
-				if(isLikeGround(iter.getBlock().getType())) {
-					return iter.getBlockY();
-				}
-			}
-		}
-		
-		return height;
-	}
-	
-	public static int limit(int value, int min, int max) {
+	public static int clamp(int value, int min, int max) {
 		return Math.min(max, Math.max(min, value));
 	}
 	
@@ -137,15 +74,15 @@ public abstract class Utils {
 		return min;
 	}
 
-	public static YamlConfiguration loadSaveFile(String configName) throws TextException {
-
-		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
-
-		if(!configFile.exists())
-			throw new TextException(Messages.ERROR_INVALID_MAZE_PART);
-
-		return YamlConfiguration.loadConfiguration(new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml"));
-	}
+//	public static YamlConfiguration loadSaveFile(String configName) throws TextException {
+//
+//		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
+//
+//		if(!configFile.exists())
+//			throw new TextException(Messages.ERROR_INVALID_MAZE_PART);
+//
+//		return YamlConfiguration.loadConfiguration(new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml"));
+//	}
 
 	public static YamlConfiguration loadDefaultConfig(String configName) {
 		InputStream defConfigStream = TangledMain.getInstance().getResource(configName + ".yml");

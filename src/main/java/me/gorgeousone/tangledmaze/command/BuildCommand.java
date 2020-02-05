@@ -142,7 +142,7 @@ public class BuildCommand extends ArgCommand {
 
 			}else {
 				int amount = new ArgValue(blockArgument[0], ArgType.INTEGER).getInt();
-				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.limit(amount, 1, 1000));
+				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.clamp(amount, 1, 1000));
 			}
 		}
 		return composition;

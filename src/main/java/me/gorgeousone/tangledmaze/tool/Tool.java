@@ -11,8 +11,8 @@ public abstract class Tool {
 	
 	private UUID player;
 
-	public Tool(Player builder) {
-		this.player = builder.getUniqueId();
+	public Tool(Player player) {
+		this.player = player.getUniqueId();
 	}
 	
 	public Player getPlayer() {
@@ -20,6 +20,6 @@ public abstract class Tool {
 	}
 
 	public abstract String getName();
-	
+
 	public abstract void interact(Block clickedBlock, Action interaction);
 }

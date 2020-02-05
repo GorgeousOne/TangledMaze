@@ -1,9 +1,10 @@
 package me.gorgeousone.tangledmaze.command;
 
+import me.gorgeousone.tangledmaze.clip.ClipShape;
+import me.gorgeousone.tangledmaze.handler.ClipToolHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.clip.shape.ClipShape;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgType;
 import me.gorgeousone.tangledmaze.command.framework.argument.ArgValue;
 import me.gorgeousone.tangledmaze.command.framework.argument.Argument;
@@ -18,9 +19,14 @@ import me.gorgeousone.tangledmaze.util.PlaceHolder;
 
 public class SelectTool extends ArgCommand {
 
-	public SelectTool(MazeCommand mazeCommand) {
-		super("select", null, true, mazeCommand);
+	private ClipToolHandler clipHandler;
+
+	public SelectTool(ClipToolHandler clipHandler, MazeCommand parent) {
+
+		super("select", null, true, parent);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
+
+		this.clipHandler = clipHandler;
 	}
 	
 	@Override
@@ -35,14 +41,14 @@ public class SelectTool extends ArgCommand {
 			case "rectangle":
 			case "square":
 
-				if(!switchToClipShape(player, ClipShape.RECT))
+				if(!clipHandler.setClipShape(player, ClipShape.RECTANGLE))
 					return true;
 				break;
 
 			case "circle":
 			case "ellipse":
 
-				if(!switchToClipShape(player, ClipShape.CIRCLE))
+				if(!clipHandler.setClipShape(player, ClipShape.ELLIPSE))
 					return true;
 				break;
 
@@ -68,22 +74,6 @@ public class SelectTool extends ArgCommand {
 		return true;
 	}
 
-	private boolean switchToClipShape(Player player, ClipShape type) {
-		
-		if(!ToolHandler.hasClipboard(player)) {
-			ToolHandler.setTool(player, new ClippingTool(player, type));
-			return true;
-		}
-		
-		ClippingTool clip = ToolHandler.getClipboard(player);
-		
-		if(clip.getType().getClass().equals(type.getClass()))
-			return false;
-
-		clip.setType(type);
-		return true;
-	}
-	
 	private boolean switchToMazeTool(Player player, Tool type) {
 
 		if(ToolHandler.getTool(player).getClass().equals(type.getClass()))
@@ -103,9 +93,10 @@ public class SelectTool extends ArgCommand {
 		}
 		
 		if(ToolHandler.hasClipboard(player)) {
-			ClippingTool clipboard = ToolHandler.getClipboard(player);
+			//TODO make cliphandler handle rendering of cliptool
+			ClipTool clipboard = ToolHandler.getClipboard(player);
 			Renderer.hideClipboard(clipboard, true);
-			clipboard.reset();
+			clipHandler.removeClipTool(player);
 		}
 		
 		ToolHandler.setTool(player, type);

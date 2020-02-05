@@ -16,7 +16,7 @@ import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.tool.ClippingTool;
+import me.gorgeousone.tangledmaze.tool.ClipTool;
 import me.gorgeousone.tangledmaze.tool.Tool;
 import me.gorgeousone.tangledmaze.util.Vec2;
 
@@ -84,7 +84,7 @@ public class BlockUpdateListener implements Listener {
 
 		Vec2 loc = new Vec2(block);
 		HashSet<Maze> affectedMazes = getAffectedMazes(loc);
-		HashSet<ClippingTool> affectedClipboards = getAffectedClipboards(loc);
+		HashSet<ClipTool> affectedClipboards = getAffectedClipboards(loc);
 
 		if(!affectedClipboards.isEmpty() || !affectedMazes.isEmpty())
 			update(block, affectedMazes, affectedClipboards, hideAffectedElements);
@@ -103,16 +103,16 @@ public class BlockUpdateListener implements Listener {
 		return affectedMazes;
 	}
 
-	private HashSet<ClippingTool> getAffectedClipboards(Vec2 loc) {
+	private HashSet<ClipTool> getAffectedClipboards(Vec2 loc) {
 
-		HashSet<ClippingTool> affectedClipboards = new HashSet<>();
+		HashSet<ClipTool> affectedClipboards = new HashSet<>();
 
 		for(Tool tool : ToolHandler.getPlayersTools()) {
 
-			if(!(tool instanceof ClippingTool))
+			if(!(tool instanceof ClipTool))
 				continue;
 
-			ClippingTool clipboard = (ClippingTool) tool;
+			ClipTool clipboard = (ClipTool) tool;
 
 			if(clipboard.getClip().contains(loc) || clipboard.verticesContain(loc))
 				affectedClipboards.add(clipboard);
@@ -121,7 +121,7 @@ public class BlockUpdateListener implements Listener {
 		return affectedClipboards;
 	}
 
-	private void update(Block changedBlock, HashSet<Maze> affectedMazes, HashSet<ClippingTool> affectedClipboards, boolean hideAffectedElements) {
+	private void update(Block changedBlock, HashSet<Maze> affectedMazes, HashSet<ClipTool> affectedClipboards, boolean hideAffectedElements) {
 		
 		new BukkitRunnable() {
 			@Override
@@ -138,7 +138,7 @@ public class BlockUpdateListener implements Listener {
 						Renderer.redisplayMazeBlock(maze, updatedBlock);
 				}
 
-				for(ClippingTool clipboard : affectedClipboards) {
+				for(ClipTool clipboard : affectedClipboards) {
 					
 					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) &&
 							(clipboard.getClip().isBorderBlock(changedBlock) ||clipboard.isVertex(changedBlock)))

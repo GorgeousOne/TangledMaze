@@ -30,10 +30,13 @@ public class Constants {
 			CLIPBOARD_BORDER = Material.GOLD_BLOCK,
 			CLIPBOARD_CORNER = Material.LAPIS_BLOCK;
 
+
 	public static final TreeSet<Material>
 			NOT_SOLIDS = new TreeSet<>(),
 			REPLACEABLE_SOLIDS = new TreeSet<>();
-	
+
+	public static final String MAZE_WAND_NAME = ChatColor.DARK_GREEN + "Maze Wand";
+
 	public static final String[] MAZE_WAND_ENCHANTS = {
 			"Difficult Handling II",
 			"Would Recommend X/X",
@@ -51,14 +54,12 @@ public class Constants {
 		YamlConfiguration materialLists = Utils.loadDefaultConfig("material_lists");
 
 		for(String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
-
 			try {
 				NOT_SOLIDS.add(Material.valueOf(materialName));
 			}catch (IllegalArgumentException ignored) {}
 		}
 
 		for(String materialName : (List<String>) materialLists.getList("replaceable-solid-materials")) {
-
 			try {
 				REPLACEABLE_SOLIDS.add(Material.valueOf(materialName));
 			}catch (IllegalArgumentException ignored) {}

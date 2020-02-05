@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze;
 
+import me.gorgeousone.tangledmaze.handler.ClipToolHandler;
 import me.gorgeousone.tangledmaze.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -17,13 +18,16 @@ import java.util.Map;
 public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
+	//TODO make cliphandler instance private
+	public static ClipToolHandler clipHandler;
 
 	@Override
 	public void onEnable() {
 
 		super.onEnable();
 		plugin = this;
-		
+		clipHandler = new ClipToolHandler();
+
 		loadConfig();
 		loadLanguage();
 		
@@ -60,7 +64,8 @@ public class TangledMain extends JavaPlugin {
 	private void registerListeners() {
 		
 		PluginManager manager = Bukkit.getPluginManager();
-		manager.registerEvents(new WandListener(), this);
+		//TODO pass clipcklistener proper instance when created
+		manager.registerEvents(new PlayerClickListener(null), this);
 		manager.registerEvents(new PlayerListener(), this);
 		manager.registerEvents(new BlockUpdateListener(), this);
 	}
@@ -71,12 +76,12 @@ public class TangledMain extends JavaPlugin {
 		mazeCommand.addChild(new HelpCommand(mazeCommand));
 		mazeCommand.addChild(new Reload(mazeCommand));
 		mazeCommand.addChild(new GiveWand(mazeCommand));
-		mazeCommand.addChild(new StartMaze(mazeCommand));
+		mazeCommand.addChild(new StartMaze(clipHandler, mazeCommand));
 		mazeCommand.addChild(new DiscardMaze(mazeCommand));
 		mazeCommand.addChild(new TpToMaze(mazeCommand));
-		mazeCommand.addChild(new SelectTool(mazeCommand));
-		mazeCommand.addChild(new AddToMaze(mazeCommand));
-		mazeCommand.addChild(new CutFromMaze(mazeCommand));
+		mazeCommand.addChild(new SelectTool(clipHandler, mazeCommand));
+		mazeCommand.addChild(new AddToMaze(clipHandler, mazeCommand));
+		mazeCommand.addChild(new CutFromMaze(clipHandler, mazeCommand));
 		mazeCommand.addChild(new UndoCommand(mazeCommand));
 		mazeCommand.addChild(new SetDimension(mazeCommand));
 		mazeCommand.addChild(new BuildCommand(mazeCommand));

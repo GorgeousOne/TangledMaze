@@ -8,6 +8,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
+import me.gorgeousone.tangledmaze.util.BlockUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -117,7 +118,7 @@ public class Maze {
 	}
 
 	public void setDimension(MazeDimension size, int newValue) {
-		dimensions.put(size, Utils.limit(newValue, 1, size.getMaxValue()));
+		dimensions.put(size, Utils.clamp(newValue, 1, size.getMaxValue()));
 	}
 
 	public void setBlockComposition(BlockComposition composition) {
@@ -352,7 +353,7 @@ public class Maze {
 		for(Directions dir : Directions.values()) {
 			
 			Vec2 neighbor = loc.clone().add(dir.getVec2());
-			int height = Utils.nearestSurfaceY(neighbor, getClip().getHeight(loc), getWorld());
+			int height = BlockUtils.nearestSurfaceY(neighbor, getClip().getHeight(loc), getWorld());
 			
 			if(!getClip().contains(neighbor)) {
 				
@@ -486,7 +487,7 @@ public class Maze {
 			throw notAlterableException;
 
 		for(Entry<Vec2, Integer> fill : getClip().getFillEntries())
-			getClip().addFill(fill.getKey(), Utils.nearestSurfaceY(fill.getKey(), fill.getValue(), getWorld()));
+			getClip().addFill(fill.getKey(), BlockUtils.nearestSurfaceY(fill.getKey(), fill.getValue(), getWorld()));
 	}
 	
 	public Location updateHeight(Block block) {
@@ -494,7 +495,7 @@ public class Maze {
 		if(isConstructed())
 			throw notAlterableException;
 		
-		Location updatedBlock = Utils.nearestSurface(block.getLocation());
+		Location updatedBlock = BlockUtils.nearestSurface(block.getLocation());
 		getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
 			
 		return updatedBlock;

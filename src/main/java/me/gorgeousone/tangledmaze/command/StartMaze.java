@@ -1,5 +1,6 @@
 package me.gorgeousone.tangledmaze.command;
 
+import me.gorgeousone.tangledmaze.handler.ClipToolHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -7,19 +8,23 @@ import me.gorgeousone.tangledmaze.command.framework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.tool.ClippingTool;
+import me.gorgeousone.tangledmaze.tool.ClipTool;
 
 public class StartMaze extends BasicCommand {
-	
-	public StartMaze(MazeCommand mazeCommand) {
+
+	private ClipToolHandler clipHandler;
+
+	public StartMaze(ClipToolHandler clipHandler, MazeCommand mazeCommand) {
 		super("start", null, true, mazeCommand);
+
+		this.clipHandler = clipHandler;
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, String[] arguments) {
 
 		Player player = (Player) sender;
-		ClippingTool clipboard = getCompletedClipboard(player);
+		ClipTool clipboard = getCompletedClipboard(player);
 		
 		if(clipboard == null)
 			return false;
@@ -38,7 +43,7 @@ public class StartMaze extends BasicCommand {
 		}
 		
 		Renderer.displayMaze(maze);
-		clipboard.reset();
+		clipHandler.removeClipTool(player);
 		return true;
 	}
 }

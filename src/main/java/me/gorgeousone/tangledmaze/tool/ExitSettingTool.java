@@ -20,7 +20,6 @@ public class ExitSettingTool extends Tool {
 		return "exit setter";
 	}
 	
-	@Override
 	public void interact(Block clickedBlock, Action interaction) {
 		
 		Maze maze = MazeHandler.getMaze(getPlayer());

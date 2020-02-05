@@ -19,7 +19,7 @@ public class BrushTool extends Tool {
 	public String getName() {
 		return "brush";
 	}
-	
+
 	@Override
 	public void interact(Block clickedBlock, Action interaction) {
 

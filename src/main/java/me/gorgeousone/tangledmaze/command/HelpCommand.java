@@ -36,7 +36,7 @@ public class HelpCommand extends ArgCommand {
 	@Override
 	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 
-		int pageNumber = Utils.limit(arguments[0].getInt(), 1, pageCount);
+		int pageNumber = Utils.clamp(arguments[0].getInt(), 1, pageCount);
 		sendHelpPage(sender, pageNumber);
 		return true;
 	}

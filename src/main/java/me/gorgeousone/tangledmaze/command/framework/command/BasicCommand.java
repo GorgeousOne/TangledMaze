@@ -13,7 +13,7 @@ import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handler.MazeHandler;
 import me.gorgeousone.tangledmaze.handler.ToolHandler;
-import me.gorgeousone.tangledmaze.tool.ClippingTool;
+import me.gorgeousone.tangledmaze.tool.ClipTool;
 
 /**
  * This is the beginning of a lot of unnecessary code.
@@ -126,7 +126,7 @@ public abstract class BasicCommand {
 		return maze;
 	}
 	
-	protected ClippingTool getCompletedClipboard(Player player) {
+	protected ClipTool getCompletedClipboard(Player player) {
 		
 		if(!ToolHandler.hasClipboard(player) || !ToolHandler.getClipboard(player).isStarted()) {
 			
@@ -135,9 +135,9 @@ public abstract class BasicCommand {
 			return null;
 		}
 
-		ClippingTool clipboard = ToolHandler.getClipboard(player);
+		ClipTool clipboard = ToolHandler.getClipboard(player);
 		
-		if(!clipboard.isComplete()) {
+		if(!clipboard.hasClip()) {
 			Messages.ERROR_CLIPBOARD_NOT_COMPLETED.sendTo(player);
 			return null;
 		}
