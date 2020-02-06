@@ -55,6 +55,7 @@ public class ClipToolHandler {
 
 		//TODO actually change clip's shape if player has a cliptool
 		clipShapes.put(player.getUniqueId(), shape);
+
 		return true;
 	}
 
@@ -103,6 +104,11 @@ public class ClipToolHandler {
 //				controlPoints.add(BlockUtils.nearestSurface(clickedBlock.getLocation()));
 //			}
 //		}
+	}
+
+	private void prepareClipToolForReshaping(Block clickedBlock) {
+
+
 	}
 
 	//	private void createNewClipTool(Player player, Block clickedBlock) {

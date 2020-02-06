@@ -20,7 +20,10 @@ public class ClipTool extends Tool {
 	private ClipShape shape;
 	private World world;
 	private List<Location> controlPoints;
-	
+
+	private boolean isBeingReshaped;
+	private int movingControlPointIndex = -1;
+
 //	private boolean isComplete, isBeingResized;
 //	private int indexOfResizedVertex;
 	
@@ -30,11 +33,12 @@ public class ClipTool extends Tool {
 		world = player.getWorld();
 		shape = type;
 		controlPoints = new ArrayList<>();
+		clip = new Clip(world);
 	}
 	
 	@Override
 	public String getName() {
-		return shape.getClass().getSimpleName().toLowerCase();
+		return shape.getSimpleName();
 	}
 
 	@Override
@@ -55,31 +59,50 @@ public class ClipTool extends Tool {
 	}
 
 	public boolean hasClip() {
-		return clip != null;
+		return !clip.getFill().isEmpty();
 	}
 
-//	public boolean isBeingResized() {
-//		return isBeingResized;
-//	}
-
-//	public int getIndexOfResizedVertex() {
-//		return indexOfResizedVertex;
-//	}
-
-//	public void setBeingResizing(boolean state) {
-//		isBeingResized = state;
-//	}
-
-//	public void setIndexOfResizedVertex(int indexOfResizedVertex) {
-//		this.indexOfResizedVertex = indexOfResizedVertex;
-//	}
+	public boolean isBeingReshaped() {
+		return isBeingReshaped;
+	}
 
 	public Clip getClip() {
 		return clip;
 	}
 
+	/**
+	 * This method sounds really stupid. It sets ClipTool in a state of being reshape, which happens when a player
+	 * drags and later drops a clip corner to reshape it.
+	 *
+	 * @param movingControlPointIndex index of the control point (clip corner) that is being moved
+	 */
+	public void startBeingReshaped(int movingControlPointIndex) {
+
+		if(!hasClip())
+			throw new IllegalStateException("Cannot reshape an unfinished clip.");
+
+		if(movingControlPointIndex < 0 || movingControlPointIndex > getControlPoints().size()-1)
+			throw new IndexOutOfBoundsException("Could not find control point with index " + movingControlPointIndex);
+
+		isBeingReshaped = true;
+		this.movingControlPointIndex = movingControlPointIndex;
+	}
+
+	/**
+	 * Returns the index of the control point (clip corner) the player is relocating when reshaping the clip.
+	 */
+	public int getMovingControlPointIndex() {
+		return movingControlPointIndex;
+	}
+
+	public void stopBeingReshaping() {
+		isBeingReshaped = false;
+		movingControlPointIndex = -1;
+	}
+
 	public void setClip(Clip clip) {
 		this.clip = clip;
+		stopBeingReshaping();
 	}
 
 	//	public void setType(ClipShape shape) {
