@@ -1,10 +1,13 @@
 package me.gorgeousone.tangledmaze.tool;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.util.BlockUtils;
+import me.gorgeousone.tangledmaze.util.BlockVec;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -13,26 +16,23 @@ import org.bukkit.entity.Player;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.util.Vec2;
 import org.bukkit.event.block.Action;
+import org.bukkit.util.Vector;
 
 public class ClipTool extends Tool {
 
 	private Clip clip;
 	private ClipShape shape;
 	private World world;
-	private List<Location> controlPoints;
+	private List<BlockVec> vertices;
 
-	private boolean isBeingReshaped;
-	private int movingControlPointIndex = -1;
-
-//	private boolean isComplete, isBeingResized;
-//	private int indexOfResizedVertex;
+	private BlockVec shiftedVertex;
 	
 	public ClipTool(Player player, ClipShape type) {
 		super(player);
 		
 		world = player.getWorld();
 		shape = type;
-		controlPoints = new ArrayList<>();
+		vertices = new ArrayList<>();
 		clip = new Clip(world);
 	}
 	
@@ -55,54 +55,41 @@ public class ClipTool extends Tool {
 	}
 
 	public boolean isStarted() {
-		return !controlPoints.isEmpty();
+		return !vertices.isEmpty();
 	}
 
 	public boolean hasClip() {
-		return !clip.getFill().isEmpty();
-	}
-
-	public boolean isBeingReshaped() {
-		return isBeingReshaped;
+		return clip.size() != 0;
 	}
 
 	public Clip getClip() {
 		return clip;
 	}
 
-	/**
-	 * This method sounds really stupid. It sets ClipTool in a state of being reshape, which happens when a player
-	 * drags and later drops a clip corner to reshape it.
-	 *
-	 * @param movingControlPointIndex index of the control point (clip corner) that is being moved
-	 */
-	public void startBeingReshaped(int movingControlPointIndex) {
+	public void startShiftingVertex(BlockVec shiftedVertex) {
 
 		if(!hasClip())
 			throw new IllegalStateException("Cannot reshape an unfinished clip.");
 
-		if(movingControlPointIndex < 0 || movingControlPointIndex > getControlPoints().size()-1)
-			throw new IndexOutOfBoundsException("Could not find control point with index " + movingControlPointIndex);
+		if(isBeingReshaped())
+			throw new IllegalStateException("Already shifting a vertex of this clip");
 
-		isBeingReshaped = true;
-		this.movingControlPointIndex = movingControlPointIndex;
+		if(!vertices.contains(shiftedVertex))
+			throw new IllegalArgumentException("Passed BlockVec is not a vertex of this clip");
+
+		this.shiftedVertex = shiftedVertex;
 	}
 
-	/**
-	 * Returns the index of the control point (clip corner) the player is relocating when reshaping the clip.
-	 */
-	public int getMovingControlPointIndex() {
-		return movingControlPointIndex;
+	public boolean isBeingReshaped() {
+		return shiftedVertex != null;
 	}
 
-	public void stopBeingReshaping() {
-		isBeingReshaped = false;
-		movingControlPointIndex = -1;
+	public BlockVec getShiftedVertex() {
+		return shiftedVertex;
 	}
 
 	public void setClip(Clip clip) {
 		this.clip = clip;
-		stopBeingReshaping();
 	}
 
 	//	public void setType(ClipShape shape) {
@@ -183,67 +170,54 @@ public class ClipTool extends Tool {
 //		isBeingResized = false;
 //	}
 	
-	public List<Location> getControlPoints() {
-		return controlPoints;
+	public List<BlockVec> getVertices() {
+		return vertices;
 	}
 
-	public void setControlPoints(List<Location> controlPoints) {
-		this.controlPoints = controlPoints;
+	public void setVertices(List<BlockVec> vertices) {
+		this.vertices = vertices;
+		shiftedVertex = null;
 	}
 
-	public boolean verticesContain(Vec2 loc) {
-		
-		for(Location vertex : controlPoints) {
-			if(vertex.getX() == loc.getX() && vertex.getZ() == loc.getZ())
+	public boolean isVertex(Vec2 point) {
+
+		for(BlockVec vertex : vertices) {
+			if (vertex.toVec2().equals(point))
 				return true;
 		}
-		
+
 		return false;
 	}
 
 	public boolean isVertex(Block block) {
-		
-		if(getWorld() != block.getWorld())
-			return false;
-		
-		Location loc = block.getLocation();
-		
-		for(Location vertex : controlPoints) {
-			if(vertex.equals(loc))
-				return true;
-		}
-		
-		return false;
+		return getVertex(block) != null;
 	}
-	
-	public int indexOfVertex(Block block) {
-		
-		for(Location vertex : controlPoints) {
-			
-			if(block.getX() == vertex.getX() &&
-			   block.getZ() == vertex.getZ())
-				return controlPoints.indexOf(vertex);
+
+	public BlockVec getVertex(Block block) {
+
+		Vector blockPos = block.getLocation().toVector();
+
+		for(BlockVec vertex : vertices) {
+			if (vertex.toVector().equals(blockPos))
+				return vertex;
 		}
-		
-		return -1;
+
+		return null;
 	}
 
 	public Location updateHeight(Block block) {
-		
+
 		Location updatedBlock = null;
+		updatedBlock = BlockUtils.nearestSurface(block.getLocation());
 
-		if(isVertex(block)) {
-			updatedBlock = BlockUtils.nearestSurface(block.getLocation());
-			controlPoints.get(indexOfVertex(block)).setY(updatedBlock.getBlockY());
-		}
-		
-		if(!hasClip())
-			return updatedBlock;
-		else
-			updatedBlock = BlockUtils.nearestSurface(block.getLocation());
+		BlockVec vertex = getVertex(block);
 
-		getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
-		
+		if(vertex != null)
+			vertex.setY(updatedBlock.getBlockY());
+
+		if(hasClip())
+			getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
+
 		return updatedBlock;
 	}
 }

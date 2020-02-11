@@ -27,9 +27,7 @@ public class TpToMaze extends BasicCommand {
 		if(maze == null)
 			return false;
 		
-		Vec2 firstLoc = ((TreeSet<Vec2>) maze.getClip().getBorder()).first();
-		
-		Location tpLoc = maze.getClip().getLocation(firstLoc);
+		Location tpLoc = maze.getClip().getBorderBlocks().iterator().next();
 		tpLoc.add(0.5, 2, 0.5);
 		tpLoc.setDirection(player.getLocation().getDirection());
 		

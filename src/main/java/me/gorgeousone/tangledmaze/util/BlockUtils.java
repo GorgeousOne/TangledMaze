@@ -4,12 +4,17 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 public final class BlockUtils {
 
 	public static int nearestSurfaceY(Vec2 loc, int startY, World world) {
 		return nearestSurface(new Location(world, loc.getX(), startY, loc.getZ())).getBlockY();
 	}
+
+//	public static int nearestSurfaceY(Block block) {
+//		return nearestSurface(block.getLocation()).getBlockY();
+//	}
 
 	public static Location nearestSurface(Location loc) {
 

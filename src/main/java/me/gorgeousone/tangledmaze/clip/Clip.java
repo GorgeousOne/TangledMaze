@@ -66,10 +66,6 @@ public class Clip {
 			border.add(point);
 	}
 
-	public void addAllBorder(Set<Vec2> points) {
-		border.addAll(points);
-	}
-	
 	public void removeBorder(Vec2 point) {
 		border.remove(point);
 	}
@@ -86,7 +82,7 @@ public class Clip {
 		return fill.get(point);
 	}
 	
-	public Location getLocation(Vec2 point) {
+	public Location getBlockLoc(Vec2 point) {
 		return new Location(getWorld(), point.getX(), getHeight(point), point.getZ());
 	}
 	
@@ -94,8 +90,8 @@ public class Clip {
 		
 		Set<Location> blocks = new HashSet<>();
 		
-		for(Vec2 border : getBorder())
-			blocks.add(new Location(getWorld(), border.getX(), getHeight(border), border.getZ()));
+		for(Vec2 border : border)
+			blocks.add(getBlockLoc(border));
 		
 		return blocks;
 	}

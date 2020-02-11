@@ -4,12 +4,13 @@ import me.gorgeousone.tangledmaze.clip.ClipFactory;
 import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.tool.ClipTool;
 import me.gorgeousone.tangledmaze.util.BlockUtils;
+import me.gorgeousone.tangledmaze.util.BlockVec;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ClipToolHandler {
 
 	public boolean setClipShape(Player player, ClipShape shape) {
 
-		if(shape == getClipShape(player))
+		if (shape == getClipShape(player))
 			return false;
 
 		//TODO actually change clip's shape if player has a cliptool
@@ -65,72 +66,73 @@ public class ClipToolHandler {
 			setClipTool(player, new ClipTool(player, getClipShape(player)));
 
 		ClipTool clipTool = getClipTool(player);
-		ClipShape clipShape = clipTool.getShape();
 
-		if (clickedBlock.getWorld() != clipTool.getWorld() || clipTool.hasClip()) {
+		if (clickedBlock.getWorld() != clipTool.getWorld()) {
+
 			Renderer.hideClipboard(clipTool, true);
-
 			clipTool = new ClipTool(player, getClipShape(player));
 			setClipTool(player, clipTool);
 		}
 
-		List<Location> controlPoints = clipTool.getControlPoints();
-		controlPoints.add(BlockUtils.nearestSurface(clickedBlock.getLocation()));
+		if (clipTool.isBeingReshaped()) {
+			completeReshapingClip(clipTool, clickedBlock);
+			return;
+		}
 
-		Bukkit.broadcastMessage(ChatColor.GRAY + "" + controlPoints.size() + " points out of " + clipShape.getRequiredControlPointCount());
+		if (clipTool.hasClip() && clipTool.isVertex(clickedBlock)) {
+			clipTool.startShiftingVertex(clipTool.getVertex(clickedBlock));
+			return;
+		}
 
-		if (controlPoints.size() == clipShape.getRequiredControlPointCount()) {
-			clipTool.setClip(ClipFactory.createClip(clipShape, controlPoints));
-			clipTool.setControlPoints(ClipFactory.createCompleteControlPointsList(controlPoints, clipShape));
+		addVertexToClip(clipTool, clickedBlock);
+	}
+
+	private void addVertexToClip(ClipTool clipTool, Block clickedBlock) {
+
+		ClipShape clipShape = clipTool.getShape();
+		List<BlockVec> vertices = clipTool.getVertices();
+
+		vertices.add(new BlockVec(BlockUtils.nearestSurface(clickedBlock.getLocation())));
+
+		Bukkit.broadcastMessage(ChatColor.GRAY + "" + vertices.size() + " vertices out of " + clipShape.getRequiredVertexCount());
+		Bukkit.broadcastMessage(ChatColor.GRAY + "y: " + new BlockVec(BlockUtils.nearestSurface(clickedBlock.getLocation())).getY());
+
+		if (vertices.size() == clipShape.getRequiredVertexCount()) {
+			clipTool.setClip(ClipFactory.createClip(clipShape, vertices));
+			clipTool.setVertices(ClipFactory.createCompleteVertexList(vertices, clipShape));
 			Bukkit.broadcastMessage(ChatColor.GRAY + "Creating clip");
 		}
 
 		Renderer.displayClipboard(clipTool);
-//		else {
-//
-//			if (clipTool.isBeingResized()) {
-//				resizeShape(clickedBlock);
-//
-//			} else if (clipTool.isVertex(clickedBlock)) {
-//
-//				clipTool.setIndexOfResizedVertex(clipTool.indexOfVertex(clickedBlock);
-//				clipTool.setBeingResizing(true);
-//				return;
-//
-//			} else {
-//
-//				Renderer.hideClipboard(this, true);
-//				reset();
-//				controlPoints.add(BlockUtils.nearestSurface(clickedBlock.getLocation()));
-//			}
-//		}
 	}
 
-	private void prepareClipToolForReshaping(Block clickedBlock) {
+	private void completeReshapingClip(ClipTool clipTool, Block newVertexBlock) {
 
+		ClipShape clipShape = clipTool.getShape();
+		List<BlockVec> vertices = clipTool.getVertices();
 
+		Renderer.hideClipboard(clipTool, true);
+
+		switch (clipShape) {
+
+			case RECTANGLE:
+			case ELLIPSE:
+
+				int indexOfOldVertex = vertices.indexOf(clipTool.getShiftedVertex());
+				int indexOfVertexOppositeToOldVertex = (indexOfOldVertex + 6) % 4;
+
+				List<BlockVec> newDefiningVertices = new ArrayList<>();
+				newDefiningVertices.add(vertices.get(indexOfVertexOppositeToOldVertex));
+				newDefiningVertices.add(new BlockVec(newVertexBlock));
+
+				clipTool.setClip(ClipFactory.createClip(clipShape, newDefiningVertices));
+				clipTool.setVertices(ClipFactory.createCompleteVertexList(newDefiningVertices, clipShape));
+				break;
+
+			default:
+				break;
+		}
+
+		Renderer.displayClipboard(clipTool);
 	}
-
-	//	private void createNewClipTool(Player player, Block clickedBlock) {
-	//		ClipTool clipTool = new ClipTool(player);
-	//		clipTool.addControlPoint(BlockUtils.nearestSurface(clickedBlock.getLocation()));
-	//	}
-	//
-	//	private void resetClipTool(ClipTool clipTool) {
-	//		clipTool.setClip(null);
-	//		clipTool.setControlPoints(new ArrayList<>());
-	//	}
-
-//	private void resizeShape(ClipTool clipTool, Block block) {
-//
-//		Renderer.hideClipboard(clipTool, true);
-//		Location oppositeVertex = vertices.get((indexOfResizedVertex + 2) % 4);
-//
-//		vertices.clear();
-//		vertices.add(oppositeVertex);
-//		vertices.add(BlockUtils.nearestSurface(block.getLocation()));
-//
-//		calculateShape();
-//	}
-
 }

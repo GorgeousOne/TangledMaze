@@ -13,7 +13,7 @@ public enum ClipShape {
 		this.simpleName = simpleName;
 	}
 
-	public int getRequiredControlPointCount() {
+	public int getRequiredVertexCount() {
 		return requiredVertexCount;
 	}
 

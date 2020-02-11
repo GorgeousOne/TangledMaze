@@ -114,7 +114,7 @@ public class BlockUpdateListener implements Listener {
 
 			ClipTool clipboard = (ClipTool) tool;
 
-			if(clipboard.getClip().contains(loc) || clipboard.verticesContain(loc))
+			if(clipboard.getClip().contains(loc) || clipboard.isVertex(loc))
 				affectedClipboards.add(clipboard);
 		}
 

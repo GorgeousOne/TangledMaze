@@ -33,12 +33,12 @@ public class ExitSettingTool extends Tool {
 			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
 
 			if(maze.hasExits())
-				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
+				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
 			
 		}else if(maze.canBeExit(clickedBlock)) {
 			
 			if(maze.hasExits())
-				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getLocation(maze.getMainExit()), Constants.MAZE_EXIT);
+				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_EXIT);
 			
 			maze.addExit(clickedBlock);
 			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);

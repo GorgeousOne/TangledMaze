@@ -28,7 +28,7 @@ public class Constants {
 			MAZE_MAIN_EXIT = Material.DIAMOND_BLOCK,
 			MAZE_EXIT = Material.EMERALD_BLOCK,
 			CLIPBOARD_BORDER = Material.GOLD_BLOCK,
-			CLIPBOARD_CORNER = Material.LAPIS_BLOCK;
+			CLIPBOARD_VERTEX = Material.LAPIS_BLOCK;
 
 
 	public static final TreeSet<Material>

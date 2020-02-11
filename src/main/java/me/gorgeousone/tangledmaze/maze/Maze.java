@@ -138,7 +138,7 @@ public class Maze {
 		if(!getClip().borderContains(point))
 			return false;
 
-		return addExit(getClip().getLocation(point).getBlock());
+		return addExit(getClip().getBlockLoc(point).getBlock());
 	}
 
 	public boolean addExit(Block block) {
