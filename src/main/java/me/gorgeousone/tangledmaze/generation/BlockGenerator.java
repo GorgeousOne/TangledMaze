@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.generation;
 import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.generation.datapicker.AbstractBlockDataPicker;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
-import me.gorgeousone.tangledmaze.util.BlockDataState;
+import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitRunnable;

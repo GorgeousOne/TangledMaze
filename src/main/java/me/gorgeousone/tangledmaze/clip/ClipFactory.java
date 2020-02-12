@@ -1,9 +1,9 @@
 package me.gorgeousone.tangledmaze.clip;
 
-import me.gorgeousone.tangledmaze.util.BlockUtils;
-import me.gorgeousone.tangledmaze.util.BlockVec;
-import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.BlockUtils;
+import me.gorgeousone.tangledmaze.utils.BlockVec;
+import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
 import org.bukkit.World;
 

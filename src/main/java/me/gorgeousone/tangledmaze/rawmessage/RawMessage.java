@@ -18,7 +18,7 @@ public class RawMessage {
 		rawElements = new ArrayList<>();
 	}
 	
-	public RawElement add(String text) {
+	public RawElement addText(String text) {
 		RawElement element = new RawElement(text, this);
 		rawElements.add(element);
 		return element;

@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.maze;
 
-import me.gorgeousone.tangledmaze.util.BlockDataState;
+import me.gorgeousone.tangledmaze.utils.BlockDataState;
 
 import java.util.HashMap;
 import java.util.Set;

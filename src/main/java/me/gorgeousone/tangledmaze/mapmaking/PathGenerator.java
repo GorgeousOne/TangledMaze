@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Random;
 
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.util.Directions;
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class PathGenerator {
 	

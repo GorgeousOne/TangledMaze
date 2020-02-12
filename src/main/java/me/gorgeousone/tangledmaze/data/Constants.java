@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import me.gorgeousone.tangledmaze.util.Utils;
+import me.gorgeousone.tangledmaze.utils.Utils;
 
 import java.util.List;
 import java.util.TreeSet;

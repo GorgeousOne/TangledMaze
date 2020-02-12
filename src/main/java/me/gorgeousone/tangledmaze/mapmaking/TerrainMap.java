@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 /**
  * A terrain map contains different information about a maze that the generators access.

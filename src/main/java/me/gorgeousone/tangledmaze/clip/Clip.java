@@ -11,7 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 /*A class for storing a 2D area. The area consists of a map with (unique) {@link Vec2}s for the x- and z-coordinate of each location
  * mapped to an int as a y-coordinate. Additionally there is a list of Vec2s for the border for the area.

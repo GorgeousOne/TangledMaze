@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import me.gorgeousone.tangledmaze.util.TextMessage;
+import me.gorgeousone.tangledmaze.utils.TextMessage;
 
 public class Messages {
 
@@ -16,7 +16,6 @@ public class Messages {
 			COMMAND_ADD_CUT,
 			COMMAND_UNDO,
 			COMMAND_DIMENSIONS,
-			COMMAND_PATHLENGTH,
 			COMMAND_BUILD,
 			COMMAND_TELEPORT,
 			COMMAND_UNBUILD,
@@ -60,14 +59,13 @@ public class Messages {
 		COMMAND_WAND       = new TextMessage(ChatColor.DARK_GREEN + "/maze wand\n" + ChatColor.GREEN + helpPages.getString("wand-command") , false);
 		COMMAND_START      = new TextMessage(ChatColor.DARK_GREEN + "/maze start\n" + ChatColor.GREEN + helpPages.getString("start-command"), true);
 		COMMAND_DISCARD    = new TextMessage(ChatColor.DARK_GREEN + "/maze discard\n"+ ChatColor.GREEN + helpPages.getString("discard-command"), true);
+		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
 		COMMAND_SELECT     = new TextMessage(ChatColor.DARK_GREEN + "/maze select <tool>\n" + ChatColor.GREEN + helpPages.getString("select-command"), true);
 		COMMAND_ADD_CUT    = new TextMessage(ChatColor.DARK_GREEN + "/maze add / cut\n" + ChatColor.GREEN + helpPages.getString("add-cut-command"), true);
 		COMMAND_UNDO       = new TextMessage(ChatColor.DARK_GREEN + "/maze undo\n" + ChatColor.GREEN + helpPages.getString("undo-command"), true);
 		COMMAND_DIMENSIONS = new TextMessage(ChatColor.DARK_GREEN + "/maze set <dimension> <integer>\n" + ChatColor.GREEN + helpPages.getString("set-dimension-command"), true);
-		COMMAND_PATHLENGTH = new TextMessage(ChatColor.DARK_GREEN + "/maze pathlength <integer>\n" + ChatColor.GREEN + helpPages.getString("pathlength-command"), true);
 		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze build <block> ...\n" + ChatColor.GREEN + helpPages.getString("build-command"), true);
-		COMMAND_TELEPORT   = new TextMessage(ChatColor.DARK_GREEN + "/maze teleport\n" + ChatColor.GREEN + helpPages.getString("teleport-command"), true);
-		COMMAND_BUILD      = new TextMessage(ChatColor.DARK_GREEN + "/maze unbuild\n" + ChatColor.GREEN + helpPages.getString("unbuild-command"), true);
+		COMMAND_UNBUILD    = new TextMessage(ChatColor.DARK_GREEN + "/maze unbuild\n" + ChatColor.GREEN + helpPages.getString("unbuild-command"), true);
 
 		ConfigurationSection tools = helpPages.getConfigurationSection("tools");
 

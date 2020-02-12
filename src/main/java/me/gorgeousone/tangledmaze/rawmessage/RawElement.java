@@ -51,7 +51,7 @@ public class RawElement {
 		return this;
 	}
 	
-	public RawElement click(String text, ClickAction action) {
+	public RawElement onClick(String text, ClickAction action) {
 		clickText = new ClickText(text, action);
 		return this;
 	}

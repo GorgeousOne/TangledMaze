@@ -3,11 +3,11 @@ package me.gorgeousone.tangledmaze.generation.blockselector;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.mapmaking.MazeAreaType;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
-import me.gorgeousone.tangledmaze.util.BlockDataState;
-import me.gorgeousone.tangledmaze.util.Directions;
+import me.gorgeousone.tangledmaze.utils.BlockDataState;
+import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.util.Utils;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 

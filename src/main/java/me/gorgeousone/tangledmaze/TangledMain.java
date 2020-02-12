@@ -1,16 +1,18 @@
 package me.gorgeousone.tangledmaze;
 
-import me.gorgeousone.tangledmaze.handler.ClipToolHandler;
-import me.gorgeousone.tangledmaze.util.Utils;
+import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
+import me.gorgeousone.tangledmaze.handlers.MazeHandler;
+import me.gorgeousone.tangledmaze.handlers.ToolHandler;
+import me.gorgeousone.tangledmaze.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.gorgeousone.tangledmaze.command.*;
-import me.gorgeousone.tangledmaze.command.framework.handler.CommandHandler;
+import me.gorgeousone.tangledmaze.commands.*;
+import me.gorgeousone.tangledmaze.commands.framework.handler.CommandHandler;
 import me.gorgeousone.tangledmaze.data.*;
-import me.gorgeousone.tangledmaze.handler.Renderer;
-import me.gorgeousone.tangledmaze.listener.*;
+import me.gorgeousone.tangledmaze.handlers.Renderer;
+import me.gorgeousone.tangledmaze.listeners.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,9 @@ import java.util.Map;
 public class TangledMain extends JavaPlugin {
 
 	private static TangledMain plugin;
+
+	private ToolHandler toolHandler;
+	private MazeHandler mazeHandler;
 	//TODO make cliphandler instance private
 	public static ClipToolHandler clipHandler;
 
@@ -26,6 +31,9 @@ public class TangledMain extends JavaPlugin {
 
 		super.onEnable();
 		plugin = this;
+
+		mazeHandler = new MazeHandler();
+		toolHandler = new ToolHandler();
 		clipHandler = new ClipToolHandler();
 
 		loadConfig();
@@ -65,9 +73,9 @@ public class TangledMain extends JavaPlugin {
 		
 		PluginManager manager = Bukkit.getPluginManager();
 		//TODO pass clipcklistener proper instance when created
-		manager.registerEvents(new PlayerClickListener(null), this);
-		manager.registerEvents(new PlayerListener(), this);
-		manager.registerEvents(new BlockUpdateListener(), this);
+		manager.registerEvents(new PlayerClickListener(toolHandler), this);
+		manager.registerEvents(new PlayerListener(toolHandler, clipHandler, mazeHandler), this);
+		manager.registerEvents(new BlockUpdateListener(clipHandler, mazeHandler), this);
 	}
 
 	private void registerCommands() {
@@ -76,16 +84,16 @@ public class TangledMain extends JavaPlugin {
 		mazeCommand.addChild(new HelpCommand(mazeCommand));
 		mazeCommand.addChild(new Reload(mazeCommand));
 		mazeCommand.addChild(new GiveWand(mazeCommand));
-		mazeCommand.addChild(new StartMaze(clipHandler, mazeCommand));
-		mazeCommand.addChild(new DiscardMaze(mazeCommand));
-		mazeCommand.addChild(new TpToMaze(mazeCommand));
-		mazeCommand.addChild(new SelectTool(clipHandler, mazeCommand));
-		mazeCommand.addChild(new AddToMaze(clipHandler, mazeCommand));
-		mazeCommand.addChild(new CutFromMaze(clipHandler, mazeCommand));
-		mazeCommand.addChild(new UndoCommand(mazeCommand));
-		mazeCommand.addChild(new SetDimension(mazeCommand));
-		mazeCommand.addChild(new BuildCommand(mazeCommand));
-		mazeCommand.addChild(new UnbuildMaze(mazeCommand));
+		mazeCommand.addChild(new StartMaze(mazeCommand, clipHandler, mazeHandler));
+		mazeCommand.addChild(new DiscardMaze(mazeCommand, toolHandler, mazeHandler));
+		mazeCommand.addChild(new TpToMaze(mazeCommand, mazeHandler));
+		mazeCommand.addChild(new SelectTool(mazeCommand, clipHandler, toolHandler, mazeHandler));
+		mazeCommand.addChild(new AddToMaze(mazeCommand, clipHandler, mazeHandler));
+		mazeCommand.addChild(new CutFromMaze(mazeCommand, clipHandler, mazeHandler));
+		mazeCommand.addChild(new UndoCommand(mazeCommand, mazeHandler));
+		mazeCommand.addChild(new SetDimension(mazeCommand, mazeHandler));
+		mazeCommand.addChild(new BuildCommand(mazeCommand, toolHandler, mazeHandler));
+		mazeCommand.addChild(new UnbuildMaze(mazeCommand, mazeHandler));
 
 		CommandHandler cmdHandler = new CommandHandler(this);
 		cmdHandler.registerCommand(mazeCommand);

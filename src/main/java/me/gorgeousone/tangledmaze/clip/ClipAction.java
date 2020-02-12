@@ -8,7 +8,7 @@ import org.bukkit.Location;
 
 import java.util.HashMap;
 
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class ClipAction {
 	

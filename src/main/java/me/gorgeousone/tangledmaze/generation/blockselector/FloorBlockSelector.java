@@ -2,7 +2,7 @@ package me.gorgeousone.tangledmaze.generation.blockselector;
 
 import me.gorgeousone.tangledmaze.mapmaking.MazeAreaType;
 import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
-import me.gorgeousone.tangledmaze.util.BlockDataState;
+import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import org.bukkit.Location;
 
 import java.util.HashSet;

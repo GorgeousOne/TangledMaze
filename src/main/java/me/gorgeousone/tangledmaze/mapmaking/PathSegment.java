@@ -3,8 +3,8 @@ package me.gorgeousone.tangledmaze.mapmaking;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class PathSegment {
 	

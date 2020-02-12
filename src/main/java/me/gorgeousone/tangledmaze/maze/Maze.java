@@ -8,7 +8,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
-import me.gorgeousone.tangledmaze.util.BlockUtils;
+import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,9 +17,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.gorgeousone.tangledmaze.clip.*;
-import me.gorgeousone.tangledmaze.util.Directions;
-import me.gorgeousone.tangledmaze.util.Utils;
-import me.gorgeousone.tangledmaze.util.Vec2;
+import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class Maze {
 	
@@ -173,7 +173,7 @@ public class Maze {
 
 	/**Applies a ClipAction which can be created e.g. with {@link #getAddition(Clip)}.
 	 * The method will change the clip of the maze according to the ClipAction,
-	 * the visual change of the maze to the player is left to the method caller (see {@link me.gorgeousone.tangledmaze.handler.Renderer#displayMazeAction(Maze, ClipAction)}).
+	 * the visual change of the maze to the player is left to the method caller (see {@link me.gorgeousone.tangledmaze.handlers.Renderer#displayMazeAction(Maze, ClipAction)}).
 	 * @param action beforehand created ClipAction
 	 * @param saveToHistory option to add the action to the maze's {@link ActionHistory} (for accessing it later e. g. to undo it)
 	 */
