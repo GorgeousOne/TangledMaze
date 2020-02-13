@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commands.framework.handler;
+package me.gorgeousone.tangledmaze.commands.framework.handlers;
 
 import java.util.LinkedList;
 import java.util.List;

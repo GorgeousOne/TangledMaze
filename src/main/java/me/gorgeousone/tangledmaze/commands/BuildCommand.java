@@ -36,8 +36,9 @@ public class BuildCommand extends ArgCommand {
 
 	private ToolHandler toolHandler;
 	private MazeHandler mazeHandler;
+	private BuildHandler buildHandler;
 
-	public BuildCommand(MazeCommand mazeCommand, ToolHandler toolHandler, MazeHandler mazeHandler) {
+	public BuildCommand(MazeCommand mazeCommand, ToolHandler toolHandler, MazeHandler mazeHandler, BuildHandler buildHandler) {
 		super("build", null, true, mazeCommand);
 
 		addArg(new Argument("part", ArgType.STRING, "walls", "walls-h", "floor", "roof").setDefaultTo("walls"));
@@ -45,6 +46,7 @@ public class BuildCommand extends ArgCommand {
 
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
+		this.buildHandler = buildHandler;
 	}
 
 	@Override
@@ -92,7 +94,7 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		}
 
-		if(BuildHandler.hasBlockBackup(maze) && BuildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
+		if(buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
 
 			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
 			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
@@ -114,7 +116,6 @@ public class BuildCommand extends ArgCommand {
 		if(!maze.isConstructed()) {
 
 			if(!mazePart.isMazeBuiltBefore()) {
-				Renderer.hideMaze(maze);
 				toolHandler.removeTool(maze.getPlayer());
 
 			}else {
@@ -128,7 +129,7 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		}
 
-		BuildHandler.buildMazePart(
+		buildHandler.buildMazePart(
 				maze,
 				mazePart,
 				blockSelector,

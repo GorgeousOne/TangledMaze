@@ -19,10 +19,13 @@ import java.util.UUID;
 
 public class ClipToolHandler {
 
+	private Renderer renderer;
 	private Map<UUID, ClipTool> playerClipTools;
 	private Map<UUID, ClipShape> clipShapes;
 
-	public ClipToolHandler() {
+	public ClipToolHandler(Renderer renderer) {
+
+		this.renderer = renderer;
 		playerClipTools = new HashMap<>();
 		clipShapes = new HashMap<>();
 	}
@@ -38,21 +41,23 @@ public class ClipToolHandler {
 	public void setClipTool(Player player, ClipTool clipTool) {
 
 		if(hasClipTool(player))
-			Renderer.hideClipboard(getClipTool(player), true);
+			renderer.hideClipboard(getClipTool(player), true);
 
 		UUID uuid = player.getUniqueId();
 		playerClipTools.put(uuid, clipTool);
-		Renderer.displayClipboard(clipTool);
+		renderer.displayClipboard(clipTool);
 	}
 
 	public boolean hasClipTool(Player player) {
 		return playerClipTools.containsKey(player.getUniqueId());
 	}
 
-	//TODO check usages of removeClip and related Renderer usage (move renderer usage to this method)
 	public void removeClipTool(Player player) {
-		UUID uuid = player.getUniqueId();
-		playerClipTools.remove(uuid);
+
+		if(hasClipTool(player)) {
+			renderer.hideClipboard(getClipTool(player), true);
+			playerClipTools.remove(player.getUniqueId());
+		}
 	}
 
 	public ClipShape getClipShape(Player player) {
@@ -79,7 +84,7 @@ public class ClipToolHandler {
 		if (clickedBlock.getWorld() != clipTool.getWorld()) {
 
 			//TODO reset cliptool instead of creating new one or unregister old cliptool from Renderer
-			Renderer.hideClipboard(clipTool, true);
+			renderer.hideClipboard(clipTool, true);
 			clipTool = new ClipTool(player, getClipShape(player));
 			setClipTool(player, clipTool);
 		}
@@ -96,7 +101,7 @@ public class ClipToolHandler {
 				return;
 
 			}else {
-				Renderer.hideClipboard(clipTool, true);
+				renderer.hideClipboard(clipTool, true);
 				clipTool = new ClipTool(player, getClipShape(player));
 				setClipTool(player, clipTool);
 			}
@@ -117,7 +122,7 @@ public class ClipToolHandler {
 			clipTool.setVertices(ClipFactory.createCompleteVertexList(vertices, clipShape));
 		}
 
-		Renderer.displayClipboard(clipTool);
+		renderer.displayClipboard(clipTool);
 	}
 
 	private void completeReshapingClip(ClipTool clipTool, Block newVertexBlock) {
@@ -125,7 +130,7 @@ public class ClipToolHandler {
 		ClipShape clipShape = clipTool.getShape();
 		List<BlockVec> vertices = clipTool.getVertices();
 
-		Renderer.hideClipboard(clipTool, true);
+		renderer.hideClipboard(clipTool, true);
 
 		switch (clipShape) {
 
@@ -147,7 +152,7 @@ public class ClipToolHandler {
 				break;
 		}
 
-		Renderer.displayClipboard(clipTool);
+		renderer.displayClipboard(clipTool);
 	}
 
 	public ClipTool requireCompletedClipTool(Player player) {

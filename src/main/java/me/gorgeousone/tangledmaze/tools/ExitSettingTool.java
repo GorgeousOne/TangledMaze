@@ -13,10 +13,12 @@ public class ExitSettingTool extends Tool {
 
 	//TODO check how to replace MazeHandler instance with parameters in methods
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 
-	public ExitSettingTool(Player player, MazeHandler mazeHandler) {
+	public ExitSettingTool(Player player, MazeHandler mazeHandler, Renderer renderer) {
 		super(player);
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 
 	@Override
@@ -34,20 +36,20 @@ public class ExitSettingTool extends Tool {
 		if(maze.isExit(clickedBlock)) {
 			
 			maze.removeExit(clickedBlock);
-			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
+			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
 
 			if(maze.hasExits())
-				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
+				renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
 			
 		}else if(maze.canBeExit(clickedBlock)) {
 			
 			if(maze.hasExits())
-				Renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_EXIT);
+				renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_EXIT);
 			
 			maze.addExit(clickedBlock);
-			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
+			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
 
 		}else
-			Renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
+			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
 	}
 }

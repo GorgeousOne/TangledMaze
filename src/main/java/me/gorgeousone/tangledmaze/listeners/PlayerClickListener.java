@@ -26,68 +26,67 @@ public class PlayerClickListener implements Listener {
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e) {
 
-		if(WandUtils.isMazeWand(e.getItem())) {
+		if (WandUtils.isMazeWand(e.getItem())) {
 			e.setCancelled(true);
 			e.getPlayer().updateInventory();
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockClick(PlayerInteractEvent event) {
-		
+
 		Action action = event.getAction();
-		
-		if(action != Action.LEFT_CLICK_BLOCK &&
-		   action != Action.RIGHT_CLICK_BLOCK ||
-		   event.getHand() != EquipmentSlot.HAND)
+
+		if (action != Action.LEFT_CLICK_BLOCK &&
+				action != Action.RIGHT_CLICK_BLOCK ||
+				event.getHand() != EquipmentSlot.HAND)
 			return;
-		
+
 		Player player = event.getPlayer();
 		ItemStack heldItem = event.getItem();
 
-		if(!WandUtils.isMazeWand(heldItem))
+		if (!WandUtils.isMazeWand(heldItem))
 			return;
 
 		event.setCancelled(true);
-			
-		if(player.hasPermission(Constants.BUILD_PERM)) {
+
+		if (player.hasPermission(Constants.BUILD_PERM)) {
 			toolHandler.handleToolInteraction(player, event.getClickedBlock(), action);
 
-		}else {
+		} else
 			destroyMazeWand(player, heldItem);
-			return;
-		}
 	}
 
 	//TODO reactivate slot switch event listening
-//	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-//	public void onSlotSwitch(PlayerItemHeldEvent event) {
-//
-//		Player player = event.getPlayer();
-//
-//		if(!player.hasPermission(Constants.BUILD_PERM))
-//			return;
-//
-//		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
-//
-//		if(!Utils.isMazeWand(newItem))
-//			return;
-//
-//		Maze maze = MazeHandler.getMaze(player);
-//
-//		if(maze.isStarted() && !maze.isConstructed() && !Renderer.isMazeVisible(maze))
-//			Renderer.displayMaze(MazeHandler.getMaze(player));
-//
-//		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
-//			Renderer.displayClipboard(ToolHandler.getClipboard(player));
-//	}
-	
+
+	//@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	//public void onSlotSwitch(PlayerItemHeldEvent event) {
+	//
+	//		Player player = event.getPlayer();
+	//
+	//		if(!player.hasPermission(Constants.BUILD_PERM))
+	//			return;
+	//
+	//		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+	//
+	//		if(!Utils.isMazeWand(newItem))
+	//			return;
+	//
+	//		Maze maze = MazeHandler.getMaze(player);
+	//
+	//		if(maze.isStarted() && !maze.isConstructed() && !Renderer.isMazeVisible(maze))
+	//			Renderer.displayMaze(MazeHandler.getMaze(player));
+	//
+	//		if(ToolHandler.hasClipboard(player) && !Renderer.isClipboardVisible(ToolHandler.getClipboard(player)))
+	//			Renderer.displayClipboard(ToolHandler.getClipboard(player));
+	//	}
+
 	private void destroyMazeWand(Player player, ItemStack wand) {
-		
+
 		player.getInventory().remove(wand);
 		player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "It seems like you are unworthy to use such mighty tool, it broke apart.");
 		player.damage(0);
-		
+
 		player.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_ITEM_BREAK, 1f, 1f);
 		player.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, player.getLocation(), 1);
 	}

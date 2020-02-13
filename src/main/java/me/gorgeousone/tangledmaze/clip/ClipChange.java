@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
-public class ClipAction {
+public class ClipChange {
 	
 	private Clip clip;
 	
@@ -23,7 +23,7 @@ public class ClipAction {
 		addedFill,
 		removedFill;
 	
-	public ClipAction(Clip clip) {
+	public ClipChange(Clip clip) {
 		
 		this.clip = clip;
 		addedFill     = new HashMap<>();
@@ -105,7 +105,7 @@ public class ClipAction {
 		return new Location(getClip().getWorld(), loc.getX(), height, loc.getZ());
 	}
 
-	public ClipAction invert() {
+	public ClipChange invert() {
 		
 		HashMap<Vec2, Integer> temporaryHolder = new HashMap<>(addedFill);
 		

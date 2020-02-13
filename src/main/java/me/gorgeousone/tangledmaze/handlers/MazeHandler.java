@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.data.Messages;
 import org.bukkit.entity.Player;
 
@@ -15,8 +16,16 @@ import me.gorgeousone.tangledmaze.data.Constants;
  * Listeners, commands and tools can access a maze by it's owner here.
  */
 public class MazeHandler {
-	
+
+	private BuildHandler buildHandler;
+	private Renderer renderer;
+
 	private HashMap<UUID, Maze> mazes = new HashMap<>();
+
+	public MazeHandler(BuildHandler buildHandler, Renderer renderer) {
+		this.buildHandler = buildHandler;
+		this.renderer = renderer;
+	}
 
 	public Maze getMaze(Player player) {
 		
@@ -40,12 +49,20 @@ public class MazeHandler {
 	}
 	
 	public void setMaze(Player player, Maze newMaze) {
+
+		if(hasMaze(player))
+			renderer.hideMaze(getMaze(player));
+		
 		mazes.put(player.getUniqueId(), newMaze);
-		Renderer.registerMaze(newMaze);
+		renderer.registerMaze(newMaze);
 	}
 	
 	public void removeMaze(Player player) {
-		Renderer.unregisterMaze(getMaze(player));
+
+		Maze maze = getMaze(player);
+
+		renderer.unregisterMaze(maze);
+		buildHandler.removeMaze(maze);
 		mazes.remove(player.getUniqueId());
 	}
 
@@ -71,5 +88,10 @@ public class MazeHandler {
 		}
 
 		return maze;
+	}
+
+	public void processClipChange(Maze maze, ClipChange action) {
+		maze.processAction(action, true);
+		renderer.displayMazeAction(maze, action);
 	}
 }

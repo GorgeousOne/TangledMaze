@@ -22,8 +22,9 @@ public class SelectTool extends ArgCommand {
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 	
-	public SelectTool(MazeCommand parent, ClipToolHandler clipHandler, ToolHandler toolHandler, MazeHandler mazeHandler) {
+	public SelectTool(MazeCommand parent, ClipToolHandler clipHandler, ToolHandler toolHandler, MazeHandler mazeHandler, Renderer renderer) {
 
 		super("select", null, true, parent);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
@@ -31,6 +32,7 @@ public class SelectTool extends ArgCommand {
 		this.clipHandler = clipHandler;
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 	
 	@Override
@@ -45,15 +47,21 @@ public class SelectTool extends ArgCommand {
 			case "rectangle":
 			case "square":
 
+				toolHandler.setToolType(player, MazeToolType.CLIP_TOOL);
+
 				if(!clipHandler.setClipShape(player, ClipShape.RECTANGLE))
 					return true;
+
 				break;
 
 			case "circle":
 			case "ellipse":
 
-				if(!clipHandler.setClipShape(player, ClipShape.ELLIPSE))
+				toolHandler.setToolType(player, MazeToolType.CLIP_TOOL);
+
+				if(!clipHandler.setClipShape(player, ClipShape.))
 					return true;
+
 				break;
 
 			case "brush":
@@ -65,7 +73,7 @@ public class SelectTool extends ArgCommand {
 			case "exit":
 			case "entrance":
 
-				if(!switchToMazeTool(player, new ExitSettingTool(player, mazeHandler)))
+				if(!switchToMazeTool(player, new ExitSettingTool(player, mazeHandler, renderer)))
 					return true;
 				break;
 
@@ -75,13 +83,19 @@ public class SelectTool extends ArgCommand {
 		}
 
 		//TODO circles wont be messaged correctly because the tool is still a rectangle.
-		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", toolHandler.getTool(player).getName()));
+		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", toolHandler.getToolType(player).getName()));
 		return true;
+	}
+
+	private void switchToClipTool(Player player, MazeToolType toolType) {
+
+		toolHandler.setToolType(player, MazeToolType.CLIP_TOOL) || !clipHandler.setClipShape(player, ClipShape.RECTANGLE)
+			Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", toolHandler.getToolType(player).getName()));
 	}
 
 	private boolean switchToMazeTool(Player player, Tool type) {
 
-		if(toolHandler.getTool(player).getClass().equals(type.getClass()))
+		if(toolHandler.getToolType(player).getClass().equals(type.getClass()))
 			return false;
 		
 		Maze maze = mazeHandler.getMaze(player);
@@ -100,11 +114,11 @@ public class SelectTool extends ArgCommand {
 		if(clipHandler.hasClipTool(player)) {
 			//TODO make cliphandler handle rendering of cliptool
 			ClipTool clipboard = clipHandler.getClipTool(player);
-			Renderer.hideClipboard(clipboard, true);
+			renderer.hideClipboard(clipboard, true);
 			clipHandler.removeClipTool(player);
 		}
 		
-		toolHandler.setTool(player, type);
+		toolHandler.setToolType(player, type);
 		return true;
 	}
 }

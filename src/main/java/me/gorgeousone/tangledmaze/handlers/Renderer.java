@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.handlers;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.data.Constants;
@@ -19,56 +19,60 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+//TODO move the tasks of this class to ToolHandler and MazeHandler. Reduce methods to simply displaying collections of blocks/locations
 /**
  * This class handles the visibility of every maze and clipboard (Clip of Clippingtool).
  * There are different methods for showing and hiding a maze or clipboard,
  * also to display changed that happened in a MazeAction or refresh a maze when hiding a clipboard.
  */
-@SuppressWarnings("deprecation")
-public abstract class Renderer implements Listener {
-	
-	private static HashMap<ClipTool, Boolean> clipVisibilities = new HashMap<>();
-	private static HashMap<Maze, Boolean> mazeVisibilities = new HashMap<>();
-	
-	public static void reload() {
+public class Renderer implements Listener {
 
+	private HashMap<ClipTool, Boolean> clipVisibilities;
+	private HashMap<Maze, Boolean> mazeVisibilities;
+
+	public Renderer() {
+		clipVisibilities = new HashMap<>();
+		mazeVisibilities = new HashMap<>();
+	}
+
+	public void hideAllClues() {
 		for (ClipTool clipboard : clipVisibilities.keySet()) {
 			if(isClipboardVisible(clipboard))
 				hideClipboard(clipboard, false);
 		}
-		
+
 		for(Maze maze : mazeVisibilities.keySet()) {
 			if(isMazeVisible(maze))
 				hideMaze(maze);
 		}
 	}
-	
-	public static void registerClip(ClipTool clipboard) {
+
+	public void registerClip(ClipTool clipboard) {
 		clipVisibilities.put(clipboard, false);
 	}
 	
-	public static void registerMaze(Maze maze) {
+	public void registerMaze(Maze maze) {
 		mazeVisibilities.put(maze, false);
 	}
 	
-	public static void unregisterShape(ClipTool clipboard) {
+	public void unregisterShape(ClipTool clipboard) {
 		clipVisibilities.remove(clipboard);
 	}
 	
-	public static void unregisterMaze(Maze maze) {
+	public void unregisterMaze(Maze maze) {
 		mazeVisibilities.remove(maze);
 	}
 	
-	public static boolean isClipboardVisible(ClipTool shape) {
+	public boolean isClipboardVisible(ClipTool shape) {
 		return clipVisibilities.get(shape);
 	}
 	
-	public static boolean isMazeVisible(Maze maze) {
+	public boolean isMazeVisible(Maze maze) {
 		return mazeVisibilities.get(maze);
 	}
 	
 	//displays a clipboard to it's owner with block changes
-	public static void displayClipboard(ClipTool clipboard) {
+	public void displayClipboard(ClipTool clipboard) {
 
 		clipVisibilities.put(clipboard, true);
 		Player player = clipboard.getPlayer();
@@ -89,7 +93,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//hides a clipboard completely with the option to redisplay previously covered maze parts
-	public static void hideClipboard(ClipTool clipboard, boolean updateMaze) {
+	public void hideClipboard(ClipTool clipboard, boolean updateMaze) {
 		
 		clipVisibilities.put(clipboard, false);
 		Player player = clipboard.getPlayer();
@@ -112,7 +116,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//displays a maze to it's owner with block changes
-	public static void displayMaze(Maze maze) {
+	public void displayMaze(Maze maze) {
 		
 		if(maze.isConstructed())
 			return;
@@ -137,7 +141,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//hides a maze
-	public static void hideMaze(Maze maze) {
+	public void hideMaze(Maze maze) {
 		
 		if(maze.isConstructed())
 			return;
@@ -150,7 +154,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//displays single blocks of a clipboard (which might covered by e.g. falling block)
-	public static void redisplayClipboardBlock(ClipTool clipboard, Location loc) {
+	public void redisplayClipboardBlock(ClipTool clipboard, Location loc) {
 		
 		Player player = clipboard.getPlayer();
 		
@@ -162,7 +166,7 @@ public abstract class Renderer implements Listener {
 	}
 
 	//displays single blocks of a maze
-	public static void redisplayMazeBlock(Maze maze, Location loc) {
+	public void redisplayMazeBlock(Maze maze, Location loc) {
 		
 		Player player = maze.getPlayer();
 		Vec2 locVec = new Vec2(loc);
@@ -178,7 +182,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//
-	public static void displayMazeAction(Maze maze, ClipAction action) {
+	public void displayMazeAction(Maze maze, ClipChange action) {
 		
 		Player player = maze.getPlayer();
 		Clip clip = maze.getClip();
@@ -204,7 +208,7 @@ public abstract class Renderer implements Listener {
 	}
 	
 	//Displays maze parts that were covered under a clipboard.
-	private static void redisplayMaze(Maze maze, ClipTool hiddenClipboard) {
+	private void redisplayMaze(Maze maze, ClipTool hiddenClipboard) {
 		
 		Player player = maze.getPlayer();
 		
@@ -224,7 +228,7 @@ public abstract class Renderer implements Listener {
 		}
 	}
 	
-	public static void sendBlockDelayed(Player player, Location loc, Material mat) {
+	public void sendBlockDelayed(Player player, Location loc, Material mat) {
 
 		new BukkitRunnable() {
 
@@ -235,7 +239,7 @@ public abstract class Renderer implements Listener {
 		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 	
-	public static void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
+	public void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
 		
 		new BukkitRunnable() {
 		

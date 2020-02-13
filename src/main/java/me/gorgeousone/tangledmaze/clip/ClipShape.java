@@ -9,6 +9,7 @@ public enum ClipShape {
 	private String simpleName;
 
 	ClipShape(String simpleName, int requiredVertexCount) {
+
 		this.requiredVertexCount = requiredVertexCount;
 		this.simpleName = simpleName;
 	}

@@ -16,9 +16,7 @@ import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
-import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
-import me.gorgeousone.tangledmaze.tools.Tool;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 import java.util.HashSet;
@@ -31,10 +29,13 @@ public class BlockUpdateListener implements Listener {
 
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 
-	public BlockUpdateListener(ClipToolHandler clipHandler, MazeHandler mazeHandler) {
+	public BlockUpdateListener(ClipToolHandler clipHandler, MazeHandler mazeHandler,
+	                           Renderer renderer) {
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -133,25 +134,25 @@ public class BlockUpdateListener implements Listener {
 				
 				for(Maze maze : affectedMazes) {
 
-					if(hideAffectedElements && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
-						Renderer.hideMaze(maze);
+					if(hideAffectedElements && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
+						renderer.hideMaze(maze);
 
 					Location updatedBlock = maze.updateHeight(changedBlock);
 					
-					if(!hideAffectedElements && updatedBlock != null && Renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock.getBlock()))
-						Renderer.redisplayMazeBlock(maze, updatedBlock);
+					if(!hideAffectedElements && updatedBlock != null && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock.getBlock()))
+						renderer.redisplayMazeBlock(maze, updatedBlock);
 				}
 
 				for(ClipTool clipboard : affectedClipboards) {
 					
-					if(hideAffectedElements && Renderer.isClipboardVisible(clipboard) &&
+					if(hideAffectedElements && renderer.isClipboardVisible(clipboard) &&
 							(clipboard.getClip().isBorderBlock(changedBlock) ||clipboard.isVertex(changedBlock)))
-						Renderer.hideClipboard(clipboard, true);
+						renderer.hideClipboard(clipboard, true);
 
 					Location updatedBlock = clipboard.updateHeight(changedBlock);
 
-					if(!hideAffectedElements && updatedBlock != null && Renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(updatedBlock.getBlock()))
-						Renderer.redisplayClipboardBlock(clipboard, updatedBlock);
+					if(!hideAffectedElements && updatedBlock != null && renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(updatedBlock.getBlock()))
+						renderer.redisplayClipboardBlock(clipboard, updatedBlock);
 				}
 			}
 		}.runTask(TangledMain.getInstance());

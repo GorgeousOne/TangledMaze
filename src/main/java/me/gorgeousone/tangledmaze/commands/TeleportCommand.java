@@ -10,14 +10,16 @@ import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
 
-public class TpToMaze extends BasicCommand {
+public class TeleportCommand extends BasicCommand {
 
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 
-	public TpToMaze(MazeCommand mazeCommand, MazeHandler mazeHandler) {
+	public TeleportCommand(MazeCommand mazeCommand, MazeHandler mazeHandler, Renderer renderer) {
 		super("teleport", Constants.MAZE_TP_PERM, true, mazeCommand);
 
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 
 	@Override
@@ -34,7 +36,8 @@ public class TpToMaze extends BasicCommand {
 		tpLoc.setDirection(player.getLocation().getDirection());
 		
 		player.teleport(tpLoc);
-		Renderer.displayMaze(maze);
+		//TODO check if maze rendering should be done in TeleportCommand
+		renderer.displayMaze(maze);
 		return true;
 	}
 }

@@ -17,12 +17,14 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 public class UnbuildMaze extends ArgCommand {
 
 	private MazeHandler mazeHandler;
+	private BuildHandler buildHandler;
 
-	public UnbuildMaze(MazeCommand mazeCommand, MazeHandler mazeHandler) {
+	public UnbuildMaze(MazeCommand mazeCommand, MazeHandler mazeHandler, BuildHandler buildHandler) {
 		super("unbuild", null, true, mazeCommand);
 		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "roof").setDefaultTo("maze"));
 
 		this.mazeHandler = mazeHandler;
+		this.buildHandler = buildHandler;
 	}
 
 	@Override
@@ -41,19 +43,19 @@ public class UnbuildMaze extends ArgCommand {
 		switch (mazePart) {
 
 			case "floor":
-				BuildHandler.unbuildMazePart(maze, MazePart.FLOOR);
+				buildHandler.unbuildMazePart(maze, MazePart.FLOOR);
 				break;
 
 			case "roof":
-				BuildHandler.unbuildMazePart(maze, MazePart.ROOF);
+				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
 				break;
 
 			case "maze":
 			case "walls":
 				Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(player);
-				BuildHandler.unbuildMazePart(maze, MazePart.FLOOR);
-				BuildHandler.unbuildMazePart(maze, MazePart.ROOF);
-				BuildHandler.unbuildMazePart(maze, MazePart.WALLS);
+				buildHandler.unbuildMazePart(maze, MazePart.FLOOR);
+				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
+				buildHandler.unbuildMazePart(maze, MazePart.WALLS);
 				break;
 
 			default:

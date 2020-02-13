@@ -4,7 +4,7 @@ import java.util.Stack;
 
 public class ActionHistory {
 
-	private Stack<ClipAction> actions;
+	private Stack<ClipChange> actions;
 	
 	public ActionHistory() {
 		actions = new Stack<>();
@@ -14,14 +14,14 @@ public class ActionHistory {
 		return actions.isEmpty();
 	}
 	
-	public void pushAction(ClipAction action) {
+	public void pushAction(ClipChange action) {
 		actions.push(action);
 		
 		if(actions.size() > 10)
 			actions.remove(0);
 	}
 	
-	public ClipAction popLastAction() {
+	public ClipChange popLastAction() {
 		return actions.pop();
 	}
 

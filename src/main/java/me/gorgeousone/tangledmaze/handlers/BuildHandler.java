@@ -21,27 +21,35 @@ import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
  * It stores information about mazes that can be accessed by generators and
  * for unbuilding the maze again.
  */
-public final class BuildHandler {
+public class BuildHandler {
 
-	private static final Map<Maze, TerrainMap> terrainMaps = new HashMap<>();
-	private static final Map<Maze, MazePartBlockBackup> mazeBlockBackups = new HashMap<>();
+	private Renderer renderer;
+	
+	private Map<Maze, TerrainMap> terrainMaps;
+	private Map<Maze, MazePartBlockBackup> mazeBlockBackups;
 
-	private BuildHandler() {}
+	public BuildHandler(Renderer renderer) {
 
-	public static MazePartBlockBackup getBlockBackup(Maze maze) {
+		this.renderer = renderer;
+
+		terrainMaps = new HashMap<>();
+		mazeBlockBackups = new HashMap<>();
+	}
+
+	public MazePartBlockBackup getBlockBackup(Maze maze) {
 		return mazeBlockBackups.get(maze);
 	}
 
-	public static boolean hasBlockBackup(Maze maze) {
+	public boolean hasBlockBackup(Maze maze) {
 		return mazeBlockBackups.containsKey(maze);
 	}
 
-	public static void removeMaze(Maze maze) {
+	public void removeMaze(Maze maze) {
 		mazeBlockBackups.remove(maze);
 		terrainMaps.remove(maze);
 	}
 
-	public static void buildMazePart(
+	public void buildMazePart(
 			Maze maze,
 			MazePart mazePart,
 			AbstractBlockSelector blockSelector,
@@ -79,7 +87,7 @@ public final class BuildHandler {
 		);
 	}
 
-	public static void unbuildMazePart(
+	public void unbuildMazePart(
 		Maze maze,
 		MazePart mazePart) {
 
@@ -104,7 +112,7 @@ public final class BuildHandler {
 				});
 	}
 
-	private static void reactivateMaze(Maze maze) {
+	private void reactivateMaze(Maze maze) {
 
 		removeMaze(maze);
 		maze.setConstructed(false);
@@ -114,12 +122,12 @@ public final class BuildHandler {
 
 			@Override
 			public void run() {
-				Renderer.displayMaze(maze);
+				renderer.displayMaze(maze);
 			}
 		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 
-	private static Set<BlockDataState> deepCloneBlockSet(Set<BlockDataState> blockSet) {
+	private Set<BlockDataState> deepCloneBlockSet(Set<BlockDataState> blockSet) {
 		Set<BlockDataState> clonedBlockSet = new HashSet<>();
 
 		for (BlockDataState block : blockSet)

@@ -4,7 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
@@ -28,16 +28,13 @@ public class BrushTool extends Tool {
 	public void interact(Block clickedBlock, Action interaction) {
 
 		Maze maze = mazeHandler.getMaze(getPlayer());
-		ClipAction brushing;
-		
-		if(interaction == Action.RIGHT_CLICK_BLOCK)
-			brushing = maze.getErasure(clickedBlock);
-		else
-			brushing = maze.getExpansion(clickedBlock);
-		
-		if(brushing != null) {
-			maze.processAction(brushing, true);
-			Renderer.displayMazeAction(maze, brushing);
-		}
+		ClipChange brushing;
+
+		brushing = interaction == Action.RIGHT_CLICK_BLOCK ?
+				maze.getErasure(clickedBlock) :
+				maze.getExpansion(clickedBlock);
+
+		if (brushing != null)
+			mazeHandler.processClipChange(maze, brushing);
 	}
 }

@@ -5,7 +5,7 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.commands.framework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
@@ -13,7 +13,7 @@ import me.gorgeousone.tangledmaze.tools.ClipTool;
 
 public class CutFromMaze extends BasicCommand {
 
-	ClipToolHandler clipHandler;
+	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
 
 	public CutFromMaze(MazeCommand mazeCommand, ClipToolHandler clipHandler, MazeHandler mazeHandler) {
@@ -39,17 +39,13 @@ public class CutFromMaze extends BasicCommand {
 		if(clipboard == null)
 			return false;
 		
-		ClipAction action = maze.getDeletion(clipboard.getClip());
-
-		//TODO make cliphandler handle cliptool rendering
-		Renderer.hideClipboard(clipboard, true);
+		ClipChange clipChange = maze.getDeletion(clipboard.getClip());
 		clipHandler.removeClipTool(player);
 
-		if(action == null)
+		if(clipChange == null)
 			return false;
 
-		maze.processAction(action, true);
-		Renderer.displayMazeAction(maze, action);
+		mazeHandler.processClipChange(maze, clipChange);
 		return true;
 	}
 }

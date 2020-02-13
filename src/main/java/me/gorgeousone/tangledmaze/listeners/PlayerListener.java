@@ -22,11 +22,14 @@ public class PlayerListener implements Listener {
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 
-	public PlayerListener(ToolHandler toolHandler, ClipToolHandler clipHandler, MazeHandler mazeHandler) {
+	public PlayerListener(ToolHandler toolHandler, ClipToolHandler clipHandler,
+	                      MazeHandler mazeHandler, Renderer renderer) {
 		this.toolHandler = toolHandler;
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -34,33 +37,29 @@ public class PlayerListener implements Listener {
 
 		Player player = event.getPlayer();
 
-		if(!player.hasPermission(Constants.BUILD_PERM))
+		if (!player.hasPermission(Constants.BUILD_PERM))
 			return;
 
 		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
 
-		if(!WandUtils.isMazeWand(newItem))
+		if (!WandUtils.isMazeWand(newItem))
 			return;
 
 		Maze maze = mazeHandler.getMaze(player);
 
-		if(maze.isStarted() && !maze.isConstructed())
-			Renderer.displayMaze(mazeHandler.getMaze(player));
+		if (maze.isStarted() && !maze.isConstructed())
+			renderer.displayMaze(mazeHandler.getMaze(player));
 
-		if(clipHandler.hasClipTool(player))
-			Renderer.displayClipboard(clipHandler.getClipTool(player));
+		if (clipHandler.hasClipTool(player))
+			renderer.displayClipboard(clipHandler.getClipTool(player));
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		
+
 		Player player = e.getPlayer();
-		
-		if(player.hasPermission(Constants.BUILD_PERM)) {
-			
-			Maze maze = mazeHandler.getMaze(player);
-			Renderer.unregisterMaze(maze);
-			BuildHandler.removeMaze(maze);
+
+		if (player.hasPermission(Constants.BUILD_PERM)) {
 			toolHandler.removeTool(player);
 			mazeHandler.removeMaze(player);
 		}

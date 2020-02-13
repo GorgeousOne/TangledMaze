@@ -173,11 +173,11 @@ public class Maze {
 
 	/**Applies a ClipAction which can be created e.g. with {@link #getAddition(Clip)}.
 	 * The method will change the clip of the maze according to the ClipAction,
-	 * the visual change of the maze to the player is left to the method caller (see {@link me.gorgeousone.tangledmaze.handlers.Renderer#displayMazeAction(Maze, ClipAction)}).
+	 * the visual change of the maze to the player is left to the method caller (see {@link me.gorgeousone.tangledmaze.handlers.Renderer#displayMazeAction(Maze, ClipChange)}).
 	 * @param action beforehand created ClipAction
 	 * @param saveToHistory option to add the action to the maze's {@link ActionHistory} (for accessing it later e. g. to undo it)
 	 */
-	public void processAction(ClipAction action, boolean saveToHistory) {
+	public void processAction(ClipChange action, boolean saveToHistory) {
 		
 		if(isConstructed())
 			throw notAlterableException;
@@ -201,16 +201,16 @@ public class Maze {
 
 	/**Creates a ClipAction of the part of the passed clip that will be added to the maze.
 	 * Returns null if worlds are not matching or the clip is completely covered by the maze.
-	 * To apply the action use {@link #processAction(ClipAction, boolean)}
+	 * To apply the action use {@link #processAction(ClipChange, boolean)}
 	 * @param clip Clip to be added to the maze
 	 * @return ClipAction of the addition
 	 */
-	public ClipAction getAddition(Clip clip) {
+	public ClipChange getAddition(Clip clip) {
 	
 		if(!getWorld().equals(clip.getWorld()))
 			return null;
 		
-		ClipAction addition = new ClipAction(getClip());
+		ClipChange addition = new ClipChange(getClip());
 		addOtherProtrudingFill(clip, addition);
 		
 		//return if the shapes is totally covered by the maze
@@ -225,7 +225,7 @@ public class Maze {
 	}
 	
 	//every fill not included by this maze yet is being added
-	private void addOtherProtrudingFill(Clip otherClip, ClipAction addition) {
+	private void addOtherProtrudingFill(Clip otherClip, ClipChange addition) {
 
 		for(Entry<Vec2, Integer> otherFill : otherClip.getFillEntries()) {
 			if(!getClip().contains(otherFill.getKey()))
@@ -234,7 +234,7 @@ public class Maze {
 	}
 	
 	//right afterwards also the border of the other clip is being added
-	private void addOtherProtrudingBorder(Clip otherClip, ClipAction addition) {
+	private void addOtherProtrudingBorder(Clip otherClip, ClipChange addition) {
 	
 		for(Vec2 otherBorder : otherClip.getBorder()) {
 			if(!getClip().contains(otherBorder))
@@ -243,7 +243,7 @@ public class Maze {
 	}
 	
 	//then own outdated border is being removed. there are also cases where thicker border next to the actual clip has to be removed
-	private void removeOwnEnclosedBorder(ClipAction addition) {
+	private void removeOwnEnclosedBorder(ClipChange addition) {
 		
 		for(Vec2 ownBorder : getClip().getBorder()) {
 			if(!touchesExternal(ownBorder, addition, Directions.values()))
@@ -252,11 +252,11 @@ public class Maze {
 	}
 	
 	//now the recently added border needs undergo another check, if it is actually sufficient and also not too thick
-	private void removeNewEnclosedBorder(ClipAction addition) {
+	private void removeNewEnclosedBorder(ClipChange addition) {
 		addition.getAddedBorder().removeIf(newBorder -> !touchesExternal(newBorder, addition, Directions.values()));
 	}
 	
-	private void removeExitsInsideClip(Clip otherClip, ClipAction changes) {
+	private void removeExitsInsideClip(Clip otherClip, ClipChange changes) {
 	
 		for(Vec2 exit : exits) {
 			if(otherClip.contains(exit))
@@ -266,16 +266,16 @@ public class Maze {
 
 	/**Creates a ClipAction of the part of the passed clip that will be removed from the maze.
 	 * Returns null if worlds are not matching or the clip is not intersecting the maze.
-	 * To apply the action use {@link #processAction(ClipAction, boolean)}
+	 * To apply the action use {@link #processAction(ClipChange, boolean)}
 	 * @param clip Clip to be removed from the maze
 	 * @return ClipAction of the deletion
 	 */
-	public ClipAction getDeletion(Clip clip) {
+	public ClipChange getDeletion(Clip clip) {
 		
 		if(!getWorld().equals(clip.getWorld()))
 			return null;
 		
-		ClipAction deletion = new ClipAction(getClip());
+		ClipChange deletion = new ClipChange(getClip());
 		removeOtherOverlappingClip(clip, deletion);
 		
 		if(deletion.getRemovedFill().isEmpty())
@@ -288,7 +288,7 @@ public class Maze {
 	}
 	
 	//every fill of the other clip overlapping the maze is being removed from the maze
-	private void removeOtherOverlappingClip(Clip otherClip, ClipAction deletion) {
+	private void removeOtherOverlappingClip(Clip otherClip, ClipChange deletion) {
 		
 		for(Entry<Vec2, Integer> otherFill : otherClip.getFillEntries()) {
 			if(!otherClip.borderContains(otherFill.getKey()) && getClip().contains(otherFill.getKey()))
@@ -296,7 +296,7 @@ public class Maze {
 		}
 	}
 	
-	private void addOtherIntersectingBorder(Clip otherClip, ClipAction deletion) {
+	private void addOtherIntersectingBorder(Clip otherClip, ClipChange deletion) {
 		
 		for(Vec2 otherBorder : otherClip.getBorder()) {
 			if(!getClip().borderContains(otherBorder) && getClip().contains(otherBorder))
@@ -316,7 +316,7 @@ public class Maze {
 		}
 	}
 
-	private void removeOwnExcludedBorder(Clip otherClip, ClipAction deletion) {
+	private void removeOwnExcludedBorder(Clip otherClip, ClipChange deletion) {
 		
 		for(Vec2 ownBorder : getClip().getBorder()) {
 			
@@ -329,24 +329,24 @@ public class Maze {
 
 	/**Creates a ClipAction with information about blocks in order to expand the maze border at the given block.
 	 * Returns null if the block is not part of the maze border (see {@link Clip#isBorderBlock(Block)}).
-	 * To apply the action use {@link #processAction(ClipAction, boolean)}
+	 * To apply the action use {@link #processAction(ClipChange, boolean)}
 	 * @param block the block where the maze border should be expanded
 	 * @return ClipAction of the expansion
 	 */
-	public ClipAction getExpansion(Block block) {
+	public ClipChange getExpansion(Block block) {
 		
 		if(!getClip().isBorderBlock(block))
 			return null;
 		
 		Vec2 blockVec = new Vec2(block);
-		ClipAction expansion = new ClipAction(getClip());
+		ClipChange expansion = new ClipChange(getClip());
 		
 		expandBorder(blockVec, expansion);
 		removeIntrusiveBorder(blockVec, expansion);
 		return expansion;
 	}
 	
-	private void expandBorder(Vec2 loc, ClipAction expansion) {
+	private void expandBorder(Vec2 loc, ClipChange expansion) {
 		
 		expansion.removeBorder(loc);
 		
@@ -365,7 +365,7 @@ public class Maze {
 		}
 	}
 	
-	private void removeIntrusiveBorder(Vec2 loc, ClipAction expansion) {
+	private void removeIntrusiveBorder(Vec2 loc, ClipChange expansion) {
 		//look for neighbors, that are now intruding the border unnecessarily
 		for(Directions dir : Directions.values()) {
 			Vec2 neighbor = loc.clone().add(dir.getVec2());
@@ -377,17 +377,17 @@ public class Maze {
 
 	/**Creates a ClipAction with information about blocks in order to reduce the maze border at the given block.
 	 * Returns null if the block is not part of the maze border (see {@link Clip#isBorderBlock(Block)}).
-	 * To apply the action use {@link #processAction(ClipAction, boolean)}
+	 * To apply the action use {@link #processAction(ClipChange, boolean)}
 	 * @param block the block where the maze border should be reduced/erased
 	 * @return ClipAction of the expansion
 	 */
-	public ClipAction getErasure(Block block) {
+	public ClipChange getErasure(Block block) {
 		
 		if(!getClip().isBorderBlock(block))
 			return null;
 		
 		Vec2 blockVec = new Vec2(block);
-		ClipAction action = new ClipAction(getClip());
+		ClipChange action = new ClipChange(getClip());
 		
 		action.removeBorder(blockVec);
 		
@@ -396,7 +396,7 @@ public class Maze {
 		return action;
 	}
 	
-	private void reduceBorder(Vec2 loc, ClipAction erasure) {
+	private void reduceBorder(Vec2 loc, ClipChange erasure) {
 		
 		if(exitsContain(loc))
 			erasure.removeExit(loc);
@@ -418,7 +418,7 @@ public class Maze {
 		}
 	}
 	
-	private void removeProtrusiveBorder(Vec2 loc, ClipAction erasure) {
+	private void removeProtrusiveBorder(Vec2 loc, ClipChange erasure) {
 		//detect outstanding neighbor borders of the block
 		for(Directions dir : Directions.values()) {
 			Vec2 neighbor = loc.clone().add(dir.getVec2());
@@ -433,10 +433,10 @@ public class Maze {
 	}
 	
 	public boolean sealsMaze(Location loc, Directions[] directions) {
-		return sealsMaze(new Vec2(loc), new ClipAction(getClip()), directions);
+		return sealsMaze(new Vec2(loc), new ClipChange(getClip()), directions);
 	}
 	
-	public boolean sealsMaze(Vec2 loc, ClipAction changes, Directions[] directions) {
+	public boolean sealsMaze(Vec2 loc, ClipChange changes, Directions[] directions) {
 		
 		boolean touchesFill = false;
 		boolean touchesExternal = false;
@@ -457,7 +457,7 @@ public class Maze {
 		return false;
 	}
 
-	public boolean touchesFill(Vec2 loc, ClipAction changes, Directions[] directions) {
+	public boolean touchesFill(Vec2 loc, ClipChange changes, Directions[] directions) {
 		
 		for(Directions dir : directions) {
 			Vec2 neighbor = loc.clone().add(dir.getVec2());
@@ -469,7 +469,7 @@ public class Maze {
 		return false;
 	}
 
-	public boolean touchesExternal(Vec2 loc, ClipAction changes, Directions[] directions) {
+	public boolean touchesExternal(Vec2 loc, ClipChange changes, Directions[] directions) {
 		
 		for(Directions dir : directions) {
 			Vec2 neighbor = loc.clone().add(dir.getVec2());

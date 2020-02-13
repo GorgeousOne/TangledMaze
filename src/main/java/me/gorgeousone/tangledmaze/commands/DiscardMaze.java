@@ -26,7 +26,6 @@ public class DiscardMaze extends BasicCommand {
 
 		Player player = (Player) sender;
 		
-		Renderer.hideMaze(mazeHandler.getMaze(player));
 		mazeHandler.setMaze(player, new Maze(player));
 		toolHandler.resetToDefaultTool(player);
 		return true;

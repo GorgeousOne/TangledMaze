@@ -5,7 +5,7 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.commands.framework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.data.Messages;
@@ -40,22 +40,20 @@ public class AddToMaze extends BasicCommand {
 		if(clipboard == null)
 			return false;
 		
-		ClipAction action = maze.getAddition(clipboard.getClip());
+		ClipChange clipChange = maze.getAddition(clipboard.getClip());
 
-		if(action == null)
+		if(clipChange == null)
 			return false;
 		
-		if(action.getAddedFill().size() == clipboard.getClip().size()) {
+		if(clipChange.getAddedFill().size() == clipboard.getClip().size()) {
 			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.sendTo(player);
 			return false;
 		}
 
 		//TODO make cliphandler handle cliptool rendering
-		Renderer.hideClipboard(clipboard, true);
 		clipHandler.removeClipTool(player);
 
-		maze.processAction(action, true);
-		Renderer.displayMazeAction(maze, action);
+		mazeHandler.processClipChange(maze, clipChange);
 		return true;
 	}
 }

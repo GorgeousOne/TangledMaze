@@ -4,10 +4,9 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gorgeousone.tangledmaze.clip.ClipAction;
+import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.commands.framework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
 
 public class UndoCommand extends BasicCommand {
 
@@ -31,9 +30,8 @@ public class UndoCommand extends BasicCommand {
 		if(maze.getActionHistory().isEmpty())
 			return false;
 
-		ClipAction action = maze.getActionHistory().popLastAction().invert();
-		maze.processAction(action, false);
-		Renderer.displayMazeAction(maze, action);
+		ClipChange clipChange = maze.getActionHistory().popLastAction().invert();
+		mazeHandler.processClipChange(maze, clipChange);
 		return true;
 	}
 }
