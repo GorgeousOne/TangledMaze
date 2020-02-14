@@ -1,18 +1,17 @@
 package me.gorgeousone.tangledmaze.commands;
 
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgType;
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgValue;
-import me.gorgeousone.tangledmaze.commands.framework.argument.Argument;
-import me.gorgeousone.tangledmaze.commands.framework.command.ArgCommand;
+import me.gorgeousone.cmdframework.argument.ArgType;
+import me.gorgeousone.cmdframework.argument.ArgValue;
+import me.gorgeousone.cmdframework.argument.Argument;
+import me.gorgeousone.cmdframework.command.ArgCommand;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.handlers.BuildHandler;
+import me.gorgeousone.tangledmaze.handlers.MazeHandler;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazePart;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.handlers.BuildHandler;
-import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 
 public class UnbuildMaze extends ArgCommand {
 
@@ -33,7 +32,7 @@ public class UnbuildMaze extends ArgCommand {
 		Player player = (Player) sender;
 		Maze maze = mazeHandler.getMaze(player);
 
-		if(!maze.isConstructed()) {
+		if (!maze.isConstructed()) {
 			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.sendTo(player);
 			return true;
 		}

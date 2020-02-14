@@ -22,7 +22,7 @@ public class MazePartBlockBackup {
 	}
 
 	public void setBackup(MazePart part, Set<BlockDataState> blockBackup) {
-			partBackupLists.put(part, blockBackup);
+		partBackupLists.put(part, blockBackup);
 	}
 
 	public void deleteBackup(MazePart mazePart) {

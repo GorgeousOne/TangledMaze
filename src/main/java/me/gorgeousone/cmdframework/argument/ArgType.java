@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commands.framework.argument;
+package me.gorgeousone.cmdframework.argument;
 
 public enum ArgType {
 
@@ -8,11 +8,11 @@ public enum ArgType {
 	BOOLEAN("boolean");
 
 	private String simpleName;
-	
+
 	ArgType(String simpleName) {
 		this.simpleName = simpleName;
 	}
-	
+
 	public String simpleName() {
 		return simpleName;
 	}

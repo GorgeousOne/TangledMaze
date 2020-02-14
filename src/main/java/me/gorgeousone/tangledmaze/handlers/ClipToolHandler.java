@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.handlers;
 import me.gorgeousone.tangledmaze.clip.ClipFactory;
 import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.BlockVec;
@@ -40,7 +39,7 @@ public class ClipToolHandler {
 
 	public void setClipTool(Player player, ClipTool clipTool) {
 
-		if(hasClipTool(player))
+		if (hasStartedClipTool(player))
 			renderer.hideClipboard(getClipTool(player), true);
 
 		UUID uuid = player.getUniqueId();
@@ -52,9 +51,13 @@ public class ClipToolHandler {
 		return playerClipTools.containsKey(player.getUniqueId());
 	}
 
+	public boolean hasStartedClipTool(Player player) {
+		return playerClipTools.containsKey(player.getUniqueId()) && getClipTool(player).isStarted();
+	}
+	
 	public void removeClipTool(Player player) {
 
-		if(hasClipTool(player)) {
+		if (hasStartedClipTool(player)) {
 			renderer.hideClipboard(getClipTool(player), true);
 			playerClipTools.remove(player.getUniqueId());
 		}
@@ -96,11 +99,11 @@ public class ClipToolHandler {
 
 		if (clipTool.hasClip()) {
 
-			if(clipTool.isVertex(clickedBlock)) {
+			if (clipTool.isVertex(clickedBlock)) {
 				clipTool.startShiftingVertex(clipTool.getVertex(clickedBlock));
 				return;
 
-			}else {
+			} else {
 				renderer.hideClipboard(clipTool, true);
 				clipTool = new ClipTool(player, getClipShape(player));
 				setClipTool(player, clipTool);
@@ -157,8 +160,7 @@ public class ClipToolHandler {
 
 	public ClipTool requireCompletedClipTool(Player player) {
 
-		if(!hasClipTool(player) || !getClipTool(player).isStarted()) {
-
+		if (!hasStartedClipTool(player)) {
 			Messages.ERROR_CLIPBOARD_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze wand");
 			return null;
@@ -166,7 +168,7 @@ public class ClipToolHandler {
 
 		ClipTool clipTool = getClipTool(player);
 
-		if(!clipTool.hasClip()) {
+		if (!clipTool.hasClip()) {
 			Messages.ERROR_CLIPBOARD_NOT_COMPLETED.sendTo(player);
 			return null;
 		}

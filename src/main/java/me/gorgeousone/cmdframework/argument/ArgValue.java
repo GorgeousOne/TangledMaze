@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.commands.framework.argument;
+package me.gorgeousone.cmdframework.argument;
 
 import org.bukkit.ChatColor;
 
@@ -22,11 +22,11 @@ public class ArgValue {
 	public String getString() {
 		return stringVal;
 	}
-	
+
 	public int getInt() {
 		return intVal;
 	}
-	
+
 	public double getDouble() {
 		return decimalVal;
 	}
@@ -36,25 +36,25 @@ public class ArgValue {
 	}
 
 	protected void setValue(String value, ArgType type) {
-		
+
 		try {
 			switch (type) {
-			
-			case INTEGER:
-				intVal = Integer.parseInt(value);
-			
-			case DECIMAL:
-				decimalVal = Double.parseDouble(value);
 
-			case STRING:
-				stringVal = value;
-				break;
+				case INTEGER:
+					intVal = Integer.parseInt(value);
 
-			case BOOLEAN:
-				booleanVal = Boolean.parseBoolean(value);
-				break;
+				case DECIMAL:
+					decimalVal = Double.parseDouble(value);
+
+				case STRING:
+					stringVal = value;
+					break;
+
+				case BOOLEAN:
+					booleanVal = Boolean.parseBoolean(value);
+					break;
 			}
-			
+
 		} catch (Exception ex) {
 			throw new IllegalArgumentException(argumentTypeException.replace("%value%", value).replace("%type%", type.simpleName()));
 		}

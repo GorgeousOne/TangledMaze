@@ -19,7 +19,7 @@ public class BlockComposition {
 	}
 
 	public void addBlock(BlockData data, int amount) {
-		if(composition.putIfAbsent(data, amount) == null)
+		if (composition.putIfAbsent(data, amount) == null)
 			size += amount;
 	}
 
@@ -31,10 +31,10 @@ public class BlockComposition {
 
 		int iterAmount = 0;
 
-		for(Map.Entry<BlockData, Integer> entry : getComposition().entrySet()) {
+		for (Map.Entry<BlockData, Integer> entry : getComposition().entrySet()) {
 			iterAmount += entry.getValue();
 
-			if(iterAmount >= amount || iterAmount == size)
+			if (iterAmount >= amount || iterAmount == size)
 				return entry.getKey();
 		}
 

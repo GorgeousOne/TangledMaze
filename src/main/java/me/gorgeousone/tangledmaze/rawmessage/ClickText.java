@@ -4,7 +4,7 @@ public class ClickText {
 
 	private String value;
 	private ClickAction action;
-	
+
 	public ClickText(String value, ClickAction action) {
 		this.value = value;
 		this.action = action;

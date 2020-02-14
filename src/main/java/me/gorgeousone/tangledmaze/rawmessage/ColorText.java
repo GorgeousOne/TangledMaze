@@ -5,12 +5,12 @@ public class ColorText {
 	private String text;
 	private Color color;
 	private boolean
-		bold,
-		italic,
-		obfuscated,
-		underlined,
-		strikethrough;
-	
+			bold,
+			italic,
+			obfuscated,
+			underlined,
+			strikethrough;
+
 	public ColorText(String text) {
 		this.text = text;
 		this.color = Color.DEFAULT;
@@ -20,12 +20,12 @@ public class ColorText {
 		underlined = false;
 		strikethrough = false;
 	}
-	
+
 	public ColorText color(Color color) {
 		this.color = color;
 		return this;
 	}
-	
+
 	public ColorText bold(boolean bold) {
 		this.bold = bold;
 		return this;
@@ -50,23 +50,23 @@ public class ColorText {
 		this.strikethrough = strikethrough;
 		return this;
 	}
-	
+
 	public String toString() {
-	    StringBuilder out = new StringBuilder("\"text\":\"" + text + "\"");
-	    
-	    out.append(color);
+		StringBuilder out = new StringBuilder("\"text\":\"" + text + "\"");
 
-	    if(bold)
-	      out.append(Color.BOLD);
-	    if(italic)
-	      out.append(Color.ITALIC);
-	    if(obfuscated)
-	      out.append(Color.OBFUSCATED);
-	    if(underlined)
-	      out.append(Color.UNDERLINED);
-	    if(strikethrough)
-	      out.append(Color.STRIKETHROUGH);
+		out.append(color);
 
-	    return out.toString();
-	  }
+		if (bold)
+			out.append(Color.BOLD);
+		if (italic)
+			out.append(Color.ITALIC);
+		if (obfuscated)
+			out.append(Color.OBFUSCATED);
+		if (underlined)
+			out.append(Color.UNDERLINED);
+		if (strikethrough)
+			out.append(Color.STRIKETHROUGH);
+
+		return out.toString();
+	}
 }

@@ -1,15 +1,14 @@
 package me.gorgeousone.tangledmaze.handlers;
 
+import me.gorgeousone.tangledmaze.clip.ClipChange;
+import me.gorgeousone.tangledmaze.data.Constants;
+import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.maze.Maze;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import me.gorgeousone.tangledmaze.clip.ClipChange;
-import me.gorgeousone.tangledmaze.data.Messages;
-import org.bukkit.entity.Player;
-
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.data.Constants;
 
 /**
  * This class stores mazes in relation to players.
@@ -28,35 +27,39 @@ public class MazeHandler {
 	}
 
 	public Maze getMaze(Player player) {
-		
-		if(!player.hasPermission(Constants.BUILD_PERM))
+
+		if (!player.hasPermission(Constants.BUILD_PERM))
 			return null;
-		
+
 		UUID uuid = player.getUniqueId();
-		
-		if(!mazes.containsKey(uuid))
+
+		if (!mazes.containsKey(uuid))
 			mazes.put(uuid, new Maze(player));
-		
+
 		return mazes.get(player.getUniqueId());
 	}
-	
+
 	public ArrayList<Maze> getMazes() {
 		return new ArrayList<>(mazes.values());
 	}
-	
+
 	public boolean hasMaze(Player player) {
 		return mazes.containsKey(player.getUniqueId());
 	}
-	
+
+	public boolean hasStartedMaze(Player player) {
+		return hasMaze(player) && getMaze(player).hasClip();
+	}
+
 	public void setMaze(Player player, Maze newMaze) {
 
-		if(hasMaze(player))
+		if (hasStartedMaze(player))
 			renderer.hideMaze(getMaze(player));
-		
+
 		mazes.put(player.getUniqueId(), newMaze);
-		renderer.registerMaze(newMaze);
+		renderer.displayMaze(newMaze);
 	}
-	
+
 	public void removeMaze(Player player) {
 
 		Maze maze = getMaze(player);
@@ -70,19 +73,19 @@ public class MazeHandler {
 
 		Maze maze = getMaze(player);
 
-		if(!maze.isStarted()) {
+		if (!maze.hasClip()) {
 			Messages.ERROR_MAZE_NOT_STARTED.sendTo(player);
 			player.sendMessage("/tangledmaze start");
 			return null;
 		}
 
-		if(withExits && !maze.hasExits()) {
+		if (withExits && !maze.hasExits()) {
 			Messages.ERROR_NO_MAZE_EXIT_SET.sendTo(player);
 			player.sendMessage("/tangledmaze select exit");
 			return null;
 		}
 
-		if(notConstructed && maze.isConstructed()) {
+		if (notConstructed && maze.isConstructed()) {
 			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
 			return null;
 		}
@@ -94,4 +97,6 @@ public class MazeHandler {
 		maze.processAction(action, true);
 		renderer.displayMazeAction(maze, action);
 	}
+	
+	
 }

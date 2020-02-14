@@ -15,11 +15,12 @@ import java.util.Map;
 
 public final class ClipFactory {
 
-	private ClipFactory() {}
+	private ClipFactory() {
+	}
 
-	public static List<BlockVec> createCompleteVertexList(List<BlockVec> definingVertices, ClipShape shape)  {
+	public static List<BlockVec> createCompleteVertexList(List<BlockVec> definingVertices, ClipShape shape) {
 
-		if(definingVertices.size() < shape.getRequiredVertexCount())
+		if (definingVertices.size() < shape.getRequiredVertexCount())
 			throw new IllegalArgumentException("Not enough vertices given to create a clip.");
 
 		switch (shape) {
@@ -50,7 +51,7 @@ public final class ClipFactory {
 
 	public static Clip createClip(ClipShape shape, List<BlockVec> definingVertices) {
 
-		if(definingVertices.size() < shape.getRequiredVertexCount())
+		if (definingVertices.size() < shape.getRequiredVertexCount())
 			throw new IllegalArgumentException("Not enough vertices given to create a clip.");
 
 		World clipWorld = definingVertices.get(0).getWorld();
@@ -74,15 +75,15 @@ public final class ClipFactory {
 
 		Clip clip = new Clip(world);
 
-		for(int x = minVertex.getX(); x <= maxVertex.getX(); x++) {
-			for(int z = minVertex.getZ(); z <= maxVertex.getZ(); z++) {
+		for (int x = minVertex.getX(); x <= maxVertex.getX(); x++) {
+			for (int z = minVertex.getZ(); z <= maxVertex.getZ(); z++) {
 
 				Vec2 point = new Vec2(x, z);
 				int height = BlockUtils.nearestSurfaceY(point, highestY, clip.getWorld());
 
 				clip.addFill(point, height);
 
-				if(isRectangleBorder(x, z, minVertex, maxVertex))
+				if (isRectangleBorder(x, z, minVertex, maxVertex))
 					clip.addBorder(point);
 			}
 		}
@@ -103,11 +104,11 @@ public final class ClipFactory {
 		double radiusZ = (maxVertex.getZ() - minVertex.getZ() + 1) / 2d;
 		double distortionZ = radiusX / radiusZ;
 
-		for(double x = -radiusX; x <= radiusX; x++) {
-			for(double z = -radiusZ; z <= radiusZ; z++) {
+		for (double x = -radiusX; x <= radiusX; x++) {
+			for (double z = -radiusZ; z <= radiusZ; z++) {
 
 				double circleSmoothing = -0.25f;
-				if(!isInEllipse(x+0.5f, z+0.5f, distortionZ, radiusX + circleSmoothing))
+				if (!isInEllipse(x + 0.5f, z + 0.5f, distortionZ, radiusX + circleSmoothing))
 					continue;
 
 				Vec2 loc = minVertex.clone().add((int) (radiusX + x), (int) (radiusZ + z));
@@ -115,7 +116,7 @@ public final class ClipFactory {
 
 				clip.addFill(loc, height);
 
-				if(isEllipseBorder(x + 0.5f, z + 0.5f, distortionZ, radiusX + circleSmoothing))
+				if (isEllipseBorder(x + 0.5f, z + 0.5f, distortionZ, radiusX + circleSmoothing))
 					clip.addBorder(loc);
 			}
 		}
@@ -126,15 +127,15 @@ public final class ClipFactory {
 	private static boolean isInEllipse(double x, double z, double distortionZ, double radius) {
 
 		double circleZ = z * distortionZ;
-		return Math.sqrt(x*x + circleZ*circleZ) <= radius;
+		return Math.sqrt(x * x + circleZ * circleZ) <= radius;
 	}
 
 	private static boolean isEllipseBorder(double x, double z, double distortionZ, double radius) {
 
-		for(Directions dir : Directions.values()) {
+		for (Directions dir : Directions.values()) {
 			Vec2 dirVec = dir.getVec2();
 
-			if(!isInEllipse(x + dirVec.getX(), z + dirVec.getZ(), distortionZ, radius)) {
+			if (!isInEllipse(x + dirVec.getX(), z + dirVec.getZ(), distortionZ, radius)) {
 				return true;
 			}
 		}

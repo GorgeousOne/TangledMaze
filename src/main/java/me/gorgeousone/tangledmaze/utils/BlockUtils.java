@@ -11,31 +11,31 @@ public final class BlockUtils {
 		return nearestSurface(new Location(world, loc.getX(), startY, loc.getZ())).getBlockY();
 	}
 
-//	public static int nearestSurfaceY(Block block) {
-//		return nearestSurface(block.getLocation()).getBlockY();
-//	}
+	//	public static int nearestSurfaceY(Block block) {
+	//		return nearestSurface(block.getLocation()).getBlockY();
+	//	}
 
 	public static Location nearestSurface(Location loc) {
 
 		Location iter = loc.clone();
 
-		if(isReallySolid(iter.getBlock().getType())) {
+		if (isReallySolid(iter.getBlock().getType())) {
 
-			while(iter.getY() <= 255) {
+			while (iter.getY() <= 255) {
 				iter.add(0, 1, 0);
 
-				if(!isReallySolid(iter.getBlock().getType())) {
+				if (!isReallySolid(iter.getBlock().getType())) {
 					iter.add(0, -1, 0);
 					return iter;
 				}
 			}
 
-		}else {
+		} else {
 
-			while(iter.getY() >= 0) {
+			while (iter.getY() >= 0) {
 				iter.add(0, -1, 0);
 
-				if(isReallySolid(iter.getBlock().getType())) {
+				if (isReallySolid(iter.getBlock().getType())) {
 					return iter;
 				}
 			}

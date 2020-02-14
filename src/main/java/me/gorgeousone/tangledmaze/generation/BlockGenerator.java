@@ -14,7 +14,8 @@ import java.util.Set;
 
 public final class BlockGenerator {
 
-	private BlockGenerator() {}
+	private BlockGenerator() {
+	}
 
 	public static void updateBlocks(
 			Set<BlockDataState> blocksToUpdate,
@@ -31,13 +32,13 @@ public final class BlockGenerator {
 
 				long timer = System.currentTimeMillis();
 
-				while(iter.hasNext()) {
+				while (iter.hasNext()) {
 
 					BlockDataState nextBlock = iter.next();
 					BlockState state = nextBlock.getBlock().getState();
 					state.setBlockData(nextBlock.getData());
 
-					if(blockDataPicker != null) {
+					if (blockDataPicker != null) {
 						BlockData newBlockData = blockDataPicker.pickBlockData(nextBlock, blockComposition, terrainMap);
 						state.setBlockData(newBlockData);
 					}
@@ -45,11 +46,11 @@ public final class BlockGenerator {
 					state.update(true, false);
 					iter.remove();
 
-					if(System.currentTimeMillis() - timer >= 49)
+					if (System.currentTimeMillis() - timer >= 49)
 						return;
 				}
 
-				if(callback != null)
+				if (callback != null)
 					callback.actionPerformed(null);
 
 				this.cancel();

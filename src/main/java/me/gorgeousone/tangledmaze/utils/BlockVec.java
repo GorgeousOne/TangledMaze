@@ -37,8 +37,10 @@ public class BlockVec {
 		return new Vec2(x, z);
 	}
 
-	public Vector toVector() {return new Vector(getX(), getY(), getZ());
+	public Vector toVector() {
+		return new Vector(getX(), getY(), getZ());
 	}
+
 	public Location toLocation() {
 		return new Location(world, getX(), getY(), getZ());
 	}
@@ -56,12 +58,12 @@ public class BlockVec {
 		return y;
 	}
 
-	public int getZ() {
-		return z;
-	}
-
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public int getZ() {
+		return z;
 	}
 
 	@Override

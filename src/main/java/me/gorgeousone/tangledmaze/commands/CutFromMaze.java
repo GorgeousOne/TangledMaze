@@ -1,15 +1,14 @@
 package me.gorgeousone.tangledmaze.commands;
 
+import me.gorgeousone.tangledmaze.clip.ClipChange;
+import me.gorgeousone.cmdframework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
+import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.maze.MazeChangeFactory;
+import me.gorgeousone.tangledmaze.tools.ClipTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.gorgeousone.tangledmaze.clip.ClipChange;
-import me.gorgeousone.tangledmaze.commands.framework.command.BasicCommand;
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
-import me.gorgeousone.tangledmaze.tools.ClipTool;
 
 public class CutFromMaze extends BasicCommand {
 
@@ -27,22 +26,22 @@ public class CutFromMaze extends BasicCommand {
 
 	@Override
 	public boolean onCommand(CommandSender sender, String[] arguments) {
-		
+
 		Player player = (Player) sender;
 		Maze maze = mazeHandler.getStartedMaze(player, false, true);
-		
-		if(maze == null)
+
+		if (maze == null)
 			return false;
-		
+
 		ClipTool clipboard = clipHandler.requireCompletedClipTool(player);
-		
-		if(clipboard == null)
+
+		if (clipboard == null)
 			return false;
-		
-		ClipChange clipChange = maze.getDeletion(clipboard.getClip());
+
+		ClipChange clipChange = MazeChangeFactory.createDeletion(maze, clipboard.getClip());
 		clipHandler.removeClipTool(player);
 
-		if(clipChange == null)
+		if (clipChange == null)
 			return false;
 
 		mazeHandler.processClipChange(maze, clipChange);

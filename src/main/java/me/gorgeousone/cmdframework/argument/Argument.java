@@ -1,19 +1,19 @@
-package me.gorgeousone.tangledmaze.commands.framework.argument;
+package me.gorgeousone.cmdframework.argument;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Argument {
-	
+
 	private String name;
-	
+
 	private ArgType type;
 	private List<String> tabList;
 	private ArgValue defValue;
 
 	public Argument(String name, ArgType type) {
-		this(name, type, new String[] {});
+		this(name, type, new String[]{});
 	}
 
 	public Argument(String name, ArgType type, String... tabList) {
@@ -40,7 +40,7 @@ public class Argument {
 	public ArgType getType() {
 		return type;
 	}
-	
+
 	public List<String> getTabList() {
 		return tabList;
 	}

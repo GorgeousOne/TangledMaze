@@ -1,14 +1,13 @@
-package me.gorgeousone.tangledmaze.commands.framework.command;
+package me.gorgeousone.cmdframework.command;
+
+import me.gorgeousone.cmdframework.argument.ArgType;
+import me.gorgeousone.cmdframework.argument.ArgValue;
+import me.gorgeousone.cmdframework.argument.Argument;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.bukkit.command.CommandSender;
-
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgType;
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgValue;
-import me.gorgeousone.tangledmaze.commands.framework.argument.Argument;
 
 public abstract class ArgCommand extends BasicCommand {
 
@@ -71,7 +70,7 @@ public abstract class ArgCommand extends BasicCommand {
 			else
 				createMoreValuesThanSenderInput(values, stringArgs);
 
-		}catch (ArrayIndexOutOfBoundsException ex) {
+		} catch (ArrayIndexOutOfBoundsException ex) {
 			sendUsage(sender);
 			return false;
 

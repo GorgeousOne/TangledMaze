@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.commands;
 
-import me.gorgeousone.tangledmaze.commands.framework.command.ParentCommand;
+import me.gorgeousone.cmdframework.command.ParentCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 
 public class MazeCommand extends ParentCommand {

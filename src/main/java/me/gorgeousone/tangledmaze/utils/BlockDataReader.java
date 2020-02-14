@@ -6,7 +6,8 @@ import org.bukkit.block.data.BlockData;
 
 public final class BlockDataReader {
 
-	private BlockDataReader() {}
+	private BlockDataReader() {
+	}
 
 	public static BlockData read(String argument) throws TextException {
 
@@ -21,7 +22,7 @@ public final class BlockDataReader {
 
 		BlockData blockData = material.createBlockData();
 
-		if(material.name().contains("LEAVES"))
+		if (material.name().contains("LEAVES"))
 			blockData = blockData.merge(material.createBlockData("[persistent=true]"));
 
 		if (split.length < 2)
@@ -33,7 +34,7 @@ public final class BlockDataReader {
 
 			try {
 				blockData = blockData.merge(material.createBlockData("[" + blockProperty + "]"));
-			}catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				createPlayerMessageFromException(ex.getCause().getLocalizedMessage(), stringMat, blockProperty.split("="));
 			}
 		}
@@ -41,20 +42,21 @@ public final class BlockDataReader {
 		return blockData;
 	}
 
-	private static void createPlayerMessageFromException(String exceptionMessage, String material, String[] blockProperty) throws TextException {
+	private static void createPlayerMessageFromException(String exceptionMessage, String material,
+	                                                     String[] blockProperty) throws TextException {
 
-		if(exceptionMessage.contains("does not have property"))
+		if (exceptionMessage.contains("does not have property"))
 			throw new TextException(
 					Messages.ERROR_INVALID_BLOCK_PROPERTY,
 					new PlaceHolder("block", material),
 					new PlaceHolder("property", blockProperty[0]));
 
-		else if(exceptionMessage.contains("Expected value for property"))
+		else if (exceptionMessage.contains("Expected value for property"))
 			throw new TextException(
 					Messages.ERROR_MISSING_BLOCK_PROPERTY_VALUE,
 					new PlaceHolder("property", blockProperty[0]));
 
-		else if(exceptionMessage.contains("does not accept"))
+		else if (exceptionMessage.contains("does not accept"))
 			throw new TextException(
 					Messages.ERROR_INVALID_BLOCK_PROPERTY_VALUE,
 					new PlaceHolder("block", material),

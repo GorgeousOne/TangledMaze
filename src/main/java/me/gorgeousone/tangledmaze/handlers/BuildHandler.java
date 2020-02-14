@@ -1,20 +1,22 @@
 package me.gorgeousone.tangledmaze.handlers;
 
-import java.util.*;
-
+import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
 import me.gorgeousone.tangledmaze.generation.datapicker.AbstractBlockDataPicker;
-import me.gorgeousone.tangledmaze.maze.MazePartBlockBackup;
+import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazePart;
+import me.gorgeousone.tangledmaze.maze.MazePartBlockBackup;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.TangledMain;
-import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class handles the process of constructing and deconstructing mazes.
@@ -24,7 +26,7 @@ import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
 public class BuildHandler {
 
 	private Renderer renderer;
-	
+
 	private Map<Maze, TerrainMap> terrainMaps;
 	private Map<Maze, MazePartBlockBackup> mazeBlockBackups;
 
@@ -55,12 +57,12 @@ public class BuildHandler {
 			AbstractBlockSelector blockSelector,
 			AbstractBlockDataPicker blockDataPicker) {
 
-		if(maze.isConstructed() != mazePart.isMazeBuiltBefore())
+		if (maze.isConstructed() != mazePart.isMazeBuiltBefore())
 			return;
 
 		TerrainMap terrainMap;
 
-		if(mazePart.isMazeBuiltBefore())
+		if (mazePart.isMazeBuiltBefore())
 			terrainMap = terrainMaps.get(maze);
 		else
 			terrainMap = new TerrainMap(maze);
@@ -75,7 +77,7 @@ public class BuildHandler {
 				terrainMap,
 				callback -> {
 
-					if(!mazePart.isMazeBuiltBefore()) {
+					if (!mazePart.isMazeBuiltBefore()) {
 						maze.setConstructed(true);
 						mazeBlockBackups.put(maze, new MazePartBlockBackup());
 					}
@@ -88,15 +90,15 @@ public class BuildHandler {
 	}
 
 	public void unbuildMazePart(
-		Maze maze,
-		MazePart mazePart) {
+			Maze maze,
+			MazePart mazePart) {
 
-		if(!hasBlockBackup(maze))
+		if (!hasBlockBackup(maze))
 			return;
 
 		MazePartBlockBackup mazeBackup = getBlockBackup(maze);
 
-		if(!mazeBackup.hasBackup(mazePart))
+		if (!mazeBackup.hasBackup(mazePart))
 			return;
 
 		BlockGenerator.updateBlocks(
@@ -107,7 +109,7 @@ public class BuildHandler {
 				callback -> {
 					mazeBackup.deleteBackup(mazePart);
 
-					if(mazeBackup.isEmpty())
+					if (mazeBackup.isEmpty())
 						reactivateMaze(maze);
 				});
 	}
@@ -130,8 +132,9 @@ public class BuildHandler {
 	private Set<BlockDataState> deepCloneBlockSet(Set<BlockDataState> blockSet) {
 		Set<BlockDataState> clonedBlockSet = new HashSet<>();
 
-		for (BlockDataState block : blockSet)
+		for (BlockDataState block : blockSet) {
 			clonedBlockSet.add(block.clone());
+		}
 
 		return clonedBlockSet;
 	}

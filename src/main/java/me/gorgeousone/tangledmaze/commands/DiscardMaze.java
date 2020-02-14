@@ -1,13 +1,11 @@
 package me.gorgeousone.tangledmaze.commands;
 
+import me.gorgeousone.cmdframework.command.BasicCommand;
+import me.gorgeousone.tangledmaze.handlers.MazeHandler;
+import me.gorgeousone.tangledmaze.handlers.ToolHandler;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.gorgeousone.tangledmaze.commands.framework.command.BasicCommand;
-import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.handlers.MazeHandler;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
-import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 
 public class DiscardMaze extends BasicCommand {
 
@@ -20,12 +18,12 @@ public class DiscardMaze extends BasicCommand {
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, String[] arguments) {
 
 		Player player = (Player) sender;
-		
+
 		mazeHandler.setMaze(player, new Maze(player));
 		toolHandler.resetToDefaultTool(player);
 		return true;

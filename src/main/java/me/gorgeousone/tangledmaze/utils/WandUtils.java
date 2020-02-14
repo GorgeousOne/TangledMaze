@@ -12,7 +12,7 @@ public class WandUtils {
 
 	public static boolean isMazeWand(ItemStack item) {
 
-		if(item == null || item.getType() != ConfigSettings.MAZE_WAND_MATERIAL)
+		if (item == null || item.getType() != ConfigSettings.MAZE_WAND_MATERIAL)
 			return false;
 
 		String itemName = item.getItemMeta().getDisplayName();

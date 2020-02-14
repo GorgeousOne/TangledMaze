@@ -1,12 +1,9 @@
 package me.gorgeousone.tangledmaze.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgType;
-import me.gorgeousone.tangledmaze.commands.framework.argument.ArgValue;
-import me.gorgeousone.tangledmaze.commands.framework.argument.Argument;
-import me.gorgeousone.tangledmaze.commands.framework.command.ArgCommand;
+import me.gorgeousone.cmdframework.argument.ArgType;
+import me.gorgeousone.cmdframework.argument.ArgValue;
+import me.gorgeousone.cmdframework.argument.Argument;
+import me.gorgeousone.cmdframework.command.ArgCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
@@ -14,25 +11,27 @@ import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
 import me.gorgeousone.tangledmaze.utils.HelpPage;
 import me.gorgeousone.tangledmaze.utils.Utils;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class HelpCommand extends ArgCommand {
-	
+
 	private final int commandCount = 10;
-	private  final int pageCount = commandCount + 1;
-	
+	private final int pageCount = commandCount + 1;
+
 	private RawMessage[] pageLinks;
 	private HelpPage[] helpPages;
-	
+
 	public HelpCommand(MazeCommand mazeCommand) {
 		super("help", null, false, mazeCommand);
 
 		addAlias("?");
 		addArg(new Argument("page", ArgType.INTEGER).setDefaultTo("1"));
-		
+
 		createPageLinks();
 		loadHelpPagesContent();
 	}
-	
+
 	@Override
 	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 
@@ -40,30 +39,31 @@ public class HelpCommand extends ArgCommand {
 		sendHelpPage(sender, pageNumber);
 		return true;
 	}
-	
+
 	public void sendHelpPage(CommandSender sender, int pageNumber) {
-		
+
 		sender.sendMessage("");
 		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + pageCount);
 		sender.sendMessage("");
-		
-		if(pageNumber == 1) {
+
+		if (pageNumber == 1) {
 			sender.sendMessage(ChatColor.GREEN + "List of all /tangledmaze commands: ");
-			
-			for(RawMessage pageLink : pageLinks)
+
+			for (RawMessage pageLink : pageLinks) {
 				pageLink.sendTo(sender);
-		
-		}else
-			helpPages[pageNumber-2].send(sender);
+			}
+
+		} else
+			helpPages[pageNumber - 2].send(sender);
 	}
-	
+
 	private void createPageLinks() {
-		
+
 		pageLinks = new RawMessage[commandCount];
-		
-		for(int i = 0; i < pageLinks.length; i++) {
+
+		for (int i = 0; i < pageLinks.length; i++) {
 			pageLinks[i] = new RawMessage();
-			pageLinks[i].addText("page " + (i+2) + " ").color(Color.LIGHT_GREEN).onClick("/maze help " + (i+2), ClickAction.RUN);
+			pageLinks[i].addText("page " + (i + 2) + " ").color(Color.LIGHT_GREEN).onClick("/maze help " + (i + 2), ClickAction.RUN);
 		}
 
 		int iter = -1;
@@ -79,9 +79,9 @@ public class HelpCommand extends ArgCommand {
 		pageLinks[++iter].last().append("/maze build <part> <block> ...").color(Color.GREEN);
 		pageLinks[++iter].last().append("/maze unbuild <part>").color(Color.GREEN);
 	}
-	
+
 	private void loadHelpPagesContent() {
-		
+
 		helpPages = new HelpPage[commandCount];
 		int iter = -1;
 
