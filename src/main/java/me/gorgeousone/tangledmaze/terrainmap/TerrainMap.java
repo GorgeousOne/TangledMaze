@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.mapmaking;
+package me.gorgeousone.tangledmaze.terrainmap;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.maze.Maze;
@@ -18,9 +18,11 @@ public class TerrainMap {
 
 	private Maze maze;
 	private MazeAreaType[][] shapeMap;
-	private int[][] floorHeightMap, wallHeightMap;
+	private int[][] floorHeightMap;
+	private int[][] wallHeightMap;
 
-	private Vec2 minimum, maximum;
+	private Vec2 minimum;
+	private Vec2 maximum;
 	private Vec2 pathStart;
 
 	public TerrainMap(Maze maze) {
@@ -179,16 +181,16 @@ public class TerrainMap {
 		Clip clip = maze.getClip();
 
 		//mark the maze's area in mazeMap as undefined area (open to become paths and walls)
-		for (Entry<Vec2, Integer> loc : clip.getFillEntries()) {
+		for (Entry<Vec2, Integer> point : clip.getFillEntries()) {
 
-			setType(loc.getKey(), MazeAreaType.UNDEFINED);
-			setFloorHeight(loc.getKey(), loc.getValue());
-			setWallHeight(loc.getKey(), wallHeight);
+			setType(point.getKey(), MazeAreaType.UNDEFINED);
+			setFloorHeight(point.getKey(), point.getValue());
+			setWallHeight(point.getKey(), wallHeight);
 		}
 
 		//mark the border in mazeMap as walls
-		for (Vec2 loc : maze.getClip().getBorder()) {
-			setType(loc, MazeAreaType.WALL);
+		for (Vec2 point : maze.getClip().getBorder()) {
+			setType(point, MazeAreaType.WALL);
 		}
 	}
 
@@ -196,19 +198,19 @@ public class TerrainMap {
 
 		Vec2 minimum = null;
 
-		for (Vec2 loc : maze.getClip().getFill()) {
+		for (Vec2 point : maze.getClip().getFill()) {
 
 			if (minimum == null) {
 
-				minimum = loc.clone();
+				minimum = point.clone();
 				continue;
 			}
 
-			if (loc.getX() < minimum.getX())
-				minimum.setX(loc.getX());
+			if (point.getX() < minimum.getX())
+				minimum.setX(point.getX());
 
-			if (loc.getZ() < minimum.getZ())
-				minimum.setZ(loc.getZ());
+			if (point.getZ() < minimum.getZ())
+				minimum.setZ(point.getZ());
 		}
 
 		return minimum;
@@ -218,18 +220,18 @@ public class TerrainMap {
 
 		Vec2 maximum = null;
 
-		for (Vec2 loc : maze.getClip().getFill()) {
+		for (Vec2 point : maze.getClip().getFill()) {
 
 			if (maximum == null) {
-				maximum = loc.clone();
+				maximum = point.clone();
 				continue;
 			}
 
-			if (loc.getX() > maximum.getX())
-				maximum.setX(loc.getX());
+			if (point.getX() > maximum.getX())
+				maximum.setX(point.getX());
 
-			if (loc.getZ() > maximum.getZ())
-				maximum.setZ(loc.getZ());
+			if (point.getZ() > maximum.getZ())
+				maximum.setZ(point.getZ());
 		}
 
 		return maximum.add(1, 1);

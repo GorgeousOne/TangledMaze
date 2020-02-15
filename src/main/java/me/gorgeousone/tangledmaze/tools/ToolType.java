@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.tools;
 
-public enum MazeToolType {
+public enum ToolType {
 	
 	CLIP_TOOL(""),
 	BRUSH_TOOL("brush"),
@@ -8,7 +8,7 @@ public enum MazeToolType {
 	
 	private String simpleName;
 	
-	MazeToolType(String simpleName) {
+	ToolType(String simpleName) {
 		this.simpleName = simpleName;
 	}
 	

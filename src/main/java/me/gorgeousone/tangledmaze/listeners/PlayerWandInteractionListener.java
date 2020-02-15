@@ -6,10 +6,12 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.utils.WandUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -58,21 +60,37 @@ public class PlayerWandInteractionListener implements Listener {
 			return;
 		
 		Player player = event.getPlayer();
+		Block clickedBlock = event.getClickedBlock();
 		ItemStack heldItem = event.getItem();
 		
-		if (!WandUtils.isMazeWand(heldItem))
-			return;
-		
-		event.setCancelled(true);
-		
-		if (player.hasPermission(Constants.BUILD_PERM)) {
-			toolHandler.handleToolInteraction(player, event.getClickedBlock(), action);
+		if (WandUtils.isMazeWand(heldItem)) {
 			
-		} else
-			destroyMazeWand(player, heldItem);
+			event.setCancelled(true);
+			
+			if (player.hasPermission(Constants.BUILD_PERM))
+				toolHandler.handleToolInteraction(player, clickedBlock, action);
+			else
+				destroyMazeWand(player, heldItem);
+			
+		}else
+			hidePlayersClipsIfHit(player, clickedBlock);
 	}
 	
-	//TODO reactivate slot switch event listening
+	private void hidePlayersClipsIfHit(Player player, Block clickedBlock) {
+		
+		Maze maze = mazeHandler.getMaze(player);
+		
+		if(maze.hasClip() && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
+			renderer.hideMaze(maze);
+		
+		if(!clipHandler.hasClipTool(player))
+			return;
+		
+		ClipTool clipTool = clipHandler.getClipTool(player);
+		
+		if(renderer.isClipToolVisible(clipTool) && (clipTool.isVertex(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
+			renderer.hideClipboard(clipTool, false);
+	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSlotSwitch(PlayerItemHeldEvent event) {

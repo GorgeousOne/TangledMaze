@@ -4,43 +4,38 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 public final class BlockUtils {
 
-	public static int nearestSurfaceY(Vec2 loc, int startY, World world) {
-		return nearestSurface(new Location(world, loc.getX(), startY, loc.getZ())).getBlockY();
+	public static int nearestSurfaceY(Vec2 point, int startY, World world) {
+		return nearestSurface(new Location(world, point.getX(), startY, point.getZ())).getY();
 	}
 
-	//	public static int nearestSurfaceY(Block block) {
-	//		return nearestSurface(block.getLocation()).getBlockY();
-	//	}
+	public static Block nearestSurface(Location point) {
 
-	public static Location nearestSurface(Location loc) {
+		Block iter = point.getBlock();
 
-		Location iter = loc.clone();
-
-		if (isReallySolid(iter.getBlock().getType())) {
+		if (isReallySolid(iter.getType())) {
 
 			while (iter.getY() <= 255) {
-				iter.add(0, 1, 0);
+				iter = iter.getRelative(BlockFace.UP);
 
-				if (!isReallySolid(iter.getBlock().getType())) {
-					iter.add(0, -1, 0);
-					return iter;
-				}
+				if (!isReallySolid(iter.getType()))
+					return iter.getRelative(BlockFace.DOWN);
 			}
 
 		} else {
 
 			while (iter.getY() >= 0) {
-				iter.add(0, -1, 0);
+				iter = iter.getRelative(BlockFace.DOWN);
 
-				if (isReallySolid(iter.getBlock().getType())) {
+				if (isReallySolid(iter.getType()))
 					return iter;
-				}
 			}
 		}
-		return loc;
+		return point.getBlock();
 	}
 
 	public static boolean isReallySolid(Material mat) {

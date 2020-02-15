@@ -6,7 +6,7 @@ import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeChangeFactory;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
-import me.gorgeousone.tangledmaze.tools.MazeToolType;
+import me.gorgeousone.tangledmaze.tools.ToolType;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -26,16 +26,12 @@ public class ToolHandler {
 
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
-	private Renderer renderer;
 
-	private Map<UUID, MazeToolType> playersTools = new HashMap<>();
+	private Map<UUID, ToolType> playersTools = new HashMap<>();
 	
-	public ToolHandler(ClipToolHandler clipHandler,
-	                   MazeHandler mazeHandler,
-	                   Renderer renderer) {
+	public ToolHandler(ClipToolHandler clipHandler, MazeHandler mazeHandler) {
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
-		this.renderer = renderer;
 	}
 	
 
@@ -45,7 +41,7 @@ public class ToolHandler {
 	//			tools.get(player.getUniqueId()) instanceof ClipTool;
 	//	}
 
-	public MazeToolType getToolType(Player player) {
+	public ToolType getToolType(Player player) {
 
 		if (!player.hasPermission(Constants.BUILD_PERM))
 			return null;
@@ -53,12 +49,12 @@ public class ToolHandler {
 		UUID uuid = player.getUniqueId();
 
 		if (!playersTools.containsKey(uuid))
-			setToolType(player, MazeToolType.CLIP_TOOL);
+			setToolType(player, ToolType.CLIP_TOOL);
 
 		return playersTools.get(player.getUniqueId());
 	}
 
-	public Collection<MazeToolType> getPlayersTools() {
+	public Collection<ToolType> getPlayersTools() {
 		return playersTools.values();
 	}
 
@@ -67,7 +63,7 @@ public class ToolHandler {
 	//		return clipboard instanceof ClipTool ? (ClipTool) clipboard : null;
 	//	}
 
-	public boolean setToolType(Player player, MazeToolType toolType) {
+	public boolean setToolType(Player player, ToolType toolType) {
 		return playersTools.put(player.getUniqueId(), toolType) != toolType;
 	}
 
@@ -80,7 +76,7 @@ public class ToolHandler {
 		else
 			clipHandler.setClipTool(player, new ClipTool(player, ClipShape.RECTANGLE));
 
-		setToolType(player, MazeToolType.CLIP_TOOL);
+		setToolType(player, ToolType.CLIP_TOOL);
 	}
 
 	public void removeTool(Player player) {

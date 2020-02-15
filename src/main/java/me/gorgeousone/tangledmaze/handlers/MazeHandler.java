@@ -64,6 +64,7 @@ public class MazeHandler {
 
 		Maze maze = getMaze(player);
 
+		renderer.hideMaze(maze);
 		renderer.unregisterMaze(maze);
 		buildHandler.removeMaze(maze);
 		mazes.remove(player.getUniqueId());

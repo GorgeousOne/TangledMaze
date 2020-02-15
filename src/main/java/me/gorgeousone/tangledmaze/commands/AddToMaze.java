@@ -34,17 +34,17 @@ public class AddToMaze extends BasicCommand {
 		if (maze == null)
 			return false;
 
-		ClipTool clipboard = clipHandler.requireCompletedClipTool(player);
+		ClipTool clipTool = clipHandler.requireCompletedClipTool(player);
 
-		if (clipboard == null)
+		if (clipTool == null)
 			return false;
 
-		ClipChange clipChange = MazeChangeFactory.createAddition(maze, clipboard.getClip());
+		ClipChange clipChange = MazeChangeFactory.createAddition(maze, clipTool.getClip());
 
 		if (clipChange == null)
 			return false;
 
-		if (clipChange.getAddedFill().size() == clipboard.getClip().size()) {
+		if (clipChange.getAddedFill().size() == clipTool.getClip().size()) {
 			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.sendTo(player);
 			return false;
 		}

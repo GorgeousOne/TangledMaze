@@ -56,51 +56,51 @@ public class ClipChange {
 		return removedExits;
 	}
 
-	public void addFill(Vec2 loc, int height) {
-		addedFill.put(loc, height);
+	public void addFill(Vec2 point, int height) {
+		addedFill.put(point, height);
 	}
 
-	public void removeFill(Vec2 loc, int height) {
-		removedFill.put(loc, height);
+	public void removeFill(Vec2 point, int height) {
+		removedFill.put(point, height);
 
-		if (clip.borderContains(loc))
-			removeBorder(loc);
+		if (clip.borderContains(point))
+			removeBorder(point);
 	}
 
-	public void addBorder(Vec2 loc) {
-		addedBorder.add(loc);
+	public void addBorder(Vec2 point) {
+		addedBorder.add(point);
 	}
 
-	public void removeBorder(Vec2 loc) {
-		removedBorder.add(loc);
+	public void removeBorder(Vec2 point) {
+		removedBorder.add(point);
 	}
 
-	public void removeExit(Vec2 loc) {
-		removedExits.add(loc);
+	public void removeExit(Vec2 point) {
+		removedExits.add(point);
 	}
 
-	public Location getBorder(Vec2 loc) {
+	public Location getBorder(Vec2 point) {
 
 		int height;
 
-		if (removedBorder.contains(loc)) {
+		if (removedBorder.contains(point)) {
 
-			if (removedFill.containsKey(loc))
-				height = removedFill.get(loc);
+			if (removedFill.containsKey(point))
+				height = removedFill.get(point);
 			else
-				height = getClip().getHeight(loc);
+				height = getClip().getHeight(point);
 
-		} else if (addedBorder.contains(loc)) {
+		} else if (addedBorder.contains(point)) {
 
-			if (addedFill.containsKey(loc))
-				height = addedFill.get(loc);
+			if (addedFill.containsKey(point))
+				height = addedFill.get(point);
 			else
-				height = getClip().getHeight(loc);
+				height = getClip().getHeight(point);
 
 		} else
 			return null;
 
-		return new Location(getClip().getWorld(), loc.getX(), height, loc.getZ());
+		return new Location(getClip().getWorld(), point.getX(), height, point.getZ());
 	}
 
 	public ClipChange invert() {
@@ -123,11 +123,11 @@ public class ClipChange {
 		return this;
 	}
 
-	public boolean clipWillContain(Vec2 loc) {
-		return getClip().contains(loc) && !getRemovedFill().containsKey(loc) || getAddedFill().containsKey(loc);
+	public boolean clipWillContain(Vec2 point) {
+		return getClip().contains(point) && !getRemovedFill().containsKey(point) || getAddedFill().containsKey(point);
 	}
 
-	public boolean clipBorderWillContain(Vec2 loc) {
-		return getAddedBorder().contains(loc) || !getRemovedBorder().contains(loc) && getClip().borderContains(loc);
+	public boolean clipBorderWillContain(Vec2 point) {
+		return getAddedBorder().contains(point) || !getRemovedBorder().contains(point) && getClip().borderContains(point);
 	}
 }

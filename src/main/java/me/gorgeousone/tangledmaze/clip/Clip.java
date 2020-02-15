@@ -130,37 +130,13 @@ public class Clip {
 		for (Directions dir : directions) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
-			if (!contains(point))
+			if (!contains(neighbor))
 				touchesExternal = true;
 			
-			else if (!borderContains(point))
+			else if (!borderContains(neighbor))
 				touchesFill = true;
 			
 			if (touchesFill && touchesExternal)
-				return true;
-		}
-		
-		return false;
-	}
-	
-	public boolean touchesFill(Vec2 point, Directions[] directions) {
-		
-		for (Directions dir : directions) {
-			Vec2 neighbor = point.clone().add(dir.getVec2());
-			
-			if (!borderContains(neighbor) && contains(point))
-				return true;
-		}
-		
-		return false;
-	}
-	
-	public boolean touchesExternal(Vec2 loc, Directions[] directions) {
-		
-		for (Directions dir : directions) {
-			Vec2 neighbor = loc.clone().add(dir.getVec2());
-			
-			if (!contains(neighbor))
 				return true;
 		}
 		

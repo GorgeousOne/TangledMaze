@@ -33,12 +33,12 @@ public class CutFromMaze extends BasicCommand {
 		if (maze == null)
 			return false;
 
-		ClipTool clipboard = clipHandler.requireCompletedClipTool(player);
+		ClipTool clipTool = clipHandler.requireCompletedClipTool(player);
 
-		if (clipboard == null)
+		if (clipTool == null)
 			return false;
 
-		ClipChange clipChange = MazeChangeFactory.createDeletion(maze, clipboard.getClip());
+		ClipChange clipChange = MazeChangeFactory.createDeletion(maze, clipTool.getClip());
 		clipHandler.removeClipTool(player);
 
 		if (clipChange == null)

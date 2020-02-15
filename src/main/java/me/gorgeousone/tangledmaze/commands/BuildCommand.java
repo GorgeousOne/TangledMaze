@@ -61,6 +61,7 @@ public class BuildCommand extends ArgCommand {
 		MazePart mazePart;
 		AbstractBlockSelector blockSelector;
 
+		//TODO match maze part and block selector in another method
 		switch (stringMazePart) {
 			case "floor":
 

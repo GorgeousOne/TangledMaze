@@ -15,12 +15,10 @@ public class WandUtils {
 		if (item == null || item.getType() != ConfigSettings.MAZE_WAND_MATERIAL)
 			return false;
 
-		String itemName = item.getItemMeta().getDisplayName();
-
-		return !itemName.equals("") && itemName.equals(Constants.MAZE_WAND_NAME);
+		return Constants.MAZE_WAND_NAME.equals(item.getItemMeta().getDisplayName());
 	}
 
-	public static ItemStack getMazeWand() {
+	public static ItemStack createMazeWand() {
 
 		ItemStack wand = new ItemStack(ConfigSettings.MAZE_WAND_MATERIAL);
 		ItemMeta wandMeta = wand.getItemMeta();

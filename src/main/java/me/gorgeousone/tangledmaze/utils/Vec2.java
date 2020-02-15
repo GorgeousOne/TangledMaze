@@ -20,9 +20,9 @@ public class Vec2 implements Comparable<Vec2> {
 		this.z = z;
 	}
 
-	public Vec2(Location loc) {
-		this.x = loc.getBlockX();
-		this.z = loc.getBlockZ();
+	public Vec2(Location point) {
+		this.x = point.getBlockX();
+		this.z = point.getBlockZ();
 	}
 
 	public Vec2(Block block) {

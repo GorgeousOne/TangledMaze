@@ -6,11 +6,9 @@ import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.BlockVec;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class ClipTool extends PlayerHolder {
 	}
 
 	public String getName() {
-		return shape.getSimpleName();
+		return shape.simpleName();
 	}
 
 	public World getWorld() {
@@ -122,18 +120,16 @@ public class ClipTool extends PlayerHolder {
 		return null;
 	}
 
-	public Location updateHeight(Block block) {
+	public Block updateHeight(Block block) {
 
-		Location updatedBlock = null;
-		updatedBlock = BlockUtils.nearestSurface(block.getLocation());
-
+		Block updatedBlock = BlockUtils.nearestSurface(block.getLocation());
 		BlockVec vertex = getVertex(block);
 
 		if (vertex != null)
-			vertex.setY(updatedBlock.getBlockY());
+			vertex.setY(updatedBlock.getY());
 
 		if (hasClip())
-			getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
+			getClip().addFill(new Vec2(block), updatedBlock.getY());
 
 		return updatedBlock;
 	}

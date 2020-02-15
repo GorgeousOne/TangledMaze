@@ -2,7 +2,7 @@ package me.gorgeousone.tangledmaze.commands;
 
 import me.gorgeousone.cmdframework.command.BasicCommand;
 import me.gorgeousone.tangledmaze.data.Constants;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.WandUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,7 +16,7 @@ public class GiveWand extends BasicCommand {
 	public boolean onCommand(CommandSender sender, String[] arguments) {
 
 		Player player = (Player) sender;
-		player.getInventory().addItem(Utils.getMazeWand());
+		player.getInventory().addItem(WandUtils.createMazeWand());
 		return true;
 	}
 }

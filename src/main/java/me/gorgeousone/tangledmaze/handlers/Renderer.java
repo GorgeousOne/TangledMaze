@@ -29,16 +29,24 @@ public class Renderer implements Listener {
 
 	private HashMap<ClipTool, Boolean> clipVisibilities;
 	private HashMap<Maze, Boolean> mazeVisibilities;
-
+	
+	//TODO think about replacement for this temporary MazeHandler instance?
+	private MazeHandler mazeHandler;
+	
 	public Renderer() {
 		clipVisibilities = new HashMap<>();
 		mazeVisibilities = new HashMap<>();
 	}
-
+	
+	public void setMazeHandler(MazeHandler mazeHandler) {
+		this.mazeHandler = mazeHandler;
+	}
+	
 	public void hideAllClues() {
-		for (ClipTool clipboard : clipVisibilities.keySet()) {
-			if (isClipboardVisible(clipboard))
-				hideClipboard(clipboard, false);
+		
+		for (ClipTool clipTool : clipVisibilities.keySet()) {
+			if (isClipToolVisible(clipTool))
+				hideClipboard(clipTool, false);
 		}
 
 		for (Maze maze : mazeVisibilities.keySet()) {
@@ -47,15 +55,15 @@ public class Renderer implements Listener {
 		}
 	}
 
-	public void unregisterShape(ClipTool clipboard) {
-		clipVisibilities.remove(clipboard);
+	public void unregisterClipTool(ClipTool clipTool) {
+		clipVisibilities.remove(clipTool);
 	}
 
 	public void unregisterMaze(Maze maze) {
 		mazeVisibilities.remove(maze);
 	}
 
-	public boolean isClipboardVisible(ClipTool shape) {
+	public boolean isClipToolVisible(ClipTool shape) {
 		return clipVisibilities.get(shape);
 	}
 
@@ -64,51 +72,51 @@ public class Renderer implements Listener {
 	}
 
 	//displays a clipboard to it's owner with block changes
-	public void displayClipboard(ClipTool clipboard) {
+	public void displayClipboard(ClipTool clipTool) {
 
-		clipVisibilities.put(clipboard, true);
-		Player player = clipboard.getPlayer();
+		clipVisibilities.put(clipTool, true);
+		Player player = clipTool.getPlayer();
 
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 
-				if (clipboard.hasClip()) {
-					for (Location loc : clipboard.getClip().getBorderBlocks()) {
-						player.sendBlockChange(loc, Constants.CLIPBOARD_BORDER, (byte) 0);
+				if (clipTool.hasClip()) {
+					for (Location point : clipTool.getClip().getBorderBlocks()) {
+						player.sendBlockChange(point, Constants.CLIPBOARD_BORDER.createBlockData());
 					}
 				}
 
-				for (BlockVec vertex : clipboard.getVertices()) {
-					player.sendBlockChange(vertex.toLocation(), Constants.CLIPBOARD_VERTEX, (byte) 0);
+				for (BlockVec vertex : clipTool.getVertices()) {
+					player.sendBlockChange(vertex.toLocation(), Constants.CLIPBOARD_VERTEX.createBlockData());
 				}
 			}
 		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
 
 	//hides a clipboard completely with the option to redisplay previously covered maze parts
-	public void hideClipboard(ClipTool clipboard, boolean updateMaze) {
+	public void hideClipboard(ClipTool clipTool, boolean updateMaze) {
 
-		clipVisibilities.put(clipboard, false);
-		Player player = clipboard.getPlayer();
+		clipVisibilities.put(clipTool, false);
+		Player player = clipTool.getPlayer();
 
-		for (BlockVec vertex : clipboard.getVertices()) {
-			player.sendBlockChange(vertex.toLocation(), vertex.getBlock().getType(), vertex.getBlock().getData());
+		for (BlockVec vertex : clipTool.getVertices()) {
+			player.sendBlockChange(vertex.toLocation(), vertex.getBlock().getBlockData());
 		}
 
-		if (clipboard.hasClip()) {
-			for (Location loc : clipboard.getClip().getBorderBlocks()) {
-				player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
+		if (clipTool.hasClip()) {
+			for (Location point : clipTool.getClip().getBorderBlocks()) {
+				player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 			}
 		}
 
 		//TODO reactivate maze updates on clip hiding
-		//		if(updateMaze) {
-		//			Maze maze = MazeHandler.getMaze(player);
-		//
-		//			if(maze != null && maze.isStarted() && isMazeVisible(maze))
-		//				redisplayMaze(maze, clipboard);
-		//		}
+		if(updateMaze) {
+			Maze maze = mazeHandler.getMaze(player);
+
+			if(maze != null && maze.hasClip() && isMazeVisible(maze))
+				redisplayMaze(maze, clipTool);
+		}
 	}
 
 	//displays a maze to it's owner with block changes
@@ -124,16 +132,16 @@ public class Renderer implements Listener {
 			@Override
 			public void run() {
 
-				for (Location loc : maze.getClip().getBorderBlocks()) {
-					player.sendBlockChange(loc, Constants.MAZE_BORDER, (byte) 0);
+				for (Location point : maze.getClip().getBorderBlocks()) {
+					player.sendBlockChange(point, Constants.MAZE_BORDER.createBlockData());
 				}
 
 				for (Vec2 exit : maze.getExits()) {
-					player.sendBlockChange(maze.getClip().getBlockLoc(exit), Constants.MAZE_EXIT, (byte) 0);
+					player.sendBlockChange(maze.getClip().getBlockLoc(exit), Constants.MAZE_EXIT.createBlockData());
 				}
 
 				if (maze.hasExits())
-					player.sendBlockChange(maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT, (byte) 0);
+					player.sendBlockChange(maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT.createBlockData());
 			}
 		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
@@ -147,37 +155,37 @@ public class Renderer implements Listener {
 		mazeVisibilities.put(maze, false);
 		Player player = maze.getPlayer();
 
-		for (Location loc : maze.getClip().getBorderBlocks()) {
-			player.sendBlockChange(loc, loc.getBlock().getType(), loc.getBlock().getData());
+		for (Location point : maze.getClip().getBorderBlocks()) {
+			player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 		}
 	}
 
 	//displays single blocks of a clipboard (which might covered by e.g. falling block)
-	public void redisplayClipboardBlock(ClipTool clipboard, Location loc) {
+	public void redisplayClipboardBlock(ClipTool clipTool, Location point) {
 
-		Player player = clipboard.getPlayer();
+		Player player = clipTool.getPlayer();
 
-		if (clipboard.isVertex(loc.getBlock()))
-			sendBlockDelayed(player, loc, Constants.CLIPBOARD_VERTEX);
+		if (clipTool.isVertex(point.getBlock()))
+			sendBlockDelayed(player, point, Constants.CLIPBOARD_VERTEX);
 
 		else
-			sendBlockDelayed(player, loc, Constants.CLIPBOARD_BORDER);
+			sendBlockDelayed(player, point, Constants.CLIPBOARD_BORDER);
 	}
 
 	//displays single blocks of a maze
-	public void redisplayMazeBlock(Maze maze, Location loc) {
+	public void redisplayMazeBlock(Maze maze, Location point) {
 
 		Player player = maze.getPlayer();
-		Vec2 locVec = new Vec2(loc);
+		Vec2 locVec = new Vec2(point);
 
 		if (locVec.equals(maze.getMainExit()))
-			sendBlockDelayed(player, loc, Constants.MAZE_MAIN_EXIT);
+			sendBlockDelayed(player, point, Constants.MAZE_MAIN_EXIT);
 
 		else if (maze.exitsContain(locVec))
-			sendBlockDelayed(player, loc, Constants.MAZE_EXIT);
+			sendBlockDelayed(player, point, Constants.MAZE_EXIT);
 
 		else
-			sendBlockDelayed(player, loc, Constants.MAZE_BORDER);
+			sendBlockDelayed(player, point, Constants.MAZE_BORDER);
 	}
 
 	//
@@ -188,22 +196,22 @@ public class Renderer implements Listener {
 
 		for (Vec2 exit : action.getRemovedExits()) {
 
-			player.sendBlockChange(clip.getBlockLoc(exit), Constants.MAZE_BORDER, (byte) 0);
+			player.sendBlockChange(clip.getBlockLoc(exit), Constants.MAZE_BORDER.createBlockData());
 
 			List<Vec2> mazeExits = maze.getExits();
 
 			if (exit.equals(maze.getMainExit()) && mazeExits.size() > 1)
-				player.sendBlockChange(clip.getBlockLoc(mazeExits.get(mazeExits.size() - 2)), Constants.MAZE_MAIN_EXIT, (byte) 0);
+				player.sendBlockChange(clip.getBlockLoc(mazeExits.get(mazeExits.size() - 2)), Constants.MAZE_MAIN_EXIT.createBlockData());
 		}
 
-		for (Vec2 loc : action.getAddedBorder()) {
-			player.sendBlockChange(action.getBorder(loc), Constants.MAZE_BORDER, (byte) 0);
+		for (Vec2 point : action.getAddedBorder()) {
+			player.sendBlockChange(action.getBorder(point), Constants.MAZE_BORDER.createBlockData());
 		}
 
-		for (Vec2 loc : action.getRemovedBorder()) {
-			System.out.println(loc.toString());
-			Location block = action.getBorder(loc);
-			player.sendBlockChange(block, block.getBlock().getType(), (byte) 0);
+		for (Vec2 point : action.getRemovedBorder()) {
+			System.out.println(point.toString());
+			Location block = action.getBorder(point);
+			player.sendBlockChange(block, block.getBlock().getType().createBlockData());
 		}
 	}
 
@@ -215,7 +223,7 @@ public class Renderer implements Listener {
 		for (BlockVec vertex : hiddenClipboard.getVertices()) {
 
 			if (maze.getClip().isBorderBlock(vertex.getBlock()))
-				player.sendBlockChange(vertex.toLocation(), Constants.MAZE_BORDER, (byte) 0);
+				player.sendBlockChange(vertex.toLocation(), Constants.MAZE_BORDER.createBlockData());
 		}
 
 		if (!hiddenClipboard.hasClip())
@@ -224,17 +232,17 @@ public class Renderer implements Listener {
 		for (Location border : hiddenClipboard.getClip().getBorderBlocks()) {
 
 			if (maze.getClip().isBorderBlock(border.getBlock()))
-				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER, (byte) 0);
+				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER.createBlockData());
 		}
 	}
 
-	public void sendBlockDelayed(Player player, Location loc, Material mat) {
+	public void sendBlockDelayed(Player player, Location point, Material mat) {
 
 		new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				player.sendBlockChange(loc, mat, (byte) 0);
+				player.sendBlockChange(point, mat.createBlockData());
 			}
 		}.runTaskLater(TangledMain.getInstance(), 2);
 	}
@@ -246,8 +254,8 @@ public class Renderer implements Listener {
 			@Override
 			public void run() {
 
-				for (Location loc : locs) {
-					player.sendBlockChange(loc, mat, (byte) 0);
+				for (Location point : locs) {
+					player.sendBlockChange(point, mat.createBlockData());
 				}
 			}
 		}.runTaskLater(TangledMain.getInstance(), 2);

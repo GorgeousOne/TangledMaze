@@ -8,9 +8,8 @@ import me.gorgeousone.cmdframework.command.ArgCommand;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
-import me.gorgeousone.tangledmaze.tools.MazeToolType;
+import me.gorgeousone.tangledmaze.tools.ToolType;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,10 +19,8 @@ public class SelectTool extends ArgCommand {
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
-	private Renderer renderer;
 
-	public SelectTool(MazeCommand parent, ClipToolHandler clipHandler, ToolHandler toolHandler, MazeHandler mazeHandler,
-	                  Renderer renderer) {
+	public SelectTool(MazeCommand parent, ClipToolHandler clipHandler, ToolHandler toolHandler, MazeHandler mazeHandler) {
 
 		super("select", null, true, parent);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
@@ -31,7 +28,6 @@ public class SelectTool extends ArgCommand {
 		this.clipHandler = clipHandler;
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
-		this.renderer = renderer;
 	}
 
 	@Override
@@ -57,13 +53,13 @@ public class SelectTool extends ArgCommand {
 
 			case "brush":
 
-				switchToMazeTool(player, MazeToolType.BRUSH_TOOL);
+				switchToMazeTool(player, ToolType.BRUSH_TOOL);
 				break;
 
 			case "exit":
 			case "entrance":
 
-				switchToMazeTool(player, MazeToolType.EXIT_SETTER);
+				switchToMazeTool(player, ToolType.EXIT_SETTER);
 				break;
 
 			default:
@@ -76,17 +72,17 @@ public class SelectTool extends ArgCommand {
 
 	private void switchToClipTool(Player player, ClipShape newClipShape) {
 
-		boolean switchedTool = toolHandler.setToolType(player, MazeToolType.CLIP_TOOL);
+		boolean switchedTool = toolHandler.setToolType(player, ToolType.CLIP_TOOL);
 		boolean switchedClipShape = clipHandler.setClipShape(player, newClipShape);
 
 		if (switchedTool || switchedClipShape)
-			Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", newClipShape.getSimpleName()));
+			Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", newClipShape.simpleName()));
 	}
 
-	private void switchToMazeTool(Player player, MazeToolType toolType) {
+	private void switchToMazeTool(Player player, ToolType toolType) {
 		
 		//:p idk just in case
-		if (toolType == MazeToolType.CLIP_TOOL)
+		if (toolType == ToolType.CLIP_TOOL)
 			throw new IllegalArgumentException("Method is not designed to switch to " + toolType.name() + ".");
 		
 		if (!mazeHandler.hasStartedMaze(player)) {

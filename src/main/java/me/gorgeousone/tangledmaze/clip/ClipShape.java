@@ -18,7 +18,7 @@ public enum ClipShape {
 		return requiredVertexCount;
 	}
 
-	public String getSimpleName() {
+	public String simpleName() {
 		return simpleName;
 	}
 }

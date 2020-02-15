@@ -10,7 +10,6 @@ import me.gorgeousone.tangledmaze.utils.Directions;
 import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -126,8 +125,8 @@ public class Maze extends PlayerHolder {
 		dimensions.put(size, Utils.clamp(newValue, 1, size.getMaxValue()));
 	}
 	
-	public boolean exitsContain(Vec2 loc) {
-		return exits.contains(loc);
+	public boolean exitsContain(Vec2 point) {
+		return exits.contains(point);
 	}
 
 //	public boolean addExit(Vec2 point) {
@@ -204,13 +203,13 @@ public class Maze extends PlayerHolder {
 		}
 	}
 	
-	public Location updateHeight(Block block) {
+	public Block updateHeight(Block block) {
 		
 		if (isConstructed())
 			throw notAlterableException;
 		
-		Location updatedBlock = BlockUtils.nearestSurface(block.getLocation());
-		getClip().addFill(new Vec2(block), updatedBlock.getBlockY());
+		Block updatedBlock = BlockUtils.nearestSurface(block.getLocation());
+		getClip().addFill(new Vec2(block), updatedBlock.getY());
 		
 		return updatedBlock;
 	}

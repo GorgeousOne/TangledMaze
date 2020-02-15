@@ -5,7 +5,7 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
 import me.gorgeousone.tangledmaze.generation.datapicker.AbstractBlockDataPicker;
-import me.gorgeousone.tangledmaze.mapmaking.TerrainMap;
+import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazePart;
 import me.gorgeousone.tangledmaze.maze.MazePartBlockBackup;

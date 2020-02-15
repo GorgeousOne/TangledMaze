@@ -7,7 +7,6 @@ import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.utils.Vec2;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -31,135 +30,137 @@ import java.util.HashSet;
  * is broken/somehow changed, touched or breathed at.
  */
 public class BlockUpdateListener implements Listener {
-
+	
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
 	private Renderer renderer;
-
+	
 	public BlockUpdateListener(ClipToolHandler clipHandler, MazeHandler mazeHandler,
 	                           Renderer renderer) {
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
 		this.renderer = renderer;
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent e) {
-		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);
+	public void onBlockPlace(BlockPlaceEvent event) {
+		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), true);
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockBreak(BlockBreakEvent e) {
-		checkForUpdates(e.getBlock(), true);
+	public void onBlockBreak(BlockBreakEvent event) {
+		checkClipsForTerrainChanges(event.getBlock(), true);
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockExplode(EntityExplodeEvent e) {
-
-		for (Block block : e.blockList()) {
-			checkForUpdates(block, false);
+	public void onBlockExplode(EntityExplodeEvent event) {
+		
+		for (Block block : event.blockList()) {
+			checkClipsForTerrainChanges(block, false);
 		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockBurn(BlockBurnEvent e) {
-		checkForUpdates(e.getBlock(), false);
+	public void onBlockBurn(BlockBurnEvent event) {
+		checkClipsForTerrainChanges(event.getBlock(), false);
 	}
-
+	
 	//pumpkin/melon growing
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockGrow(BlockGrowEvent e) {
-		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), false);
+	public void onBlockGrow(BlockGrowEvent event) {
+		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), false);
 	}
-
+	
 	//grass, mycelium spreading
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockSpread(BlockSpreadEvent e) {
-		checkForUpdates(e.getBlock(), false);
+	public void onBlockSpread(BlockSpreadEvent event) {
+		checkClipsForTerrainChanges(event.getBlock(), false);
 	}
-
+	
 	//obsidian, concrete
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockForm(BlockFormEvent e) {
-		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), false);
+	public void onBlockForm(BlockFormEvent event) {
+		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), false);
 	}
-
+	
 	//ice melting
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBlockFade(BlockFadeEvent e) {
-		checkForUpdates(e.getBlock(), false);
+	public void onBlockFade(BlockFadeEvent event) {
+		checkClipsForTerrainChanges(event.getBlock(), false);
 	}
-
+	
 	//falling sand... and maybe endermen
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
-		checkForUpdates(e.getBlock().getRelative(BlockFace.DOWN), true);
+	public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), true);
 	}
-
-	private void checkForUpdates(Block block, boolean hideAffectedElements) {
-
-		Vec2 loc = new Vec2(block);
-		HashSet<Maze> affectedMazes = getAffectedMazes(loc);
-		HashSet<ClipTool> affectedClipboards = getAffectedClipboards(loc);
-
+	
+	private void checkClipsForTerrainChanges(Block block, boolean hideAffectedElements) {
+		
+		Vec2 point = new Vec2(block);
+		HashSet<Maze> affectedMazes = getAffectedMazes(point);
+		HashSet<ClipTool> affectedClipboards = getAffectedClipTools(point);
+		
 		if (!affectedClipboards.isEmpty() || !affectedMazes.isEmpty())
-			update(block, affectedMazes, affectedClipboards, hideAffectedElements);
+			updateClipsWithChangedTerrain(block, affectedMazes, affectedClipboards, hideAffectedElements);
 	}
-
-	private HashSet<Maze> getAffectedMazes(Vec2 loc) {
-
+	
+	private HashSet<Maze> getAffectedMazes(Vec2 point) {
+		
 		HashSet<Maze> affectedMazes = new HashSet<>();
-
+		
 		for (Maze maze : mazeHandler.getMazes()) {
-
-			if (maze.hasClip() && !maze.isConstructed() && maze.getClip().contains(loc))
+			
+			if (maze.hasClip() && !maze.isConstructed() && maze.getClip().contains(point))
 				affectedMazes.add(maze);
 		}
-
+		
 		return affectedMazes;
 	}
-
-	private HashSet<ClipTool> getAffectedClipboards(Vec2 loc) {
-
+	
+	private HashSet<ClipTool> getAffectedClipTools(Vec2 point) {
+		
 		HashSet<ClipTool> affectedClipboards = new HashSet<>();
-
+		
 		for (ClipTool clipTool : clipHandler.getPlayerClipTools()) {
-
-			if (clipTool.getClip().contains(loc) || clipTool.isVertex(loc))
+			
+			if (clipTool.getClip().contains(point) || clipTool.isVertex(point))
 				affectedClipboards.add(clipTool);
 		}
-
+		
 		return affectedClipboards;
 	}
-
-	private void update(Block changedBlock, HashSet<Maze> affectedMazes, HashSet<ClipTool> affectedClipboards,
-	                    boolean hideAffectedElements) {
-
+	
+	private void updateClipsWithChangedTerrain(Block changedBlock,
+	                                           HashSet<Maze> affectedMazes,
+	                                           HashSet<ClipTool> affectedClipboards,
+	                                           boolean hideAffectedClips) {
+		
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-
+				
 				for (Maze maze : affectedMazes) {
-
-					if (hideAffectedElements && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
+					
+					if (hideAffectedClips && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
 						renderer.hideMaze(maze);
-
-					Location updatedBlock = maze.updateHeight(changedBlock);
-
-					if (!hideAffectedElements && updatedBlock != null && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock.getBlock()))
-						renderer.redisplayMazeBlock(maze, updatedBlock);
+					
+					Block updatedBlock = maze.updateHeight(changedBlock);
+					
+					if (!hideAffectedClips && updatedBlock != null && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock))
+						renderer.redisplayMazeBlock(maze, updatedBlock.getLocation());
 				}
-
-				for (ClipTool clipboard : affectedClipboards) {
-
-					if (hideAffectedElements && renderer.isClipboardVisible(clipboard) &&
-							(clipboard.getClip().isBorderBlock(changedBlock) || clipboard.isVertex(changedBlock)))
-						renderer.hideClipboard(clipboard, true);
-
-					Location updatedBlock = clipboard.updateHeight(changedBlock);
-
-					if (!hideAffectedElements && updatedBlock != null && renderer.isClipboardVisible(clipboard) && clipboard.getClip().isBorderBlock(updatedBlock.getBlock()))
-						renderer.redisplayClipboardBlock(clipboard, updatedBlock);
+				
+				for (ClipTool clipTool : affectedClipboards) {
+					
+					if (hideAffectedClips && renderer.isClipToolVisible(clipTool) &&
+							(clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
+						renderer.hideClipboard(clipTool, true);
+					
+					Block updatedBlock = clipTool.updateHeight(changedBlock);
+					
+					if (!hideAffectedClips && updatedBlock != null && renderer.isClipToolVisible(clipTool) && clipTool.getClip().isBorderBlock(updatedBlock))
+						renderer.redisplayClipboardBlock(clipTool, updatedBlock.getLocation());
 				}
 			}
 		}.runTask(TangledMain.getInstance());
