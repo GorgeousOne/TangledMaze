@@ -5,7 +5,7 @@ import me.gorgeousone.tangledmaze.utils.Vec2;
 public class PathMap {
 	
 	private PathAreaType[][] mazePathGrid;
-	private Vec2 mapOffset;
+	private Vec2 gridOffset;
 	
 	private Vec2 pathStartAsGridPoint;
 	private int pathWidth;
@@ -22,6 +22,10 @@ public class PathMap {
 		this.meshSize = pathWidth + wallWidth;
 		
 		setUp(clipMin, clipMax, pathStart);
+	}
+	
+	public Vec2 getGridOffset() {
+		return gridOffset;
 	}
 	
 	public int getGridWidth() {
@@ -55,7 +59,7 @@ public class PathMap {
 	//TODO remodel segments size + start into one PathSegment after cleaning up mentioned class.
 	public Vec2 getSegmentStart(int gridX, int gridZ) {
 		
-		Vec2 segmentStart = mapOffset.clone();
+		Vec2 segmentStart = gridOffset.clone();
 		
 		segmentStart.add(
 				(gridX / meshSize) * meshSize,
@@ -77,19 +81,19 @@ public class PathMap {
 	
 	private void setUp(Vec2 clipMin, Vec2 clipMax, Vec2 pathStart) {
 		
-		Vec2 gridOffSet = new Vec2(
+		Vec2 pathStartOffset = new Vec2(
 				pathStart.getX() % meshSize,
 				pathStart.getZ() % meshSize);
 		
-		mapOffset = clipMin.clone();
-		mapOffset.sub(gridOffSet);
-		mapOffset.set(
-				(mapOffset.getX() / meshSize) * meshSize,
-				(mapOffset.getZ() / meshSize) * meshSize);
-		mapOffset.add(gridOffSet);
+		gridOffset = clipMin.clone();
+		gridOffset.sub(pathStartOffset);
+		gridOffset.set(
+				(clipMin.getX() / meshSize) * meshSize,
+				(clipMin.getZ() / meshSize) * meshSize);
+		gridOffset.add(pathStartOffset);
 		
-		int gridWidth = (int) Math.ceil(1f * (clipMax.getX() - mapOffset.getX()) / meshSize);
-		int gridHeight = (int) Math.ceil(1f * (clipMax.getZ() - mapOffset.getZ()) / meshSize);
+		int gridWidth = (int) Math.ceil(1f * (clipMax.getX() - gridOffset.getX()) / meshSize);
+		int gridHeight = (int) Math.ceil(1f * (clipMax.getZ() - gridOffset.getZ()) / meshSize);
 		
 		createMazePathGrid(gridWidth, gridHeight);
 		pathStartAsGridPoint = getGridCoordinates(pathStart);
@@ -113,7 +117,7 @@ public class PathMap {
 	private Vec2 getGridCoordinates(Vec2 point) {
 		
 		Vec2 relativePoint = point.clone();
-		relativePoint.sub(mapOffset);
+		relativePoint.sub(gridOffset);
 		
 		Vec2 gridPoint = new Vec2(
 				relativePoint.getX() / meshSize * 2,
