@@ -1,8 +1,6 @@
 package me.gorgeousone.tangledmaze.utils;
 
 import me.gorgeousone.tangledmaze.TangledMain;
-import me.gorgeousone.tangledmaze.data.Constants;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -10,13 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public abstract class Utils {
+public final class Utils {
+	
+	private Utils() {}
 	
 	public static int clamp(int value, int min, int max) {
 		return Math.min(max, Math.max(min, value));
 	}
 	
 	public static YamlConfiguration loadDefaultConfig(String configName) {
+		//TODO replace static getInstance() method
 		InputStream defConfigStream = TangledMain.getInstance().getResource(configName + ".yml");
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}

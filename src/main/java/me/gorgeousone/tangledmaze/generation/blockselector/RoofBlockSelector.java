@@ -6,7 +6,7 @@ import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -47,7 +47,7 @@ public class RoofBlockSelector extends AbstractBlockSelector {
 		
 		int maxRoofHeight = terrainMap.getRoofHeight(x, z);
 		
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 			

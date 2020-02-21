@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.utils;
 
-public enum Directions {
+public enum Direction {
 
 	//putting opposite values next to each other can help quicken methods like Maze.sealsMaze();
 	EAST(new Vec2(1, 0)),
@@ -14,12 +14,12 @@ public enum Directions {
 
 	private Vec2 facing;
 
-	Directions(Vec2 facing) {
+	Direction(Vec2 facing) {
 		this.facing = facing;
 	}
 
-	public static Directions[] cardinalValues() {
-		return new Directions[]{EAST, WEST, SOUTH, NORTH};
+	public static Direction[] cardinalValues() {
+		return new Direction[]{EAST, WEST, SOUTH, NORTH};
 	}
 
 	/**
@@ -36,21 +36,7 @@ public enum Directions {
 		return facing.getX() != 0;
 	}
 
-	/**
-	 * Returns if the z coordinate of the direction's vector is not 0
-	 */
-	//	public boolean isZAligned() {
-	//		return facing.getZ() != 0;
-	//	}
 	public Vec2 getVec2() {
 		return facing.clone();
 	}
-
-	//	public static Directions cardinalValueOf(Vec2 vec) {
-	//
-	//		if(vec.getX() != 0)
-	//			return vec.getX() > 0 ? EAST : WEST;
-	//
-	//		return vec.getZ() > 0 ? SOUTH : NORTH;
-	//	}
 }

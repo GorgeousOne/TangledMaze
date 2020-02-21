@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.terrainmap;
 
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 import java.util.HashSet;
@@ -13,11 +13,10 @@ public class PathSegment {
 	private Vec2 size;
 	private Vec2 relativeMin;
 
-	private Directions facing;
+	private Direction facing;
 
-	public PathSegment(Vec2 start, int length, int width, Directions facing, boolean isExit) {
+	public PathSegment(Vec2 start, int length, int width, Direction facing, boolean isExit) {
 
-		//the segment can either face aligned to x or z axis. in positive or negative direction
 		this.start = start;
 		this.facing = facing;
 
@@ -32,7 +31,7 @@ public class PathSegment {
 		return end.clone();
 	}
 
-	public Directions getFacing() {
+	public Direction getFacing() {
 		return facing;
 	}
 

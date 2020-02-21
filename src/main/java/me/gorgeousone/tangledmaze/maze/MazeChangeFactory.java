@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.maze;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.block.Block;
 
@@ -67,14 +67,14 @@ public abstract class MazeChangeFactory {
 	private static void removeEnclosedMazeBorder(Clip mazeClip, ClipChange addition) {
 		
 		for (Vec2 ownBorder : mazeClip.getBorder()) {
-			if (!touchesExternal(ownBorder, addition, Directions.values()))
+			if (!touchesExternal(ownBorder, addition, Direction.values()))
 				addition.removeBorder(ownBorder);
 		}
 	}
 	
 	//now the recently added border needs undergo another check, if it is actually sufficient and also not too thick
 	private static void removeThickEnclosedMazeBorder(ClipChange addition) {
-		addition.getAddedBorder().removeIf(newBorder -> !touchesExternal(newBorder, addition, Directions.values()));
+		addition.getAddedBorder().removeIf(newBorder -> !touchesExternal(newBorder, addition, Direction.values()));
 	}
 	
 	//TODO switch exits's type to BlockVec (also in ClipChange
@@ -135,7 +135,7 @@ public abstract class MazeChangeFactory {
 		while (iterator.hasNext()) {
 			Vec2 newBorder = iterator.next();
 			
-			if (!touchesFill(newBorder, deletion, Directions.values())) {
+			if (!touchesFill(newBorder, deletion, Direction.values())) {
 				iterator.remove();
 				deletion.removeFill(newBorder, mazeClip.getHeight(newBorder));
 			}
@@ -146,7 +146,7 @@ public abstract class MazeChangeFactory {
 		
 		for (Vec2 ownBorder : mazeClip.getBorder()) {
 			
-			if (otherClip.contains(ownBorder) && !touchesFill(ownBorder, deletion, Directions.values())) {
+			if (otherClip.contains(ownBorder) && !touchesFill(ownBorder, deletion, Direction.values())) {
 				deletion.removeBorder(ownBorder);
 				deletion.removeFill(ownBorder, mazeClip.getHeight(ownBorder));
 			}
@@ -181,7 +181,7 @@ public abstract class MazeChangeFactory {
 		Clip mazeClip = maze.getClip();
 		expansion.removeBorder(point);
 		
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			int height = BlockUtils.nearestSurfaceY(neighbor, mazeClip.getHeight(point), mazeClip.getWorld());
@@ -191,7 +191,7 @@ public abstract class MazeChangeFactory {
 				expansion.addFill(neighbor, height);
 				expansion.addBorder(neighbor);
 				
-			} else if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, expansion, Directions.cardinalValues()))
+			} else if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, expansion, Direction.cardinalValues()))
 				expansion.removeExit(neighbor);
 		}
 	}
@@ -199,10 +199,10 @@ public abstract class MazeChangeFactory {
 	//look for neighbors, that are now intruding the border unnecessarily around the expanded block
 	private static void removeIntrusiveMazeBorder(Clip mazeClip, Vec2 point, ClipChange expansion) {
 	
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
-			if (mazeClip.borderContains(neighbor) && !sealsClipBorder(neighbor, expansion, Directions.values()))
+			if (mazeClip.borderContains(neighbor) && !sealsClipBorder(neighbor, expansion, Direction.values()))
 				expansion.removeBorder(neighbor);
 		}
 	}
@@ -242,27 +242,27 @@ public abstract class MazeChangeFactory {
 		erasure.removeBorder(point);
 		erasure.removeFill(point, mazeClip.getHeight(point));
 		
-		if (!sealsClipBorder(point, erasure, Directions.values()))
+		if (!sealsClipBorder(point, erasure, Direction.values()))
 			return;
 		
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			if (mazeClip.contains(neighbor) && !mazeClip.borderContains(neighbor))
 				erasure.addBorder(neighbor);
 			
-			if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, erasure, Directions.cardinalValues()))
+			if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, erasure, Direction.cardinalValues()))
 				erasure.removeExit(neighbor);
 		}
 	}
 	
 	private static void removeProtrusiveBorder(Clip mazeClip, Vec2 point, ClipChange erasure) {
 		//detect outstanding neighbor borders of the block
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			//remove the neighbor if it still stands out
-			if (mazeClip.borderContains(neighbor) && !sealsClipBorder(neighbor, erasure, Directions.values())) {
+			if (mazeClip.borderContains(neighbor) && !sealsClipBorder(neighbor, erasure, Direction.values())) {
 				
 				int height = mazeClip.getHeight(neighbor);
 				erasure.removeFill(neighbor, height);
@@ -270,12 +270,12 @@ public abstract class MazeChangeFactory {
 		}
 	}
 	
-	public static boolean sealsClipBorder(Vec2 point, ClipChange changes, Directions[] directions) {
+	public static boolean sealsClipBorder(Vec2 point, ClipChange changes, Direction[] directions) {
 		
 		boolean touchesFill = false;
 		boolean touchesExternal = false;
 		
-		for (Directions dir : directions) {
+		for (Direction dir : directions) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			if (!changes.clipWillContain(neighbor))
@@ -291,9 +291,9 @@ public abstract class MazeChangeFactory {
 		return false;
 	}
 	
-	public static boolean touchesFill(Vec2 point, ClipChange changes, Directions[] directions) {
+	public static boolean touchesFill(Vec2 point, ClipChange changes, Direction[] directions) {
 		
-		for (Directions dir : directions) {
+		for (Direction dir : directions) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			if (!changes.clipBorderWillContain(neighbor) && changes.clipWillContain(neighbor))
@@ -303,9 +303,9 @@ public abstract class MazeChangeFactory {
 		return false;
 	}
 	
-	public static boolean touchesExternal(Vec2 point, ClipChange changes, Directions[] directions) {
+	public static boolean touchesExternal(Vec2 point, ClipChange changes, Direction[] directions) {
 		
-		for (Directions dir : directions) {
+		for (Direction dir : directions) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			if (!changes.clipWillContain(neighbor))

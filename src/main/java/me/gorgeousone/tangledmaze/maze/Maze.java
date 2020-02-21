@@ -6,7 +6,7 @@ import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Bukkit;
@@ -154,7 +154,7 @@ public class Maze extends PlayerHolder {
 	}
 	
 	public boolean canBeExit(Block block) {
-		return getClip().isBorderBlock(block) && getClip().sealsBorder(new Vec2(block), Directions.cardinalValues());
+		return getClip().isBorderBlock(block) && getClip().sealsBorder(new Vec2(block), Direction.cardinalValues());
 	}
 	
 	public boolean isExit(Block block) {

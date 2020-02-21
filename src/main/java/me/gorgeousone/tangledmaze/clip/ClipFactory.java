@@ -2,7 +2,7 @@ package me.gorgeousone.tangledmaze.clip;
 
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.BlockVec;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -132,7 +132,7 @@ public final class ClipFactory {
 	
 	private static boolean ellipseBorderContains(double x, double z, double distortionZ, double radius) {
 		
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 			
 			Vec2 dirVec = dir.getVec2();
 			

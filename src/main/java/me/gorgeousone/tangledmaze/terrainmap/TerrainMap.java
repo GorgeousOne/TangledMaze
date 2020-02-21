@@ -94,7 +94,7 @@ public class TerrainMap {
 		return getFloorHeight(point) + getWallHeight(point);
 	}
 
-	public Vec2 getStart() {
+	public Vec2 getPathStart() {
 		return pathStart;
 	}
 

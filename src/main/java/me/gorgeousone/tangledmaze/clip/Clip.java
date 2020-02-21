@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.clip;
 
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -122,12 +122,12 @@ public class Clip {
 		return border.contains(point);
 	}
 	
-	public boolean sealsBorder(Vec2 point, Directions[] directions) {
+	public boolean sealsBorder(Vec2 point, Direction[] directions) {
 		
 		boolean touchesFill = false;
 		boolean touchesExternal = false;
 		
-		for (Directions dir : directions) {
+		for (Direction dir : directions) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
 			if (!contains(neighbor))

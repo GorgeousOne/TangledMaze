@@ -2,28 +2,29 @@ package me.gorgeousone.tangledmaze.terrainmap;
 
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class PathGenerator {
 
-	private ArrayList<Directions> shuffledCardinalDirs;
+	private ArrayList<Direction> shuffledCardinalDirs;
 	private Random rnd;
 
 	public PathGenerator() {
 
-		shuffledCardinalDirs = new ArrayList<>(Arrays.asList(Directions.cardinalValues()));
+		shuffledCardinalDirs = new ArrayList<>(Arrays.asList(Direction.cardinalValues()));
 		rnd = new Random();
 	}
 
-	private static Directions getExitFacing(Vec2 exit, TerrainMap terrainMap) {
+	private static Direction getExitFacing(Vec2 exit, TerrainMap terrainMap) {
 
-		for (Directions dir : Directions.cardinalValues()) {
+		for (Direction dir : Direction.cardinalValues()) {
 
 			Vec2 neighbor = exit.clone().add(dir.getVec2());
 
@@ -66,8 +67,8 @@ public class PathGenerator {
 		if (maze.getExits().size() < 2)
 			return;
 
-		int pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth),
-				pathGridOffsetZ = pathStart.getZ() % (pathWidth + wallWidth);
+		int pathGridOffsetX = pathStart.getX() % (pathWidth + wallWidth);
+		int pathGridOffsetZ = pathStart.getZ() % (pathWidth + wallWidth);
 
 		for (Vec2 exit : maze.getExits()) {
 
@@ -86,7 +87,7 @@ public class PathGenerator {
 
 	private PathSegment createEntranceSegment(
 			Vec2 entrance,
-			Directions facing,
+			Direction facing,
 			int pathWidth,
 			int wallWidth) {
 
@@ -106,7 +107,7 @@ public class PathGenerator {
 			int pathWidth,
 			int wallWidth) {
 
-		Directions facing = getExitFacing(exit, terrainMap);
+		Direction facing = getExitFacing(exit, terrainMap);
 
 		PathSegment exitSegment = new PathSegment(
 				exit,
@@ -180,7 +181,7 @@ public class PathGenerator {
 	//calculate how long the exit has to be to reach the grid of paths
 	private int getExitOffsetToPathGrid(
 			int exitSegmentStart,
-			Directions exitFacing,
+			Direction exitFacing,
 			int pathGridOffset,
 			int pathWidth,
 			int wallWidth) {
@@ -206,8 +207,8 @@ public class PathGenerator {
 
 		Maze maze = terrainMap.getMaze();
 
-		ArrayList<Vec2> pathEnds = new ArrayList<>();
-		pathEnds.add(terrainMap.getStart());
+		List<Vec2> pathEnds = new ArrayList<>();
+		pathEnds.add(terrainMap.getPathStart());
 
 		int pathWidth = maze.getDimension(MazeDimension.PATH_WIDTH);
 		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
@@ -262,11 +263,9 @@ public class PathGenerator {
 			int pathWidth,
 			int pathLength) {
 
-		Collections.shuffle(shuffledCardinalDirs);
-
 		PathSegment newPath = null;
 
-		for (Directions dir : shuffledCardinalDirs) {
+		for (Direction dir : shuffledCardinalDirs) {
 
 			Vec2 facing = dir.getVec2();
 			Vec2 start = new Vec2(

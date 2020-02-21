@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.terrainmap;
 
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.utils.Directions;
+import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public class TerrainEditor {
@@ -62,7 +62,7 @@ public class TerrainEditor {
 		Vec2 maxNeighborFloor = null;
 		int maxNeighborFloorHeight = 0;
 
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 
@@ -86,7 +86,7 @@ public class TerrainEditor {
 		int heightDiff = 0;
 		int neighborsCount = 0;
 
-		for (Directions dir : Directions.values()) {
+		for (Direction dir : Direction.values()) {
 
 			Vec2 neighbor = new Vec2(x, z).add(dir.getVec2());
 
