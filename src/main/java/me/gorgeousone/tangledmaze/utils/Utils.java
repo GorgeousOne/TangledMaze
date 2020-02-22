@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.utils;
 
-import me.gorgeousone.tangledmaze.TangledMain;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,16 +16,16 @@ public final class Utils {
 		return Math.min(max, Math.max(min, value));
 	}
 	
-	public static YamlConfiguration loadDefaultConfig(String configName) {
-		//TODO replace static getInstance() method
-		InputStream defConfigStream = TangledMain.getInstance().getResource(configName + ".yml");
+	public static YamlConfiguration loadDefaultConfig(String configName, JavaPlugin plugin) {
+		
+		InputStream defConfigStream = plugin.getResource(configName + ".yml");
 		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 	
-	public static YamlConfiguration loadConfig(String configName) {
+	public static YamlConfiguration loadConfig(String configName, JavaPlugin plugin) {
 		
-		File configFile = new File(TangledMain.getInstance().getDataFolder() + File.separator + configName + ".yml");
-		YamlConfiguration defConfig = loadDefaultConfig(configName);
+		File configFile = new File(plugin.getDataFolder() + File.separator + configName + ".yml");
+		YamlConfiguration defConfig = loadDefaultConfig(configName, plugin);
 		
 		if (!configFile.exists()) {
 			try {

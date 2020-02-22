@@ -58,7 +58,11 @@ public class ClipTool extends PlayerHolder {
 	public Clip getClip() {
 		return clip;
 	}
-
+	
+	public void setShape(ClipShape shape) {
+		this.shape = shape;
+	}
+	
 	public void setClip(Clip clip) {
 		this.clip = clip;
 	}

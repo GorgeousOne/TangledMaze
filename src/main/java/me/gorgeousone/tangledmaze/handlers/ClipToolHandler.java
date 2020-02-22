@@ -6,7 +6,6 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.BlockVec;
-import me.gorgeousone.tangledmaze.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -76,6 +75,10 @@ public class ClipToolHandler {
 		
 		//TODO actually change clip's shape if player has a cliptool
 		clipShapes.put(player.getUniqueId(), shape);
+		
+		if(hasClipTool(player))
+			switchClipShape(getClipTool(player), shape);
+		
 		return true;
 	}
 	
@@ -147,6 +150,24 @@ public class ClipToolHandler {
 			default:
 				break;
 		}
+		
+		renderer.displayClipboard(clipTool);
+	}
+	
+	//that obviously is limited to rectangles and ellipses...
+	private void switchClipShape(ClipTool clipTool, ClipShape newShape) {
+		
+		renderer.hideClipboard(clipTool, true);
+		
+		List<BlockVec> vertices = clipTool.getVertices();
+		List<BlockVec> definingVertices = new ArrayList<>();
+		
+		definingVertices.add(vertices.get(0));
+		definingVertices.add(vertices.get(2));
+		
+		clipTool.setClip(ClipFactory.createClip(newShape, definingVertices));
+		clipTool.setVertices(ClipFactory.createCompleteVertexList(definingVertices, newShape));
+		clipTool.setShape(newShape);
 		
 		renderer.displayClipboard(clipTool);
 	}

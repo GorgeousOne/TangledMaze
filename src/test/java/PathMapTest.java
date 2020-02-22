@@ -1,4 +1,3 @@
-import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.terrainmap.paths.PathMap;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +16,7 @@ public class PathMapTest {
 		int wallWidth = 2;
 		
 		PathMap testMap = new PathMap(clipMin, clipMax, pathStart, pathWidth, wallWidth);
-		Vec2 gridOffset = testMap.getGridOffset();
+		Vec2 gridOffset = testMap.getGridMapOffset();
 		
 		Assertions.assertEquals(20, gridOffset.getX());
 		Assertions.assertEquals(20, gridOffset.getZ());

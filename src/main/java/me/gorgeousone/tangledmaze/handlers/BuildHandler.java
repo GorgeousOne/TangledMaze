@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.handlers;
 
-import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
@@ -11,6 +10,7 @@ import me.gorgeousone.tangledmaze.maze.MazePart;
 import me.gorgeousone.tangledmaze.maze.MazePartBlockBackup;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -25,15 +25,17 @@ import java.util.Set;
  */
 public class BuildHandler {
 
+	private JavaPlugin plugin;
 	private Renderer renderer;
-
+	
 	private Map<Maze, TerrainMap> terrainMaps;
 	private Map<Maze, MazePartBlockBackup> mazeBlockBackups;
 
-	public BuildHandler(Renderer renderer) {
+	public BuildHandler(JavaPlugin plugin, Renderer renderer) {
 
 		this.renderer = renderer;
-
+		this.plugin = plugin;
+		
 		terrainMaps = new HashMap<>();
 		mazeBlockBackups = new HashMap<>();
 	}
@@ -64,13 +66,19 @@ public class BuildHandler {
 
 		if (mazePart.isMazeBuiltBefore())
 			terrainMap = terrainMaps.get(maze);
-		else
+		else {
+			renderer.hideMaze(maze);
 			terrainMap = new TerrainMap(maze);
-
+		}
+		
+//		if(2*1 == 2)
+//			return;
+		
 		Set<BlockDataState> mazePartBlockLocs = blockSelector.getBlocks(terrainMap);
 		Set<BlockDataState> blockBackup = deepCloneBlockSet(mazePartBlockLocs);
 
 		BlockGenerator.updateBlocks(
+				plugin,
 				mazePartBlockLocs,
 				maze.getBlockComposition(),
 				blockDataPicker,
@@ -102,6 +110,7 @@ public class BuildHandler {
 			return;
 
 		BlockGenerator.updateBlocks(
+				plugin,
 				mazeBackup.getPartBackup(mazePart),
 				null,
 				null,
@@ -126,7 +135,7 @@ public class BuildHandler {
 			public void run() {
 				renderer.displayMaze(maze);
 			}
-		}.runTaskLater(TangledMain.getInstance(), 2);
+		}.runTaskLater(plugin, 2);
 	}
 
 	private Set<BlockDataState> deepCloneBlockSet(Set<BlockDataState> blockSet) {

@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
@@ -31,12 +32,15 @@ import java.util.HashSet;
  */
 public class BlockUpdateListener implements Listener {
 	
+	private JavaPlugin plugin;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
 	private Renderer renderer;
 	
-	public BlockUpdateListener(ClipToolHandler clipHandler, MazeHandler mazeHandler,
-	                           Renderer renderer) {
+	public BlockUpdateListener(JavaPlugin plugin,
+	                           ClipToolHandler clipHandler,
+	                           MazeHandler mazeHandler, Renderer renderer) {
+		this.plugin = plugin;
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
 		this.renderer = renderer;
@@ -163,6 +167,6 @@ public class BlockUpdateListener implements Listener {
 						renderer.redisplayClipboardBlock(clipTool, updatedBlock.getLocation());
 				}
 			}
-		}.runTask(TangledMain.getInstance());
+		}.runTask(plugin);
 	}
 }

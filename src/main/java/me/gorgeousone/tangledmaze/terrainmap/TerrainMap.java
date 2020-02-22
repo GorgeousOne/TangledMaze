@@ -41,6 +41,8 @@ public class TerrainMap {
 		NewPathGenerator.populatePathMap(pathMap);
 		PathMapFactory.copyPathsOnTerrainMap(this, pathMap);
 		
+		flipMap();
+		
 		new TerrainEditor().editTerrain(this);
 	}
 
@@ -65,18 +67,23 @@ public class TerrainMap {
 	}
 
 	public boolean contains(Vec2 point) {
+		return contains(point.getX(), point.getZ());
+	}
+	
+	public boolean contains(int x, int z) {
 		return
-				point.getX() >= getMinX() && point.getX() < getMaxX() &&
-						point.getZ() >= getMinZ() && point.getZ() < getMaxZ();
+				x >= getMinX() && x < getMaxX() &&
+				z >= getMinZ() && z < getMaxZ();
 	}
-
-	public MazeAreaType getAreaType(int x, int z) {
-		return shapeMap[x - getMinX()][z - getMinZ()];
-	}
-
+	
 	public MazeAreaType getAreaType(Vec2 point) {
 		return getAreaType(point.getX(), point.getZ());
 	}
+	
+	public MazeAreaType getAreaType(int x, int z) {
+		return contains(x, z) ? shapeMap[x - getMinX()][z - getMinZ()] : null;
+	}
+
 
 	public int getFloorHeight(Vec2 point) {
 		return getFloorHeight(point.getX(), point.getZ());
@@ -111,7 +118,8 @@ public class TerrainMap {
 	}
 
 	public void setType(int x, int z, MazeAreaType type) {
-		shapeMap[x - getMinX()][z - getMinZ()] = type;
+		if(contains(x, z))
+			shapeMap[x - getMinX()][z - getMinZ()] = type;
 	}
 
 	public void setFloorHeight(Vec2 point, int newY) {
@@ -197,9 +205,8 @@ public class TerrainMap {
 		}
 
 		//mark the border in mazeMap as walls
-		for (Vec2 point : maze.getClip().getBorder()) {
+		for (Vec2 point : maze.getClip().getBorder())
 			setType(point, MazeAreaType.WALL);
-		}
 	}
 
 	private Vec2 getMinLoc() {

@@ -7,6 +7,7 @@ import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
+import me.gorgeousone.tangledmaze.tools.ToolType;
 import me.gorgeousone.tangledmaze.utils.WandUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Particle;
@@ -55,8 +56,8 @@ public class PlayerWandInteractionListener implements Listener {
 		Action action = event.getAction();
 		
 		if (action != Action.LEFT_CLICK_BLOCK &&
-				action != Action.RIGHT_CLICK_BLOCK ||
-				event.getHand() != EquipmentSlot.HAND)
+		    action != Action.RIGHT_CLICK_BLOCK ||
+		    event.getHand() != EquipmentSlot.HAND)
 			return;
 		
 		Player player = event.getPlayer();
@@ -72,7 +73,7 @@ public class PlayerWandInteractionListener implements Listener {
 			else
 				destroyMazeWand(player, heldItem);
 			
-		}else
+		} else
 			hidePlayersClipsIfHit(player, clickedBlock);
 	}
 	
@@ -80,15 +81,15 @@ public class PlayerWandInteractionListener implements Listener {
 		
 		Maze maze = mazeHandler.getMaze(player);
 		
-		if(maze.hasClip() && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
+		if (maze.hasClip() && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
 			renderer.hideMaze(maze);
 		
-		if(!clipHandler.hasClipTool(player))
+		if (!clipHandler.hasClipTool(player))
 			return;
 		
 		ClipTool clipTool = clipHandler.getClipTool(player);
 		
-		if(renderer.isClipToolVisible(clipTool) && (clipTool.isVertex(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
+		if (renderer.isClipToolVisible(clipTool) && (clipTool.isVertex(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
 			renderer.hideClipboard(clipTool, false);
 	}
 	
@@ -110,7 +111,7 @@ public class PlayerWandInteractionListener implements Listener {
 		if (maze.hasClip() && !maze.isConstructed())
 			renderer.displayMaze(mazeHandler.getMaze(player));
 		
-		if (clipHandler.hasClipTool(player))
+		if (clipHandler.hasClipTool(player) && toolHandler.getToolType(player) == ToolType.CLIP_TOOL)
 			renderer.displayClipboard(clipHandler.getClipTool(player));
 	}
 	

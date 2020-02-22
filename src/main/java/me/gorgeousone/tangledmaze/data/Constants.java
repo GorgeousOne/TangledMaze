@@ -4,6 +4,7 @@ import me.gorgeousone.tangledmaze.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -48,9 +49,9 @@ public class Constants {
 			"Artifact Lv. XCIX"
 	};
 
-	public static void loadConstants() {
+	public static void loadMaterialLists(JavaPlugin plugin) {
 
-		YamlConfiguration materialLists = Utils.loadDefaultConfig("material_lists");
+		YamlConfiguration materialLists = Utils.loadDefaultConfig("material_lists", plugin);
 
 		for (String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
 			try {

@@ -22,30 +22,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class TangledMain extends JavaPlugin {
 	
-	//TODO dont realease without update checker xD
-	
-	//TODO remove plugin instance
-	private static TangledMain plugin;
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
 	private Renderer renderer;
 	
-	public static TangledMain getInstance() {
-		return plugin;
-	}
-	
 	@Override
 	public void onEnable() {
 		
 		super.onEnable();
-		plugin = this;
 		
 		checkForUpdates();
 		
-		renderer = new Renderer();
-		buildHandler = new BuildHandler(renderer);
+		renderer = new Renderer(this);
+		buildHandler = new BuildHandler(this, renderer);
 		
 		mazeHandler = new MazeHandler(buildHandler, renderer);
 		clipHandler = new ClipToolHandler(renderer);
@@ -56,7 +47,7 @@ public class TangledMain extends JavaPlugin {
 		loadConfig();
 		loadMessages();
 		
-		Constants.loadConstants();
+		Constants.loadMaterialLists(this);
 		ConfigSettings.loadSettings(getConfig());
 		
 		registerListeners();
@@ -81,19 +72,19 @@ public class TangledMain extends JavaPlugin {
 		PluginManager manager = Bukkit.getPluginManager();
 		manager.registerEvents(new PlayerWandInteractionListener(toolHandler, clipHandler, mazeHandler, renderer), this);
 		manager.registerEvents(new PlayerQuitListener(toolHandler, mazeHandler), this);
-		manager.registerEvents(new BlockUpdateListener(clipHandler, mazeHandler, renderer), this);
+		manager.registerEvents(new BlockUpdateListener(this, clipHandler, mazeHandler, renderer), this);
 	}
 	
 	private void registerCommands() {
 		
 		MazeCommand mazeCommand = new MazeCommand();
 		mazeCommand.addChild(new HelpCommand(mazeCommand));
-		mazeCommand.addChild(new Reload(mazeCommand));
+		mazeCommand.addChild(new Reload(this, mazeCommand));
 		mazeCommand.addChild(new GiveWand(mazeCommand));
 		mazeCommand.addChild(new StartMaze(mazeCommand, clipHandler, mazeHandler));
 		mazeCommand.addChild(new DiscardMaze(mazeCommand, toolHandler, mazeHandler));
 		mazeCommand.addChild(new TeleportCommand(mazeCommand, mazeHandler, renderer));
-		mazeCommand.addChild(new SelectTool(mazeCommand, clipHandler, toolHandler, mazeHandler));
+		mazeCommand.addChild(new SelectTool(mazeCommand, clipHandler, toolHandler, mazeHandler, renderer));
 		mazeCommand.addChild(new AddToMaze(mazeCommand, clipHandler, mazeHandler));
 		mazeCommand.addChild(new CutFromMaze(mazeCommand, clipHandler, mazeHandler));
 		mazeCommand.addChild(new UndoCommand(mazeCommand, mazeHandler));
@@ -113,7 +104,7 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	private void loadMessages() {
-		Messages.loadMessages(Utils.loadConfig("language"));
+		Messages.loadMessages(Utils.loadConfig("language", this));
 	}
 	
 	private void checkForUpdates() {
@@ -125,8 +116,7 @@ public class TangledMain extends JavaPlugin {
 			switch (versionResponse) {
 				
 				case FOUND_NEW:
-					Bukkit.broadcastMessage(Constants.prefix + "Check out the new version of TangledMaze: " +
-							                        ChatColor.DARK_GREEN + version + ChatColor.YELLOW + "!");
+					Bukkit.broadcastMessage(Constants.prefix + "Check out the new version of TangledMaze: " + ChatColor.DARK_GREEN + version + ChatColor.YELLOW + "!");
 					break;
 					
 				case LATEST:
