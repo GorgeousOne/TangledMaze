@@ -14,11 +14,15 @@ import me.gorgeousone.tangledmaze.listeners.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerQuitListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerWandInteractionListener;
 import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.updatechecks.UpdateCheck;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class TangledMain extends JavaPlugin {
+	
+	//TODO dont realease without update checker xD
 	
 	//TODO remove plugin instance
 	private static TangledMain plugin;
@@ -38,12 +42,14 @@ public class TangledMain extends JavaPlugin {
 		super.onEnable();
 		plugin = this;
 		
+		checkForUpdates();
+		
 		renderer = new Renderer();
 		buildHandler = new BuildHandler(renderer);
 		
 		mazeHandler = new MazeHandler(buildHandler, renderer);
 		clipHandler = new ClipToolHandler(renderer);
-		toolHandler = new ToolHandler(clipHandler, mazeHandler);
+		toolHandler = new ToolHandler(clipHandler, mazeHandler, renderer);
 		
 		renderer.setMazeHandler(mazeHandler);
 		
@@ -108,5 +114,30 @@ public class TangledMain extends JavaPlugin {
 	
 	private void loadMessages() {
 		Messages.loadMessages(Utils.loadConfig("language"));
+	}
+	
+	private void checkForUpdates() {
+		
+		int resourceId = 59284;
+		
+		UpdateCheck.of(this).resourceId(resourceId).handleResponse((versionResponse, version) -> {
+			
+			switch (versionResponse) {
+				
+				case FOUND_NEW:
+					Bukkit.broadcastMessage(Constants.prefix + "Check out the new version of TangledMaze: " +
+							                        ChatColor.DARK_GREEN + version + ChatColor.YELLOW + "!");
+					break;
+					
+				case LATEST:
+					getLogger().info("You are running the latest version of TangledMaze :)");
+					break;
+				
+				case UNAVAILABLE:
+					getLogger().info("Unable to check for updates...");
+			}
+		}).
+		
+		check();
 	}
 }

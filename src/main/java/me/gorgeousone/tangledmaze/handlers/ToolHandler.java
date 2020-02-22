@@ -26,21 +26,16 @@ public class ToolHandler {
 
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
+	private Renderer renderer;
 
 	private Map<UUID, ToolType> playersTools = new HashMap<>();
 	
-	public ToolHandler(ClipToolHandler clipHandler, MazeHandler mazeHandler) {
+	public ToolHandler(ClipToolHandler clipHandler, MazeHandler mazeHandler, Renderer renderer) {
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
+		this.renderer = renderer;
 	}
 	
-
-	//	public boolean hasClipboard(Player player) {
-	//		return
-	//			tools.containsKey(player.getUniqueId()) &&
-	//			tools.get(player.getUniqueId()) instanceof ClipTool;
-	//	}
-
 	public ToolType getToolType(Player player) {
 
 		if (!player.hasPermission(Constants.BUILD_PERM))
@@ -54,21 +49,11 @@ public class ToolHandler {
 		return playersTools.get(player.getUniqueId());
 	}
 
-	public Collection<ToolType> getPlayersTools() {
-		return playersTools.values();
-	}
-
-	//	public ClipTool getClipboard(Player p) {
-	//		Tool clipboard = tools.get(p.getUniqueId());
-	//		return clipboard instanceof ClipTool ? (ClipTool) clipboard : null;
-	//	}
-
 	public boolean setToolType(Player player, ToolType toolType) {
 		return playersTools.put(player.getUniqueId(), toolType) != toolType;
 	}
 
 	//	TODO check how to replace resetToDefaultTool correctly
-
 	public void resetToDefaultTool(Player player) {
 
 		if (clipHandler.hasClipTool(player))
@@ -80,7 +65,8 @@ public class ToolHandler {
 	}
 
 	public void removeTool(Player player) {
-
+		//TODO check if player clips are hidden correctly?
+		
 		//		if(hasClipboard(player))
 		//			renderer.unregisterShape(getClipboard(player));
 
@@ -101,7 +87,7 @@ public class ToolHandler {
 				break;
 				
 			case EXIT_SETTER:
-				player.sendMessage("need to code this first nigga");
+				setMazeExit(mazeHandler.getMaze(player), clickedBlock);
 				break;
 		}
 	}
@@ -118,34 +104,31 @@ public class ToolHandler {
 			mazeHandler.processClipChange(maze, brushing);
 	}
 	
-	private void setMazeExit() {
-	
+	//TODO check renderer usage for improvements
+	private void setMazeExit(Maze maze, Block clickedBlock) {
+		
+		Player player = maze.getPlayer();
+		
+		if (!maze.getClip().isBorderBlock(clickedBlock))
+			return;
+
+		if (maze.isExit(clickedBlock)) {
+
+			maze.removeExit(clickedBlock);
+			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER);
+
+			if (maze.hasExits())
+				renderer.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
+
+		} else if (maze.canBeExit(clickedBlock)) {
+
+			if (maze.hasExits())
+				renderer.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_EXIT);
+
+			maze.addExit(clickedBlock);
+			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
+
+		} else
+			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER);
 	}
-	
-//	public void interact(Block clickedBlock, Action interaction) {
-//
-//		Maze maze = mazeHandler.getMaze(getPlayer());
-//
-//		if (!maze.getClip().isBorderBlock(clickedBlock))
-//			return;
-//
-//		if (maze.isExit(clickedBlock)) {
-//
-//			maze.removeExit(clickedBlock);
-//			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
-//
-//			if (maze.hasExits())
-//				renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT);
-//
-//		} else if (maze.canBeExit(clickedBlock)) {
-//
-//			if (maze.hasExits())
-//				renderer.sendBlockDelayed(getPlayer(), maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_EXIT);
-//
-//			maze.addExit(clickedBlock);
-//			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
-//
-//		} else
-//			renderer.sendBlockDelayed(getPlayer(), clickedBlock.getLocation(), Constants.MAZE_BORDER);
-//	}
 }

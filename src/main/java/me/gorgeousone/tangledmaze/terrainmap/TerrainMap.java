@@ -3,6 +3,9 @@ package me.gorgeousone.tangledmaze.terrainmap;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
+import me.gorgeousone.tangledmaze.terrainmap.paths.NewPathGenerator;
+import me.gorgeousone.tangledmaze.terrainmap.paths.PathMap;
+import me.gorgeousone.tangledmaze.terrainmap.paths.PathMapFactory;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 import java.util.Map.Entry;
@@ -31,8 +34,13 @@ public class TerrainMap {
 
 		calculateMapSize();
 		copyMazeOntoMap();
-
-		new PathGenerator().generatePaths(this);
+		
+		new PathGenerator().generateExits(this);
+		
+		PathMap pathMap = PathMapFactory.createPathMap(this);
+		NewPathGenerator.populatePathMap(pathMap);
+		PathMapFactory.copyPathsOnTerrainMap(this, pathMap);
+		
 		new TerrainEditor().editTerrain(this);
 	}
 

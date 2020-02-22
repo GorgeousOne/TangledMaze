@@ -41,6 +41,11 @@ public class PathMap {
 	}
 	
 	public PathAreaType getPathAreaType(int gridX, int gridZ) {
+		
+		if(gridX < 0 || gridX > getGridWidth() ||
+		   gridZ < 0 || gridZ < getGridHeight())
+			return PathAreaType.BLOCKED;
+		
 		return mazePathGrid[gridX][gridZ];
 	}
 	

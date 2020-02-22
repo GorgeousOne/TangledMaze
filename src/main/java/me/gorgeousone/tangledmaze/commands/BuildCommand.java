@@ -25,9 +25,11 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class BuildCommand extends ArgCommand {
 
@@ -56,42 +58,18 @@ public class BuildCommand extends ArgCommand {
 		if (maze == null)
 			return false;
 
-		String stringMazePart = arguments[0].getString();
-
-		MazePart mazePart;
-		AbstractBlockSelector blockSelector;
-
-		//TODO match maze part and block selector in another method
-		switch (stringMazePart) {
-			case "floor":
-
-				mazePart = MazePart.FLOOR;
-				blockSelector = new FloorBlockSelector();
-				break;
-
-			case "roof":
-
-				mazePart = MazePart.ROOF;
-				blockSelector = new RoofBlockSelector();
-				break;
-
-			case "walls-h":
-
-				mazePart = MazePart.WALLS;
-				blockSelector = new HollowWallSelector();
-				break;
-
-			case "walls":
-			case "maze":
-
-				mazePart = MazePart.WALLS;
-				blockSelector = new WallBlockSelector();
-				break;
-
-			default:
-				Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", stringMazePart));
-				return false;
+		String settingsString = arguments[0].getString();
+		Map.Entry<MazePart, AbstractBlockSelector> buildSettings = readBuildSettings(settingsString);
+		
+		if(buildSettings == null) {
+			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", arguments[0].getString()));
+			return false;
 		}
+		
+		MazePart mazePart = buildSettings.getKey();
+		AbstractBlockSelector blockSelector = buildSettings.getValue();
+		
+		//TODO match maze part and block selector in another method
 
 		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
 
@@ -135,6 +113,44 @@ public class BuildCommand extends ArgCommand {
 				new RandomBlockDataPicker());
 
 		return true;
+	}
+	
+	private Map.Entry<MazePart, AbstractBlockSelector> readBuildSettings(String playerInput) {
+		
+		MazePart mazePart;
+		AbstractBlockSelector blockSelector;
+		
+		switch (playerInput) {
+			case "floor":
+				
+				mazePart = MazePart.FLOOR;
+				blockSelector = new FloorBlockSelector();
+				break;
+			
+			case "roof":
+				
+				mazePart = MazePart.ROOF;
+				blockSelector = new RoofBlockSelector();
+				break;
+			
+			case "walls-h":
+				
+				mazePart = MazePart.WALLS;
+				blockSelector = new HollowWallSelector();
+				break;
+			
+			case "walls":
+			case "maze":
+				
+				mazePart = MazePart.WALLS;
+				blockSelector = new WallBlockSelector();
+				break;
+			
+			default:
+				return null;
+		}
+		
+		return new AbstractMap.SimpleEntry<>(mazePart, blockSelector);
 	}
 
 	private BlockComposition readBlockTypeList(ArgValue[] arguments) throws TextException {

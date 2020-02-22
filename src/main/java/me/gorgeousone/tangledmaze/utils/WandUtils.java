@@ -23,12 +23,18 @@ public class WandUtils {
 		ItemStack wand = new ItemStack(ConfigSettings.MAZE_WAND_MATERIAL);
 		ItemMeta wandMeta = wand.getItemMeta();
 
-		wandMeta.setDisplayName(Constants.MAZE_WAND_NAME);
-
-		List<String> lore = wandMeta.getLore();
-		lore.set(0, ChatColor.GRAY + getRndWandEnchantment());
-
-		wandMeta.setLore(lore);
+		//TODO check why NPE ...
+		if(wandMeta != null) {
+			wandMeta.setDisplayName(Constants.MAZE_WAND_NAME);
+			
+			List<String> lore = wandMeta.getLore();
+			
+			if(lore != null)
+				lore.set(0, ChatColor.GRAY + getRndWandEnchantment());
+			
+			wandMeta.setLore(lore);
+		}
+		
 		wand.setItemMeta(wandMeta);
 		return wand;
 	}

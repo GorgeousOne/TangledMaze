@@ -46,7 +46,7 @@ public class PathGenerator {
 		terrainMap.flipMap();
 	}
 
-	private void generateExits(TerrainMap terrainMap) {
+	public void generateExits(TerrainMap terrainMap) {
 
 		Maze maze = terrainMap.getMaze();
 

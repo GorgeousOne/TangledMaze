@@ -28,8 +28,10 @@ public final class PathMapFactory {
 		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
 		
 		Map.Entry<Vec2, Vec2> clipBounds = calculateClipBounds(maze.getClip());
+		PathMap pathMap = new PathMap(clipBounds.getKey(), clipBounds.getValue(), pathStart, pathWidth, wallWidth);
 		
-		return new PathMap(clipBounds.getKey(), clipBounds.getValue(), pathStart, pathWidth, wallWidth);
+		copyMazeOnPathMap(terrainMap, pathMap);
+		return pathMap;
 	}
 	
 	private static Map.Entry<Vec2, Vec2> calculateClipBounds(Clip clip) {
@@ -59,7 +61,11 @@ public final class PathMapFactory {
 		return new AbstractMap.SimpleEntry<>(min, max);
 	}
 	
-	private static void copyPathsOnTerrainMap(TerrainMap terrainMap, PathMap pathMap) {
+	private static void copyMazeOnPathMap(TerrainMap terrainMap, PathMap pathMap) {
+	
+	}
+	
+	public  static void copyPathsOnTerrainMap(TerrainMap terrainMap, PathMap pathMap) {
 	
 		for(int gridX = 0; gridX < pathMap.getGridWidth(); gridX++) {
 			for(int gridZ = 0; gridZ < pathMap.getGridHeight(); gridZ++) {
