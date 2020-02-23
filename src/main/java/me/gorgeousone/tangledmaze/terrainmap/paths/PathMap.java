@@ -4,6 +4,9 @@ import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A class that compresses the whole area array of a {@link me.gorgeousone.tangledmaze.terrainmap.TerrainMap} into an array where each "cell" represents
  * a segment of wall or path. After the {@link PathMapFactory} plotted all information about available and blocked segments,
@@ -67,29 +70,6 @@ public class PathMap {
 	
 	public void setPathAreaType(int gridX, int gridZ, PathAreaType pathAreaType) {
 		mazePathGrid[gridX][gridZ] = pathAreaType;
-	}
-	
-	//TODO remodel segments size + start into one PathSegment after cleaning up mentioned class.
-	public Vec2 getSegmentStart(int gridX, int gridZ) {
-		
-		Vec2 segmentStart = gridMapOffset.clone();
-		
-		segmentStart.add(
-				(gridX / 2) * meshSize,
-				(gridZ / 2) * meshSize);
-		
-		segmentStart.add(
-				(gridX % 2) * pathWidth,
-				(gridZ % 2) * pathWidth);
-		
-		return segmentStart;
-	}
-	
-	public Vec2 getSegmentSize(int gridX, int gridZ) {
-		
-		return new Vec2(
-				gridX % 2 == 0 ? pathWidth : wallWidth,
-				gridZ % 2 == 0 ? pathWidth : wallWidth);
 	}
 	
 	private void compressMazeInfos(Vec2 clipMin, Vec2 clipMax, Vec2 pathStart) {
@@ -159,5 +139,39 @@ public class PathMap {
 				relativePoint.getZ() % meshSize / pathWidth);
 		
 		return gridPoint;
+	}
+	
+//	public Set<NewPathSegment> getPossiblePaths() {
+//
+//		Set<NewPathSegment> possiblePaths = new HashSet<>();
+//
+//		for (int gridX = 0; gridX < getGridWidth(); gridX++) {
+//			for (int gridZ = 0; gridZ < getGridHeight(); gridZ++) {
+//
+//				if (gridX % 2 == 0 || gridZ % 2 == 0)
+//					possiblePaths.add(getSegment(gridX, gridZ));
+//			}
+//		}
+//
+//		return possiblePaths;
+//	}
+	
+	public NewPathSegment getSegment(int gridX, int gridZ) {
+		
+		Vec2 segmentStart = gridMapOffset.clone();
+		
+		segmentStart.add(
+				(gridX / 2) * meshSize,
+				(gridZ / 2) * meshSize);
+		
+		segmentStart.add(
+				(gridX % 2) * pathWidth,
+				(gridZ % 2) * pathWidth);
+		
+		Vec2 segmentSize = new Vec2(
+				gridX % 2 == 0 ? pathWidth : wallWidth,
+				gridZ % 2 == 0 ? pathWidth : wallWidth);
+		
+		return new NewPathSegment(segmentStart, segmentSize);
 	}
 }

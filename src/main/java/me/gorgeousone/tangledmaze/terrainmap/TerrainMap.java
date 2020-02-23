@@ -116,7 +116,7 @@ public class TerrainMap {
 	}
 	
 	public void setType(int x, int z, MazeAreaType type) {
-		if (contains(x, z)) shapeMap[x - getMinX()][z - getMinZ()] = type;
+		shapeMap[x - getMinX()][z - getMinZ()] = type;
 	}
 	
 	public void setFloorHeight(Vec2 point, int newY) {

@@ -33,8 +33,25 @@ public final class PathMapFactory {
 	}
 	
 	private static void copyMazeOnPathMap(TerrainMap terrainMap, PathMap pathMap) {
-	
 		
+		for (int gridX = 0; gridX < pathMap.getGridWidth(); gridX++) {
+			for (int gridZ = 0; gridZ < pathMap.getGridHeight(); gridZ++) {
+				
+				if (gridX % 2 == 0 || gridZ % 2 == 0)
+					markObstaclesInPathMap(terrainMap, pathMap, gridX, gridZ);
+			}
+		}
+	}
+	
+	private static void markObstaclesInPathMap(TerrainMap terrainMap, PathMap pathMap, int gridX, int gridZ) {
+		
+		for (Vec2 fill : pathMap.getSegment(gridX, gridZ).getFill()) {
+			
+			if (terrainMap.getAreaType(fill) != MazeAreaType.UNDEFINED) {
+				pathMap.setPathAreaType(gridX, gridZ, PathAreaType.BLOCKED);
+				return;
+			}
+		}
 	}
 	
 	public static void copyPathsOnTerrainMap(TerrainMap terrainMap, PathMap pathMap) {
@@ -42,31 +59,18 @@ public final class PathMapFactory {
 		for (int gridX = 0; gridX < pathMap.getGridWidth(); gridX++) {
 			for (int gridZ = 0; gridZ < pathMap.getGridHeight(); gridZ++) {
 				
-				Vec2 start = pathMap.getSegmentStart(gridX, gridZ);
-				System.out.println(start.toString() + " " + pathMap.getPathAreaType(gridX, gridZ));
-				
 				if (pathMap.getPathAreaType(gridX, gridZ) == PathAreaType.PATH)
 					mapSegment(
 							terrainMap,
-							pathMap.getSegmentStart(gridX, gridZ),
-							pathMap.getSegmentSize(gridX, gridZ),
+							pathMap.getSegment(gridX, gridZ),
 							MazeAreaType.PATH);
 			}
 		}
 	}
 	
-	private static void mapSegment(TerrainMap terrainMap, Vec2 segment, Vec2 segmentSize, MazeAreaType mazeAreaType) {
+	private static void mapSegment(TerrainMap terrainMap, NewPathSegment segment, MazeAreaType mazeAreaType) {
 		
-		for (int x = 0; x < segmentSize.getX(); x++) {
-			for (int z = 0; z < segmentSize.getZ(); z++) {
-				
-				MazeAreaType type = terrainMap.getAreaType(segment.getX() + x, segment.getZ() + z);
-				//				System.out.println(segment.getX() + x + ", " + (segment.getZ() + z) + " " + type);
-				
-				//TODO remove this condition when the PathMap has full access to the maze shape data
-				if (type != MazeAreaType.NOT_MAZE && type != MazeAreaType.WALL)
-					terrainMap.setType(segment.getX() + x, segment.getZ() + z, mazeAreaType);
-			}
-		}
+		for (Vec2 fill : segment.getFill())
+			terrainMap.setType(fill, mazeAreaType);
 	}
 }

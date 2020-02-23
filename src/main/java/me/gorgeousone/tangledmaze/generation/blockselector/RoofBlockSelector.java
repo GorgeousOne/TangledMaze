@@ -23,8 +23,8 @@ public class RoofBlockSelector extends AbstractBlockSelector {
 		Maze maze = terrainMap.getMaze();
 		int roofWidth = maze.getDimension(MazeDimension.ROOF_WIDTH);
 		
-		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
+		for (int x = terrainMap.getMinX(); x <= terrainMap.getMaxX(); x++) {
+			for (int z = terrainMap.getMinZ(); z <= terrainMap.getMaxZ(); z++) {
 				
 				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
 					continue;

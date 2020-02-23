@@ -21,8 +21,8 @@ public class HollowWallSelector extends AbstractBlockSelector {
 		Set<BlockDataState> relevantBlocks = new HashSet<>();
 		Maze maze = terrainMap.getMaze();
 		
-		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
+		for (int x = terrainMap.getMinX(); x <= terrainMap.getMaxX(); x++) {
+			for (int z = terrainMap.getMinZ(); z <= terrainMap.getMaxZ(); z++) {
 				
 				if (terrainMap.getAreaType(x, z) != MazeAreaType.WALL)
 					continue;
