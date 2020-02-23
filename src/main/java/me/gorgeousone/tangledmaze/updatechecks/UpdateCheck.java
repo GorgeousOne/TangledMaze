@@ -1,4 +1,4 @@
-package me.gorgeousone.updatechecks;
+package me.gorgeousone.tangledmaze.updatechecks;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
@@ -56,9 +56,8 @@ public class UpdateCheck {
 		Objects.requireNonNull(this.versionResponse, "versionResponse");
 		
 		Bukkit.getScheduler().runTaskAsynchronously(this.javaPlugin, () -> {
-		
+			
 			try {
-				
 				HttpURLConnection httpURLConnection = (HttpsURLConnection) new URL(String.format(SPIGOT_URL, this.resourceId)).openConnection();
 				httpURLConnection.setRequestMethod("GET");
 				httpURLConnection.setRequestProperty(HttpHeaders.USER_AGENT, "Mozilla/5.0");
@@ -67,10 +66,9 @@ public class UpdateCheck {
 				
 				boolean isPluginUpToDate = fetchedVersion.equalsIgnoreCase(this.currentVersion);
 				Bukkit.getScheduler().runTask(this.javaPlugin, () -> this.versionResponse.accept(isPluginUpToDate ? VersionResponse.LATEST : VersionResponse.FOUND_NEW, isPluginUpToDate ? this.currentVersion : fetchedVersion));
-			
+				
 			} catch (IOException exception) {
 				
-				exception.printStackTrace();
 				Bukkit.getScheduler().runTask(this.javaPlugin, () -> this.versionResponse.accept(VersionResponse.UNAVAILABLE, null));
 			}
 		});

@@ -26,22 +26,22 @@ public final class NewPathGenerator {
 			
 			Vec2 nextPathEnd;
 			
-			if(linkedPathSegmentCount < maxLinkedPathSegments) {
+			if (linkedPathSegmentCount < maxLinkedPathSegments) {
 				nextPathEnd = openPathEnds.get(0);
 				linkedPathSegmentCount++;
-			
-			}else {
+				
+			} else {
 				nextPathEnd = openPathEnds.get(random.nextInt(openPathEnds.size()));
 				linkedPathSegmentCount = 0;
 			}
 			
 			List<Map.Entry<Vec2, Vec2>> freeNeighbors = getFreePathNeighbors(pathMap, nextPathEnd);
 			
-			if(freeNeighbors.size() < 2) {
+			if (freeNeighbors.size() < 2) {
 				openPathEnds.remove(nextPathEnd);
 				linkedPathSegmentCount = 0;
 				
-				if(freeNeighbors.isEmpty())
+				if (freeNeighbors.isEmpty())
 					continue;
 			}
 			
@@ -57,12 +57,12 @@ public final class NewPathGenerator {
 		
 		List<Map.Entry<Vec2, Vec2>> freeNeighbors = new ArrayList<>();
 		
-		for(Direction facing : Direction.cardinalValues()) {
+		for (Direction facing : Direction.fourCardinals()) {
 			
 			Vec2 neighborPoint1 = pathEnd.clone().add(facing.getVec2());
 			Vec2 neighborPoint2 = neighborPoint1.clone().add(facing.getVec2());
 			
-			if(pathMap.isFree(neighborPoint1) && pathMap.isFree(neighborPoint2))
+			if (pathMap.isFree(neighborPoint1) && pathMap.isFree(neighborPoint2))
 				freeNeighbors.add(new AbstractMap.SimpleEntry<>(neighborPoint1, neighborPoint2));
 		}
 		

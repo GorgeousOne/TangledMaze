@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.rawmessage;
 
 public enum Color {
-
+	
 	WHITE(",\"color\":\"white\""),
 	YELLOW(",\"color\":\"yellow\""),
 	LIGHT_PURPLE(",\"color\":\"light_purple\""),
@@ -24,13 +24,13 @@ public enum Color {
 	UNDERLINED(",underlined:true"),
 	STRIKETHROUGH(",strikethrough:true"),
 	DEFAULT("");
-
+	
 	private String format;
-
+	
 	Color(String format) {
 		this.format = format;
 	}
-
+	
 	public String toString() {
 		return format;
 	}

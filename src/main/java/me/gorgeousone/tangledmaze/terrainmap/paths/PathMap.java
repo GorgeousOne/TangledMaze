@@ -51,7 +51,7 @@ public class PathMap {
 	public PathAreaType getPathAreaType(int gridX, int gridZ) {
 		
 		if (gridX < 0 || gridX >= getGridWidth() ||
-			gridZ < 0 || gridZ >= getGridHeight())
+		    gridZ < 0 || gridZ >= getGridHeight())
 			return PathAreaType.BLOCKED;
 		
 		return mazePathGrid[gridX][gridZ];
@@ -95,7 +95,7 @@ public class PathMap {
 	private void compressMazeInfos(Vec2 clipMin, Vec2 clipMax, Vec2 pathStart) {
 		
 		calculateGridMapOffset(clipMin, pathStart);
-	
+		
 		int gridWidth = 2 * (int) Math.ceil(1f * (clipMax.getX() - gridMapOffset.getX()) / meshSize);
 		int gridHeight = 2 * (int) Math.ceil(1f * (clipMax.getZ() - gridMapOffset.getZ()) / meshSize);
 		

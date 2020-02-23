@@ -1,4 +1,4 @@
-package me.gorgeousone.updatechecks;
+package me.gorgeousone.tangledmaze.updatechecks;
 
 public enum VersionResponse {
 	

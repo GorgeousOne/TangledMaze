@@ -191,14 +191,14 @@ public abstract class MazeChangeFactory {
 				expansion.addFill(neighbor, height);
 				expansion.addBorder(neighbor);
 				
-			} else if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, expansion, Direction.cardinalValues()))
+			} else if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, expansion, Direction.fourCardinals()))
 				expansion.removeExit(neighbor);
 		}
 	}
 	
 	//look for neighbors, that are now intruding the border unnecessarily around the expanded block
 	private static void removeIntrusiveMazeBorder(Clip mazeClip, Vec2 point, ClipChange expansion) {
-	
+		
 		for (Direction dir : Direction.values()) {
 			Vec2 neighbor = point.clone().add(dir.getVec2());
 			
@@ -251,7 +251,7 @@ public abstract class MazeChangeFactory {
 			if (mazeClip.contains(neighbor) && !mazeClip.borderContains(neighbor))
 				erasure.addBorder(neighbor);
 			
-			if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, erasure, Direction.cardinalValues()))
+			if (maze.exitsContain(neighbor) && !sealsClipBorder(neighbor, erasure, Direction.fourCardinals()))
 				erasure.removeExit(neighbor);
 		}
 	}

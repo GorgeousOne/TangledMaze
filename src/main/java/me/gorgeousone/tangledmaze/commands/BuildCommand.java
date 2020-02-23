@@ -32,87 +32,21 @@ import java.util.List;
 import java.util.Map;
 
 public class BuildCommand extends ArgCommand {
-
+	
 	private ToolHandler toolHandler;
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
-
+	
 	public BuildCommand(MazeCommand mazeCommand, ToolHandler toolHandler, MazeHandler mazeHandler,
 	                    BuildHandler buildHandler) {
 		super("build", null, true, mazeCommand);
-
+		
 		addArg(new Argument("part", ArgType.STRING, "walls", "walls-h", "floor", "roof").setDefaultTo("walls"));
 		addArg(new Argument("blocks...", ArgType.STRING).setDefaultTo("stone"));
-
+		
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
 		this.buildHandler = buildHandler;
-	}
-
-	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
-
-		Player player = (Player) sender;
-		Maze maze = mazeHandler.getStartedMaze(player, true, false);
-
-		if (maze == null)
-			return false;
-
-		String settingsString = arguments[0].getString();
-		Map.Entry<MazePart, AbstractBlockSelector> buildSettings = readBuildSettings(settingsString);
-		
-		if(buildSettings == null) {
-			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", arguments[0].getString()));
-			return false;
-		}
-		
-		MazePart mazePart = buildSettings.getKey();
-		AbstractBlockSelector blockSelector = buildSettings.getValue();
-		
-		//TODO match maze part and block selector in another method
-
-		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
-
-			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
-			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
-			return false;
-		}
-
-		try {
-			maze.setBlockComposition(readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length)));
-
-		} catch (TextException textEx) {
-			textEx.sendTextTo(player);
-			return false;
-
-		} catch (Exception ex) {
-			player.sendMessage(ex.getMessage());
-			return false;
-		}
-
-		if (!maze.isConstructed()) {
-
-			if (!mazePart.isMazeBuiltBefore()) {
-				toolHandler.removeTool(maze.getPlayer());
-
-			} else {
-				Messages.ERROR_MAZE_NOT_BUILT.sendTo(sender);
-				return false;
-			}
-
-		} else if (!mazePart.isMazeBuiltBefore()) {
-
-			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
-			return false;
-		}
-
-		buildHandler.buildMazePart(
-				maze,
-				mazePart,
-				blockSelector,
-				new RandomBlockDataPicker());
-
-		return true;
 	}
 	
 	private Map.Entry<MazePart, AbstractBlockSelector> readBuildSettings(String playerInput) {
@@ -152,17 +86,17 @@ public class BuildCommand extends ArgCommand {
 		
 		return new AbstractMap.SimpleEntry<>(mazePart, blockSelector);
 	}
-
+	
 	private BlockComposition readBlockTypeList(ArgValue[] arguments) throws TextException {
-
+		
 		BlockComposition composition = new BlockComposition();
-
+		
 		for (ArgValue argument : arguments) {
 			String[] blockArgument = argument.getString().split("\\*");
-
+			
 			if (blockArgument.length == 1) {
 				composition.addBlock(BlockDataReader.read(blockArgument[0]), 1);
-
+				
 			} else {
 				int amount = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
 				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.clamp(amount, 1, 1000));
@@ -170,42 +104,108 @@ public class BuildCommand extends ArgCommand {
 		}
 		return composition;
 	}
-
+	
 	@Override
 	public List<String> getTabList(String[] arguments) {
-
+		
 		if (arguments.length < getArgs().size())
 			return super.getTabList(arguments);
-
+		
 		List<String> tabList = new LinkedList<>();
-
+		
 		String tabbedArg = arguments[arguments.length - 1];
 		String materialString = "";
 		String restString = "";
-
+		
 		if (tabbedArg.endsWith("*"))
 			restString = tabbedArg;
-
+		
 		else if (!tabbedArg.equals("")) {
-
+			
 			String[] argParts = (tabbedArg).split("\\*");
 			materialString = argParts[argParts.length - 1];
-
+			
 			if (argParts.length > 1)
 				restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length - 1)) + "*";
 		}
-
+		
 		for (Material material : Material.values()) {
-
+			
 			if (!material.isBlock())
 				continue;
-
+			
 			String materialName = material.name().toLowerCase();
-
+			
 			if (materialName.startsWith(materialString))
 				tabList.add(restString + materialName);
 		}
-
+		
 		return tabList;
+	}
+	
+	@Override
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+		
+		Player player = (Player) sender;
+		Maze maze = mazeHandler.getStartedMaze(player, true, false);
+		
+		if (maze == null)
+			return false;
+		
+		String settingsString = arguments[0].getString();
+		Map.Entry<MazePart, AbstractBlockSelector> buildSettings = readBuildSettings(settingsString);
+		
+		if (buildSettings == null) {
+			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", arguments[0].getString()));
+			return false;
+		}
+		
+		MazePart mazePart = buildSettings.getKey();
+		AbstractBlockSelector blockSelector = buildSettings.getValue();
+		
+		//TODO match maze part and block selector in another method
+		
+		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
+			
+			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
+			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
+			return false;
+		}
+		
+		try {
+			maze.setBlockComposition(readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length)));
+			
+		} catch (TextException textEx) {
+			textEx.sendTextTo(player);
+			return false;
+			
+		} catch (Exception ex) {
+			player.sendMessage(ex.getMessage());
+			return false;
+		}
+		
+		if (!maze.isConstructed()) {
+			
+			if (!mazePart.isMazeBuiltBefore()) {
+				toolHandler.removeTool(maze.getPlayer());
+				
+			} else {
+				Messages.ERROR_MAZE_NOT_BUILT.sendTo(sender);
+				return false;
+			}
+			
+		} else if (!mazePart.isMazeBuiltBefore()) {
+			
+			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
+			return false;
+		}
+		
+		buildHandler.buildMazePart(
+				maze,
+				mazePart,
+				blockSelector,
+				new RandomBlockDataPicker());
+		
+		return true;
 	}
 }

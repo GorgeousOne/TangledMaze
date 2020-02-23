@@ -14,41 +14,41 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class UnbuildMaze extends ArgCommand {
-
+	
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
-
+	
 	public UnbuildMaze(MazeCommand mazeCommand, MazeHandler mazeHandler, BuildHandler buildHandler) {
 		super("unbuild", null, true, mazeCommand);
 		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "roof").setDefaultTo("maze"));
-
+		
 		this.mazeHandler = mazeHandler;
 		this.buildHandler = buildHandler;
 	}
-
+	
 	@Override
 	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
-
+		
 		Player player = (Player) sender;
 		Maze maze = mazeHandler.getMaze(player);
-
+		
 		if (!maze.isConstructed()) {
 			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.sendTo(player);
 			return true;
 		}
-
+		
 		String mazePart = arguments[0].getString();
-
+		
 		switch (mazePart) {
-
+			
 			case "floor":
 				buildHandler.unbuildMazePart(maze, MazePart.FLOOR);
 				break;
-
+			
 			case "roof":
 				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
 				break;
-
+			
 			case "maze":
 			case "walls":
 				Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(player);
@@ -56,7 +56,7 @@ public class UnbuildMaze extends ArgCommand {
 				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
 				buildHandler.unbuildMazePart(maze, MazePart.WALLS);
 				break;
-
+			
 			default:
 				Messages.ERROR_INVALID_MAZE_PART.sendTo(player, new PlaceHolder("mazepart", mazePart));
 				break;

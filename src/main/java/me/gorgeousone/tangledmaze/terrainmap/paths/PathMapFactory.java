@@ -1,13 +1,12 @@
 package me.gorgeousone.tangledmaze.terrainmap.paths;
 
-import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
+import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
-import java.util.AbstractMap;
 import java.util.Map;
 
 public final class PathMapFactory {
@@ -26,42 +25,16 @@ public final class PathMapFactory {
 		int pathWidth = maze.getDimension(MazeDimension.PATH_WIDTH);
 		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
 		
-		Map.Entry<Vec2, Vec2> clipBounds = calculateClipBounds(maze.getClip());
+		Map.Entry<Vec2, Vec2> clipBounds = Utils.calculateClipBounds(maze.getClip());
 		PathMap pathMap = new PathMap(clipBounds.getKey(), clipBounds.getValue(), pathStart, pathWidth, wallWidth);
 		
 		copyMazeOnPathMap(terrainMap, pathMap);
 		return pathMap;
 	}
 	
-	private static Map.Entry<Vec2, Vec2> calculateClipBounds(Clip clip) {
-		
-		Vec2 min = null;
-		Vec2 max = null;
-		
-		for (Vec2 point : clip.getFill()) {
-			
-			if (min == null) {
-				min = point.clone();
-				max = point.clone();
-				continue;
-			}
-			
-			if (point.getX() < min.getX())
-				min.setX(point.getX());
-			else if (point.getX() > max.getX())
-				max.setX(point.getX());
-			
-			if (point.getZ() < min.getZ())
-				min.setZ(point.getZ());
-			else if (point.getZ() > max.getZ())
-				max.setZ(point.getZ());
-		}
-		
-		return new AbstractMap.SimpleEntry<>(min, max);
-	}
-	
 	private static void copyMazeOnPathMap(TerrainMap terrainMap, PathMap pathMap) {
 	
+		
 	}
 	
 	public static void copyPathsOnTerrainMap(TerrainMap terrainMap, PathMap pathMap) {
@@ -88,7 +61,7 @@ public final class PathMapFactory {
 			for (int z = 0; z < segmentSize.getZ(); z++) {
 				
 				MazeAreaType type = terrainMap.getAreaType(segment.getX() + x, segment.getZ() + z);
-//				System.out.println(segment.getX() + x + ", " + (segment.getZ() + z) + " " + type);
+				//				System.out.println(segment.getX() + x + ", " + (segment.getZ() + z) + " " + type);
 				
 				//TODO remove this condition when the PathMap has full access to the maze shape data
 				if (type != MazeAreaType.NOT_MAZE && type != MazeAreaType.WALL)

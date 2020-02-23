@@ -11,15 +11,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 
 public class WandUtils {
-
+	
 	public static boolean isMazeWand(ItemStack item) {
-
+		
 		if (item == null || item.getType() != ConfigSettings.MAZE_WAND_MATERIAL)
 			return false;
-
+		
 		return Constants.MAZE_WAND_NAME.equals(item.getItemMeta().getDisplayName());
 	}
-
+	
 	public static ItemStack createMazeWand() {
 		
 		ItemStack wand = new ItemStack(ConfigSettings.MAZE_WAND_MATERIAL);
@@ -40,9 +40,9 @@ public class WandUtils {
 		
 		return wand;
 	}
-
+	
 	private static String getRandomCrazyEnchantment() {
-
+		
 		int rndIndex = (int) (Math.random() * Constants.MAZE_WAND_ENCHANTS.length);
 		return Constants.MAZE_WAND_ENCHANTS[rndIndex];
 	}

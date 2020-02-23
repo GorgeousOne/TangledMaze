@@ -76,7 +76,7 @@ public class ClipToolHandler {
 		//TODO actually change clip's shape if player has a cliptool
 		clipShapes.put(player.getUniqueId(), shape);
 		
-		if(hasClipTool(player))
+		if (hasClipTool(player))
 			switchClipShape(getClipTool(player), shape);
 		
 		return true;

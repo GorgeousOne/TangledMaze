@@ -94,7 +94,7 @@ public final class ClipFactory {
 	
 	private static boolean rectangleBorderContains(int x, int z, Vec2 rectMin, Vec2 rectMax) {
 		return x == rectMin.getX() || x == rectMax.getX() ||
-				z == rectMin.getZ() || z == rectMax.getZ();
+		       z == rectMin.getZ() || z == rectMax.getZ();
 	}
 	
 	private static Clip createEllipseClip(World world, Vec2 minVertex, Vec2 maxVertex, int highestY) {

@@ -13,8 +13,8 @@ import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.listeners.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerQuitListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerWandInteractionListener;
+import me.gorgeousone.tangledmaze.updatechecks.UpdateCheck;
 import me.gorgeousone.tangledmaze.utils.Utils;
-import me.gorgeousone.updatechecks.UpdateCheck;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
@@ -27,6 +27,12 @@ public class TangledMain extends JavaPlugin {
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
 	private Renderer renderer;
+	
+	@Override
+	public void onDisable() {
+		renderer.hideAllClues();
+		super.onDisable();
+	}
 	
 	@Override
 	public void onEnable() {
@@ -52,12 +58,6 @@ public class TangledMain extends JavaPlugin {
 		
 		registerListeners();
 		registerCommands();
-	}
-	
-	@Override
-	public void onDisable() {
-		renderer.hideAllClues();
-		super.onDisable();
 	}
 	
 	public void reloadPlugin() {
@@ -118,7 +118,7 @@ public class TangledMain extends JavaPlugin {
 				case FOUND_NEW:
 					Bukkit.broadcastMessage(Constants.prefix + "Check out the new version of TangledMaze: " + ChatColor.DARK_GREEN + version + ChatColor.YELLOW + "!");
 					break;
-					
+				
 				case LATEST:
 					getLogger().info("You are running the latest version of TangledMaze :)");
 					break;
@@ -127,7 +127,7 @@ public class TangledMain extends JavaPlugin {
 					getLogger().info("Unable to check for updates...");
 			}
 		}).
-		
-		check();
+				
+				check();
 	}
 }

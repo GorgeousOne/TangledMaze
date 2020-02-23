@@ -49,11 +49,11 @@ public class Maze extends PlayerHolder {
 			dimensions.put(dimension, dimension.getDefault());
 	}
 	
-//	public Maze(Player builder) {
-//
-//		this(builder.getWorld());
-//		this.builder = builder.getUniqueId();
-//	}
+	//	public Maze(Player builder) {
+	//
+	//		this(builder.getWorld());
+	//		this.builder = builder.getUniqueId();
+	//	}
 	
 	public World getWorld() {
 		return world;
@@ -101,7 +101,7 @@ public class Maze extends PlayerHolder {
 		return !exits.isEmpty();
 	}
 	
-	public Vec2 getMainExit() {
+	public Vec2 getEntrance() {
 		return hasExits() ? exits.peek().clone() : null;
 	}
 	
@@ -128,14 +128,14 @@ public class Maze extends PlayerHolder {
 	public boolean exitsContain(Vec2 point) {
 		return exits.contains(point);
 	}
-
-//	public boolean addExit(Vec2 point) {
-//
-//		if (!getClip().borderContains(point))
-//			return false;
-//
-//		return addExit(getClip().getBlockLoc(point).getBlock());
-//	}
+	
+	//	public boolean addExit(Vec2 point) {
+	//
+	//		if (!getClip().borderContains(point))
+	//			return false;
+	//
+	//		return addExit(getClip().getBlockLoc(point).getBlock());
+	//	}
 	
 	public void addExit(Block block) {
 		
@@ -154,7 +154,7 @@ public class Maze extends PlayerHolder {
 	}
 	
 	public boolean canBeExit(Block block) {
-		return getClip().isBorderBlock(block) && getClip().sealsBorder(new Vec2(block), Direction.cardinalValues());
+		return getClip().isBorderBlock(block) && getClip().sealsBorder(new Vec2(block), Direction.fourCardinals());
 	}
 	
 	public boolean isExit(Block block) {

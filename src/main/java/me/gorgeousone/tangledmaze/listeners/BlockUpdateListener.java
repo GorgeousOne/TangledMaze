@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.listeners;
 
-import me.gorgeousone.tangledmaze.TangledMain;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
@@ -158,7 +157,7 @@ public class BlockUpdateListener implements Listener {
 				for (ClipTool clipTool : affectedClipboards) {
 					
 					if (hideAffectedClips && renderer.isClipToolVisible(clipTool) &&
-							(clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
+					    (clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
 						renderer.hideClipboard(clipTool, true);
 					
 					Block updatedBlock = clipTool.updateHeight(changedBlock);

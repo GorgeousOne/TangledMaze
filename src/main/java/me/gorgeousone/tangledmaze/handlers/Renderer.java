@@ -141,7 +141,7 @@ public class Renderer implements Listener {
 					player.sendBlockChange(maze.getClip().getBlockLoc(exit), Constants.MAZE_EXIT.createBlockData());
 				
 				if (maze.hasExits())
-					player.sendBlockChange(maze.getClip().getBlockLoc(maze.getMainExit()), Constants.MAZE_MAIN_EXIT.createBlockData());
+					player.sendBlockChange(maze.getClip().getBlockLoc(maze.getEntrance()), Constants.MAZE_MAIN_EXIT.createBlockData());
 				
 			}
 		}.runTaskLater(plugin, 2);
@@ -177,7 +177,7 @@ public class Renderer implements Listener {
 		Player player = maze.getPlayer();
 		Vec2 locVec = new Vec2(point);
 		
-		if (locVec.equals(maze.getMainExit()))
+		if (locVec.equals(maze.getEntrance()))
 			sendBlockDelayed(player, point, Constants.MAZE_MAIN_EXIT);
 		
 		else if (maze.exitsContain(locVec))
@@ -199,7 +199,7 @@ public class Renderer implements Listener {
 			
 			List<Vec2> mazeExits = maze.getExits();
 			
-			if (exit.equals(maze.getMainExit()) && mazeExits.size() > 1)
+			if (exit.equals(maze.getEntrance()) && mazeExits.size() > 1)
 				player.sendBlockChange(clip.getBlockLoc(mazeExits.get(mazeExits.size() - 2)), Constants.MAZE_MAIN_EXIT.createBlockData());
 		}
 		
@@ -247,17 +247,17 @@ public class Renderer implements Listener {
 	}
 	
 	//TODO this can be an important method for a more general Renderer
-//	public void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
-//
-//		new BukkitRunnable() {
-//
-//			@Override
-//			public void run() {
-//
-//				for (Location point : locs) {
-//					player.sendBlockChange(point, mat.createBlockData());
-//				}
-//			}
-//		}.runTaskLater(plugin, 2);
-//	}
+	//	public void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
+	//
+	//		new BukkitRunnable() {
+	//
+	//			@Override
+	//			public void run() {
+	//
+	//				for (Location point : locs) {
+	//					player.sendBlockChange(point, mat.createBlockData());
+	//				}
+	//			}
+	//		}.runTaskLater(plugin, 2);
+	//	}
 }
