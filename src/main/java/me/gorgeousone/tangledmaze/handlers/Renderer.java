@@ -137,7 +137,7 @@ public class Renderer implements Listener {
 				for (Location point : maze.getClip().getBorderBlocks())
 					player.sendBlockChange(point, Constants.MAZE_BORDER.createBlockData());
 				
-				for (Vec2 exit : maze.getExits())
+				for (Vec2 exit : maze.getSecondaryExits())
 					player.sendBlockChange(maze.getClip().getBlockLoc(exit), Constants.MAZE_EXIT.createBlockData());
 				
 				if (maze.hasExits())
@@ -197,7 +197,7 @@ public class Renderer implements Listener {
 			
 			player.sendBlockChange(clip.getBlockLoc(exit), Constants.MAZE_BORDER.createBlockData());
 			
-			List<Vec2> mazeExits = maze.getExits();
+			List<Vec2> mazeExits = maze.getSecondaryExits();
 			
 			if (exit.equals(maze.getEntrance()) && mazeExits.size() > 1)
 				player.sendBlockChange(clip.getBlockLoc(mazeExits.get(mazeExits.size() - 2)), Constants.MAZE_MAIN_EXIT.createBlockData());

@@ -2,12 +2,12 @@ package me.gorgeousone.tangledmaze.handlers;
 
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
-import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
-import me.gorgeousone.tangledmaze.generation.datapicker.AbstractBlockDataPicker;
+import me.gorgeousone.tangledmaze.generation.blocklocators.AbstractBlockLocator;
+import me.gorgeousone.tangledmaze.generation.blockdatapickers.AbstractBlockDataPicker;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazePart;
-import me.gorgeousone.tangledmaze.maze.MazePartBlockBackup;
+import me.gorgeousone.tangledmaze.generation.MazePart;
+import me.gorgeousone.tangledmaze.generation.MazePartBlockBackup;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMapFactory;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
@@ -56,7 +56,7 @@ public class BuildHandler {
 	public void buildMazePart(
 			Maze maze,
 			MazePart mazePart,
-			AbstractBlockSelector blockSelector,
+			AbstractBlockLocator blockSelector,
 			AbstractBlockDataPicker blockDataPicker) {
 		
 		if (maze.isConstructed() != mazePart.isMazeBuiltBefore())
@@ -69,10 +69,11 @@ public class BuildHandler {
 		
 		else {
 			renderer.hideMaze(maze);
-			terrainMap = TerrainMapFactory.createMapOf(maze);
+			terrainMap = TerrainMapFactory.createTerrainMapOf(maze);
+			TerrainMapFactory.populateMap(terrainMap);
 		}
 		
-		Set<BlockDataState> mazePartBlockLocs = blockSelector.getBlocks(terrainMap);
+		Set<BlockDataState> mazePartBlockLocs = blockSelector.locateBlocks(terrainMap);
 		Set<BlockDataState> blockBackup = deepCloneBlockSet(mazePartBlockLocs);
 		
 		BlockGenerator.updateBlocks(

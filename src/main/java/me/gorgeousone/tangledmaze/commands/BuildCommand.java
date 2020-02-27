@@ -6,17 +6,17 @@ import me.gorgeousone.cmdframework.argument.Argument;
 import me.gorgeousone.cmdframework.command.ArgCommand;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
-import me.gorgeousone.tangledmaze.generation.blockselector.AbstractBlockSelector;
-import me.gorgeousone.tangledmaze.generation.blockselector.FloorBlockSelector;
-import me.gorgeousone.tangledmaze.generation.blockselector.HollowWallSelector;
-import me.gorgeousone.tangledmaze.generation.blockselector.RoofBlockSelector;
-import me.gorgeousone.tangledmaze.generation.blockselector.WallBlockSelector;
-import me.gorgeousone.tangledmaze.generation.datapicker.RandomBlockDataPicker;
+import me.gorgeousone.tangledmaze.generation.blockdatapickers.RandomBlockDataPicker;
+import me.gorgeousone.tangledmaze.generation.blocklocators.AbstractBlockLocator;
+import me.gorgeousone.tangledmaze.generation.blocklocators.FloorBlockLocator;
+import me.gorgeousone.tangledmaze.generation.blocklocators.HollowWallLocator;
+import me.gorgeousone.tangledmaze.generation.blocklocators.RoofBlockLocator;
+import me.gorgeousone.tangledmaze.generation.blocklocators.WallBlockLocator;
 import me.gorgeousone.tangledmaze.handlers.BuildHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.maze.MazePart;
+import me.gorgeousone.tangledmaze.generation.MazePart;
 import me.gorgeousone.tangledmaze.utils.BlockDataReader;
 import me.gorgeousone.tangledmaze.utils.PlaceHolder;
 import me.gorgeousone.tangledmaze.utils.TextException;
@@ -49,100 +49,6 @@ public class BuildCommand extends ArgCommand {
 		this.buildHandler = buildHandler;
 	}
 	
-	private Map.Entry<MazePart, AbstractBlockSelector> readBuildSettings(String playerInput) {
-		
-		MazePart mazePart;
-		AbstractBlockSelector blockSelector;
-		
-		switch (playerInput) {
-			case "floor":
-				
-				mazePart = MazePart.FLOOR;
-				blockSelector = new FloorBlockSelector();
-				break;
-			
-			case "roof":
-				
-				mazePart = MazePart.ROOF;
-				blockSelector = new RoofBlockSelector();
-				break;
-			
-			case "walls-h":
-				
-				mazePart = MazePart.WALLS;
-				blockSelector = new HollowWallSelector();
-				break;
-			
-			case "walls":
-			case "maze":
-				
-				mazePart = MazePart.WALLS;
-				blockSelector = new WallBlockSelector();
-				break;
-			
-			default:
-				return null;
-		}
-		
-		return new AbstractMap.SimpleEntry<>(mazePart, blockSelector);
-	}
-	
-	private BlockComposition readBlockTypeList(ArgValue[] arguments) throws TextException {
-		
-		BlockComposition composition = new BlockComposition();
-		
-		for (ArgValue argument : arguments) {
-			String[] blockArgument = argument.getString().split("\\*");
-			
-			if (blockArgument.length == 1) {
-				composition.addBlock(BlockDataReader.read(blockArgument[0]), 1);
-				
-			} else {
-				int amount = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
-				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.clamp(amount, 1, 1000));
-			}
-		}
-		return composition;
-	}
-	
-	@Override
-	public List<String> getTabList(String[] arguments) {
-		
-		if (arguments.length < getArgs().size())
-			return super.getTabList(arguments);
-		
-		List<String> tabList = new LinkedList<>();
-		
-		String tabbedArg = arguments[arguments.length - 1];
-		String materialString = "";
-		String restString = "";
-		
-		if (tabbedArg.endsWith("*"))
-			restString = tabbedArg;
-		
-		else if (!tabbedArg.equals("")) {
-			
-			String[] argParts = (tabbedArg).split("\\*");
-			materialString = argParts[argParts.length - 1];
-			
-			if (argParts.length > 1)
-				restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length - 1)) + "*";
-		}
-		
-		for (Material material : Material.values()) {
-			
-			if (!material.isBlock())
-				continue;
-			
-			String materialName = material.name().toLowerCase();
-			
-			if (materialName.startsWith(materialString))
-				tabList.add(restString + materialName);
-		}
-		
-		return tabList;
-	}
-	
 	@Override
 	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 		
@@ -153,7 +59,7 @@ public class BuildCommand extends ArgCommand {
 			return false;
 		
 		String settingsString = arguments[0].getString();
-		Map.Entry<MazePart, AbstractBlockSelector> buildSettings = readBuildSettings(settingsString);
+		Map.Entry<MazePart, AbstractBlockLocator> buildSettings = readBuildSettings(settingsString);
 		
 		if (buildSettings == null) {
 			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", arguments[0].getString()));
@@ -161,9 +67,7 @@ public class BuildCommand extends ArgCommand {
 		}
 		
 		MazePart mazePart = buildSettings.getKey();
-		AbstractBlockSelector blockSelector = buildSettings.getValue();
-		
-		//TODO match maze part and block selector in another method
+		AbstractBlockLocator blockSelector = buildSettings.getValue();
 		
 		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
 			
@@ -207,5 +111,99 @@ public class BuildCommand extends ArgCommand {
 				new RandomBlockDataPicker());
 		
 		return true;
+	}
+	
+	@Override
+	public List<String> getTabList(String[] arguments) {
+		
+		if (arguments.length < getArgs().size())
+			return super.getTabList(arguments);
+		
+		List<String> tabList = new LinkedList<>();
+		
+		String tabbedArg = arguments[arguments.length - 1];
+		String materialString = "";
+		String restString = "";
+		
+		if (tabbedArg.endsWith("*"))
+			restString = tabbedArg;
+		
+		else if (!tabbedArg.equals("")) {
+			
+			String[] argParts = (tabbedArg).split("\\*");
+			materialString = argParts[argParts.length - 1];
+			
+			if (argParts.length > 1)
+				restString = String.join("*", Arrays.copyOfRange(argParts, 0, argParts.length - 1)) + "*";
+		}
+		
+		for (Material material : Material.values()) {
+			
+			if (!material.isBlock())
+				continue;
+			
+			String materialName = material.name().toLowerCase();
+			
+			if (materialName.startsWith(materialString))
+				tabList.add(restString + materialName);
+		}
+		
+		return tabList;
+	}
+	
+	private Map.Entry<MazePart, AbstractBlockLocator> readBuildSettings(String playerInput) {
+		
+		MazePart mazePart;
+		AbstractBlockLocator blockSelector;
+		
+		switch (playerInput) {
+			case "floor":
+				
+				mazePart = MazePart.FLOOR;
+				blockSelector = new FloorBlockLocator();
+				break;
+			
+			case "roof":
+				
+				mazePart = MazePart.ROOF;
+				blockSelector = new RoofBlockLocator();
+				break;
+			
+			case "walls-h":
+				
+				mazePart = MazePart.WALLS;
+				blockSelector = new HollowWallLocator();
+				break;
+			
+			case "walls":
+			case "maze":
+				
+				mazePart = MazePart.WALLS;
+				blockSelector = new WallBlockLocator();
+				break;
+			
+			default:
+				return null;
+		}
+		
+		return new AbstractMap.SimpleEntry<>(mazePart, blockSelector);
+	}
+	
+	private BlockComposition readBlockTypeList(ArgValue[] arguments) throws TextException {
+		
+		BlockComposition composition = new BlockComposition();
+		
+		for (ArgValue argument : arguments) {
+			String[] blockArgument = argument.getString().split("\\*");
+			
+			if (blockArgument.length == 1) {
+				composition.addBlock(BlockDataReader.read(blockArgument[0]), 1);
+				
+			} else {
+				int amount = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
+				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.clamp(amount, 1, 1000));
+			}
+		}
+		return composition;
 	}
 }

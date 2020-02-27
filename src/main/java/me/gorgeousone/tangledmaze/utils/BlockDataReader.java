@@ -6,8 +6,7 @@ import org.bukkit.block.data.BlockData;
 
 public final class BlockDataReader {
 	
-	private BlockDataReader() {
-	}
+	private BlockDataReader() {}
 	
 	public static BlockData read(String argument) throws TextException {
 		

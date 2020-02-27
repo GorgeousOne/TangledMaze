@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation.blockselector;
+package me.gorgeousone.tangledmaze.generation.blocklocators;
 
 import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
@@ -8,10 +8,10 @@ import org.bukkit.Location;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FloorBlockSelector extends AbstractBlockSelector {
+public class FloorBlockLocator extends AbstractBlockLocator {
 	
 	@Override
-	public Set<BlockDataState> getBlocks(TerrainMap terrainMap) {
+	public Set<BlockDataState> locateBlocks(TerrainMap terrainMap) {
 		
 		Set<BlockDataState> relevantBlocks = new HashSet<>();
 		

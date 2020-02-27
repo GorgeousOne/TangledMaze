@@ -88,21 +88,25 @@ public class Maze extends PlayerHolder {
 		return this;
 	}
 	
-	public Stack<Vec2> getExits() {
-		Stack<Vec2> deepCopy = new Stack<>();
-		
-		for (Vec2 exit : exits)
-			deepCopy.push(exit.clone());
-		
-		return deepCopy;
-	}
-	
 	public boolean hasExits() {
 		return !exits.isEmpty();
 	}
 	
 	public Vec2 getEntrance() {
 		return hasExits() ? exits.peek().clone() : null;
+	}
+	
+	public Stack<Vec2> getSecondaryExits() {
+		
+		Stack<Vec2> deepCopy = new Stack<>();
+		
+		if(exits.size() <= 1)
+			return deepCopy;
+		
+		for (int i = 0; i < exits.size()-1; i++)
+			deepCopy.add(exits.get(i).clone());
+		
+		return deepCopy;
 	}
 	
 	public ActionHistory getActionHistory() {

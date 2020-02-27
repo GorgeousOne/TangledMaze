@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.terrainmap;
+package me.gorgeousone.tangledmaze.terrainmap.paths;
 
 public final class PathSegmentFactory {
 	

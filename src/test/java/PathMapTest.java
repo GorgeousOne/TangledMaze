@@ -16,7 +16,7 @@ public class PathMapTest {
 		int wallWidth = 2;
 		
 		PathMap testMap = new PathMap(clipMin, clipMax, pathStart, pathWidth, wallWidth);
-		Vec2 gridOffset = testMap.getGridMapOffset();
+		Vec2 gridOffset = testMap.getPathMapOffset();
 		
 		Assertions.assertEquals(20, gridOffset.getX());
 		Assertions.assertEquals(20, gridOffset.getZ());

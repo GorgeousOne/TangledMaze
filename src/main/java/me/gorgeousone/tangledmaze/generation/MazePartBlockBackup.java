@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.maze;
+package me.gorgeousone.tangledmaze.generation;
 
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 

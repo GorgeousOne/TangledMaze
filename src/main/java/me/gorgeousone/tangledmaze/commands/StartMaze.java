@@ -31,6 +31,7 @@ public class StartMaze extends BasicCommand {
 		
 		mazeHandler.setMaze(player, new Maze(player).setClip(clipTool.getClip()));
 		clipHandler.removeClipTool(player);
+		
 		return true;
 	}
 }

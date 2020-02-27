@@ -41,7 +41,7 @@ public abstract class MazeChangeFactory {
 		addProtrudingClipBorderToMaze(mazeClip, clip, addition);
 		removeEnclosedMazeBorder(mazeClip, addition);
 		removeThickEnclosedMazeBorder(addition);
-		removeMazeExitsInsideClip(maze.getExits(), clip, addition);
+		removeMazeExitsInsideClip(maze.getSecondaryExits(), clip, addition);
 		return addition;
 	}
 	
@@ -109,7 +109,7 @@ public abstract class MazeChangeFactory {
 		
 		addIntersectingClipBorderToMaze(mazeClip, otherClip, deletion);
 		removeExcludedMazeBorder(mazeClip, otherClip, deletion);
-		removeMazeExitsInsideClip(maze.getExits(), otherClip, deletion);
+		removeMazeExitsInsideClip(maze.getSecondaryExits(), otherClip, deletion);
 		return deletion;
 	}
 	

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation.datapicker;
+package me.gorgeousone.tangledmaze.generation.blockdatapickers;
 
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
 import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.generation.blockselector;
+package me.gorgeousone.tangledmaze.generation.blocklocators;
 
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
@@ -14,10 +14,10 @@ import org.bukkit.block.Block;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RoofBlockSelector extends AbstractBlockSelector {
+public class RoofBlockLocator extends AbstractBlockLocator {
 	
 	@Override
-	public Set<BlockDataState> getBlocks(TerrainMap terrainMap) {
+	public Set<BlockDataState> locateBlocks(TerrainMap terrainMap) {
 		
 		Set<BlockDataState> relevantBlocks = new HashSet<>();
 		Maze maze = terrainMap.getMaze();
