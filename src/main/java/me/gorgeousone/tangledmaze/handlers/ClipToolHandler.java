@@ -20,52 +20,63 @@ public class ClipToolHandler {
 	
 	private Renderer renderer;
 	private Map<UUID, ClipTool> playerClipTools;
-	private Map<UUID, ClipShape> clipShapes;
+	private Map<UUID, ClipShape> playerClipShapes;
 	
 	public ClipToolHandler(Renderer renderer) {
 		
 		this.renderer = renderer;
 		playerClipTools = new HashMap<>();
-		clipShapes = new HashMap<>();
+		playerClipShapes = new HashMap<>();
 	}
 	
 	public Collection<ClipTool> getPlayerClipTools() {
 		return playerClipTools.values();
 	}
 	
-	public void removeClipTool(Player player) {
-		
-		if (hasStartedClipTool(player)) {
-			renderer.hideClipboard(getClipTool(player), true);
-			renderer.unregisterClipTool(getClipTool(player));
-			playerClipTools.remove(player.getUniqueId());
-		}
-	}
-	
 	public ClipTool getClipTool(Player player) {
 		return playerClipTools.get(player.getUniqueId());
-	}
-	
-	public boolean hasStartedClipTool(Player player) {
-		return playerClipTools.containsKey(player.getUniqueId()) && getClipTool(player).isStarted();
 	}
 	
 	public boolean hasClipTool(Player player) {
 		return playerClipTools.containsKey(player.getUniqueId());
 	}
 	
+	public boolean hasStartedClipTool(Player player) {
+		return playerClipTools.containsKey(player.getUniqueId()) && getClipTool(player).isStarted();
+	}
+	
 	public void setClipTool(Player player, ClipTool clipTool) {
 		
-		if (hasStartedClipTool(player))
-			renderer.hideClipboard(getClipTool(player), true);
+		if (hasStartedClipTool(player)) {
+			renderer.hideClipTool(getClipTool(player), true);
+			renderer.unregisterClipTool(getClipTool(player));
+		}
 		
 		UUID uuid = player.getUniqueId();
 		playerClipTools.put(uuid, clipTool);
-		renderer.displayClipboard(clipTool);
+		renderer.displayClipTool(clipTool);
+	}
+	
+	public void removeClipTool(Player player) {
+		
+		if (hasStartedClipTool(player)) {
+			renderer.hideClipTool(getClipTool(player), true);
+			renderer.unregisterClipTool(getClipTool(player));
+			playerClipTools.remove(player.getUniqueId());
+		}
+	}
+	
+	public void removePlayer(Player player) {
+		
+		if (hasClipTool(player))
+			renderer.unregisterClipTool(getClipTool(player));
+			
+		playerClipShapes.remove(player.getUniqueId());
+		playerClipTools.remove(player.getUniqueId());
 	}
 	
 	public ClipShape getClipShape(Player player) {
-		return clipShapes.getOrDefault(player.getUniqueId(), ClipShape.RECTANGLE);
+		return playerClipShapes.getOrDefault(player.getUniqueId(), ClipShape.RECTANGLE);
 	}
 	
 	public boolean setClipShape(Player player, ClipShape shape) {
@@ -73,8 +84,7 @@ public class ClipToolHandler {
 		if (shape == getClipShape(player))
 			return false;
 		
-		//TODO actually change clip's shape if player has a cliptool
-		clipShapes.put(player.getUniqueId(), shape);
+		playerClipShapes.put(player.getUniqueId(), shape);
 		
 		if (hasClipTool(player))
 			switchClipShape(getClipTool(player), shape);
@@ -85,7 +95,7 @@ public class ClipToolHandler {
 	//that obviously is limited to rectangles and ellipses...
 	private void switchClipShape(ClipTool clipTool, ClipShape newShape) {
 		
-		renderer.hideClipboard(clipTool, true);
+		renderer.hideClipTool(clipTool, true);
 		
 		List<BlockVec> vertices = clipTool.getVertices();
 		List<BlockVec> definingVertices = new ArrayList<>();
@@ -97,7 +107,7 @@ public class ClipToolHandler {
 		clipTool.setVertices(ClipFactory.createCompleteVertexList(definingVertices, newShape));
 		clipTool.setShape(newShape);
 		
-		renderer.displayClipboard(clipTool);
+		renderer.displayClipTool(clipTool);
 	}
 	
 	public void handleClipInteraction(Player player, Block clickedBlock) {
@@ -108,10 +118,9 @@ public class ClipToolHandler {
 		ClipTool clipTool = getClipTool(player);
 		
 		if (clickedBlock.getWorld() != clipTool.getWorld()) {
-			
-			//TODO reset cliptool instead of creating new one or unregister old cliptool from Renderer
-			renderer.hideClipboard(clipTool, true);
-			setClipTool(player, new ClipTool(player, getClipShape(player)));
+			renderer.unregisterClipTool(clipTool);
+			clipTool = new ClipTool(player, getClipShape(player));
+			setClipTool(player, clipTool);
 		}
 		
 		if (clipTool.isBeingReshaped()) {
@@ -126,7 +135,7 @@ public class ClipToolHandler {
 				return;
 				
 			} else {
-				renderer.hideClipboard(clipTool, true);
+				renderer.hideClipTool(clipTool, true);
 				clipTool = new ClipTool(player, getClipShape(player));
 				setClipTool(player, clipTool);
 			}
@@ -147,12 +156,12 @@ public class ClipToolHandler {
 			clipTool.setVertices(ClipFactory.createCompleteVertexList(vertices, clipShape));
 		}
 		
-		renderer.displayClipboard(clipTool);
+		renderer.displayClipTool(clipTool);
 	}
 	
 	private void completeReshapingClip(ClipTool clipTool, Block newVertexBlock) {
 		
-		renderer.hideClipboard(clipTool, true);
+		renderer.hideClipTool(clipTool, true);
 		ClipShape clipShape = clipTool.getShape();
 		
 		switch (clipShape) {
@@ -169,7 +178,7 @@ public class ClipToolHandler {
 				break;
 		}
 		
-		renderer.displayClipboard(clipTool);
+		renderer.displayClipTool(clipTool);
 	}
 	
 	private List<BlockVec> createNewDefiningVertices(ClipTool clipTool, Block newVertexBlock) {

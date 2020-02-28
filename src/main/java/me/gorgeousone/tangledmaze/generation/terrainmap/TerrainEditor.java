@@ -7,7 +7,6 @@ import me.gorgeousone.tangledmaze.utils.Vec2;
 public class TerrainEditor {
 	
 	public void editTerrain(TerrainMap terrainMap) {
-		
 		levelOffSpikes(terrainMap);
 		raiseLowWalls(terrainMap);
 	}

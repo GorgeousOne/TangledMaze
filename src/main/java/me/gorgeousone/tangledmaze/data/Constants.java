@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.data;
 
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.ConfigUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,7 +51,7 @@ public class Constants {
 	
 	public static void loadMaterialLists(JavaPlugin plugin) {
 		
-		YamlConfiguration materialLists = Utils.loadDefaultConfig("material_lists", plugin);
+		YamlConfiguration materialLists = ConfigUtils.loadDefaultConfig("material_lists", plugin);
 		
 		for (String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
 			try {

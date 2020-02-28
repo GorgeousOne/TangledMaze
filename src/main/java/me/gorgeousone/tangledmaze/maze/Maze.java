@@ -7,7 +7,8 @@ import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.Direction;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.ConfigUtils;
+import me.gorgeousone.tangledmaze.utils.MathHelper;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -78,17 +79,27 @@ public class Maze extends PlayerHolder {
 		return hasExits() ? exits.peek().clone() : null;
 	}
 	
+	public Stack<Vec2> getExits() {
+		
+		Stack<Vec2> deepClone = new Stack<>();
+		
+		for(Vec2 exit : exits)
+			deepClone.add(exit.clone());
+		
+		return deepClone;
+	}
+	
 	public Stack<Vec2> getSecondaryExits() {
 		
-		Stack<Vec2> deepCopy = new Stack<>();
+		Stack<Vec2> deepClone = new Stack<>();
 		
 		if (exits.size() <= 1)
-			return deepCopy;
+			return deepClone;
 		
 		for (int i = 0; i < exits.size() - 1; i++)
-			deepCopy.add(exits.get(i).clone());
+			deepClone.add(exits.get(i).clone());
 		
-		return deepCopy;
+		return deepClone;
 	}
 	
 	public void addExit(Block block) {
@@ -130,7 +141,7 @@ public class Maze extends PlayerHolder {
 	}
 	
 	public void setDimension(MazeDimension size, int newValue) {
-		dimensions.put(size, Utils.clamp(newValue, 1, size.getMaxValue()));
+		dimensions.put(size, MathHelper.clamp(newValue, 1, size.getMaxValue()));
 	}
 	
 	public BlockComposition getBlockComposition() {

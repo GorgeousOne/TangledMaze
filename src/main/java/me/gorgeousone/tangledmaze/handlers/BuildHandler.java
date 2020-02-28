@@ -9,8 +9,8 @@ import me.gorgeousone.tangledmaze.generation.blocklocators.AbstractBlockLocator;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMapFactory;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.utils.BlockDataState;
-import me.gorgeousone.tangledmaze.utils.PlaceHolder;
+import me.gorgeousone.tangledmaze.generation.BlockDataState;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 

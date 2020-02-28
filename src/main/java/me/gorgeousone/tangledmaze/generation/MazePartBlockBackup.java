@@ -1,7 +1,5 @@
 package me.gorgeousone.tangledmaze.generation;
 
-import me.gorgeousone.tangledmaze.utils.BlockDataState;
-
 import java.util.HashMap;
 import java.util.Set;
 

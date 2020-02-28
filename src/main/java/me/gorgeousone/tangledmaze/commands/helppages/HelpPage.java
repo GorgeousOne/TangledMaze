@@ -1,5 +1,6 @@
-package me.gorgeousone.tangledmaze.utils;
+package me.gorgeousone.tangledmaze.commands.helppages;
 
+import me.gorgeousone.tangledmaze.messages.TextMessage;
 import org.bukkit.command.CommandSender;
 
 /**

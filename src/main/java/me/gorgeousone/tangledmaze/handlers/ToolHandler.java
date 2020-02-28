@@ -53,15 +53,13 @@ public class ToolHandler {
 	}
 	
 	public void removeTool(Player player) {
-		//TODO check if player clips are hidden correctly?
 		
-		//		if(hasClipboard(player))
-		//			renderer.unregisterShape(getClipboard(player));
-		
+		if(getToolType(player) == ToolType.CLIP_TOOL)
+			clipHandler.removePlayer(player);
+
 		playersTools.remove(player.getUniqueId());
 	}
 	
-	//	TODO check how to replace resetToDefaultTool correctly
 	public void resetToDefaultTool(Player player) {
 		
 		if (clipHandler.hasClipTool(player))

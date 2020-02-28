@@ -8,7 +8,8 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.utils.PlaceHolder;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
+import me.gorgeousone.tangledmaze.utils.MathHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,13 +33,12 @@ public class SetDimension extends ArgCommand {
 		MazeDimension dimension = MazeDimension.match(arguments[0].getString());
 		
 		if (dimension == null) {
-			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", arguments[0].toString()));
+			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", arguments[0].getString()));
 			return false;
 		}
 		
-		int newDimValue = arguments[1].getInt();
+		int newDimValue = MathHelper.clamp(arguments[1].getInt(), 1, dimension.getMaxValue());
 		
-		//TODO idk put maze dimension into MazeHandler? seems more practical
 		Maze maze = mazeHandler.getMaze(player);
 		
 		if (maze.getDimension(dimension) != newDimValue) {
@@ -46,7 +46,7 @@ public class SetDimension extends ArgCommand {
 			
 			Messages.MESSAGE_DIMENSION_CHANGED.sendTo(
 					player,
-					new PlaceHolder("dimension", dimension.toString()),
+					new PlaceHolder("dimension", dimension.commandName()),
 					new PlaceHolder("number", newDimValue));
 		}
 		

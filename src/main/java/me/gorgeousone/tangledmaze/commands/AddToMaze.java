@@ -49,9 +49,7 @@ public class AddToMaze extends BasicCommand {
 			return false;
 		}
 		
-		//TODO make cliphandler handle cliptool rendering
 		clipHandler.removeClipTool(player);
-		
 		mazeHandler.processClipChange(maze, clipChange);
 		return true;
 	}

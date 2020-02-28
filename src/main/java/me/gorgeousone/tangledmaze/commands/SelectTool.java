@@ -11,7 +11,7 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.tools.ToolType;
-import me.gorgeousone.tangledmaze.utils.PlaceHolder;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -90,7 +90,7 @@ public class SelectTool extends ArgCommand {
 		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", newClipShape.simpleName()));
 		
 		if (oldTool != ToolType.CLIP_TOOL && clipHandler.hasClipTool(player))
-			renderer.displayClipboard(clipHandler.getClipTool(player));
+			renderer.displayClipTool(clipHandler.getClipTool(player));
 	}
 	
 	private void switchToMazeTool(Player player, ToolType toolType) {
@@ -111,6 +111,6 @@ public class SelectTool extends ArgCommand {
 		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", toolType.getSimpleName()));
 		
 		if (clipHandler.hasClipTool(player))
-			renderer.hideClipboard(clipHandler.getClipTool(player), true);
+			renderer.hideClipTool(clipHandler.getClipTool(player), true);
 	}
 }

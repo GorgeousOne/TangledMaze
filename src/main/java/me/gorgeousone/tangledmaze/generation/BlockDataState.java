@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.utils;
+package me.gorgeousone.tangledmaze.generation;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

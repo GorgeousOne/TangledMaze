@@ -3,7 +3,7 @@ package me.gorgeousone.tangledmaze.generation.blocklocators;
 import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.utils.BlockDataState;
+import me.gorgeousone.tangledmaze.generation.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

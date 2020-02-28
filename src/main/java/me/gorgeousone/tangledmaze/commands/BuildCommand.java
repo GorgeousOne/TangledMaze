@@ -18,9 +18,9 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.utils.BlockDataReader;
-import me.gorgeousone.tangledmaze.utils.PlaceHolder;
-import me.gorgeousone.tangledmaze.utils.TextException;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
+import me.gorgeousone.tangledmaze.messages.TextException;
+import me.gorgeousone.tangledmaze.utils.MathHelper;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,7 +71,7 @@ public class BuildCommand extends ArgCommand {
 		
 		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
 			
-			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
+			Messages.ERROR_MAZE_PART_ALREADY_BUILT.sendTo(sender);
 			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
 			return false;
 		}
@@ -83,10 +83,12 @@ public class BuildCommand extends ArgCommand {
 			textEx.sendTextTo(player);
 			return false;
 			
-		} catch (Exception ex) {
-			player.sendMessage(ex.getMessage());
-			return false;
 		}
+//		catch (Exception ex) {
+//			player.sendMessage(ex.getClass().getSimpleName());
+//			player.sendMessage(ex.getMessage());
+//			return false;
+//		}
 		
 		if (!maze.isConstructed()) {
 			
@@ -100,7 +102,7 @@ public class BuildCommand extends ArgCommand {
 			
 		} else if (!mazePart.isMazeBuiltBefore()) {
 			
-			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(sender);
+			Messages.ERROR_MAZE_PART_ALREADY_BUILT.sendTo(sender);
 			return false;
 		}
 		
@@ -201,9 +203,10 @@ public class BuildCommand extends ArgCommand {
 				
 			} else {
 				int amount = new ArgValue(ArgType.INTEGER, blockArgument[0]).getInt();
-				composition.addBlock(BlockDataReader.read(blockArgument[1]), Utils.clamp(amount, 1, 1000));
+				composition.addBlock(BlockDataReader.read(blockArgument[1]), MathHelper.clamp(amount, 1, 1000));
 			}
 		}
 		return composition;
 	}
+	
 }

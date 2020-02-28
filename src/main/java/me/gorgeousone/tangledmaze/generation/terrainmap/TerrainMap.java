@@ -40,6 +40,11 @@ public class TerrainMap {
 		}
 	}
 	
+	//it's a bit of cheating to pass this reference for info about path width etc. Maybe there is a better way?
+	public Maze getMaze() {
+		return maze;
+	}
+	
 	public int getMinX() {
 		return minimum.getX();
 	}
@@ -60,11 +65,6 @@ public class TerrainMap {
 		shapeMap[x - getMinX()][z - getMinZ()] = type;
 	}
 	
-	//it's a bit of cheating to pass this reference for info about path width etc. Maybe there is a better way?
-	public Maze getMaze() {
-		return maze;
-	}
-	
 	public Vec2 getMinimum() {
 		return minimum.clone();
 	}
@@ -81,14 +81,18 @@ public class TerrainMap {
 		return contains(x, z) ? shapeMap[x - getMinX()][z - getMinZ()] : null;
 	}
 	
+	public void setAreaType(Vec2 point, MazeAreaType type) {
+		setAreaType(point.getX(), point.getZ(), type);
+	}
+	
+	public boolean contains(Vec2 point) {
+		return contains(point.getX(), point.getZ());
+	}
+	
 	public boolean contains(int x, int z) {
 		return
 				x >= getMinX() && x <= getMaxX() &&
 				z >= getMinZ() && z <= getMaxZ();
-	}
-	
-	public void setAreaType(Vec2 point, MazeAreaType type) {
-		setAreaType(point.getX(), point.getZ(), type);
 	}
 	
 	public int getFloorHeight(Vec2 point) {
@@ -107,13 +111,6 @@ public class TerrainMap {
 		floorHeightMap[x - getMinX()][z - getMinZ()] = newY;
 	}
 	
-	public void setWallHeight(Vec2 point, int newHeight) {
-		setWallHeight(point.getX(), point.getZ(), newHeight);
-	}
-	
-	public void setWallHeight(int x, int z, int newHeight) {
-		wallHeightMap[x - getMinX()][z - getMinZ()] = newHeight;
-	}
 	
 	public int getRoofHeight(Vec2 point) {
 		return getRoofHeight(point.getX(), point.getZ());
@@ -123,18 +120,28 @@ public class TerrainMap {
 		return getFloorHeight(x, z) + getWallHeight(x, z);
 	}
 	
+	
+	public int getWallHeight(Vec2 point) {
+		return getWallHeight(point.getX(), point.getZ());
+	}
+	
 	public int getWallHeight(int x, int z) {
 		return wallHeightMap[x - getMinX()][z - getMinZ()];
 	}
+	
+	public void setWallHeight(Vec2 point, int newHeight) {
+		setWallHeight(point.getX(), point.getZ(), newHeight);
+	}
+	
+	public void setWallHeight(int x, int z, int newHeight) {
+		wallHeightMap[x - getMinX()][z - getMinZ()] = newHeight;
+	}
+	
 	
 	public void mapSegment(RectSegment segment, MazeAreaType type) {
 		
 		for (Vec2 point : segment.getFill()) {
 			if (contains(point)) setAreaType(point.getX(), point.getZ(), type);
 		}
-	}
-	
-	public boolean contains(Vec2 point) {
-		return contains(point.getX(), point.getZ());
 	}
 }

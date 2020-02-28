@@ -8,9 +8,9 @@ import me.gorgeousone.tangledmaze.generation.pathmap.PathMap;
 import me.gorgeousone.tangledmaze.generation.pathmap.PathMapFactory;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
+import java.util.AbstractMap;
 import java.util.Map;
 
 public final class TerrainMapFactory {
@@ -20,7 +20,7 @@ public final class TerrainMapFactory {
 	public static TerrainMap createTerrainMapOf(Maze maze) {
 		
 		Clip mazeClip = maze.getClip();
-		Map.Entry<Vec2, Vec2> clipBounds = Utils.calculateClipBounds(mazeClip);
+		Map.Entry<Vec2, Vec2> clipBounds = calculateClipBounds(mazeClip);
 		
 		TerrainMap terrainMap = new TerrainMap(clipBounds.getKey(), clipBounds.getValue(), maze);
 		copyClipOntoMap(mazeClip, terrainMap, maze.getDimension(MazeDimension.WALL_HEIGHT));
@@ -57,7 +57,7 @@ public final class TerrainMapFactory {
 			terrainMap.mapSegment(exit, MazeAreaType.EXIT);
 		}
 		
-		PathGenerator.createPathsInPathMap(pathMap);
+		PathGenerator.createPathsInPathMap(pathMap, maze.getDimension(MazeDimension.PATH_LENGTH));
 		PathMapFactory.copyPathsOntoTerrainMap(terrainMap, pathMap);
 		
 		flipMap(terrainMap);
@@ -79,5 +79,35 @@ public final class TerrainMapFactory {
 					terrainMap.setAreaType(x, z, MazeAreaType.PATH);
 			}
 		}
+	}
+	
+	public static Map.Entry<Vec2, Vec2> calculateClipBounds(Clip clip) {
+		
+		Vec2 min = null;
+		Vec2 max = null;
+		
+		for (Vec2 point : clip.getFill()) {
+			
+			if (min == null) {
+				min = point.clone();
+				max = point.clone();
+				continue;
+			}
+			
+			int x = point.getX();
+			int z = point.getZ();
+			
+			if (x < min.getX())
+				min.setX(x);
+			else if (x > max.getX())
+				max.setX(x);
+			
+			if (z < min.getZ())
+				min.setZ(point.getZ());
+			else if (z > max.getZ())
+				max.setZ(z);
+		}
+		
+		return new AbstractMap.SimpleEntry<>(min, max);
 	}
 }

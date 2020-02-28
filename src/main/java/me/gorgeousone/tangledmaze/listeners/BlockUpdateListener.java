@@ -59,7 +59,7 @@ public class BlockUpdateListener implements Listener {
 		
 		HashSet<Maze> affectedMazes = new HashSet<>();
 		
-		for (Maze maze : mazeHandler.getMazes()) {
+		for (Maze maze : mazeHandler.getPlayerMazes()) {
 			
 			if (maze.hasClip() && !maze.isConstructed() && maze.getClip().contains(point))
 				affectedMazes.add(maze);
@@ -105,7 +105,7 @@ public class BlockUpdateListener implements Listener {
 					
 					if (hideAffectedClips && renderer.isClipToolVisible(clipTool) &&
 					    (clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
-						renderer.hideClipboard(clipTool, true);
+						renderer.hideClipTool(clipTool, true);
 					
 					Block updatedBlock = clipTool.updateHeight(changedBlock);
 					

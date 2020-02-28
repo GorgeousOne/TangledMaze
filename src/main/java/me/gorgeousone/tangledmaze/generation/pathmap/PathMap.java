@@ -3,6 +3,8 @@ package me.gorgeousone.tangledmaze.generation.pathmap;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
+import java.util.List;
+
 /**
  * A class that compresses the whole area array of a {@link TerrainMap} into an array where each "cell" represents
  * a segment of wall or path. After the {@link PathMapFactory} plotted all information about available and blocked segments,
@@ -51,7 +53,6 @@ public class PathMap {
 		return gridPoint;
 	}
 	
-	//TODO add comments. super useful. too tired.
 	private void calculateOffsets(Vec2 clipMin, Vec2 pathStart) {
 		
 		pathGridOffset = new Vec2(
@@ -98,10 +99,6 @@ public class PathMap {
 		mazePathsMap[gridX][gridZ] = pathAreaType;
 	}
 	
-	public Vec2 getPathMapOffset() {
-		return pathMapOffset;
-	}
-	
 	public Vec2 getPathGridOffset() {
 		return pathGridOffset;
 	}
@@ -118,8 +115,14 @@ public class PathMap {
 		setGridCellType(gridPoint.getX(), gridPoint.getZ(), pathAreaType);
 	}
 	
-	public boolean isPathCellFree(Vec2 gridPoint) {
-		return getGridCellType(gridPoint.getX(), gridPoint.getZ()) == PathAreaType.AVAILABLE;
+	public boolean arePathGridCellsFree(List<Vec2> gridCells) {
+		
+		for(Vec2 gridCell : gridCells) {
+			if (getGridCellType(gridCell.getX(), gridCell.getZ()) != PathAreaType.AVAILABLE)
+				return false;
+		}
+		
+		return true;
 	}
 	
 	public PathAreaType getGridCellType(int gridX, int gridZ) {

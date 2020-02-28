@@ -33,7 +33,6 @@ public final class ClipFactory {
 				definingVertices.get(0).setY(highestY);
 				definingVertices.get(1).setY(highestY);
 				
-				//TODO check if nearestSurface() can be changed to type BlockVec
 				BlockVec point1 = new BlockVec(BlockUtils.nearestSurface(definingVertices.get(0).toLocation()));
 				BlockVec point3 = new BlockVec(BlockUtils.nearestSurface(definingVertices.get(1).toLocation()));
 				BlockVec point2 = new BlockVec(BlockUtils.nearestSurface(new Location(point1.getWorld(), point1.getX(), highestY, point3.getZ())));

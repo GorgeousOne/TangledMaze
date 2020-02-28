@@ -58,7 +58,7 @@ public class Renderer implements Listener {
 		
 		for (ClipTool clipTool : clipVisibilities.keySet()) {
 			if (isClipToolVisible(clipTool))
-				hideClipboard(clipTool, false);
+				hideClipTool(clipTool, false);
 		}
 		
 		for (Maze maze : mazeVisibilities.keySet()) {
@@ -76,7 +76,7 @@ public class Renderer implements Listener {
 	}
 	
 	//displays a clipboard to it's owner with block changes
-	public void displayClipboard(ClipTool clipTool) {
+	public void displayClipTool(ClipTool clipTool) {
 		
 		clipVisibilities.put(clipTool, true);
 		Player player = clipTool.getPlayer();
@@ -98,7 +98,7 @@ public class Renderer implements Listener {
 	}
 	
 	//hides a clipboard completely with the option to redisplay previously covered maze parts
-	public void hideClipboard(ClipTool clipTool, boolean updateMaze) {
+	public void hideClipTool(ClipTool clipTool, boolean updateMaze) {
 		
 		clipVisibilities.put(clipTool, false);
 		Player player = clipTool.getPlayer();
@@ -217,7 +217,7 @@ public class Renderer implements Listener {
 			
 			player.sendBlockChange(clip.getBlockLoc(exit), Constants.MAZE_BORDER.createBlockData());
 			
-			List<Vec2> mazeExits = maze.getSecondaryExits();
+			List<Vec2> mazeExits = maze.getExits();
 			
 			if (exit.equals(maze.getEntrance()) && mazeExits.size() > 1)
 				player.sendBlockChange(clip.getBlockLoc(mazeExits.get(mazeExits.size() - 2)), Constants.MAZE_MAIN_EXIT.createBlockData());
@@ -228,7 +228,6 @@ public class Renderer implements Listener {
 		}
 		
 		for (Vec2 point : action.getRemovedBorder()) {
-			System.out.println(point.toString());
 			Location block = action.getBorder(point);
 			player.sendBlockChange(block, block.getBlock().getType().createBlockData());
 		}

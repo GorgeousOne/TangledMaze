@@ -90,7 +90,7 @@ public class PlayerWandInteractionListener implements Listener {
 		ClipTool clipTool = clipHandler.getClipTool(player);
 		
 		if (renderer.isClipToolVisible(clipTool) && (clipTool.isVertex(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
-			renderer.hideClipboard(clipTool, false);
+			renderer.hideClipTool(clipTool, false);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -112,7 +112,7 @@ public class PlayerWandInteractionListener implements Listener {
 			renderer.displayMaze(mazeHandler.getMaze(player));
 		
 		if (clipHandler.hasClipTool(player) && toolHandler.getToolType(player) == ToolType.CLIP_TOOL)
-			renderer.displayClipboard(clipHandler.getClipTool(player));
+			renderer.displayClipTool(clipHandler.getClipTool(player));
 	}
 	private void destroyMazeWand(Player player, ItemStack wand) {
 		

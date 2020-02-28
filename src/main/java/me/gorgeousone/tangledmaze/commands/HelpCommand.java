@@ -9,8 +9,9 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
-import me.gorgeousone.tangledmaze.utils.HelpPage;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.commands.helppages.HelpPage;
+import me.gorgeousone.tangledmaze.utils.ConfigUtils;
+import me.gorgeousone.tangledmaze.utils.MathHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -84,7 +85,7 @@ public class HelpCommand extends ArgCommand {
 	@Override
 	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
 		
-		int pageNumber = Utils.clamp(arguments[0].getInt(), 1, pageCount);
+		int pageNumber = MathHelper.clamp(arguments[0].getInt(), 1, pageCount);
 		sendHelpPage(sender, pageNumber);
 		return true;
 	}

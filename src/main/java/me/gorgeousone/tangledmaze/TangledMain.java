@@ -14,7 +14,7 @@ import me.gorgeousone.tangledmaze.listeners.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerQuitListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerWandInteractionListener;
 import me.gorgeousone.tangledmaze.updatechecks.UpdateCheck;
-import me.gorgeousone.tangledmaze.utils.Utils;
+import me.gorgeousone.tangledmaze.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
@@ -104,7 +104,7 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	private void loadMessages() {
-		Messages.loadMessages(Utils.loadConfig("language", this));
+		Messages.loadMessages(ConfigUtils.loadConfig("language", this));
 	}
 	
 	private void checkForUpdates() {

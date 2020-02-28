@@ -7,7 +7,7 @@ public enum MazeDimension {
 	WALL_HEIGHT(2, 255),
 	WALL_WIDTH(1, 128),
 	PATH_WIDTH(1, 128),
-	PATH_LENGTH(5, 10),
+	PATH_LENGTH(2, 10),
 	ROOF_WIDTH(1, 128);
 	
 	private int defaultValue;

@@ -19,15 +19,15 @@ public class MazeHandler {
 	private BuildHandler buildHandler;
 	private Renderer renderer;
 	
-	private HashMap<UUID, Maze> mazes = new HashMap<>();
+	private HashMap<UUID, Maze> playerMazes = new HashMap<>();
 	
 	public MazeHandler(BuildHandler buildHandler, Renderer renderer) {
 		this.buildHandler = buildHandler;
 		this.renderer = renderer;
 	}
 	
-	public ArrayList<Maze> getMazes() {
-		return new ArrayList<>(mazes.values());
+	public ArrayList<Maze> getPlayerMazes() {
+		return new ArrayList<>(playerMazes.values());
 	}
 	
 	public Maze getMaze(Player player) {
@@ -37,14 +37,14 @@ public class MazeHandler {
 		
 		UUID uuid = player.getUniqueId();
 		
-		if (!mazes.containsKey(uuid))
-			mazes.put(uuid, new Maze(player));
+		if (!playerMazes.containsKey(uuid))
+			playerMazes.put(uuid, new Maze(player));
 		
-		return mazes.get(player.getUniqueId());
+		return playerMazes.get(player.getUniqueId());
 	}
 	
 	public boolean hasMaze(Player player) {
-		return mazes.containsKey(player.getUniqueId());
+		return playerMazes.containsKey(player.getUniqueId());
 	}
 	
 	public boolean hasStartedMaze(Player player) {
@@ -56,7 +56,7 @@ public class MazeHandler {
 		if (hasStartedMaze(player))
 			renderer.hideMaze(getMaze(player));
 		
-		mazes.put(player.getUniqueId(), newMaze);
+		playerMazes.put(player.getUniqueId(), newMaze);
 		renderer.displayMaze(newMaze);
 	}
 	
@@ -67,7 +67,7 @@ public class MazeHandler {
 		renderer.hideMaze(maze);
 		renderer.unregisterMaze(maze);
 		buildHandler.removeMaze(maze);
-		mazes.remove(player.getUniqueId());
+		playerMazes.remove(player.getUniqueId());
 	}
 	
 	public Maze getStartedMaze(Player player, boolean withExits, boolean notConstructed) {
@@ -87,7 +87,7 @@ public class MazeHandler {
 		}
 		
 		if (notConstructed && maze.isConstructed()) {
-			Messages.ERROR_MAZE_ALREADY_BUILT.sendTo(player);
+			Messages.ERROR_MAZE_PART_ALREADY_BUILT.sendTo(player);
 			return null;
 		}
 		

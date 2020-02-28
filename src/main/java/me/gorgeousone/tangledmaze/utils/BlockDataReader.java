@@ -1,6 +1,8 @@
 package me.gorgeousone.tangledmaze.utils;
 
 import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
+import me.gorgeousone.tangledmaze.messages.TextException;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 
@@ -10,8 +12,8 @@ public final class BlockDataReader {
 	
 	public static BlockData read(String argument) throws TextException {
 		
-		String[] split = argument.split(":");
-		String stringMat = split[0];
+		String[] argSplit = argument.split(":");
+		String stringMat = argSplit[0];
 		Material material = Material.matchMaterial(stringMat);
 		
 		if (material == null || !material.isBlock())
@@ -24,13 +26,13 @@ public final class BlockDataReader {
 		if (material.name().contains("LEAVES"))
 			blockData = blockData.merge(material.createBlockData("[persistent=true]"));
 		
-		if (split.length < 2)
+		if (argSplit.length <= 1)
 			return blockData;
 		
-		for (int i = 1; i < split.length; i++) {
+		for (int i = 1; i < argSplit.length; i++) {
 			
-			String blockProperty = split[i];
-			
+			String blockProperty = argSplit[i];
+				
 			try {
 				blockData = blockData.merge(material.createBlockData("[" + blockProperty + "]"));
 			} catch (IllegalArgumentException ex) {
@@ -44,22 +46,24 @@ public final class BlockDataReader {
 	private static void createPlayerMessageFromException(String exceptionMessage, String material,
 	                                                     String[] blockProperty) throws TextException {
 		
-		if (exceptionMessage.contains("does not have property"))
+		if (exceptionMessage.contains("does not have property")) {
 			throw new TextException(
 					Messages.ERROR_INVALID_BLOCK_PROPERTY,
 					new PlaceHolder("block", material),
 					new PlaceHolder("property", blockProperty[0]));
-		
-		else if (exceptionMessage.contains("Expected value for property"))
+			
+		} else if (exceptionMessage.contains("Expected value for property")) {
 			throw new TextException(
 					Messages.ERROR_MISSING_BLOCK_PROPERTY_VALUE,
 					new PlaceHolder("property", blockProperty[0]));
-		
-		else if (exceptionMessage.contains("does not accept"))
+			
+		} else if (exceptionMessage.contains("does not accept")) {
+			
 			throw new TextException(
 					Messages.ERROR_INVALID_BLOCK_PROPERTY_VALUE,
 					new PlaceHolder("block", material),
 					new PlaceHolder("property", blockProperty[0]),
-					new PlaceHolder("value", blockProperty[1]));
+					new PlaceHolder("value", blockProperty.length > 1 ? blockProperty[1] : ""));
+		}
 	}
 }

@@ -9,7 +9,7 @@ import me.gorgeousone.tangledmaze.generation.MazePart;
 import me.gorgeousone.tangledmaze.handlers.BuildHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.utils.PlaceHolder;
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

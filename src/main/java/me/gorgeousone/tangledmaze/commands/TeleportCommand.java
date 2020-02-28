@@ -35,7 +35,6 @@ public class TeleportCommand extends BasicCommand {
 		tpLoc.setDirection(player.getLocation().getDirection());
 		
 		player.teleport(tpLoc);
-		//TODO check if maze rendering should be done in TeleportCommand
 		renderer.displayMaze(maze);
 		return true;
 	}

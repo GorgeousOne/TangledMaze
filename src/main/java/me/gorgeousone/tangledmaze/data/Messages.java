@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.data;
 
-import me.gorgeousone.tangledmaze.utils.TextMessage;
+import me.gorgeousone.tangledmaze.messages.TextMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,22 +34,20 @@ public class Messages {
 			MESSAGE_MAZE_BUILDING_COMPLETED,
 			MESSAGE_MAZE_UNBUILDING_STARTED,
 			MESSAGE_NO_MAZE_TO_UNBUILD,
-			ERROR_NO_BUILD_PERMISSION,
+			ERROR_INSUFFICIENT_PERMISSION,
 			ERROR_CLIPBOARD_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_COMPLETED,
 			ERROR_MAZE_NOT_STARTED,
 			ERROR_CLIPBOARD_NOT_TOUCHING_MAZE,
 			ERROR_NO_MAZE_EXIT_SET,
-			ERROR_MAZE_ALREADY_BUILT,
+			ERROR_MAZE_PART_ALREADY_BUILT,
 			ERROR_MAZE_NOT_BUILT,
-			ERROR_INVALID_NUMBER,
 			ERROR_INVALID_DIMENSION,
 			ERROR_INVALID_MAZE_PART,
 			ERROR_INVALID_BLOCK_NAME,
 			ERROR_INVALID_BLOCK_PROPERTY,
 			ERROR_INVALID_BLOCK_PROPERTY_VALUE,
-			ERROR_MISSING_BLOCK_PROPERTY_VALUE,
-			ERROR_SAVE_FILE_CORRUPTED;
+			ERROR_MISSING_BLOCK_PROPERTY_VALUE;
 	
 	public static void loadMessages(FileConfiguration langConfig) {
 		
@@ -93,21 +91,19 @@ public class Messages {
 		
 		ConfigurationSection errors = langConfig.getConfigurationSection("errors");
 		
-		ERROR_NO_BUILD_PERMISSION = new TextMessage(ChatColor.RED + errors.getString("insufficient-permission"), false);
+		ERROR_INSUFFICIENT_PERMISSION = new TextMessage(ChatColor.RED + errors.getString("insufficient-permission"), false);
 		ERROR_CLIPBOARD_NOT_STARTED = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-started"), false);
 		ERROR_CLIPBOARD_NOT_COMPLETED = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-completed"), false);
 		ERROR_MAZE_NOT_STARTED = new TextMessage(ChatColor.RED + errors.getString("maze-not-started"), false);
 		ERROR_CLIPBOARD_NOT_TOUCHING_MAZE = new TextMessage(ChatColor.RED + errors.getString("clipboard-not-touching-maze"), false);
 		ERROR_NO_MAZE_EXIT_SET = new TextMessage(ChatColor.RED + errors.getString("no-maze-exit-set"), false);
-		ERROR_MAZE_ALREADY_BUILT = new TextMessage(ChatColor.RED + errors.getString("maze-already-built"), false);
+		ERROR_MAZE_PART_ALREADY_BUILT = new TextMessage(ChatColor.RED + errors.getString("maze-part-already-built"), false);
 		ERROR_MAZE_NOT_BUILT = new TextMessage(ChatColor.RED + errors.getString("maze-not-built"), false);
-		ERROR_INVALID_NUMBER = new TextMessage(ChatColor.RED + errors.getString("invalid-number"), false);
 		ERROR_INVALID_DIMENSION = new TextMessage(ChatColor.RED + errors.getString("invalid-dimension"), false);
 		ERROR_INVALID_MAZE_PART = new TextMessage(ChatColor.RED + errors.getString("invalid-maze-part"), false);
 		ERROR_INVALID_BLOCK_NAME = new TextMessage(ChatColor.RED + errors.getString("invalid-block-name"), false);
 		ERROR_INVALID_BLOCK_PROPERTY = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property"), false);
 		ERROR_INVALID_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("invalid-block-property-value"), false);
 		ERROR_MISSING_BLOCK_PROPERTY_VALUE = new TextMessage(ChatColor.RED + errors.getString("missing-block-property-value"), false);
-		ERROR_SAVE_FILE_CORRUPTED = new TextMessage(ChatColor.RED + errors.getString("save-file-corrupted"), false);
 	}
 }

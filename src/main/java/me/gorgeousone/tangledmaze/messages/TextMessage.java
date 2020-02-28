@@ -1,5 +1,6 @@
-package me.gorgeousone.tangledmaze.utils;
+package me.gorgeousone.tangledmaze.messages;
 
+import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 

@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.utils;
+package me.gorgeousone.tangledmaze.messages;
 
 public class PlaceHolder {
 	
