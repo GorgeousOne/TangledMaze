@@ -31,8 +31,6 @@ public abstract class ArgCommand extends BasicCommand {
 		arguments.add(arg);
 	}
 	
-	protected abstract boolean onCommand(CommandSender sender, ArgValue[] arguments);
-	
 	@Override
 	protected boolean onCommand(CommandSender sender, String[] stringArgs) {
 		
@@ -59,6 +57,8 @@ public abstract class ArgCommand extends BasicCommand {
 		onCommand(sender, values);
 		return true;
 	}
+	
+	protected abstract boolean onCommand(CommandSender sender, ArgValue[] arguments);
 	
 	@Override
 	public List<String> getTabList(String[] arguments) {

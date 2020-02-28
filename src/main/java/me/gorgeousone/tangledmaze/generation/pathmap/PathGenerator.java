@@ -1,7 +1,5 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
-import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 

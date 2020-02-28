@@ -1,13 +1,13 @@
-package me.gorgeousone.tangledmaze.terrainmap;
+package me.gorgeousone.tangledmaze.generation.terrainmap;
 
 import me.gorgeousone.tangledmaze.clip.Clip;
+import me.gorgeousone.tangledmaze.generation.pathmap.ExitSegment;
+import me.gorgeousone.tangledmaze.generation.pathmap.ExitSegmentFactory;
+import me.gorgeousone.tangledmaze.generation.pathmap.PathGenerator;
+import me.gorgeousone.tangledmaze.generation.pathmap.PathMap;
+import me.gorgeousone.tangledmaze.generation.pathmap.PathMapFactory;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.terrainmap.paths.ExitSegment;
-import me.gorgeousone.tangledmaze.terrainmap.paths.ExitSegmentFactory;
-import me.gorgeousone.tangledmaze.terrainmap.paths.PathGenerator;
-import me.gorgeousone.tangledmaze.terrainmap.paths.PathMap;
-import me.gorgeousone.tangledmaze.terrainmap.paths.PathMapFactory;
 import me.gorgeousone.tangledmaze.utils.Utils;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
@@ -21,11 +21,23 @@ public final class TerrainMapFactory {
 		
 		Clip mazeClip = maze.getClip();
 		Map.Entry<Vec2, Vec2> clipBounds = Utils.calculateClipBounds(mazeClip);
-
+		
 		TerrainMap terrainMap = new TerrainMap(clipBounds.getKey(), clipBounds.getValue(), maze);
 		copyClipOntoMap(mazeClip, terrainMap, maze.getDimension(MazeDimension.WALL_HEIGHT));
-	
+		
 		return terrainMap;
+	}
+	
+	private static void copyClipOntoMap(Clip clip, TerrainMap terrainMap, int wallHeight) {
+		
+		for (Vec2 point : clip.getFill()) {
+			terrainMap.setAreaType(point, MazeAreaType.UNDEFINED);
+			terrainMap.setFloorHeight(point, clip.getHeight(point));
+			terrainMap.setWallHeight(point, wallHeight);
+		}
+		
+		for (Vec2 point : clip.getBorder())
+			terrainMap.setAreaType(point, MazeAreaType.WALL);
 	}
 	
 	public static void populateMap(TerrainMap terrainMap) {
@@ -40,7 +52,7 @@ public final class TerrainMapFactory {
 		
 		PathMap pathMap = PathMapFactory.createPathMapOf(terrainMap, entrance.getEndPoint(), pathWidth, wallWidth);
 		
-		for(Vec2 exitPoint : maze.getSecondaryExits()) {
+		for (Vec2 exitPoint : maze.getSecondaryExits()) {
 			ExitSegment exit = ExitSegmentFactory.createExitSegment(exitPoint, terrainMap, pathMap.getPathGridOffset(), pathWidth, pathMap.getPathGridMeshSize());
 			terrainMap.mapSegment(exit, MazeAreaType.EXIT);
 		}
@@ -51,18 +63,6 @@ public final class TerrainMapFactory {
 		flipMap(terrainMap);
 		
 		new TerrainEditor().editTerrain(terrainMap);
-	}
-	
-	private static void copyClipOntoMap(Clip clip, TerrainMap terrainMap, int wallHeight) {
-		
-		for (Vec2 point : clip.getFill()) {
-			terrainMap.setAreaType(point, MazeAreaType.UNDEFINED);
-			terrainMap.setFloorHeight(point, clip.getHeight(point));
-			terrainMap.setWallHeight(point, wallHeight);
-		}
-		
-		for (Vec2 point : clip.getBorder())
-			terrainMap.setAreaType(point, MazeAreaType.WALL);
 	}
 	
 	public static void flipMap(TerrainMap terrainMap) {

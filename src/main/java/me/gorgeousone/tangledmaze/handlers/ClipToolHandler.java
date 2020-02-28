@@ -33,8 +33,25 @@ public class ClipToolHandler {
 		return playerClipTools.values();
 	}
 	
+	public void removeClipTool(Player player) {
+		
+		if (hasStartedClipTool(player)) {
+			renderer.hideClipboard(getClipTool(player), true);
+			renderer.unregisterClipTool(getClipTool(player));
+			playerClipTools.remove(player.getUniqueId());
+		}
+	}
+	
 	public ClipTool getClipTool(Player player) {
 		return playerClipTools.get(player.getUniqueId());
+	}
+	
+	public boolean hasStartedClipTool(Player player) {
+		return playerClipTools.containsKey(player.getUniqueId()) && getClipTool(player).isStarted();
+	}
+	
+	public boolean hasClipTool(Player player) {
+		return playerClipTools.containsKey(player.getUniqueId());
 	}
 	
 	public void setClipTool(Player player, ClipTool clipTool) {
@@ -45,23 +62,6 @@ public class ClipToolHandler {
 		UUID uuid = player.getUniqueId();
 		playerClipTools.put(uuid, clipTool);
 		renderer.displayClipboard(clipTool);
-	}
-	
-	public boolean hasClipTool(Player player) {
-		return playerClipTools.containsKey(player.getUniqueId());
-	}
-	
-	public boolean hasStartedClipTool(Player player) {
-		return playerClipTools.containsKey(player.getUniqueId()) && getClipTool(player).isStarted();
-	}
-	
-	public void removeClipTool(Player player) {
-		
-		if (hasStartedClipTool(player)) {
-			renderer.hideClipboard(getClipTool(player), true);
-			renderer.unregisterClipTool(getClipTool(player));
-			playerClipTools.remove(player.getUniqueId());
-		}
 	}
 	
 	public ClipShape getClipShape(Player player) {
@@ -80,6 +80,24 @@ public class ClipToolHandler {
 			switchClipShape(getClipTool(player), shape);
 		
 		return true;
+	}
+	
+	//that obviously is limited to rectangles and ellipses...
+	private void switchClipShape(ClipTool clipTool, ClipShape newShape) {
+		
+		renderer.hideClipboard(clipTool, true);
+		
+		List<BlockVec> vertices = clipTool.getVertices();
+		List<BlockVec> definingVertices = new ArrayList<>();
+		
+		definingVertices.add(vertices.get(0));
+		definingVertices.add(vertices.get(2));
+		
+		clipTool.setClip(ClipFactory.createClip(newShape, definingVertices));
+		clipTool.setVertices(ClipFactory.createCompleteVertexList(definingVertices, newShape));
+		clipTool.setShape(newShape);
+		
+		renderer.displayClipboard(clipTool);
 	}
 	
 	public void handleClipInteraction(Player player, Block clickedBlock) {
@@ -150,24 +168,6 @@ public class ClipToolHandler {
 			default:
 				break;
 		}
-		
-		renderer.displayClipboard(clipTool);
-	}
-	
-	//that obviously is limited to rectangles and ellipses...
-	private void switchClipShape(ClipTool clipTool, ClipShape newShape) {
-		
-		renderer.hideClipboard(clipTool, true);
-		
-		List<BlockVec> vertices = clipTool.getVertices();
-		List<BlockVec> definingVertices = new ArrayList<>();
-		
-		definingVertices.add(vertices.get(0));
-		definingVertices.add(vertices.get(2));
-		
-		clipTool.setClip(ClipFactory.createClip(newShape, definingVertices));
-		clipTool.setVertices(ClipFactory.createCompleteVertexList(definingVertices, newShape));
-		clipTool.setShape(newShape);
 		
 		renderer.displayClipboard(clipTool);
 	}

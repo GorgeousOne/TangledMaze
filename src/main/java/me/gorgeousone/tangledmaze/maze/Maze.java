@@ -49,30 +49,16 @@ public class Maze extends PlayerHolder {
 			dimensions.put(dimension, dimension.getDefault());
 	}
 	
-	//	public Maze(Player builder) {
-	//
-	//		this(builder.getWorld());
-	//		this.builder = builder.getUniqueId();
-	//	}
-	
 	public World getWorld() {
 		return world;
 	}
 	
-	public boolean hasClip() {
-		return clip != null;
-	}
-	
-	public boolean isConstructed() {
-		return isConstructed;
-	}
-	
-	public void setConstructed(boolean state) {
-		isConstructed = state;
-	}
-	
 	public Clip getClip() {
 		return clip;
+	}
+	
+	public boolean hasClip() {
+		return clip != null;
 	}
 	
 	public Maze setClip(Clip newClip) {
@@ -88,10 +74,6 @@ public class Maze extends PlayerHolder {
 		return this;
 	}
 	
-	public boolean hasExits() {
-		return !exits.isEmpty();
-	}
-	
 	public Vec2 getEntrance() {
 		return hasExits() ? exits.peek().clone() : null;
 	}
@@ -100,46 +82,14 @@ public class Maze extends PlayerHolder {
 		
 		Stack<Vec2> deepCopy = new Stack<>();
 		
-		if(exits.size() <= 1)
+		if (exits.size() <= 1)
 			return deepCopy;
 		
-		for (int i = 0; i < exits.size()-1; i++)
+		for (int i = 0; i < exits.size() - 1; i++)
 			deepCopy.add(exits.get(i).clone());
 		
 		return deepCopy;
 	}
-	
-	public ActionHistory getActionHistory() {
-		return history;
-	}
-	
-	public int getDimension(MazeDimension size) {
-		return dimensions.get(size);
-	}
-	
-	public BlockComposition getBlockComposition() {
-		return blockComposition;
-	}
-	
-	public void setBlockComposition(BlockComposition composition) {
-		this.blockComposition = composition;
-	}
-	
-	public void setDimension(MazeDimension size, int newValue) {
-		dimensions.put(size, Utils.clamp(newValue, 1, size.getMaxValue()));
-	}
-	
-	public boolean exitsContain(Vec2 point) {
-		return exits.contains(point);
-	}
-	
-	//	public boolean addExit(Vec2 point) {
-	//
-	//		if (!getClip().borderContains(point))
-	//			return false;
-	//
-	//		return addExit(getClip().getBlockLoc(point).getBlock());
-	//	}
 	
 	public void addExit(Block block) {
 		
@@ -157,6 +107,14 @@ public class Maze extends PlayerHolder {
 		exits.remove(new Vec2(block));
 	}
 	
+	public boolean hasExits() {
+		return !exits.isEmpty();
+	}
+	
+	public boolean exitsContain(Vec2 point) {
+		return exits.contains(point);
+	}
+	
 	public boolean canBeExit(Block block) {
 		return getClip().isBorderBlock(block) && getClip().sealsBorder(new Vec2(block), Direction.fourCardinals());
 	}
@@ -165,6 +123,34 @@ public class Maze extends PlayerHolder {
 		
 		Vec2 blockVec = new Vec2(block);
 		return exits.contains(blockVec) && getClip().getHeight(blockVec) == block.getY();
+	}
+	
+	public int getDimension(MazeDimension size) {
+		return dimensions.get(size);
+	}
+	
+	public void setDimension(MazeDimension size, int newValue) {
+		dimensions.put(size, Utils.clamp(newValue, 1, size.getMaxValue()));
+	}
+	
+	public BlockComposition getBlockComposition() {
+		return blockComposition;
+	}
+	
+	public void setBlockComposition(BlockComposition composition) {
+		this.blockComposition = composition;
+	}
+	
+	public ActionHistory getActionHistory() {
+		return history;
+	}
+	
+	public boolean isConstructed() {
+		return isConstructed;
+	}
+	
+	public void setConstructed(boolean state) {
+		isConstructed = state;
 	}
 	
 	/**
@@ -197,16 +183,6 @@ public class Maze extends PlayerHolder {
 			getActionHistory().pushAction(action);
 	}
 	
-	public void updateHeights() {
-		
-		if (isConstructed())
-			throw notAlterableException;
-		
-		for (Entry<Vec2, Integer> fill : getClip().getFillEntries()) {
-			getClip().addFill(fill.getKey(), BlockUtils.nearestSurfaceY(fill.getKey(), fill.getValue(), getWorld()));
-		}
-	}
-	
 	public Block updateHeight(Block block) {
 		
 		if (isConstructed())
@@ -216,5 +192,15 @@ public class Maze extends PlayerHolder {
 		getClip().addFill(new Vec2(block), updatedBlock.getY());
 		
 		return updatedBlock;
+	}
+	
+	public void updateHeights() {
+		
+		if (isConstructed())
+			throw notAlterableException;
+		
+		for (Entry<Vec2, Integer> fill : getClip().getFillEntries()) {
+			getClip().addFill(fill.getKey(), BlockUtils.nearestSurfaceY(fill.getKey(), fill.getValue(), getWorld()));
+		}
 	}
 }

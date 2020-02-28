@@ -1,7 +1,7 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
-import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 public final class PathMapFactory {

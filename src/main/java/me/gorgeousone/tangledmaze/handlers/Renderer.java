@@ -42,6 +42,14 @@ public class Renderer implements Listener {
 		mazeVisibilities = new HashMap<>();
 	}
 	
+	public void unregisterClipTool(ClipTool clipTool) {
+		clipVisibilities.remove(clipTool);
+	}
+	
+	public void unregisterMaze(Maze maze) {
+		mazeVisibilities.remove(maze);
+	}
+	
 	public void setMazeHandler(MazeHandler mazeHandler) {
 		this.mazeHandler = mazeHandler;
 	}
@@ -57,14 +65,6 @@ public class Renderer implements Listener {
 			if (isMazeVisible(maze))
 				hideMaze(maze);
 		}
-	}
-	
-	public void unregisterClipTool(ClipTool clipTool) {
-		clipVisibilities.remove(clipTool);
-	}
-	
-	public void unregisterMaze(Maze maze) {
-		mazeVisibilities.remove(maze);
 	}
 	
 	public boolean isClipToolVisible(ClipTool shape) {
@@ -160,6 +160,27 @@ public class Renderer implements Listener {
 			player.sendBlockChange(point, point.getBlock().getType(), point.getBlock().getData());
 	}
 	
+	//Displays maze parts that were covered under a clipboard.
+	private void redisplayMaze(Maze maze, ClipTool hiddenClipboard) {
+		
+		Player player = maze.getPlayer();
+		
+		for (BlockVec vertex : hiddenClipboard.getVertices()) {
+			
+			if (maze.getClip().isBorderBlock(vertex.getBlock()))
+				player.sendBlockChange(vertex.toLocation(), Constants.MAZE_BORDER.createBlockData());
+		}
+		
+		if (!hiddenClipboard.hasClip())
+			return;
+		
+		for (Location border : hiddenClipboard.getClip().getBorderBlocks()) {
+			
+			if (maze.getClip().isBorderBlock(border.getBlock()))
+				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER.createBlockData());
+		}
+	}
+	
 	//displays single blocks of a clipboard (which might covered by e.g. falling block)
 	public void redisplayClipboardBlock(ClipTool clipTool, Location point) {
 		
@@ -187,7 +208,6 @@ public class Renderer implements Listener {
 			sendBlockDelayed(player, point, Constants.MAZE_BORDER);
 	}
 	
-	//
 	public void displayMazeAction(Maze maze, ClipChange action) {
 		
 		Player player = maze.getPlayer();
@@ -214,27 +234,6 @@ public class Renderer implements Listener {
 		}
 	}
 	
-	//Displays maze parts that were covered under a clipboard.
-	private void redisplayMaze(Maze maze, ClipTool hiddenClipboard) {
-		
-		Player player = maze.getPlayer();
-		
-		for (BlockVec vertex : hiddenClipboard.getVertices()) {
-			
-			if (maze.getClip().isBorderBlock(vertex.getBlock()))
-				player.sendBlockChange(vertex.toLocation(), Constants.MAZE_BORDER.createBlockData());
-		}
-		
-		if (!hiddenClipboard.hasClip())
-			return;
-		
-		for (Location border : hiddenClipboard.getClip().getBorderBlocks()) {
-			
-			if (maze.getClip().isBorderBlock(border.getBlock()))
-				maze.getPlayer().sendBlockChange(border, Constants.MAZE_BORDER.createBlockData());
-		}
-	}
-	
 	public void sendBlockDelayed(Player player, Location point, Material mat) {
 		
 		new BukkitRunnable() {
@@ -245,19 +244,4 @@ public class Renderer implements Listener {
 			}
 		}.runTaskLater(plugin, 2);
 	}
-	
-	//TODO this can be an important method for a more general Renderer
-	//	public void sendBlocksDelayed(Player player, Collection<Location> locs, Material mat) {
-	//
-	//		new BukkitRunnable() {
-	//
-	//			@Override
-	//			public void run() {
-	//
-	//				for (Location point : locs) {
-	//					player.sendBlockChange(point, mat.createBlockData());
-	//				}
-	//			}
-	//		}.runTaskLater(plugin, 2);
-	//	}
 }

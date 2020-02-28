@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.generation.blocklocators;
 
-import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import org.bukkit.Location;
 

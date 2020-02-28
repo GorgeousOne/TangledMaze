@@ -25,10 +25,6 @@ public abstract class ParentCommand extends BasicCommand {
 		this.children = new ArrayList<>();
 	}
 	
-	public List<BasicCommand> getChildren() {
-		return children;
-	}
-	
 	public void addChild(BasicCommand child) {
 		children.add(child);
 	}
@@ -49,6 +45,10 @@ public abstract class ParentCommand extends BasicCommand {
 		
 		sendUsage(sender);
 		return false;
+	}
+	
+	public List<BasicCommand> getChildren() {
+		return children;
 	}
 	
 	@Override

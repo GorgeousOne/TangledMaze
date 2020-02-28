@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.terrainmap;
+package me.gorgeousone.tangledmaze.generation.terrainmap;
 
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.utils.Direction;
@@ -25,30 +25,6 @@ public class TerrainEditor {
 				
 				if (floorHeight >= maxNeighborFloorHeight + 2)
 					terrainMap.setFloorHeight(x, z, floorHeight + getAverageHeightDiffToNeighborFloors(terrainMap, x, z));
-			}
-		}
-	}
-	
-	protected void raiseLowWalls(TerrainMap terrainMap) {
-		
-		int wallHeight = terrainMap.getMaze().getDimension(MazeDimension.WALL_HEIGHT);
-		
-		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
-			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
-				
-				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
-					continue;
-				
-				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
-				
-				if (maxNeighborPath == null)
-					continue;
-				
-				int floorHeight = terrainMap.getFloorHeight(x, z);
-				int maxNeighborFloorHeight = terrainMap.getFloorHeight(maxNeighborPath);
-				
-				if (maxNeighborFloorHeight > floorHeight)
-					terrainMap.setWallHeight(x, z, wallHeight + maxNeighborFloorHeight - floorHeight);
 			}
 		}
 	}
@@ -97,5 +73,29 @@ public class TerrainEditor {
 			neighborsCount++;
 		}
 		return heightDiff / neighborsCount;
+	}
+	
+	protected void raiseLowWalls(TerrainMap terrainMap) {
+		
+		int wallHeight = terrainMap.getMaze().getDimension(MazeDimension.WALL_HEIGHT);
+		
+		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
+			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
+				
+				if (terrainMap.getAreaType(x, z) == MazeAreaType.NOT_MAZE)
+					continue;
+				
+				Vec2 maxNeighborPath = getHighestNeighborFloor(x, z, terrainMap, MazeAreaType.PATH);
+				
+				if (maxNeighborPath == null)
+					continue;
+				
+				int floorHeight = terrainMap.getFloorHeight(x, z);
+				int maxNeighborFloorHeight = terrainMap.getFloorHeight(maxNeighborPath);
+				
+				if (maxNeighborFloorHeight > floorHeight)
+					terrainMap.setWallHeight(x, z, wallHeight + maxNeighborFloorHeight - floorHeight);
+			}
+		}
 	}
 }

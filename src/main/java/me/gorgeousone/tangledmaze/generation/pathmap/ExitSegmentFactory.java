@@ -1,7 +1,7 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
-import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
@@ -9,7 +9,10 @@ public final class ExitSegmentFactory {
 	
 	private ExitSegmentFactory() {}
 	
-	public static ExitSegment createEntranceSegment(TerrainMap terrainMap, Vec2 entrancePoint, int pathWidth, int wallWidth) {
+	public static ExitSegment createEntranceSegment(TerrainMap terrainMap,
+	                                                Vec2 entrancePoint,
+	                                                int pathWidth,
+	                                                int wallWidth) {
 		
 		Direction facing = getExitFacing(entrancePoint, terrainMap);
 		Vec2 exitStart = calculateExitStart(entrancePoint, facing, pathWidth);
@@ -17,23 +20,6 @@ public final class ExitSegmentFactory {
 		ExitSegment entrance = new ExitSegment(exitStart, facing, pathWidth);
 		entrance.expandLength(wallWidth);
 		return entrance;
-	}
-	
-	public static ExitSegment createExitSegment(
-			Vec2 exitPoint,
-			TerrainMap terrainMap,
-			Vec2 pathGridOffset,
-			int pathWidth,
-			int pathGridMeshSize) {
-		
-		Direction facing = getExitFacing(exitPoint, terrainMap);
-		Vec2 exitStart = calculateExitStart(exitPoint, facing, pathWidth);
-		
-		ExitSegment exit = new ExitSegment(exitStart, facing, pathWidth);
-		exit.expandLength(facing.isXAligned() ?
-				                   getExitOffsetToPathGrid(exit.getStartPoint().getX(), facing, pathGridOffset.getX(), pathGridMeshSize) :
-				                   getExitOffsetToPathGrid(exit.getStartPoint().getZ(), facing, pathGridOffset.getZ(), pathGridMeshSize));
-		return exit;
 	}
 	
 	private static Direction getExitFacing(Vec2 exit, TerrainMap terrainMap) {
@@ -64,6 +50,23 @@ public final class ExitSegmentFactory {
 			exitStart.add(-exitWidth + 1, -exitWidth + 1);
 		
 		return exitStart;
+	}
+	
+	public static ExitSegment createExitSegment(
+			Vec2 exitPoint,
+			TerrainMap terrainMap,
+			Vec2 pathGridOffset,
+			int pathWidth,
+			int pathGridMeshSize) {
+		
+		Direction facing = getExitFacing(exitPoint, terrainMap);
+		Vec2 exitStart = calculateExitStart(exitPoint, facing, pathWidth);
+		
+		ExitSegment exit = new ExitSegment(exitStart, facing, pathWidth);
+		exit.expandLength(facing.isXAligned() ?
+				                  getExitOffsetToPathGrid(exit.getStartPoint().getX(), facing, pathGridOffset.getX(), pathGridMeshSize) :
+				                  getExitOffsetToPathGrid(exit.getStartPoint().getZ(), facing, pathGridOffset.getZ(), pathGridMeshSize));
+		return exit;
 	}
 	
 	private static int getExitOffsetToPathGrid(

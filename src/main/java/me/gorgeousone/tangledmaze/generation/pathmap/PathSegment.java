@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
 import me.gorgeousone.tangledmaze.utils.Vec2;
 

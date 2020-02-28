@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.generation;
 
 import me.gorgeousone.tangledmaze.generation.blockdatapickers.AbstractBlockDataPicker;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;

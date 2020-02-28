@@ -1,7 +1,7 @@
-package me.gorgeousone.tangledmaze.terrainmap;
+package me.gorgeousone.tangledmaze.generation.terrainmap;
 
+import me.gorgeousone.tangledmaze.generation.pathmap.RectSegment;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.terrainmap.paths.RectSegment;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
 /**
@@ -40,19 +40,6 @@ public class TerrainMap {
 		}
 	}
 	
-	//it's a bit of cheating to pass this reference for info about path width etc. Maybe there is a better way?
-	public Maze getMaze() {
-		return maze;
-	}
-	
-	public Vec2 getMinimum() {
-		return minimum.clone();
-	}
-	
-	public Vec2 getMaximum() {
-		return maximum.clone();
-	}
-	
 	public int getMinX() {
 		return minimum.getX();
 	}
@@ -69,14 +56,21 @@ public class TerrainMap {
 		return maximum.getZ();
 	}
 	
-	public boolean contains(Vec2 point) {
-		return contains(point.getX(), point.getZ());
+	public void setAreaType(int x, int z, MazeAreaType type) {
+		shapeMap[x - getMinX()][z - getMinZ()] = type;
 	}
 	
-	public boolean contains(int x, int z) {
-		return
-				x >= getMinX() && x <= getMaxX() &&
-				z >= getMinZ() && z <= getMaxZ();
+	//it's a bit of cheating to pass this reference for info about path width etc. Maybe there is a better way?
+	public Maze getMaze() {
+		return maze;
+	}
+	
+	public Vec2 getMinimum() {
+		return minimum.clone();
+	}
+	
+	public Vec2 getMaximum() {
+		return maximum.clone();
 	}
 	
 	public MazeAreaType getAreaType(Vec2 point) {
@@ -87,12 +81,14 @@ public class TerrainMap {
 		return contains(x, z) ? shapeMap[x - getMinX()][z - getMinZ()] : null;
 	}
 	
-	public void setAreaType(Vec2 point, MazeAreaType type) {
-		setAreaType(point.getX(), point.getZ(), type);
+	public boolean contains(int x, int z) {
+		return
+				x >= getMinX() && x <= getMaxX() &&
+				z >= getMinZ() && z <= getMaxZ();
 	}
 	
-	public void setAreaType(int x, int z, MazeAreaType type) {
-		shapeMap[x - getMinX()][z - getMinZ()] = type;
+	public void setAreaType(Vec2 point, MazeAreaType type) {
+		setAreaType(point.getX(), point.getZ(), type);
 	}
 	
 	public int getFloorHeight(Vec2 point) {
@@ -111,20 +107,12 @@ public class TerrainMap {
 		floorHeightMap[x - getMinX()][z - getMinZ()] = newY;
 	}
 	
-	public int getWallHeight(Vec2 point) {
-		return getWallHeight(point.getX(), point.getZ());
-	}
-	
 	public void setWallHeight(Vec2 point, int newHeight) {
 		setWallHeight(point.getX(), point.getZ(), newHeight);
 	}
 	
 	public void setWallHeight(int x, int z, int newHeight) {
 		wallHeightMap[x - getMinX()][z - getMinZ()] = newHeight;
-	}
-	
-	public int getWallHeight(int x, int z) {
-		return wallHeightMap[x - getMinX()][z - getMinZ()];
 	}
 	
 	public int getRoofHeight(Vec2 point) {
@@ -135,10 +123,18 @@ public class TerrainMap {
 		return getFloorHeight(x, z) + getWallHeight(x, z);
 	}
 	
+	public int getWallHeight(int x, int z) {
+		return wallHeightMap[x - getMinX()][z - getMinZ()];
+	}
+	
 	public void mapSegment(RectSegment segment, MazeAreaType type) {
 		
 		for (Vec2 point : segment.getFill()) {
 			if (contains(point)) setAreaType(point.getX(), point.getZ(), type);
 		}
+	}
+	
+	public boolean contains(Vec2 point) {
+		return contains(point.getX(), point.getZ());
 	}
 }

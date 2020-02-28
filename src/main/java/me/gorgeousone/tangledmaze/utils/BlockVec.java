@@ -33,6 +33,26 @@ public class BlockVec {
 		return world;
 	}
 	
+	public Block getBlock() {
+		return toLocation().getBlock();
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public int getZ() {
+		return z;
+	}
+	
+	public void setY(int y) {
+		this.y = y;
+	}
+
 	public Vec2 toVec2() {
 		return new Vec2(x, z);
 	}
@@ -43,27 +63,6 @@ public class BlockVec {
 	
 	public Location toLocation() {
 		return new Location(world, getX(), getY(), getZ());
-	}
-	
-	public Block getBlock() {
-		return toLocation().getBlock();
-	}
-	
-	
-	public int getX() {
-		return x;
-	}
-	
-	public int getY() {
-		return y;
-	}
-	
-	public void setY(int y) {
-		this.y = y;
-	}
-	
-	public int getZ() {
-		return z;
 	}
 	
 	@Override

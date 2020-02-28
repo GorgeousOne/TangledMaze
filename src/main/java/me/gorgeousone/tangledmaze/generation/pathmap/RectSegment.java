@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class RectSegment {
-	
-	public abstract Vec2 getMinimum();
-	public abstract Vec2 getMaximum();
 	
 	public Set<Vec2> getFill() {
 		
@@ -23,4 +20,8 @@ public abstract class RectSegment {
 		
 		return fill;
 	}
+	
+	public abstract Vec2 getMinimum();
+	
+	public abstract Vec2 getMaximum();
 }

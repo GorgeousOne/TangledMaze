@@ -32,31 +32,6 @@ public class HelpCommand extends ArgCommand {
 		loadHelpPagesContent();
 	}
 	
-	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
-		
-		int pageNumber = Utils.clamp(arguments[0].getInt(), 1, pageCount);
-		sendHelpPage(sender, pageNumber);
-		return true;
-	}
-	
-	public void sendHelpPage(CommandSender sender, int pageNumber) {
-		
-		sender.sendMessage("");
-		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + pageCount);
-		sender.sendMessage("");
-		
-		if (pageNumber == 1) {
-			sender.sendMessage(ChatColor.GREEN + "List of all /tangledmaze commands: ");
-			
-			for (RawMessage pageLink : pageLinks) {
-				pageLink.sendTo(sender);
-			}
-			
-		} else
-			helpPages[pageNumber - 2].send(sender);
-	}
-	
 	private void createPageLinks() {
 		
 		pageLinks = new RawMessage[commandCount];
@@ -104,5 +79,30 @@ public class HelpCommand extends ArgCommand {
 		                                 Messages.DIMENSION_PATH_LENGTH);
 		helpPages[++iter] = new HelpPage(Messages.COMMAND_BUILD);
 		helpPages[++iter] = new HelpPage(Messages.COMMAND_UNBUILD);
+	}
+	
+	@Override
+	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+		
+		int pageNumber = Utils.clamp(arguments[0].getInt(), 1, pageCount);
+		sendHelpPage(sender, pageNumber);
+		return true;
+	}
+	
+	public void sendHelpPage(CommandSender sender, int pageNumber) {
+		
+		sender.sendMessage("");
+		sender.sendMessage(Constants.prefix + "--- Help Pages --- " + ChatColor.GREEN + pageNumber + "/" + pageCount);
+		sender.sendMessage("");
+		
+		if (pageNumber == 1) {
+			sender.sendMessage(ChatColor.GREEN + "List of all /tangledmaze commands: ");
+			
+			for (RawMessage pageLink : pageLinks) {
+				pageLink.sendTo(sender);
+			}
+			
+		} else
+			helpPages[pageNumber - 2].send(sender);
 	}
 }

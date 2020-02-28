@@ -1,4 +1,4 @@
-package me.gorgeousone.tangledmaze.terrainmap.paths;
+package me.gorgeousone.tangledmaze.generation.pathmap;
 
 import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
@@ -43,7 +43,7 @@ public class ExitSegment extends RectSegment {
 	
 	public void expandLength(int dLength) {
 		
-		if(length + dLength < width)
+		if (length + dLength < width)
 			throw new IllegalArgumentException("Cannot (don't want to) make exit segment shorter than wide.");
 		
 		endPoint.add(facing.getVec2().mult(dLength));

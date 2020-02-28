@@ -47,6 +47,14 @@ public abstract class BasicCommand {
 		return permission;
 	}
 	
+	public ParentCommand getParent() {
+		return parent;
+	}
+	
+	public boolean isChild() {
+		return parent != null;
+	}
+	
 	public boolean matches(String alias) {
 		return aliases.contains(alias);
 	}
@@ -54,16 +62,6 @@ public abstract class BasicCommand {
 	protected void addAlias(String alias) {
 		aliases.add(alias);
 	}
-	
-	public boolean isChild() {
-		return parent != null;
-	}
-	
-	public ParentCommand getParent() {
-		return parent;
-	}
-	
-	protected abstract boolean onCommand(CommandSender sender, String[] arguments);
 	
 	public void execute(CommandSender sender, String[] arguments) {
 		
@@ -79,6 +77,8 @@ public abstract class BasicCommand {
 		
 		onCommand(sender, arguments);
 	}
+	
+	protected abstract boolean onCommand(CommandSender sender, String[] arguments);
 	
 	public List<String> getTabList(String[] arguments) {
 		return new LinkedList<>();

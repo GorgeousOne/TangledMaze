@@ -114,7 +114,6 @@ public class PlayerWandInteractionListener implements Listener {
 		if (clipHandler.hasClipTool(player) && toolHandler.getToolType(player) == ToolType.CLIP_TOOL)
 			renderer.displayClipboard(clipHandler.getClipTool(player));
 	}
-	
 	private void destroyMazeWand(Player player, ItemStack wand) {
 		
 		player.getInventory().remove(wand);

@@ -19,12 +19,6 @@ public final class Utils {
 		return Math.min(max, Math.max(min, value));
 	}
 	
-	public static YamlConfiguration loadDefaultConfig(String configName, JavaPlugin plugin) {
-		
-		InputStream defConfigStream = plugin.getResource(configName + ".yml");
-		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
-	}
-	
 	public static YamlConfiguration loadConfig(String configName, JavaPlugin plugin) {
 		
 		File configFile = new File(plugin.getDataFolder() + File.separator + configName + ".yml");
@@ -42,6 +36,12 @@ public final class Utils {
 		config.options().copyDefaults(true);
 		
 		return config;
+	}
+	
+	public static YamlConfiguration loadDefaultConfig(String configName, JavaPlugin plugin) {
+		
+		InputStream defConfigStream = plugin.getResource(configName + ".yml");
+		return YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 	}
 	
 	public static Map.Entry<Vec2, Vec2> calculateClipBounds(Clip clip) {

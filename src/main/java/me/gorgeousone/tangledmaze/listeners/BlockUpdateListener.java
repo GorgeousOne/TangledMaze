@@ -45,6 +45,77 @@ public class BlockUpdateListener implements Listener {
 		this.renderer = renderer;
 	}
 	
+	private void checkClipsForTerrainChanges(Block block, boolean hideAffectedElements) {
+		
+		Vec2 point = new Vec2(block);
+		HashSet<Maze> affectedMazes = getAffectedMazes(point);
+		HashSet<ClipTool> affectedClipboards = getAffectedClipTools(point);
+		
+		if (!affectedClipboards.isEmpty() || !affectedMazes.isEmpty())
+			updateClipsWithChangedTerrain(block, affectedMazes, affectedClipboards, hideAffectedElements);
+	}
+	
+	private HashSet<Maze> getAffectedMazes(Vec2 point) {
+		
+		HashSet<Maze> affectedMazes = new HashSet<>();
+		
+		for (Maze maze : mazeHandler.getMazes()) {
+			
+			if (maze.hasClip() && !maze.isConstructed() && maze.getClip().contains(point))
+				affectedMazes.add(maze);
+		}
+		
+		return affectedMazes;
+	}
+	
+	private HashSet<ClipTool> getAffectedClipTools(Vec2 point) {
+		
+		HashSet<ClipTool> affectedClipboards = new HashSet<>();
+		
+		for (ClipTool clipTool : clipHandler.getPlayerClipTools()) {
+			
+			if (clipTool.getClip().contains(point) || clipTool.isVertex(point))
+				affectedClipboards.add(clipTool);
+		}
+		
+		return affectedClipboards;
+	}
+	
+	private void updateClipsWithChangedTerrain(Block changedBlock,
+	                                           HashSet<Maze> affectedMazes,
+	                                           HashSet<ClipTool> affectedClipTools,
+	                                           boolean hideAffectedClips) {
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				
+				for (Maze maze : affectedMazes) {
+					
+					if (hideAffectedClips && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
+						renderer.hideMaze(maze);
+					
+					Block updatedBlock = maze.updateHeight(changedBlock);
+					
+					if (!hideAffectedClips && updatedBlock != null && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock))
+						renderer.redisplayMazeBlock(maze, updatedBlock.getLocation());
+				}
+				
+				for (ClipTool clipTool : affectedClipTools) {
+					
+					if (hideAffectedClips && renderer.isClipToolVisible(clipTool) &&
+					    (clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
+						renderer.hideClipboard(clipTool, true);
+					
+					Block updatedBlock = clipTool.updateHeight(changedBlock);
+					
+					if (!hideAffectedClips && updatedBlock != null && renderer.isClipToolVisible(clipTool) && clipTool.getClip().isBorderBlock(updatedBlock))
+						renderer.redisplayClipboardBlock(clipTool, updatedBlock.getLocation());
+				}
+			}
+		}.runTask(plugin);
+	}
+	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), true);
@@ -96,76 +167,5 @@ public class BlockUpdateListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityChangeBlock(EntityChangeBlockEvent event) {
 		checkClipsForTerrainChanges(event.getBlock().getRelative(BlockFace.DOWN), true);
-	}
-	
-	private void checkClipsForTerrainChanges(Block block, boolean hideAffectedElements) {
-		
-		Vec2 point = new Vec2(block);
-		HashSet<Maze> affectedMazes = getAffectedMazes(point);
-		HashSet<ClipTool> affectedClipboards = getAffectedClipTools(point);
-		
-		if (!affectedClipboards.isEmpty() || !affectedMazes.isEmpty())
-			updateClipsWithChangedTerrain(block, affectedMazes, affectedClipboards, hideAffectedElements);
-	}
-	
-	private HashSet<Maze> getAffectedMazes(Vec2 point) {
-		
-		HashSet<Maze> affectedMazes = new HashSet<>();
-		
-		for (Maze maze : mazeHandler.getMazes()) {
-			
-			if (maze.hasClip() && !maze.isConstructed() && maze.getClip().contains(point))
-				affectedMazes.add(maze);
-		}
-		
-		return affectedMazes;
-	}
-	
-	private HashSet<ClipTool> getAffectedClipTools(Vec2 point) {
-		
-		HashSet<ClipTool> affectedClipboards = new HashSet<>();
-		
-		for (ClipTool clipTool : clipHandler.getPlayerClipTools()) {
-			
-			if (clipTool.getClip().contains(point) || clipTool.isVertex(point))
-				affectedClipboards.add(clipTool);
-		}
-		
-		return affectedClipboards;
-	}
-	
-	private void updateClipsWithChangedTerrain(Block changedBlock,
-	                                           HashSet<Maze> affectedMazes,
-	                                           HashSet<ClipTool> affectedClipboards,
-	                                           boolean hideAffectedClips) {
-		
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				
-				for (Maze maze : affectedMazes) {
-					
-					if (hideAffectedClips && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(changedBlock))
-						renderer.hideMaze(maze);
-					
-					Block updatedBlock = maze.updateHeight(changedBlock);
-					
-					if (!hideAffectedClips && updatedBlock != null && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(updatedBlock))
-						renderer.redisplayMazeBlock(maze, updatedBlock.getLocation());
-				}
-				
-				for (ClipTool clipTool : affectedClipboards) {
-					
-					if (hideAffectedClips && renderer.isClipToolVisible(clipTool) &&
-					    (clipTool.getClip().isBorderBlock(changedBlock) || clipTool.isVertex(changedBlock)))
-						renderer.hideClipboard(clipTool, true);
-					
-					Block updatedBlock = clipTool.updateHeight(changedBlock);
-					
-					if (!hideAffectedClips && updatedBlock != null && renderer.isClipToolVisible(clipTool) && clipTool.getClip().isBorderBlock(updatedBlock))
-						renderer.redisplayClipboardBlock(clipTool, updatedBlock.getLocation());
-				}
-			}
-		}.runTask(plugin);
 	}
 }

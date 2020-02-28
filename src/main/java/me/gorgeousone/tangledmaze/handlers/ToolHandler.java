@@ -52,6 +52,15 @@ public class ToolHandler {
 		return playersTools.put(player.getUniqueId(), toolType) != toolType;
 	}
 	
+	public void removeTool(Player player) {
+		//TODO check if player clips are hidden correctly?
+		
+		//		if(hasClipboard(player))
+		//			renderer.unregisterShape(getClipboard(player));
+		
+		playersTools.remove(player.getUniqueId());
+	}
+	
 	//	TODO check how to replace resetToDefaultTool correctly
 	public void resetToDefaultTool(Player player) {
 		
@@ -61,15 +70,6 @@ public class ToolHandler {
 			clipHandler.setClipTool(player, new ClipTool(player, ClipShape.RECTANGLE));
 		
 		setToolType(player, ToolType.CLIP_TOOL);
-	}
-	
-	public void removeTool(Player player) {
-		//TODO check if player clips are hidden correctly?
-		
-		//		if(hasClipboard(player))
-		//			renderer.unregisterShape(getClipboard(player));
-		
-		playersTools.remove(player.getUniqueId());
 	}
 	
 	public void handleToolInteraction(Player player, Block clickedBlock, Action action) {

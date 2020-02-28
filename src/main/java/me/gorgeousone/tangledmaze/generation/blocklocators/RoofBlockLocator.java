@@ -1,9 +1,9 @@
 package me.gorgeousone.tangledmaze.generation.blocklocators;
 
+import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeDimension;
-import me.gorgeousone.tangledmaze.terrainmap.MazeAreaType;
-import me.gorgeousone.tangledmaze.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.utils.BlockDataState;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.Direction;

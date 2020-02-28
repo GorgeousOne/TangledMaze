@@ -32,30 +32,6 @@ public class ClipChange {
 		removedExits = new HashSet<>();
 	}
 	
-	public Clip getClip() {
-		return clip;
-	}
-	
-	public Map<Vec2, Integer> getAddedFill() {
-		return addedFill;
-	}
-	
-	public Map<Vec2, Integer> getRemovedFill() {
-		return removedFill;
-	}
-	
-	public Set<Vec2> getAddedBorder() {
-		return addedBorder;
-	}
-	
-	public Set<Vec2> getRemovedBorder() {
-		return removedBorder;
-	}
-	
-	public Set<Vec2> getRemovedExits() {
-		return removedExits;
-	}
-	
 	public void addFill(Vec2 point, int height) {
 		addedFill.put(point, height);
 	}
@@ -67,12 +43,12 @@ public class ClipChange {
 			removeBorder(point);
 	}
 	
-	public void addBorder(Vec2 point) {
-		addedBorder.add(point);
-	}
-	
 	public void removeBorder(Vec2 point) {
 		removedBorder.add(point);
+	}
+	
+	public void addBorder(Vec2 point) {
+		addedBorder.add(point);
 	}
 	
 	public void removeExit(Vec2 point) {
@@ -103,6 +79,10 @@ public class ClipChange {
 		return new Location(getClip().getWorld(), point.getX(), height, point.getZ());
 	}
 	
+	public Clip getClip() {
+		return clip;
+	}
+	
 	public ClipChange invert() {
 		
 		HashMap<Vec2, Integer> temporaryHolder = new HashMap<>(addedFill);
@@ -123,11 +103,31 @@ public class ClipChange {
 		return this;
 	}
 	
+	public Set<Vec2> getRemovedExits() {
+		return removedExits;
+	}
+	
 	public boolean clipWillContain(Vec2 point) {
 		return getClip().contains(point) && !getRemovedFill().containsKey(point) || getAddedFill().containsKey(point);
 	}
 	
+	public Map<Vec2, Integer> getAddedFill() {
+		return addedFill;
+	}
+	
+	public Map<Vec2, Integer> getRemovedFill() {
+		return removedFill;
+	}
+	
 	public boolean clipBorderWillContain(Vec2 point) {
 		return getAddedBorder().contains(point) || !getRemovedBorder().contains(point) && getClip().borderContains(point);
+	}
+	
+	public Set<Vec2> getAddedBorder() {
+		return addedBorder;
+	}
+	
+	public Set<Vec2> getRemovedBorder() {
+		return removedBorder;
 	}
 }

@@ -26,6 +26,10 @@ public class MazeHandler {
 		this.renderer = renderer;
 	}
 	
+	public ArrayList<Maze> getMazes() {
+		return new ArrayList<>(mazes.values());
+	}
+	
 	public Maze getMaze(Player player) {
 		
 		if (!player.hasPermission(Constants.BUILD_PERM))
@@ -37,10 +41,6 @@ public class MazeHandler {
 			mazes.put(uuid, new Maze(player));
 		
 		return mazes.get(player.getUniqueId());
-	}
-	
-	public ArrayList<Maze> getMazes() {
-		return new ArrayList<>(mazes.values());
 	}
 	
 	public boolean hasMaze(Player player) {
@@ -98,6 +98,4 @@ public class MazeHandler {
 		maze.processAction(action, true);
 		renderer.displayMazeAction(maze, action);
 	}
-	
-	
 }

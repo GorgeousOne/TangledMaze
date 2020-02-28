@@ -27,10 +27,6 @@ public enum MazeDimension {
 		return null;
 	}
 	
-	public static String[] getCommandNames() {
-		return Arrays.stream(values()).map(MazeDimension::commandName).toArray(String[]::new);
-	}
-	
 	public int getDefault() {
 		return defaultValue;
 	}
@@ -39,12 +35,11 @@ public enum MazeDimension {
 		return maxValue;
 	}
 	
-	@Override
-	public String toString() {
-		return name().toLowerCase().replaceAll("_", " ");
-	}
-	
 	public String commandName() {
 		return name().toLowerCase().replaceAll("_", "");
+	}
+	
+	public static String[] getCommandNames() {
+		return Arrays.stream(values()).map(MazeDimension::commandName).toArray(String[]::new);
 	}
 }

@@ -35,10 +35,6 @@ public class BlockDataState {
 		return blockData.clone();
 	}
 	
-	public void updateBlock(boolean withPhysics) {
-		blockLoc.getBlock().setBlockData(blockData);
-	}
-	
 	@Override
 	public BlockDataState clone() {
 		return new BlockDataState(getLoc(), getData());
