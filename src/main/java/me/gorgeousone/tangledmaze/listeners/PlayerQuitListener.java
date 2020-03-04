@@ -24,8 +24,8 @@ public class PlayerQuitListener implements Listener {
 		Player player = e.getPlayer();
 		
 		if (player.hasPermission(Constants.BUILD_PERM)) {
-			toolHandler.removeTool(player);
-			mazeHandler.removeMaze(player);
+			toolHandler.removePlayer(player);
+			mazeHandler.removePlayer(player);
 		}
 	}
 }

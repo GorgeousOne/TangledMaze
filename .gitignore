@@ -2,6 +2,9 @@
 
 .classpath
 .project
-.idea/
 target/
+
+.idea/workspace.xml
+.idea/modules.xml
+
 *.iml

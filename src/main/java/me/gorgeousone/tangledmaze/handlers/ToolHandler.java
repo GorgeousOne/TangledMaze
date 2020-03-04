@@ -52,7 +52,7 @@ public class ToolHandler {
 		return playersTools.put(player.getUniqueId(), toolType) != toolType;
 	}
 	
-	public void removeTool(Player player) {
+	public void removePlayer(Player player) {
 		
 		if(getToolType(player) == ToolType.CLIP_TOOL)
 			clipHandler.removePlayer(player);

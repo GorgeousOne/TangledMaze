@@ -62,13 +62,23 @@ public class MazeHandler {
 	
 	public void removeMaze(Player player) {
 		
-		Maze maze = getMaze(player);
+		if (!hasMaze(player))
+			return;
 		
-		renderer.hideMaze(maze);
-		renderer.unregisterMaze(maze);
-		buildHandler.removeMaze(maze);
-		playerMazes.remove(player.getUniqueId());
+		Maze maze = getMaze(player);
+		this.renderer.hideMaze(maze);
+		this.renderer.unregisterMaze(maze);
+		this.buildHandler.removeMaze(maze);
+		this.playerMazes.remove(player.getUniqueId());
 	}
+	
+	public void removePlayer(Player player) {
+		
+		Maze maze = getMaze(player);
+		this.buildHandler.removeMaze(maze);
+		this.playerMazes.remove(player.getUniqueId());
+	}
+	
 	
 	public Maze getStartedMaze(Player player, boolean withExits, boolean notConstructed) {
 		

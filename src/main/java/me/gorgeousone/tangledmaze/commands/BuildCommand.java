@@ -84,16 +84,11 @@ public class BuildCommand extends ArgCommand {
 			return false;
 			
 		}
-//		catch (Exception ex) {
-//			player.sendMessage(ex.getClass().getSimpleName());
-//			player.sendMessage(ex.getMessage());
-//			return false;
-//		}
 		
 		if (!maze.isConstructed()) {
 			
 			if (!mazePart.isMazeBuiltBefore()) {
-				toolHandler.removeTool(maze.getPlayer());
+				toolHandler.removePlayer(maze.getPlayer());
 				
 			} else {
 				Messages.ERROR_MAZE_NOT_BUILT.sendTo(sender);

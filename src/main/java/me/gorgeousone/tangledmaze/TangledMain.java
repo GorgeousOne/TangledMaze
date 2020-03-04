@@ -29,12 +29,6 @@ public class TangledMain extends JavaPlugin {
 	private Renderer renderer;
 	
 	@Override
-	public void onDisable() {
-		renderer.hideAllClues();
-		super.onDisable();
-	}
-	
-	@Override
 	public void onEnable() {
 		
 		super.onEnable();
@@ -58,6 +52,11 @@ public class TangledMain extends JavaPlugin {
 		
 		registerListeners();
 		registerCommands();
+	}
+	
+	@Override
+	public void onDisable() {
+		renderer.hideAllClues();
 	}
 	
 	public void reloadPlugin() {
