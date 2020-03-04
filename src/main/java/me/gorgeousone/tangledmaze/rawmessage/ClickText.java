@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.rawmessage;
 
 public class ClickText {
-
+	
 	private String value;
 	private ClickAction action;
 	
@@ -9,7 +9,7 @@ public class ClickText {
 		this.value = value;
 		this.action = action;
 	}
-
+	
 	@Override
 	public String toString() {
 		return ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + value + "\"}";

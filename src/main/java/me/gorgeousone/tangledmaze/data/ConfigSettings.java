@@ -1,7 +1,5 @@
 package me.gorgeousone.tangledmaze.data;
 
-import java.util.ArrayList;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,18 +8,21 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class ConfigSettings {
+import java.util.ArrayList;
 
+public final class ConfigSettings {
+	
 	public static ItemStack MAZE_WAND;
 	public static Material MAZE_WAND_MATERIAL;
 	
-	private ConfigSettings() {}
-
+	private ConfigSettings() {
+	}
+	
 	public static void loadSettings(FileConfiguration config) {
-
+		
 		MAZE_WAND_MATERIAL = Material.matchMaterial(config.getString("wand-item"));
 		
-		if(MAZE_WAND_MATERIAL == null)
+		if (MAZE_WAND_MATERIAL == null)
 			MAZE_WAND_MATERIAL = Material.GOLDEN_SHOVEL;
 		
 		createMazeWand();

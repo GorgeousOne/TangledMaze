@@ -5,7 +5,7 @@ public enum ClickAction {
 	RUN("run_command"),
 	SUGGEST("suggest_command"),
 	URL("open_url");
-		
+	
 	private String action;
 	
 	ClickAction(String action) {

@@ -35,14 +35,11 @@ errors:
     maze-not-started: Please start a maze first.
     clipboard-not-touching-maze: Your clipboard does not seem to touch your maze.
     no-maze-exit-set: Please mark an exit at the border of your maze first.
-    maze-part-already-built: Your maze is already built.
+    maze-part-already-built: This part of your maze is already built.
     maze-not-built: Please build the walls of your maze first.
-    invalid-number: '''%number%'' is not a valid number.'
     invalid-dimension: '''%dimension%'' is not a valid dimension.'
     invalid-maze-part: '''%mazepart%'' is not a valid maze part.'
     invalid-block-name: '''%block%'' is not a block name.'
     invalid-block-property: '''%block%'' does not seem to have the property ''%property%''.'
     invalid-block-property-value: '''%block%'' cannot take ''%value%'' as value for ''%property%''.'
     missing-block-property-value: 'Please complete your added property in the pattern ''%property%=...''.'
-    save-file-missing: No maze with name '%name%' found.
-    save-file-corrupted: Could not load maze %name%. The save file has been corrupted.
