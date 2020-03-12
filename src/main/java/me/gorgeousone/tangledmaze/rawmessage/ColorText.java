@@ -4,6 +4,7 @@ public class ColorText {
 	
 	private String text;
 	private Color color;
+	
 	private boolean
 			bold,
 			italic,
@@ -12,8 +13,9 @@ public class ColorText {
 			strikethrough;
 	
 	public ColorText(String text) {
+		
 		this.text = text;
-		this.color = Color.DEFAULT;
+		
 		bold = false;
 		italic = false;
 		obfuscated = false;
@@ -52,20 +54,21 @@ public class ColorText {
 	}
 	
 	public String toString() {
+		
 		StringBuilder out = new StringBuilder("\"text\":\"" + text + "\"");
 		
-		out.append(color);
-		
+		if(color != null)
+			out.append(",").append(color);
 		if (bold)
-			out.append(Color.BOLD);
+			out.append(",").append(Color.BOLD);
 		if (italic)
-			out.append(Color.ITALIC);
+			out.append(",").append(Color.ITALIC);
 		if (obfuscated)
-			out.append(Color.OBFUSCATED);
+			out.append(",").append(Color.OBFUSCATED);
 		if (underlined)
-			out.append(Color.UNDERLINED);
+			out.append(",").append(Color.UNDERLINED);
 		if (strikethrough)
-			out.append(Color.STRIKETHROUGH);
+			out.append(",").append(Color.STRIKETHROUGH);
 		
 		return out.toString();
 	}

@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.generation.pathmap;
 import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 
-import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

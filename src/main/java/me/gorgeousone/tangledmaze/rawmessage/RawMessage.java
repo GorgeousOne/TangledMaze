@@ -9,8 +9,8 @@ import java.util.List;
 public class RawMessage {
 	
 	private static final String
-			start = "{\"text\":\"\",\"extra\":[",
-			end = "]}";
+			start = "[",
+			end = "]";
 	
 	private List<RawElement> rawElements;
 	
@@ -19,12 +19,13 @@ public class RawMessage {
 	}
 	
 	public RawElement addText(String text) {
+		
 		RawElement element = new RawElement(text, this);
 		rawElements.add(element);
 		return element;
 	}
 	
-	public RawElement last() {
+	public RawElement lastText() {
 		return rawElements.isEmpty() ? null : rawElements.get(rawElements.size() - 1);
 	}
 	
@@ -34,11 +35,12 @@ public class RawMessage {
 	
 	@Override
 	public String toString() {
+		
 		StringBuilder message = new StringBuilder(start);
 		
-		for (RawElement collection : rawElements) {
+		for (RawElement elements : rawElements) {
 			message.append("{");
-			message.append(collection.toString());
+			message.append(elements.toString());
 			message.append("},");
 		}
 		

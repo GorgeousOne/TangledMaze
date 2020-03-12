@@ -7,7 +7,6 @@ import me.gorgeousone.tangledmaze.clip.ClipChange;
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
 import me.gorgeousone.tangledmaze.utils.Direction;
-import me.gorgeousone.tangledmaze.utils.ConfigUtils;
 import me.gorgeousone.tangledmaze.utils.MathHelper;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Bukkit;

@@ -26,6 +26,7 @@ public final class BlockGenerator {
 		Iterator<BlockDataState> iter = blocksToUpdate.iterator();
 		
 		new BukkitRunnable() {
+			
 			@Override
 			public void run() {
 				

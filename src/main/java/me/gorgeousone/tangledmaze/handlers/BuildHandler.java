@@ -1,6 +1,7 @@
 package me.gorgeousone.tangledmaze.handlers;
 
 import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.generation.BlockDataState;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.MazePart;
 import me.gorgeousone.tangledmaze.generation.MazePartBlockBackup;
@@ -9,7 +10,6 @@ import me.gorgeousone.tangledmaze.generation.blocklocators.AbstractBlockLocator;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMapFactory;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.generation.BlockDataState;
 import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;

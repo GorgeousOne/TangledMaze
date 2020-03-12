@@ -12,6 +12,6 @@ public class ClickText {
 	
 	@Override
 	public String toString() {
-		return ",\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + value + "\"}";
+		return "\"clickEvent\":{\"action\":\"" + action + "\",\"value\":\"" + value + "\"}";
 	}
 }

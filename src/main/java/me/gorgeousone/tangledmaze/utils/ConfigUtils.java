@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.utils;
 
-import me.gorgeousone.tangledmaze.clip.Clip;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 

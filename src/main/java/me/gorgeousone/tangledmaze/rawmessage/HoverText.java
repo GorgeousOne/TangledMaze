@@ -55,7 +55,7 @@ public class HoverText {
 	
 	@Override
 	public String toString() {
-		StringBuilder hoverText = new StringBuilder(",\"hoverEvent\":{\"action\":\"show_text\",\"value\":[");
+		StringBuilder hoverText = new StringBuilder("\"hoverEvent\":{\"action\":\"show_text\",\"value\":[");
 		
 		for (ColorText element : texts) {
 			hoverText.append("{").append(element.toString()).append("},");

@@ -4,13 +4,12 @@ import me.gorgeousone.cmdframework.argument.ArgType;
 import me.gorgeousone.cmdframework.argument.ArgValue;
 import me.gorgeousone.cmdframework.argument.Argument;
 import me.gorgeousone.cmdframework.command.ArgCommand;
+import me.gorgeousone.tangledmaze.commands.helppages.HelpPage;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
-import me.gorgeousone.tangledmaze.commands.helppages.HelpPage;
-import me.gorgeousone.tangledmaze.utils.ConfigUtils;
 import me.gorgeousone.tangledmaze.utils.MathHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -44,16 +43,16 @@ public class HelpCommand extends ArgCommand {
 		
 		int iter = -1;
 		
-		pageLinks[++iter].last().append("/maze wand").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze start").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze discard").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze teleport").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze select <tool>").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze add / cut").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze undo").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze set <dimensions> <integer>").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze build <part> <block> ...").color(Color.GREEN);
-		pageLinks[++iter].last().append("/maze unbuild <part>").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze wand").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze start").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze discard").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze teleport").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze select <tool>").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze add / cut").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze undo").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze set <dimensions> <integer>").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze build <part> <block> ...").color(Color.GREEN);
+		pageLinks[++iter].lastText().append("/maze unbuild <part>").color(Color.GREEN);
 	}
 	
 	private void loadHelpPagesContent() {

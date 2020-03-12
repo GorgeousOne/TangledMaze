@@ -13,10 +13,14 @@ import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.listeners.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerQuitListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerWandInteractionListener;
+import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
+import me.gorgeousone.tangledmaze.rawmessage.Color;
+import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
 import me.gorgeousone.tangledmaze.updatechecks.UpdateCheck;
 import me.gorgeousone.tangledmaze.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,7 +36,6 @@ public class TangledMain extends JavaPlugin {
 	public void onEnable() {
 		
 		super.onEnable();
-		
 		checkForUpdates();
 		
 		renderer = new Renderer(this);
@@ -109,13 +112,25 @@ public class TangledMain extends JavaPlugin {
 	private void checkForUpdates() {
 		
 		int resourceId = 59284;
+		String websiteURL = "https://www.spigotmc.org/resources/tangled-maze-maze-generator-1-13.59284/";
 		
-		UpdateCheck.of(this).resourceId(resourceId).handleResponse((versionResponse, version) -> {
+		UpdateCheck.of(this).resourceId(resourceId).handleResponse((versionResponse, newVersion) -> {
 			
 			switch (versionResponse) {
 				
 				case FOUND_NEW:
-					Bukkit.broadcastMessage(Constants.prefix + "Check out the new version of TangledMaze: " + ChatColor.DARK_GREEN + version + ChatColor.YELLOW + "!");
+					
+					RawMessage updateMsg = new RawMessage();
+					updateMsg.addText("[").color(Color.GREEN).append("TM").color(Color.LIGHT_GREEN).append("] ").color(Color.GREEN);
+					updateMsg.lastText().append("Check out the new version of Tangled Maze: ").color(Color.YELLOW);
+					updateMsg.addText("v" + newVersion).color(Color.GREEN).underlined(true).onClick(websiteURL, ClickAction.OPEN_URL).hoverText("click to open website");
+					
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						if (player.isOp())
+							updateMsg.sendTo(player);
+					}
+					
+					getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Check out the new version v" + newVersion + " of Tangled Maze: " + websiteURL);
 					break;
 				
 				case LATEST:

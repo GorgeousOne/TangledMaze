@@ -70,17 +70,16 @@ public class RawElement {
 		
 		StringBuilder out = new StringBuilder("\"text\":\"\",\"extra\":[");
 		
-		for (ColorText text : texts) {
+		for (ColorText text : texts)
 			out.append("{").append(text.toString()).append("},");
-		}
 		
 		out.deleteCharAt(out.length() - 1);
 		out.append("]");
 		
 		if (hoverText != null)
-			out.append(hoverText.toString());
+			out.append(",").append(hoverText.toString());
 		if (clickText != null)
-			out.append(clickText.toString());
+			out.append(",").append(clickText.toString());
 		
 		return out.toString();
 	}

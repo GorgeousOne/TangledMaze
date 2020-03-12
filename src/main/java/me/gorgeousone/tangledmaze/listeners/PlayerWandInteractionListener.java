@@ -79,6 +79,9 @@ public class PlayerWandInteractionListener implements Listener {
 	
 	private void hidePlayersClipsIfHit(Player player, Block clickedBlock) {
 		
+		if (!player.hasPermission(Constants.BUILD_PERM))
+			return;
+		
 		Maze maze = mazeHandler.getMaze(player);
 		
 		if (maze.hasClip() && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
@@ -114,6 +117,7 @@ public class PlayerWandInteractionListener implements Listener {
 		if (clipHandler.hasClipTool(player) && toolHandler.getToolType(player) == ToolType.CLIP_TOOL)
 			renderer.displayClipTool(clipHandler.getClipTool(player));
 	}
+	
 	private void destroyMazeWand(Player player, ItemStack wand) {
 		
 		player.getInventory().remove(wand);

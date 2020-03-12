@@ -10,8 +10,8 @@ import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
-import me.gorgeousone.tangledmaze.tools.ToolType;
 import me.gorgeousone.tangledmaze.messages.PlaceHolder;
+import me.gorgeousone.tangledmaze.tools.ToolType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.generation.blocklocators;
 
-import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.generation.BlockDataState;
+import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 
 import java.util.Set;
 
