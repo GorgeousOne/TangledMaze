@@ -20,7 +20,7 @@ public class TerrainEditor {
 					continue;
 				
 				int floorHeight = terrainMap.getFloorHeight(x, z);
-				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap));
+				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap, null));
 				
 				if (floorHeight >= maxNeighborFloorHeight + 2)
 					terrainMap.setFloorHeight(x, z, floorHeight + getAverageHeightDiffToNeighborFloors(terrainMap, x, z));
@@ -28,13 +28,9 @@ public class TerrainEditor {
 		}
 	}
 	
-	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
-		return getHighestNeighborFloor(x, z, terrainMap, null);
-	}
-	
 	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap, MazeAreaType areaType) {
 		
-		Vec2 maxNeighborFloor = null;
+		Vec2 maxNeighborFloor = new Vec2(x, z);
 		int maxNeighborFloorHeight = 0;
 		
 		for (Direction dir : Direction.values()) {

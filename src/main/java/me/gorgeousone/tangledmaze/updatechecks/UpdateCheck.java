@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 
 public class UpdateCheck {
 	
-	private static final String SPIGOT_URL = "https://api.spigotmc.org/legacy/update.php?resource=%d";
+	private static final String SPIGOT_URL = "https://api.spigotmc.org/legacy/update.php?resource=%d/";
 	
 	private final JavaPlugin javaPlugin;
 	

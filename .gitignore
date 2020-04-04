@@ -8,3 +8,4 @@ target/
 .idea/modules.xml
 
 *.iml
+.idea/misc.xml
