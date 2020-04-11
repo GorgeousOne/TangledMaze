@@ -2,7 +2,11 @@ package me.gorgeousone.tangledmaze.generation.terrainmap;
 
 import me.gorgeousone.tangledmaze.generation.pathmap.RectSegment;
 import me.gorgeousone.tangledmaze.maze.Maze;
+import me.gorgeousone.tangledmaze.maze.MazeDimension;
 import me.gorgeousone.tangledmaze.utils.Vec2;
+import org.bukkit.World;
+
+import java.util.Map;
 
 /**
  * A terrain map contains different information about a maze that the generators access.
@@ -13,19 +17,21 @@ import me.gorgeousone.tangledmaze.utils.Vec2;
  */
 public class TerrainMap {
 	
-	private Maze maze;
+	private World world;
+	private Vec2 minimum;
+	private Vec2 maximum;
+	private Map<MazeDimension, Integer> dimensions;
+	
 	private MazeAreaType[][] shapeMap;
 	private int[][] floorHeightMap;
 	private int[][] wallHeightMap;
 	
-	private Vec2 minimum;
-	private Vec2 maximum;
-	
-	public TerrainMap(Vec2 minimum, Vec2 maximum, Maze maze) {
+	public TerrainMap(World world, Vec2 minimum, Vec2 maximum, Map<MazeDimension, Integer> dimensions) {
 		
+		this.world = world;
 		this.minimum = minimum;
 		this.maximum = maximum;
-		this.maze = maze;
+		this.dimensions = dimensions;
 		
 		int width = maximum.getX() - minimum.getX() + 1;
 		int height = maximum.getZ() - minimum.getZ() + 1;
@@ -40,9 +46,8 @@ public class TerrainMap {
 		}
 	}
 	
-	//it's a bit of cheating to pass this reference for info about path width etc. Maybe there is a better way?
-	public Maze getMaze() {
-		return maze;
+	public World getWorld() {
+		return world;
 	}
 	
 	public int getMinX() {
@@ -59,6 +64,10 @@ public class TerrainMap {
 	
 	public int getMaxZ() {
 		return maximum.getZ();
+	}
+	
+	public int getDimension(MazeDimension size) {
+		return dimensions.get(size);
 	}
 	
 	public void setAreaType(int x, int z, MazeAreaType type) {

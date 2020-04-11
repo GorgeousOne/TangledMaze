@@ -1,6 +1,5 @@
 package me.gorgeousone.tangledmaze.maze;
 
-import me.gorgeousone.tangledmaze.PlayerHolder;
 import me.gorgeousone.tangledmaze.clip.ActionHistory;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipChange;
@@ -13,19 +12,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-public class Maze extends PlayerHolder {
+public class Maze {
 	
-	private static IllegalStateException notAlterableException = new IllegalStateException("The maze cannot be altered when it is constructed.");
+	private transient IllegalStateException notAlterableException;
 	
 	private World world;
-	private ActionHistory history;
+	private transient ActionHistory history;
 	private Clip clip;
 	private Stack<Vec2> exits;
 	
@@ -33,10 +31,8 @@ public class Maze extends PlayerHolder {
 	private BlockComposition blockComposition;
 	private boolean isConstructed;
 	
-	public Maze(Player player) {
-		super(player);
-		
-		this.world = player.getWorld();
+	public Maze(World world) {
+		this.world = world;
 		
 		history = new ActionHistory();
 		exits = new Stack<>();
@@ -47,6 +43,8 @@ public class Maze extends PlayerHolder {
 		
 		for (MazeDimension dimension : MazeDimension.values())
 			dimensions.put(dimension, dimension.getDefault());
+		
+		notAlterableException = new IllegalStateException("The maze cannot be altered when it is constructed.");
 	}
 	
 	public World getWorld() {
@@ -82,7 +80,7 @@ public class Maze extends PlayerHolder {
 		
 		Stack<Vec2> deepClone = new Stack<>();
 		
-		for(Vec2 exit : exits)
+		for (Vec2 exit : exits)
 			deepClone.add(exit.clone());
 		
 		return deepClone;
@@ -135,6 +133,10 @@ public class Maze extends PlayerHolder {
 		return exits.contains(blockVec) && getClip().getHeight(blockVec) == block.getY();
 	}
 	
+	public Map<MazeDimension, Integer> getDimensions() {
+		return new HashMap<>(dimensions);
+	}
+	
 	public int getDimension(MazeDimension size) {
 		return dimensions.get(size);
 	}
@@ -163,14 +165,6 @@ public class Maze extends PlayerHolder {
 		isConstructed = state;
 	}
 	
-	/**
-	 * Applies a {@link ClipChange} which can be created with the {@link MazeChangeFactory}.
-	 * The method will change the clip of the maze according to the ClipAction,
-	 * the visual change of the maze to the player is left to the method caller (see {@link me.gorgeousone.tangledmaze.handlers.Renderer#displayMazeAction(Maze, ClipChange)}).
-	 *
-	 * @param action        beforehand created ClipAction
-	 * @param saveToHistory option to add the action to the maze's {@link ActionHistory} (for accessing it later e. g. to undo it)
-	 */
 	public void processAction(ClipChange action, boolean saveToHistory) {
 		
 		if (isConstructed())

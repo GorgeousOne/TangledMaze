@@ -1,7 +1,7 @@
 package me.gorgeousone.tangledmaze.generation.blockdatapickers;
 
 import me.gorgeousone.tangledmaze.generation.BlockComposition;
-import me.gorgeousone.tangledmaze.generation.BlockDataState;
+import me.gorgeousone.tangledmaze.generation.LocatedBlockData;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import org.bukkit.block.data.BlockData;
 
@@ -16,7 +16,7 @@ public class RandomBlockDataPicker extends AbstractBlockDataPicker {
 	}
 	
 	@Override
-	public BlockData pickBlockData(BlockDataState block, BlockComposition blockComposition, TerrainMap terrainMap) {
+	public BlockData pickBlockData(LocatedBlockData block, BlockComposition blockComposition, TerrainMap terrainMap) {
 		return blockComposition.getBlockAtAmount(random.nextInt(blockComposition.getSize() + 1));
 	}
 }

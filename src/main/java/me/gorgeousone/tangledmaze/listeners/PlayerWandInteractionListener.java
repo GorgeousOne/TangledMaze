@@ -3,7 +3,6 @@ package me.gorgeousone.tangledmaze.listeners;
 import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
@@ -29,16 +28,13 @@ public class PlayerWandInteractionListener implements Listener {
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
-	private Renderer renderer;
 	
 	public PlayerWandInteractionListener(ToolHandler toolHandler,
 	                                     ClipToolHandler clipHandler,
-	                                     MazeHandler mazeHandler,
-	                                     Renderer renderer) {
+	                                     MazeHandler mazeHandler) {
 		this.toolHandler = toolHandler;
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
-		this.renderer = renderer;
 	}
 	
 	@EventHandler
@@ -79,21 +75,18 @@ public class PlayerWandInteractionListener implements Listener {
 	
 	private void hidePlayersClipsIfHit(Player player, Block clickedBlock) {
 		
-		if (!player.hasPermission(Constants.BUILD_PERM))
-			return;
-		
 		Maze maze = mazeHandler.getMaze(player);
 		
-		if (maze.hasClip() && renderer.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
-			renderer.hideMaze(maze);
+		if (maze.hasClip() && mazeHandler.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))
+			mazeHandler.hideMazeOf(player);
 		
 		if (!clipHandler.hasClipTool(player))
 			return;
 		
 		ClipTool clipTool = clipHandler.getClipTool(player);
 		
-		if (renderer.isClipToolVisible(clipTool) && (clipTool.isVertex(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
-			renderer.hideClipTool(clipTool, false);
+		if (clipHandler.isClipToolVisible(clipTool) && (clipTool.isVertexBlock(clickedBlock) || clipTool.getClip().isBorderBlock(clickedBlock)))
+			clipHandler.hideClipToolOf(player, true);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -112,10 +105,10 @@ public class PlayerWandInteractionListener implements Listener {
 		Maze maze = mazeHandler.getMaze(player);
 		
 		if (maze.hasClip() && !maze.isConstructed())
-			renderer.displayMaze(mazeHandler.getMaze(player));
+			mazeHandler.displayMazeOf(player);
 		
 		if (clipHandler.hasClipTool(player) && toolHandler.getToolType(player) == ToolType.CLIP_TOOL)
-			renderer.displayClipTool(clipHandler.getClipTool(player));
+			clipHandler.displayClipToolOf(player);
 	}
 	
 	private void destroyMazeWand(Player player, ItemStack wand) {

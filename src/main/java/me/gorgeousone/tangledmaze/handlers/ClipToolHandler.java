@@ -1,36 +1,50 @@
 package me.gorgeousone.tangledmaze.handlers;
 
+import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipFactory;
 import me.gorgeousone.tangledmaze.clip.ClipShape;
+import me.gorgeousone.tangledmaze.data.Constants;
 import me.gorgeousone.tangledmaze.data.Messages;
+import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.BlockVec;
+import me.gorgeousone.tangledmaze.utils.RenderUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class ClipToolHandler {
 	
-	private Renderer renderer;
+	private JavaPlugin plugin;
+	private MazeHandler mazeHandler;
+	
 	private Map<UUID, ClipTool> playerClipTools;
 	private Map<UUID, ClipShape> playerClipShapes;
+	private HashMap<ClipTool, Boolean> clipVisibilities;
 	
-	public ClipToolHandler(Renderer renderer) {
+	public ClipToolHandler(JavaPlugin plugin, MazeHandler mazeHandler) {
 		
-		this.renderer = renderer;
+		this.plugin = plugin;
+		this.mazeHandler = mazeHandler;
+		
 		playerClipTools = new HashMap<>();
 		playerClipShapes = new HashMap<>();
+		clipVisibilities = new HashMap<>();
 	}
 	
-	public Collection<ClipTool> getPlayerClipTools() {
-		return playerClipTools.values();
+	public Map<UUID, ClipTool> getPlayerClipTools() {
+		return new HashMap<>(playerClipTools);
 	}
 	
 	public ClipTool getClipTool(Player player) {
@@ -48,20 +62,20 @@ public class ClipToolHandler {
 	public void setClipTool(Player player, ClipTool clipTool) {
 		
 		if (hasStartedClipTool(player)) {
-			renderer.hideClipTool(getClipTool(player), true);
-			renderer.unregisterClipTool(getClipTool(player));
+			hideClipToolOf(player, true);
+			clipVisibilities.remove(getClipTool(player));
 		}
 		
 		UUID uuid = player.getUniqueId();
 		playerClipTools.put(uuid, clipTool);
-		renderer.displayClipTool(clipTool);
+		displayClipToolOf(player);
 	}
 	
 	public void removeClipTool(Player player) {
 		
 		if (hasStartedClipTool(player)) {
-			renderer.hideClipTool(getClipTool(player), true);
-			renderer.unregisterClipTool(getClipTool(player));
+			hideClipToolOf(player, true);
+			clipVisibilities.remove(getClipTool(player));
 			playerClipTools.remove(player.getUniqueId());
 		}
 	}
@@ -69,8 +83,8 @@ public class ClipToolHandler {
 	public void removePlayer(Player player) {
 		
 		if (hasClipTool(player))
-			renderer.unregisterClipTool(getClipTool(player));
-			
+			clipVisibilities.remove(getClipTool(player));
+		
 		playerClipShapes.remove(player.getUniqueId());
 		playerClipTools.remove(player.getUniqueId());
 	}
@@ -87,18 +101,19 @@ public class ClipToolHandler {
 		playerClipShapes.put(player.getUniqueId(), shape);
 		
 		if (hasClipTool(player))
-			switchClipShape(getClipTool(player), shape);
+			switchClipShape(player, shape);
 		
 		return true;
 	}
 	
 	//that obviously is limited to rectangles and ellipses...
-	private void switchClipShape(ClipTool clipTool, ClipShape newShape) {
+	private void switchClipShape(Player player, ClipShape newShape) {
 		
-		renderer.hideClipTool(clipTool, true);
+		ClipTool clipTool = getClipTool(player);
+		hideClipToolOf(player, true);
 		
-		List<BlockVec> vertices = clipTool.getVertices();
-		List<BlockVec> definingVertices = new ArrayList<>();
+		List<Location> vertices = clipTool.getVertices();
+		List<Location> definingVertices = new ArrayList<>();
 		
 		definingVertices.add(vertices.get(0));
 		definingVertices.add(vertices.get(2));
@@ -107,7 +122,7 @@ public class ClipToolHandler {
 		clipTool.setVertices(ClipFactory.createCompleteVertexList(definingVertices, newShape));
 		clipTool.setShape(newShape);
 		
-		renderer.displayClipTool(clipTool);
+		displayClipToolOf(player);
 	}
 	
 	public void handleClipInteraction(Player player, Block clickedBlock) {
@@ -118,7 +133,7 @@ public class ClipToolHandler {
 		ClipTool clipTool = getClipTool(player);
 		
 		if (clickedBlock.getWorld() != clipTool.getWorld()) {
-			renderer.unregisterClipTool(clipTool);
+			clipVisibilities.remove(clipTool);
 			clipTool = new ClipTool(player, getClipShape(player));
 			setClipTool(player, clipTool);
 		}
@@ -130,38 +145,39 @@ public class ClipToolHandler {
 		
 		if (clipTool.hasClip()) {
 			
-			if (clipTool.isVertex(clickedBlock)) {
+			if (clipTool.isVertexBlock(clickedBlock)) {
 				clipTool.startShiftingVertex(clipTool.getVertex(clickedBlock));
 				return;
 				
 			} else {
-				renderer.hideClipTool(clipTool, true);
+				hideClipToolOf(player, true);
 				clipTool = new ClipTool(player, getClipShape(player));
 				setClipTool(player, clipTool);
 			}
 		}
 		
-		addVertexToClip(clipTool, clickedBlock);
+		addVertexToClipTool(clipTool, clickedBlock);
 	}
 	
-	private void addVertexToClip(ClipTool clipTool, Block clickedBlock) {
+	private void addVertexToClipTool(ClipTool clipTool, Block clickedBlock) {
 		
 		ClipShape clipShape = getClipShape(clipTool.getPlayer());
-		List<BlockVec> vertices = clipTool.getVertices();
+		List<Location> vertices = clipTool.getVertices();
 		
-		vertices.add(new BlockVec(BlockUtils.nearestSurface(clickedBlock.getLocation())));
+		vertices.add(BlockUtils.nearestSurface(clickedBlock.getLocation()).getLocation());
 		
 		if (vertices.size() == clipShape.getRequiredVertexCount()) {
 			clipTool.setClip(ClipFactory.createClip(clipShape, vertices));
 			clipTool.setVertices(ClipFactory.createCompleteVertexList(vertices, clipShape));
 		}
 		
-		renderer.displayClipTool(clipTool);
+		displayClipToolOf(clipTool.getPlayer());
 	}
 	
 	private void completeReshapingClip(ClipTool clipTool, Block newVertexBlock) {
 		
-		renderer.hideClipTool(clipTool, true);
+		Player player = clipTool.getPlayer();
+		hideClipToolOf(player, true);
 		ClipShape clipShape = clipTool.getShape();
 		
 		switch (clipShape) {
@@ -169,7 +185,7 @@ public class ClipToolHandler {
 			case RECTANGLE:
 			case ELLIPSE:
 				
-				List<BlockVec> newDefiningVertices = createNewDefiningVertices(clipTool, newVertexBlock);
+				List<Location> newDefiningVertices = createNewDefiningVertices(clipTool, newVertexBlock);
 				clipTool.setClip(ClipFactory.createClip(clipShape, newDefiningVertices));
 				clipTool.setVertices(ClipFactory.createCompleteVertexList(newDefiningVertices, clipShape));
 				break;
@@ -178,19 +194,19 @@ public class ClipToolHandler {
 				break;
 		}
 		
-		renderer.displayClipTool(clipTool);
+		displayClipToolOf(player);
 	}
 	
-	private List<BlockVec> createNewDefiningVertices(ClipTool clipTool, Block newVertexBlock) {
+	private List<Location> createNewDefiningVertices(ClipTool reshapedClipTool, Block newVertexBlock) {
 		
-		List<BlockVec> vertices = clipTool.getVertices();
-		List<BlockVec> newDefiningVertices = new ArrayList<>();
+		List<Location> vertices = reshapedClipTool.getVertices();
+		List<Location> newDefiningVertices = new ArrayList<>();
 		
-		int indexOfOldVertex = vertices.indexOf(clipTool.getShiftedVertex());
+		int indexOfOldVertex = vertices.indexOf(reshapedClipTool.getShiftedVertex());
 		int indexOfVertexOppositeToOldVertex = (indexOfOldVertex + 6) % 4;
 		
 		newDefiningVertices.add(vertices.get(indexOfVertexOppositeToOldVertex));
-		newDefiningVertices.add(new BlockVec(BlockUtils.nearestSurface(newVertexBlock.getLocation())));
+		newDefiningVertices.add(BlockUtils.nearestSurface(newVertexBlock.getLocation()).getLocation());
 		
 		return newDefiningVertices;
 	}
@@ -211,5 +227,94 @@ public class ClipToolHandler {
 		}
 		
 		return clipTool;
+	}
+	
+	public boolean isClipToolVisible(ClipTool clipTool) {
+		return clipVisibilities.getOrDefault(clipTool, false);
+	}
+	
+	public void displayClipToolOf(Player player) {
+		
+		if (!hasStartedClipTool(player))
+			return;
+		
+		ClipTool clipTool = getClipTool(player);
+		
+		Map<Material, Collection<Location>> blocksToDisplay = new LinkedHashMap<>();
+		
+		if (clipTool.hasClip()) {
+			Clip clip = clipTool.getClip();
+			blocksToDisplay.put(Constants.CLIPBOARD_BORDER, clip.getBlockLocs(clip.getBorder()));
+		}
+		
+		blocksToDisplay.put(Constants.CLIPBOARD_VERTEX, clipTool.getVertices());
+		RenderUtils.sendBlocksDelayed(player, blocksToDisplay, plugin);
+		clipVisibilities.put(clipTool, true);
+	}
+	
+	//hides a clipboard completely with the option to redisplay previously covered maze parts
+	public void hideClipToolOf(Player player, boolean updateMaze) {
+		
+		if (!hasStartedClipTool(player))
+			return;
+		
+		ClipTool clipTool = getClipTool(player);
+		
+		if(!isClipToolVisible(clipTool))
+			return;
+		
+		for (Location vertex : clipTool.getVertices())
+			player.sendBlockChange(vertex, vertex.getBlock().getBlockData());
+		
+		if (clipTool.hasClip()) {
+			for (Location border : clipTool.getClip().getBlockLocs(clipTool.getClip().getBorder()))
+				player.sendBlockChange(border, border.getBlock().getBlockData());
+		}
+		
+		if (updateMaze && mazeHandler.hasStartedMaze(player))
+			redisplayMaze(clipTool, player);
+		
+		clipVisibilities.put(clipTool, false);
+	}
+	
+	public void redisplayClipToolBlock(Player player, Block block) {
+		
+		ClipTool clipTool = getClipTool(player);
+		Location blockLoc = block.getLocation();
+		
+		if (clipTool.isVertexBlock(block))
+			RenderUtils.sendBlockDelayed(player, blockLoc, Constants.CLIPBOARD_VERTEX, plugin);
+		else
+			RenderUtils.sendBlockDelayed(player, blockLoc, Constants.CLIPBOARD_BORDER, plugin);
+	}
+	
+	private void redisplayMaze(ClipTool clipTool, Player player) {
+		
+		Maze maze = mazeHandler.getMaze(player);
+		
+		if (!mazeHandler.isMazeVisible(mazeHandler.getMaze(player)))
+			return;
+		
+		Clip clip = clipTool.getClip();
+		Clip mazeClip = maze.getClip();
+		
+		for (Location border : clip.getBlockLocs(clip.getBorder())) {
+			if (mazeClip.isBorderBlock(border.getBlock()))
+				mazeHandler.redisplayMazeBlock(player, border.getBlock());
+		}
+		
+		for (Location vertex : clipTool.getVertices()) {
+			if (mazeClip.isBorderBlock(vertex.getBlock()))
+				mazeHandler.redisplayMazeBlock(player, vertex.getBlock());
+		}
+	}
+	
+	public void hideAllClues() {
+		
+		for (Map.Entry<UUID, ClipTool> entry : playerClipTools.entrySet()) {
+			if (isClipToolVisible(entry.getValue()))
+				hideClipToolOf(Bukkit.getPlayer(entry.getKey()), false);
+			
+		}
 	}
 }

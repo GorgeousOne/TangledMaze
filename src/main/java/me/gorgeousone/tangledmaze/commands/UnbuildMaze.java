@@ -11,7 +11,6 @@ import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class UnbuildMaze extends ArgCommand {
 	
@@ -19,7 +18,7 @@ public class UnbuildMaze extends ArgCommand {
 	private BuildHandler buildHandler;
 	
 	public UnbuildMaze(MazeCommand mazeCommand, MazeHandler mazeHandler, BuildHandler buildHandler) {
-		super("unbuild", null, true, mazeCommand);
+		super("unbuild", null, false, mazeCommand);
 		addArg(new Argument("part", ArgType.STRING, "maze", "floor", "roof").setDefaultTo("maze"));
 		
 		this.mazeHandler = mazeHandler;
@@ -27,14 +26,13 @@ public class UnbuildMaze extends ArgCommand {
 	}
 	
 	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+	protected void onCommand(CommandSender sender, ArgValue[] arguments) {
 		
-		Player player = (Player) sender;
-		Maze maze = mazeHandler.getMaze(player);
+		Maze maze = mazeHandler.getMaze(sender);
 		
 		if (!maze.isConstructed()) {
-			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.sendTo(player);
-			return true;
+			Messages.MESSAGE_NO_MAZE_TO_UNBUILD.sendTo(sender);
+			return;
 		}
 		
 		String mazePart = arguments[0].getString();
@@ -42,25 +40,24 @@ public class UnbuildMaze extends ArgCommand {
 		switch (mazePart) {
 			
 			case "floor":
-				buildHandler.unbuildMazePart(maze, MazePart.FLOOR);
+				buildHandler.unbuildMazePart(maze, MazePart.FLOOR, null);
 				break;
 			
 			case "roof":
-				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
+				buildHandler.unbuildMazePart(maze, MazePart.ROOF, null);
 				break;
 			
 			case "maze":
 			case "walls":
-				Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(player);
-				buildHandler.unbuildMazePart(maze, MazePart.FLOOR);
-				buildHandler.unbuildMazePart(maze, MazePart.ROOF);
-				buildHandler.unbuildMazePart(maze, MazePart.WALLS);
+				Messages.MESSAGE_MAZE_UNBUILDING_STARTED.sendTo(sender);
+				buildHandler.unbuildMazePart(maze, MazePart.FLOOR, null);
+				buildHandler.unbuildMazePart(maze, MazePart.ROOF, null);
+				buildHandler.unbuildMazePart(maze, MazePart.WALLS, sender);
 				break;
 			
 			default:
-				Messages.ERROR_INVALID_MAZE_PART.sendTo(player, new PlaceHolder("mazepart", mazePart));
+				Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", mazePart));
 				break;
 		}
-		return true;
 	}
 }

@@ -53,17 +53,17 @@ public final class PathGenerator {
 			Direction rndFacing = keysAsArray.get(random.nextInt(getFreePaths.size()));
 			List<Vec2> rndNewPath = getFreePaths.get(rndFacing);
 			
-			if(pathLength > 1) {
+			if (pathLength > 1) {
 				if (!lastPathWasExpanded)
 					lastPathWasExpanded = tryToExpandPath(pathMap, rndNewPath, rndFacing, random.nextInt(pathLength) + 1);
 				else
 					lastPathWasExpanded = false;
 			}
 			
-			for(Vec2 pathCell : rndNewPath)
+			for (Vec2 pathCell : rndNewPath)
 				pathMap.setGridCellType(pathCell, PathAreaType.PATH);
 			
-			openPathEnds.add(0, rndNewPath.get(rndNewPath.size()-1));
+			openPathEnds.add(0, rndNewPath.get(rndNewPath.size() - 1));
 		}
 	}
 	
@@ -74,7 +74,7 @@ public final class PathGenerator {
 		for (Direction facing : Direction.fourCardinals()) {
 			List<Vec2> newPath = getNewPath(pathEnd, facing);
 			
-			if(pathMap.arePathGridCellsFree(newPath))
+			if (pathMap.arePathGridCellsFree(newPath))
 				freePaths.put(facing, newPath);
 		}
 		
@@ -85,16 +85,16 @@ public final class PathGenerator {
 		
 		boolean pathWasExpanded = false;
 		
-		for(int i = 1; i < maxLength; i++) {
+		for (int i = 1; i < maxLength; i++) {
 			
-			Vec2 currentPathEnd = path.get(path.size()-1);
+			Vec2 currentPathEnd = path.get(path.size() - 1);
 			List<Vec2> expansion = getNewPath(currentPathEnd, facing);
-
-			if(pathMap.arePathGridCellsFree(expansion)) {
+			
+			if (pathMap.arePathGridCellsFree(expansion)) {
 				path.addAll(expansion);
 				pathWasExpanded = true;
-			
-			}else
+				
+			} else
 				break;
 		}
 		

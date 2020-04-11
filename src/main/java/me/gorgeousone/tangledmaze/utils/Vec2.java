@@ -4,11 +4,13 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
+import java.io.PrintStream;
 import java.util.Objects;
 
 public class Vec2 implements Comparable<Vec2> {
 	
-	private int x, z;
+	private int x;
+	private int z;
 	
 	public Vec2() {
 		this.x = 0;
@@ -96,14 +98,6 @@ public class Vec2 implements Comparable<Vec2> {
 		return this;
 	}
 	
-	public Vec2 getAbs() {
-		return new Vec2(Math.abs(x), Math.abs(z));
-	}
-	
-	public Vector toVec3(double y) {
-		return new Vector(x, y, z);
-	}
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(x, z);
@@ -125,11 +119,6 @@ public class Vec2 implements Comparable<Vec2> {
 	@Override
 	public Vec2 clone() {
 		return new Vec2(x, z);
-	}
-	
-	@Override
-	public String toString() {
-		return "vec2[x=" + x + ",z=" + z + "]";
 	}
 	
 	@Override

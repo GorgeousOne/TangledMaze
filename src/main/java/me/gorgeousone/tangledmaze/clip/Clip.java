@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,7 +70,6 @@ public class Clip {
 			border.add(point);
 	}
 	
-	
 	public void removeBorder(Vec2 point) {
 		border.remove(point);
 	}
@@ -83,19 +83,29 @@ public class Clip {
 		return borderContains(blockVec) && getHeight(blockVec) == block.getY();
 	}
 	
-	public Set<Location> getBorderBlocks() {
+	@Deprecated
+	public Set<Location> getBorderBlocksLocs() {
 		
 		Set<Location> blocks = new HashSet<>();
 		
-		for (Vec2 border : border) {
+		for (Vec2 border : border)
 			blocks.add(getBlockLoc(border));
-		}
 		
 		return blocks;
 	}
 	
 	public Location getBlockLoc(Vec2 point) {
-		return new Location(getWorld(), point.getX(), getHeight(point), point.getZ());
+		return !contains(point) ? null : new Location(getWorld(), point.getX(), getHeight(point), point.getZ());
+	}
+	
+	public Set<Location> getBlockLocs(Collection<Vec2> points) {
+		
+		Set<Location> blockLocs = new HashSet<>();
+		
+		for (Vec2 point : points)
+			blockLocs.add(getBlockLoc(point));
+		
+		return blockLocs;
 	}
 	
 	public int getHeight(Vec2 point) {

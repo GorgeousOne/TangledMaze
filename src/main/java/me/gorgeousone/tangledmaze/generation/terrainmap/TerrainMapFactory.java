@@ -22,13 +22,20 @@ public final class TerrainMapFactory {
 		Clip mazeClip = maze.getClip();
 		Map.Entry<Vec2, Vec2> clipBounds = calculateClipBounds(mazeClip);
 		
-		TerrainMap terrainMap = new TerrainMap(clipBounds.getKey(), clipBounds.getValue(), maze);
-		copyClipOntoMap(mazeClip, terrainMap, maze.getDimension(MazeDimension.WALL_HEIGHT));
+		TerrainMap terrainMap = new TerrainMap(
+				maze.getWorld(),
+				clipBounds.getKey(),
+				clipBounds.getValue(),
+				maze.getDimensions());
 		
+		copyClipOntoMap(mazeClip, terrainMap);
+		populateMap(maze, terrainMap);
 		return terrainMap;
 	}
 	
-	private static void copyClipOntoMap(Clip clip, TerrainMap terrainMap, int wallHeight) {
+	private static void copyClipOntoMap(Clip clip, TerrainMap terrainMap) {
+		
+		int wallHeight = terrainMap.getDimension(MazeDimension.WALL_HEIGHT);
 		
 		for (Vec2 point : clip.getFill()) {
 			terrainMap.setAreaType(point, MazeAreaType.UNDEFINED);
@@ -40,12 +47,10 @@ public final class TerrainMapFactory {
 			terrainMap.setAreaType(point, MazeAreaType.WALL);
 	}
 	
-	public static void populateMap(TerrainMap terrainMap) {
+	public static void populateMap(Maze maze, TerrainMap terrainMap) {
 		
-		Maze maze = terrainMap.getMaze();
-		
-		int pathWidth = maze.getDimension(MazeDimension.PATH_WIDTH);
-		int wallWidth = maze.getDimension(MazeDimension.WALL_WIDTH);
+		int pathWidth = terrainMap.getDimension(MazeDimension.PATH_WIDTH);
+		int wallWidth = terrainMap.getDimension(MazeDimension.WALL_WIDTH);
 		
 		ExitSegment entrance = ExitSegmentFactory.createEntranceSegment(terrainMap, maze.getEntrance(), pathWidth, wallWidth);
 		terrainMap.mapSegment(entrance, MazeAreaType.PATH);
@@ -57,7 +62,7 @@ public final class TerrainMapFactory {
 			terrainMap.mapSegment(exit, MazeAreaType.EXIT);
 		}
 		
-		PathGenerator.createPathsInPathMap(pathMap, maze.getDimension(MazeDimension.PATH_LENGTH));
+		PathGenerator.createPathsInPathMap(pathMap, terrainMap.getDimension(MazeDimension.PATH_LENGTH));
 		PathMapFactory.copyPathsOntoTerrainMap(terrainMap, pathMap);
 		
 		flipMap(terrainMap);

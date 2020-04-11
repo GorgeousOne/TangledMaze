@@ -25,26 +25,26 @@ public class CutFromMaze extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = mazeHandler.getStartedMaze(player, false, true);
 		
 		if (maze == null)
-			return false;
+			return;
 		
 		ClipTool clipTool = clipHandler.requireCompletedClipTool(player);
 		
 		if (clipTool == null)
-			return false;
+			return;
 		
 		ClipChange clipChange = MazeChangeFactory.createDeletion(maze, clipTool.getClip());
 		clipHandler.removeClipTool(player);
 		
 		if (clipChange == null)
-			return false;
+			return;
 		
-		mazeHandler.processClipChange(maze, clipChange);
-		return true;
+		mazeHandler.processClipChange(player, maze, clipChange);
+		return;
 	}
 }

@@ -17,6 +17,7 @@ public class AddToMaze extends BasicCommand {
 	private MazeHandler mazeHandler;
 	
 	public AddToMaze(MazeCommand mazeCommand, ClipToolHandler clipHandler, MazeHandler mazeHandler) {
+		
 		super("add", null, true, mazeCommand);
 		addAlias("merge");
 		
@@ -25,32 +26,32 @@ public class AddToMaze extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		
 		Maze maze = mazeHandler.getStartedMaze(player, false, true);
 		
 		if (maze == null)
-			return false;
+			return;
 		
 		ClipTool clipTool = clipHandler.requireCompletedClipTool(player);
 		
 		if (clipTool == null)
-			return false;
+			return;
 		
 		ClipChange clipChange = MazeChangeFactory.createAddition(maze, clipTool.getClip());
 		
 		if (clipChange == null)
-			return false;
+			return;
 		
 		if (clipChange.getAddedFill().size() == clipTool.getClip().size()) {
 			Messages.ERROR_CLIPBOARD_NOT_TOUCHING_MAZE.sendTo(player);
-			return false;
+			return;
 		}
 		
 		clipHandler.removeClipTool(player);
-		mazeHandler.processClipChange(maze, clipChange);
-		return true;
+		mazeHandler.processClipChange(player, maze, clipChange);
+		return;
 	}
 }

@@ -7,9 +7,12 @@ import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.maze.MazeChangeFactory;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
 import me.gorgeousone.tangledmaze.tools.ToolType;
+import me.gorgeousone.tangledmaze.utils.RenderUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +26,21 @@ import java.util.UUID;
 //TODO make a singelton out of this? Create one instance handed around by TangledMain
 public class ToolHandler {
 	
+	private JavaPlugin plugin;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
-	private Renderer renderer;
 	
-	private Map<UUID, ToolType> playersTools = new HashMap<>();
+	private Map<UUID, ToolType> playersTools;
 	
-	public ToolHandler(ClipToolHandler clipHandler, MazeHandler mazeHandler, Renderer renderer) {
+	public ToolHandler(JavaPlugin plugin,
+	                   ClipToolHandler clipHandler,
+	                   MazeHandler mazeHandler) {
+		
+		this.plugin = plugin;
 		this.clipHandler = clipHandler;
 		this.mazeHandler = mazeHandler;
-		this.renderer = renderer;
+		
+		playersTools = new HashMap<>();
 	}
 	
 	public ToolType getToolType(Player player) {
@@ -54,9 +62,9 @@ public class ToolHandler {
 	
 	public void removePlayer(Player player) {
 		
-		if(getToolType(player) == ToolType.CLIP_TOOL)
+		if (getToolType(player) == ToolType.CLIP_TOOL)
 			clipHandler.removePlayer(player);
-
+		
 		playersTools.remove(player.getUniqueId());
 	}
 	
@@ -80,17 +88,18 @@ public class ToolHandler {
 			
 			case BRUSH_TOOL:
 				
-				brushMaze(mazeHandler.getMaze(player), clickedBlock, action);
+				brushMaze(player, clickedBlock, action);
 				break;
 			
 			case EXIT_SETTER:
-				setMazeExit(mazeHandler.getMaze(player), clickedBlock);
+				setMazeExit(player, clickedBlock);
 				break;
 		}
 	}
 	
-	private void brushMaze(Maze maze, Block clickedBlock, Action action) {
+	private void brushMaze(Player player, Block clickedBlock, Action action) {
 		
+		Maze maze = mazeHandler.getMaze(player);
 		ClipChange brushing;
 		
 		brushing = action == Action.RIGHT_CLICK_BLOCK ?
@@ -98,13 +107,12 @@ public class ToolHandler {
 				MazeChangeFactory.createExpansion(maze, clickedBlock);
 		
 		if (brushing != null)
-			mazeHandler.processClipChange(maze, brushing);
+			mazeHandler.processClipChange(player, maze, brushing);
 	}
 	
-	//TODO check renderer usage for improvements
-	private void setMazeExit(Maze maze, Block clickedBlock) {
+	private void setMazeExit(Player player, Block clickedBlock) {
 		
-		Player player = maze.getPlayer();
+		Maze maze = mazeHandler.getMaze(player);
 		
 		if (!maze.getClip().isBorderBlock(clickedBlock))
 			return;
@@ -112,20 +120,20 @@ public class ToolHandler {
 		if (maze.isExit(clickedBlock)) {
 			
 			maze.removeExit(clickedBlock);
-			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER);
+			RenderUtils.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER, plugin);
 			
 			if (maze.hasExits())
-				renderer.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getEntrance()), Constants.MAZE_MAIN_EXIT);
+				RenderUtils.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getEntrance()), Constants.MAZE_ENTRANCE, plugin);
 			
 		} else if (maze.canBeExit(clickedBlock)) {
 			
 			if (maze.hasExits())
-				renderer.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getEntrance()), Constants.MAZE_EXIT);
+				RenderUtils.sendBlockDelayed(player, maze.getClip().getBlockLoc(maze.getEntrance()), Constants.MAZE_EXIT, plugin);
 			
 			maze.addExit(clickedBlock);
-			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_MAIN_EXIT);
+			RenderUtils.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_ENTRANCE, plugin);
 			
 		} else
-			renderer.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER);
+			RenderUtils.sendBlockDelayed(player, clickedBlock.getLocation(), Constants.MAZE_BORDER, plugin);
 	}
 }

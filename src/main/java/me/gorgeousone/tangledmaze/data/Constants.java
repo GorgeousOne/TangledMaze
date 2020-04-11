@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.data;
 
-import me.gorgeousone.tangledmaze.utils.ConfigUtils;
+import me.gorgeousone.tangledmaze.utils.FileUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,17 +15,19 @@ public class Constants {
 			BUILD_PERM = "tangledmaze.build",
 			WAND_PERM = "tangledmaze.getwand",
 			MAZE_TP_PERM = "tangledmaze.teleport",
+			MAZE_BACKUP_PERM = "tangledmaze.backup",
 			RELOAD_PERM = "tangledmaze.reload";
 	
 	public static final String prefix =
 			ChatColor.DARK_GREEN + "[" +
 			ChatColor.GREEN + "TM" +
+			ChatColor.GOLD + "+" +
 			ChatColor.DARK_GREEN + "] " +
 			ChatColor.YELLOW;
 	
 	public static final Material
 			MAZE_BORDER = Material.REDSTONE_BLOCK,
-			MAZE_MAIN_EXIT = Material.DIAMOND_BLOCK,
+			MAZE_ENTRANCE = Material.DIAMOND_BLOCK,
 			MAZE_EXIT = Material.EMERALD_BLOCK,
 			CLIPBOARD_BORDER = Material.GOLD_BLOCK,
 			CLIPBOARD_VERTEX = Material.LAPIS_BLOCK;
@@ -49,9 +51,11 @@ public class Constants {
 			"Artifact Lv. XCIX"
 	};
 	
+	public static final String BACKUP_DIRECTORY = "maze backups";
+	
 	public static void loadMaterialLists(JavaPlugin plugin) {
 		
-		YamlConfiguration materialLists = ConfigUtils.loadDefaultConfig("material_lists", plugin);
+		YamlConfiguration materialLists = FileUtils.loadDefaultConfig("material_lists", plugin);
 		
 		for (String materialName : (List<String>) materialLists.getList("not-solid-materials")) {
 			try {

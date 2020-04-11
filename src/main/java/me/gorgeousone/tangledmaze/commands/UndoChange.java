@@ -7,30 +7,30 @@ import me.gorgeousone.tangledmaze.maze.Maze;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UndoCommand extends BasicCommand {
+public class UndoChange extends BasicCommand {
 	
 	private MazeHandler mazeHandler;
 	
-	public UndoCommand(MazeCommand mazeCommand, MazeHandler mazeHandler) {
+	public UndoChange(MazeCommand mazeCommand, MazeHandler mazeHandler) {
 		super("undo", null, true, mazeCommand);
 		
 		this.mazeHandler = mazeHandler;
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		Maze maze = mazeHandler.getStartedMaze(player, false, true);
 		
 		if (maze == null)
-			return false;
+			return;
 		
 		if (maze.getActionHistory().isEmpty())
-			return false;
+			return;
 		
 		ClipChange clipChange = maze.getActionHistory().popLastAction().invert();
-		mazeHandler.processClipChange(maze, clipChange);
-		return true;
+		mazeHandler.processClipChange(player, maze, clipChange);
+		return;
 	}
 }

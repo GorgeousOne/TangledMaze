@@ -2,7 +2,7 @@ name: TangledMaze
 version: ${project.version}
 api-version: 1.13
 authors: [mightyone, spthiel, GenerousGuava]
-description: intuitive visual maze generator for every shape and every terrain
+description: intuitive visual maze generator for every shape and terrain
 website: https://www.spigotmc.org/resources/tangled-maze-maze-generator-1-13.59284/
 
 main: me.gorgeousone.tangledmaze.TangledMain
@@ -28,4 +28,8 @@ permissions:
 
   tangledmaze.teleport:
     description: Permission for teleporting yourself back to your maze.
+    default: op
+
+  tangledmaze.backup:
+    description: Permission for backing up and loading mazes.
     default: op

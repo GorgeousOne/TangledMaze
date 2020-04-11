@@ -4,6 +4,7 @@ import me.gorgeousone.cmdframework.argument.ArgType;
 import me.gorgeousone.cmdframework.argument.ArgValue;
 import me.gorgeousone.cmdframework.argument.Argument;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -32,7 +33,7 @@ public abstract class ArgCommand extends BasicCommand {
 	}
 	
 	@Override
-	protected boolean onCommand(CommandSender sender, String[] stringArgs) {
+	protected void onCommand(CommandSender sender, String[] stringArgs) {
 		
 		int argsSize = getArgs().size();
 		int stringArgsLength = stringArgs.length;
@@ -47,21 +48,24 @@ public abstract class ArgCommand extends BasicCommand {
 			
 		} catch (ArrayIndexOutOfBoundsException ex) {
 			sendUsage(sender);
-			return false;
+			return;
 			
 		} catch (IllegalArgumentException ex) {
 			sender.sendMessage(ex.getMessage());
-			return false;
+			return;
 		}
 		
 		onCommand(sender, values);
-		return true;
+		return;
 	}
 	
-	protected abstract boolean onCommand(CommandSender sender, ArgValue[] arguments);
+	protected abstract void onCommand(CommandSender sender, ArgValue[] arguments);
 	
 	@Override
-	public List<String> getTabList(String[] arguments) {
+	public List<String> getTabList(CommandSender sender, String[] arguments) {
+		
+		if(isPlayerRequired() && !(sender instanceof Player))
+			return null;
 		
 		if (this.arguments.size() < arguments.length)
 			return new LinkedList<>();

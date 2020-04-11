@@ -18,7 +18,7 @@ public class SetDimension extends ArgCommand {
 	private MazeHandler mazeHandler;
 	
 	public SetDimension(MazeCommand mazeCommand, MazeHandler mazeHandler) {
-		super("set", null, true, mazeCommand);
+		super("set", null, false, mazeCommand);
 		
 		addArg(new Argument("dimension", ArgType.STRING, MazeDimension.getCommandNames()));
 		addArg(new Argument("integer", ArgType.INTEGER));
@@ -27,14 +27,14 @@ public class SetDimension extends ArgCommand {
 	}
 	
 	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+	protected void onCommand(CommandSender sender, ArgValue[] arguments) {
 		
 		Player player = (Player) sender;
 		MazeDimension dimension = MazeDimension.match(arguments[0].getString());
 		
 		if (dimension == null) {
 			Messages.ERROR_INVALID_DIMENSION.sendTo(player, new PlaceHolder("dimension", arguments[0].getString()));
-			return false;
+			return;
 		}
 		
 		int newDimValue = MathHelper.clamp(arguments[1].getInt(), 1, dimension.getMaxValue());
@@ -50,6 +50,6 @@ public class SetDimension extends ArgCommand {
 					new PlaceHolder("number", newDimValue));
 		}
 		
-		return true;
+		return;
 	}
 }

@@ -47,6 +47,10 @@ public abstract class BasicCommand {
 		return permission;
 	}
 	
+	public boolean isPlayerRequired() {
+		return isPlayerRequired;
+	}
+	
 	public ParentCommand getParent() {
 		return parent;
 	}
@@ -78,9 +82,9 @@ public abstract class BasicCommand {
 		onCommand(sender, arguments);
 	}
 	
-	protected abstract boolean onCommand(CommandSender sender, String[] arguments);
+	protected abstract void onCommand(CommandSender sender, String[] arguments);
 	
-	public List<String> getTabList(String[] arguments) {
+	public List<String> getTabList(CommandSender sender, String[] arguments) {
 		return new LinkedList<>();
 	}
 	

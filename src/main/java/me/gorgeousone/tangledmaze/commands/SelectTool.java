@@ -8,7 +8,6 @@ import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.messages.PlaceHolder;
 import me.gorgeousone.tangledmaze.tools.ToolType;
@@ -20,13 +19,11 @@ public class SelectTool extends ArgCommand {
 	private ToolHandler toolHandler;
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
-	private Renderer renderer;
 	
 	public SelectTool(MazeCommand parent,
 	                  ClipToolHandler clipHandler,
 	                  ToolHandler toolHandler,
-	                  MazeHandler mazeHandler,
-	                  Renderer renderer) {
+	                  MazeHandler mazeHandler) {
 		
 		super("select", null, true, parent);
 		addArg(new Argument("tool", ArgType.STRING, "rect", "circle", "brush", "exit"));
@@ -34,11 +31,10 @@ public class SelectTool extends ArgCommand {
 		this.clipHandler = clipHandler;
 		this.toolHandler = toolHandler;
 		this.mazeHandler = mazeHandler;
-		this.renderer = renderer;
 	}
 	
 	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+	protected void onCommand(CommandSender sender, ArgValue[] arguments) {
 		
 		Player player = (Player) sender;
 		String toolType = arguments[0].getString();
@@ -71,10 +67,10 @@ public class SelectTool extends ArgCommand {
 			
 			default:
 				player.sendMessage("/tangledmaze help 6");
-				return false;
+				return;
 		}
 		
-		return true;
+		return;
 	}
 	
 	private void switchToClipTool(Player player, ClipShape newClipShape) {
@@ -90,7 +86,7 @@ public class SelectTool extends ArgCommand {
 		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", newClipShape.simpleName()));
 		
 		if (oldTool != ToolType.CLIP_TOOL && clipHandler.hasClipTool(player))
-			renderer.displayClipTool(clipHandler.getClipTool(player));
+			clipHandler.displayClipToolOf(player);
 	}
 	
 	private void switchToMazeTool(Player player, ToolType toolType) {
@@ -111,6 +107,6 @@ public class SelectTool extends ArgCommand {
 		Messages.MESSAGE_TOOL_SWITCHED.sendTo(player, new PlaceHolder("tool", toolType.getSimpleName()));
 		
 		if (clipHandler.hasClipTool(player))
-			renderer.hideClipTool(clipHandler.getClipTool(player), true);
+			clipHandler.hideClipToolOf(player, true);
 	}
 }

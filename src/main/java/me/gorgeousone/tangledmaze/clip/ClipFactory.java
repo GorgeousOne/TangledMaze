@@ -1,7 +1,6 @@
 package me.gorgeousone.tangledmaze.clip;
 
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.BlockVec;
 import me.gorgeousone.tangledmaze.utils.Direction;
 import me.gorgeousone.tangledmaze.utils.Vec2;
 import org.bukkit.Location;
@@ -19,7 +18,7 @@ public final class ClipFactory {
 	
 	private ClipFactory() {}
 	
-	public static List<BlockVec> createCompleteVertexList(List<BlockVec> definingVertices, ClipShape shape) {
+	public static List<Location> createCompleteVertexList(List<Location> definingVertices, ClipShape shape) {
 		
 		if (definingVertices.size() < shape.getRequiredVertexCount())
 			throw new IllegalArgumentException("Not enough vertices given to create a clip.");
@@ -29,14 +28,14 @@ public final class ClipFactory {
 			case RECTANGLE:
 			case ELLIPSE:
 				
-				int highestY = Math.max(definingVertices.get(0).getY(), definingVertices.get(1).getY());
+				int highestY = Math.max(definingVertices.get(0).getBlockY(), definingVertices.get(1).getBlockY());
 				definingVertices.get(0).setY(highestY);
 				definingVertices.get(1).setY(highestY);
 				
-				BlockVec point1 = new BlockVec(BlockUtils.nearestSurface(definingVertices.get(0).toLocation()));
-				BlockVec point3 = new BlockVec(BlockUtils.nearestSurface(definingVertices.get(1).toLocation()));
-				BlockVec point2 = new BlockVec(BlockUtils.nearestSurface(new Location(point1.getWorld(), point1.getX(), highestY, point3.getZ())));
-				BlockVec point4 = new BlockVec(BlockUtils.nearestSurface(new Location(point1.getWorld(), point3.getX(), highestY, point1.getZ())));
+				Location point1 = BlockUtils.nearestSurface(definingVertices.get(0)).getLocation();
+				Location point3 = BlockUtils.nearestSurface(definingVertices.get(1)).getLocation();
+				Location point2 = BlockUtils.nearestSurface(new Location(point1.getWorld(), point1.getX(), highestY, point3.getZ())).getLocation();
+				Location point4 = BlockUtils.nearestSurface(new Location(point1.getWorld(), point3.getX(), highestY, point1.getZ())).getLocation();
 				
 				return new ArrayList<>(Arrays.asList(
 						point1,
@@ -49,14 +48,14 @@ public final class ClipFactory {
 		}
 	}
 	
-	public static Clip createClip(ClipShape shape, List<BlockVec> definingVertices) {
+	public static Clip createClip(ClipShape shape, List<Location> definingVertices) {
 		
 		if (definingVertices.size() < shape.getRequiredVertexCount())
 			throw new IllegalArgumentException("Not enough vertices given to create a clip with shape " + shape.name());
 		
 		World clipWorld = definingVertices.get(0).getWorld();
 		Map.Entry<Vec2, Vec2> rectangularBounds = getRectangularBounds(definingVertices.get(0), definingVertices.get(1));
-		int highestY = Math.max(definingVertices.get(0).getY(), definingVertices.get(1).getY());
+		int highestY = Math.max(definingVertices.get(0).getBlockY(), definingVertices.get(1).getBlockY());
 		
 		switch (shape) {
 			
@@ -142,12 +141,12 @@ public final class ClipFactory {
 		return false;
 	}
 	
-	private static Map.Entry<Vec2, Vec2> getRectangularBounds(BlockVec vertex1, BlockVec vertex2) {
+	private static Map.Entry<Vec2, Vec2> getRectangularBounds(Location vertex1, Location vertex2) {
 		
-		int x1 = vertex1.getX();
-		int x2 = vertex2.getX();
-		int z1 = vertex1.getZ();
-		int z2 = vertex2.getZ();
+		int x1 = vertex1.getBlockX();
+		int x2 = vertex2.getBlockX();
+		int z1 = vertex1.getBlockZ();
+		int z2 = vertex2.getBlockZ();
 		
 		Vec2 min = new Vec2(Math.min(x1, x2), Math.min(z1, z2));
 		Vec2 max = new Vec2(Math.max(x1, x2), Math.max(z1, z2));

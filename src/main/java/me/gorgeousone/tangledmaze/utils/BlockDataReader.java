@@ -32,7 +32,7 @@ public final class BlockDataReader {
 		for (int i = 1; i < argSplit.length; i++) {
 			
 			String blockProperty = argSplit[i];
-				
+			
 			try {
 				blockData = blockData.merge(material.createBlockData("[" + blockProperty + "]"));
 			} catch (IllegalArgumentException ex) {

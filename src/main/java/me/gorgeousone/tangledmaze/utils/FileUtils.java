@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public final class ConfigUtils {
+public final class FileUtils {
 	
-	private ConfigUtils() {}
+	private FileUtils() {}
 	
 	public static YamlConfiguration loadConfig(String configName, JavaPlugin plugin) {
 		

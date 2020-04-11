@@ -14,6 +14,10 @@ public class BlockComposition {
 		composition = new LinkedHashMap<>();
 	}
 	
+	public Map<BlockData, Integer> getComposition() {
+		return composition;
+	}
+	
 	public int getSize() {
 		return size;
 	}
@@ -21,10 +25,6 @@ public class BlockComposition {
 	public void addBlock(BlockData data, int amount) {
 		if (composition.putIfAbsent(data, amount) == null)
 			size += amount;
-	}
-	
-	public BlockData getDataAtPercentage(double percentage) {
-		return getBlockAtAmount((int) (percentage * size + 0.5));
 	}
 	
 	public BlockData getBlockAtAmount(int amount) {
@@ -41,7 +41,7 @@ public class BlockComposition {
 		return null;
 	}
 	
-	public Map<BlockData, Integer> getComposition() {
-		return composition;
-	}
+	//	public BlockData getBlockAtPercentage(double percentage) {
+	//		return getBlockAtAmount((int) (percentage * size + 0.5));
+	//	}
 }

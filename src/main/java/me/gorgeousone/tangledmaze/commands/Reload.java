@@ -17,10 +17,10 @@ public class Reload extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		main.reloadPlugin();
 		Messages.MESSAGE_PLUGIN_RELOADED.sendTo(sender);
-		return true;
+		return;
 	}
 }

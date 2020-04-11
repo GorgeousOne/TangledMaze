@@ -11,7 +11,7 @@ public class TerrainEditor {
 		raiseLowWalls(terrainMap);
 	}
 	
-	protected void levelOffSpikes(TerrainMap terrainMap) {
+	private void levelOffSpikes(TerrainMap terrainMap) {
 		
 		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {
@@ -20,15 +20,19 @@ public class TerrainEditor {
 					continue;
 				
 				int floorHeight = terrainMap.getFloorHeight(x, z);
-				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap, null));
+				int maxNeighborFloorHeight = terrainMap.getFloorHeight(getHighestNeighborFloor(x, z, terrainMap));
 				
-				if (floorHeight >= maxNeighborFloorHeight + 2)
+				if (floorHeight > maxNeighborFloorHeight)
 					terrainMap.setFloorHeight(x, z, floorHeight + getAverageHeightDiffToNeighborFloors(terrainMap, x, z));
 			}
 		}
 	}
 	
-	protected Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap, MazeAreaType areaType) {
+	private Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap) {
+		return getHighestNeighborFloor(x, z, terrainMap, null);
+	}
+	
+	private Vec2 getHighestNeighborFloor(int x, int z, TerrainMap terrainMap, MazeAreaType areaType) {
 		
 		Vec2 maxNeighborFloor = new Vec2(x, z);
 		int maxNeighborFloorHeight = 0;
@@ -51,7 +55,7 @@ public class TerrainEditor {
 		return maxNeighborFloor;
 	}
 	
-	protected int getAverageHeightDiffToNeighborFloors(TerrainMap terrainMap, int x, int z) {
+	private int getAverageHeightDiffToNeighborFloors(TerrainMap terrainMap, int x, int z) {
 		
 		int floorHeight = terrainMap.getFloorHeight(x, z);
 		int heightDiff = 0;
@@ -70,9 +74,9 @@ public class TerrainEditor {
 		return heightDiff / neighborsCount;
 	}
 	
-	protected void raiseLowWalls(TerrainMap terrainMap) {
+	private void raiseLowWalls(TerrainMap terrainMap) {
 		
-		int wallHeight = terrainMap.getMaze().getDimension(MazeDimension.WALL_HEIGHT);
+		int wallHeight = terrainMap.getDimension(MazeDimension.WALL_HEIGHT);
 		
 		for (int x = terrainMap.getMinX(); x < terrainMap.getMaxX(); x++) {
 			for (int z = terrainMap.getMinZ(); z < terrainMap.getMaxZ(); z++) {

@@ -4,8 +4,8 @@ import me.gorgeousone.tangledmaze.PlayerHolder;
 import me.gorgeousone.tangledmaze.clip.Clip;
 import me.gorgeousone.tangledmaze.clip.ClipShape;
 import me.gorgeousone.tangledmaze.utils.BlockUtils;
-import me.gorgeousone.tangledmaze.utils.BlockVec;
 import me.gorgeousone.tangledmaze.utils.Vec2;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -19,9 +19,9 @@ public class ClipTool extends PlayerHolder {
 	private Clip clip;
 	private ClipShape shape;
 	private World world;
-	private List<BlockVec> vertices;
+	private List<Location> vertices;
 	
-	private BlockVec shiftedVertex;
+	private Location shiftedVertex;
 	
 	public ClipTool(Player player, ClipShape type) {
 		super(player);
@@ -67,16 +67,61 @@ public class ClipTool extends PlayerHolder {
 		this.clip = clip;
 	}
 	
-	public List<BlockVec> getVertices() {
+	public List<Location> getVertices() {
 		return vertices;
 	}
 	
-	public void setVertices(List<BlockVec> vertices) {
+	public void setVertices(List<Location> vertices) {
 		this.vertices = vertices;
 		shiftedVertex = null;
 	}
 	
-	public void startShiftingVertex(BlockVec shiftedVertex) {
+	public Location getVertex(Block block) {
+		return getVertex(new Vec2(block));
+	}
+	
+	/**
+	 * Returns the vertex of the clip that is matching the x and z coordinates of the block.
+	 */
+	public Location getVertex(Vec2 point) {
+		
+		for (Location vertex : vertices) {
+			if (new Vec2(vertex).equals(point))
+				return vertex;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns true if the passed block is matching the x and z coordinates of a vertex of the clip.
+	 */
+	public boolean isVertex(Vec2 point) {
+		
+		for (Location vertex : vertices) {
+			if (new Vec2(vertex).equals(point))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns true if the passed block is matching the exact position of a vertex of the clip.
+	 */
+	public boolean isVertexBlock(Block block) {
+		
+		Vector blockPos = block.getLocation().toVector();
+		
+		for (Location vertex : vertices) {
+			if (vertex.toVector().equals(blockPos))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public void startShiftingVertex(Location shiftedVertex) {
 		
 		if (!hasClip())
 			throw new IllegalStateException("Cannot reshape an unfinished clip.");
@@ -94,43 +139,17 @@ public class ClipTool extends PlayerHolder {
 		return shiftedVertex != null;
 	}
 	
-	public BlockVec getShiftedVertex() {
+	public Location getShiftedVertex() {
 		return shiftedVertex;
-	}
-	
-	public boolean isVertex(Vec2 point) {
-		
-		for (BlockVec vertex : vertices) {
-			if (vertex.toVec2().equals(point))
-				return true;
-		}
-		
-		return false;
-	}
-	
-	public boolean isVertex(Block block) {
-		return getVertex(block) != null;
-	}
-	
-	public BlockVec getVertex(Block block) {
-		
-		Vector blockPos = block.getLocation().toVector();
-		
-		for (BlockVec vertex : vertices) {
-			if (vertex.toVector().equals(blockPos))
-				return vertex;
-		}
-		
-		return null;
 	}
 	
 	public Block updateHeight(Block block) {
 		
 		Block updatedBlock = BlockUtils.nearestSurface(block.getLocation());
-		BlockVec vertex = getVertex(block);
+		Vec2 blockPoint = new Vec2(block);
 		
-		if (vertex != null)
-			vertex.setY(updatedBlock.getY());
+		if (isVertex(blockPoint))
+			getVertex(blockPoint).setY(updatedBlock.getY());
 		
 		if (hasClip())
 			getClip().addFill(new Vec2(block), updatedBlock.getY());

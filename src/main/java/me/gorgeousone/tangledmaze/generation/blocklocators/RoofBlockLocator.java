@@ -1,6 +1,6 @@
 package me.gorgeousone.tangledmaze.generation.blocklocators;
 
-import me.gorgeousone.tangledmaze.generation.BlockDataState;
+import me.gorgeousone.tangledmaze.generation.LocatedBlockData;
 import me.gorgeousone.tangledmaze.generation.terrainmap.MazeAreaType;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.maze.Maze;
@@ -17,11 +17,10 @@ import java.util.Set;
 public class RoofBlockLocator extends AbstractBlockLocator {
 	
 	@Override
-	public Set<BlockDataState> locateBlocks(TerrainMap terrainMap) {
+	public Set<LocatedBlockData> locateBlocks(TerrainMap terrainMap) {
 		
-		Set<BlockDataState> relevantBlocks = new HashSet<>();
-		Maze maze = terrainMap.getMaze();
-		int roofWidth = maze.getDimension(MazeDimension.ROOF_WIDTH);
+		Set<LocatedBlockData> relevantBlocks = new HashSet<>();
+		int roofWidth = terrainMap.getDimension(MazeDimension.ROOF_WIDTH);
 		
 		for (int x = terrainMap.getMinX(); x <= terrainMap.getMaxX(); x++) {
 			for (int z = terrainMap.getMinZ(); z <= terrainMap.getMaxZ(); z++) {
@@ -33,10 +32,10 @@ public class RoofBlockLocator extends AbstractBlockLocator {
 				int maxSurroundingRoofHeight = getHighestSurroundingRoof(x, z, terrainMap);
 				
 				for (int y = roofHeight + 1; y < maxSurroundingRoofHeight + 1 + roofWidth; y++) {
-					Block block = new Location(maze.getWorld(), x, y, z).getBlock();
+					Block block = new Location(terrainMap.getWorld(), x, y, z).getBlock();
 					
 					if (!BlockUtils.isReallySolid(block.getType()))
-						relevantBlocks.add(new BlockDataState(block));
+						relevantBlocks.add(new LocatedBlockData(block));
 				}
 			}
 		}

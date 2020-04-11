@@ -1,19 +1,18 @@
 package me.gorgeousone.tangledmaze.handlers;
 
-import me.gorgeousone.tangledmaze.data.Messages;
-import me.gorgeousone.tangledmaze.generation.BlockDataState;
+import me.gorgeousone.tangledmaze.generation.LocatedBlockData;
 import me.gorgeousone.tangledmaze.generation.BlockGenerator;
 import me.gorgeousone.tangledmaze.generation.MazePart;
-import me.gorgeousone.tangledmaze.generation.MazePartBlockBackup;
+import me.gorgeousone.tangledmaze.generation.MazeBackup;
 import me.gorgeousone.tangledmaze.generation.blockdatapickers.AbstractBlockDataPicker;
 import me.gorgeousone.tangledmaze.generation.blocklocators.AbstractBlockLocator;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMap;
 import me.gorgeousone.tangledmaze.generation.terrainmap.TerrainMapFactory;
 import me.gorgeousone.tangledmaze.maze.Maze;
-import me.gorgeousone.tangledmaze.messages.PlaceHolder;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,55 +25,70 @@ import java.util.Set;
 public class BuildHandler {
 	
 	private JavaPlugin plugin;
-	private Renderer renderer;
+	private MazeHandler mazeHandler;
 	
-	private Map<Maze, TerrainMap> terrainMaps;
-	private Map<Maze, MazePartBlockBackup> mazeBlockBackups;
+	private Map<Maze, MazeBackup> mazeBackups;
 	
-	public BuildHandler(JavaPlugin plugin, Renderer renderer) {
+	public BuildHandler(JavaPlugin plugin, MazeHandler mazeHandler) {
 		
-		this.renderer = renderer;
 		this.plugin = plugin;
+		this.mazeHandler = mazeHandler;
 		
-		terrainMaps = new HashMap<>();
-		mazeBlockBackups = new HashMap<>();
+		mazeBackups = new HashMap<>();
 	}
 	
-	public MazePartBlockBackup getBlockBackup(Maze maze) {
-		return mazeBlockBackups.get(maze);
+	public MazeBackup getMazeBackup(Maze maze) {
+		
+		if(!mazeBackups.containsKey(maze))
+			mazeBackups.put(maze, new MazeBackup(maze));
+		
+		return mazeBackups.get(maze);
 	}
 	
-	public boolean hasBlockBackup(Maze maze) {
-		return mazeBlockBackups.containsKey(maze);
+	public boolean hasMazeBackup(Maze maze) {
+		return mazeBackups.containsKey(maze);
+	}
+	
+	public void setMazeBackup(Maze maze, MazeBackup backup) {
+		mazeBackups.put(maze, backup);
+	}
+	
+	private void removeBlocksFromBackup(CommandSender sender, Maze maze, MazePart mazePart) {
+		
+		MazeBackup mazeBackup = getMazeBackup(maze);
+		mazeBackup.deleteMazePart(mazePart);
+		
+		if (mazeBackup.isEmpty()) {
+		
+			removeMaze(maze);
+			maze.setConstructed(false);
+			maze.updateHeights();
+			mazeHandler.displayMazeOf(sender);
+		}
 	}
 	
 	public void removeMaze(Maze maze) {
-		mazeBlockBackups.remove(maze);
-		terrainMaps.remove(maze);
+		mazeBackups.remove(maze);
 	}
 	
 	public void buildMazePart(
 			Maze maze,
 			MazePart mazePart,
-			AbstractBlockLocator blockSelector,
-			AbstractBlockDataPicker blockDataPicker) {
+			AbstractBlockLocator blockLocator,
+			AbstractBlockDataPicker blockDataPicker,
+			ActionListener callback) {
 		
 		if (maze.isConstructed() != mazePart.isMazeBuiltBefore())
 			return;
 		
-		TerrainMap terrainMap;
+		MazeBackup mazeBackup = getMazeBackup(maze);
 		
-		if (mazePart.isMazeBuiltBefore())
-			terrainMap = terrainMaps.get(maze);
+		if(!maze.isConstructed())
+			mazeBackup.setTerrainMap(TerrainMapFactory.createTerrainMapOf(maze));
 		
-		else {
-			renderer.hideMaze(maze);
-			terrainMap = TerrainMapFactory.createTerrainMapOf(maze);
-			TerrainMapFactory.populateMap(terrainMap);
-		}
-		
-		Set<BlockDataState> mazePartBlockLocs = blockSelector.locateBlocks(terrainMap);
-		Set<BlockDataState> blockBackup = deepCloneBlockSet(mazePartBlockLocs);
+		TerrainMap terrainMap = mazeBackup.getTerrainMap();
+		Set<LocatedBlockData> mazePartBlockLocs = blockLocator.locateBlocks(terrainMap);
+		Set<LocatedBlockData> blockBackup = deepCloneBlockSet(mazePartBlockLocs);
 		
 		BlockGenerator.updateBlocks(
 				plugin,
@@ -82,66 +96,43 @@ public class BuildHandler {
 				maze.getBlockComposition(),
 				blockDataPicker,
 				terrainMap,
-				callback -> {
+				nestedCallback -> {
 					
-					if (!mazePart.isMazeBuiltBefore()) {
-						maze.setConstructed(true);
-						mazeBlockBackups.put(maze, new MazePartBlockBackup());
-					}
+					maze.setConstructed(true);
+					mazeBackup.setBlocks(mazePart, blockBackup);
 					
-					getBlockBackup(maze).setBackup(mazePart, blockBackup);
-					Messages.MESSAGE_MAZE_BUILDING_COMPLETED.sendTo(maze.getPlayer(), new PlaceHolder("count", blockBackup.size()));
-					terrainMaps.put(maze, terrainMap);
-				}
-		);
+					if(callback != null)
+						callback.actionPerformed(null);
+				});
 	}
 	
 	public void unbuildMazePart(
 			Maze maze,
-			MazePart mazePart) {
+			MazePart mazePart,
+			CommandSender sender) {
 		
-		if (!hasBlockBackup(maze))
+		if (!hasMazeBackup(maze))
 			return;
 		
-		MazePartBlockBackup mazeBackup = getBlockBackup(maze);
+		MazeBackup mazeBackup = getMazeBackup(maze);
 		
-		if (!mazeBackup.hasBackup(mazePart))
+		if (!mazeBackup.hasBlocksFor(mazePart))
 			return;
 		
 		BlockGenerator.updateBlocks(
 				plugin,
-				mazeBackup.getPartBackup(mazePart),
+				mazeBackup.getBlocks(mazePart),
 				null,
 				null,
-				terrainMaps.get(maze),
-				callback -> {
-					mazeBackup.deleteBackup(mazePart);
-					
-					if (mazeBackup.isEmpty())
-						reactivateMaze(maze);
-				});
+				mazeBackup.getTerrainMap(),
+				callback -> removeBlocksFromBackup(sender, maze, mazePart));
 	}
 	
-	private void reactivateMaze(Maze maze) {
+	private Set<LocatedBlockData> deepCloneBlockSet(Set<LocatedBlockData> blockSet) {
 		
-		removeMaze(maze);
-		maze.setConstructed(false);
-		maze.updateHeights();
+		Set<LocatedBlockData> clonedBlockSet = new HashSet<>();
 		
-		new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				renderer.displayMaze(maze);
-			}
-		}.runTaskLater(plugin, 2);
-	}
-	
-	private Set<BlockDataState> deepCloneBlockSet(Set<BlockDataState> blockSet) {
-		
-		Set<BlockDataState> clonedBlockSet = new HashSet<>();
-		
-		for (BlockDataState block : blockSet)
+		for (LocatedBlockData block : blockSet)
 			clonedBlockSet.add(block.clone());
 		
 		return clonedBlockSet;

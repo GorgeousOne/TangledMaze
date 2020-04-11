@@ -13,10 +13,10 @@ public class GiveWand extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		player.getInventory().addItem(WandUtils.createMazeWand());
-		return true;
+		return;
 	}
 }

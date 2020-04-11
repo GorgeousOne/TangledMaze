@@ -31,15 +31,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BuildCommand extends ArgCommand {
+public class BuildMaze extends ArgCommand {
 	
 	private ToolHandler toolHandler;
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
 	
-	public BuildCommand(MazeCommand mazeCommand, ToolHandler toolHandler, MazeHandler mazeHandler,
-	                    BuildHandler buildHandler) {
-		super("build", null, true, mazeCommand);
+	public BuildMaze(MazeCommand mazeCommand, ToolHandler toolHandler, MazeHandler mazeHandler,
+	                 BuildHandler buildHandler) {
+		super("build", null, false, mazeCommand);
 		
 		addArg(new Argument("part", ArgType.STRING, "walls", "walls-h", "floor", "roof").setDefaultTo("walls"));
 		addArg(new Argument("blocks...", ArgType.STRING).setDefaultTo("stone"));
@@ -50,71 +50,73 @@ public class BuildCommand extends ArgCommand {
 	}
 	
 	@Override
-	protected boolean onCommand(CommandSender sender, ArgValue[] arguments) {
+	protected void onCommand(CommandSender sender, ArgValue[] arguments) {
 		
-		Player player = (Player) sender;
-		Maze maze = mazeHandler.getStartedMaze(player, true, false);
+		Maze maze = mazeHandler.getStartedMaze(sender, true, false);
 		
 		if (maze == null)
-			return false;
+			return;
 		
 		String settingsString = arguments[0].getString();
 		Map.Entry<MazePart, AbstractBlockLocator> buildSettings = readBuildSettings(settingsString);
 		
 		if (buildSettings == null) {
 			Messages.ERROR_INVALID_MAZE_PART.sendTo(sender, new PlaceHolder("mazepart", arguments[0].getString()));
-			return false;
+			return;
 		}
 		
 		MazePart mazePart = buildSettings.getKey();
 		AbstractBlockLocator blockSelector = buildSettings.getValue();
 		
-		if (buildHandler.hasBlockBackup(maze) && buildHandler.getBlockBackup(maze).hasBackup(mazePart)) {
+		if (buildHandler.hasMazeBackup(maze) && buildHandler.getMazeBackup(maze).hasBlocksFor(mazePart)) {
 			
 			Messages.ERROR_MAZE_PART_ALREADY_BUILT.sendTo(sender);
 			sender.sendMessage("/tangledmaze unbuild " + mazePart.name().toLowerCase());
-			return false;
+			return;
 		}
 		
 		try {
 			maze.setBlockComposition(readBlockTypeList(Arrays.copyOfRange(arguments, 1, arguments.length)));
 			
 		} catch (TextException textEx) {
-			textEx.sendTextTo(player);
-			return false;
 			
+			textEx.sendTextTo(sender);
+			return;
 		}
 		
 		if (!maze.isConstructed()) {
 			
-			if (!mazePart.isMazeBuiltBefore()) {
-				toolHandler.removePlayer(maze.getPlayer());
-				
-			} else {
+			if (mazePart.isMazeBuiltBefore()) {
 				Messages.ERROR_MAZE_NOT_BUILT.sendTo(sender);
-				return false;
+				return;
+				
+			} else if (sender instanceof Player){
+				toolHandler.removePlayer((Player) sender);
 			}
 			
 		} else if (!mazePart.isMazeBuiltBefore()) {
 			
 			Messages.ERROR_MAZE_PART_ALREADY_BUILT.sendTo(sender);
-			return false;
+			return;
 		}
 		
+		mazeHandler.hideMazeOf(sender);
 		buildHandler.buildMazePart(
 				maze,
 				mazePart,
 				blockSelector,
-				new RandomBlockDataPicker());
-		
-		return true;
+				new RandomBlockDataPicker(),
+				callback -> {
+					int generatedBlocksCounts = buildHandler.getMazeBackup(maze).getBlocks(mazePart).size();
+					Messages.MESSAGE_MAZE_BUILDING_COMPLETED.sendTo(sender, new PlaceHolder("count", generatedBlocksCounts));
+				});
 	}
 	
 	@Override
-	public List<String> getTabList(String[] arguments) {
+	public List<String> getTabList(CommandSender sender, String[] arguments) {
 		
 		if (arguments.length < getArgs().size())
-			return super.getTabList(arguments);
+			return super.getTabList(sender, arguments);
 		
 		List<String> tabList = new LinkedList<>();
 		
@@ -148,12 +150,12 @@ public class BuildCommand extends ArgCommand {
 		return tabList;
 	}
 	
-	private Map.Entry<MazePart, AbstractBlockLocator> readBuildSettings(String playerInput) {
+	private Map.Entry<MazePart, AbstractBlockLocator> readBuildSettings(String senderInput) {
 		
 		MazePart mazePart;
 		AbstractBlockLocator blockSelector;
 		
-		switch (playerInput) {
+		switch (senderInput) {
 			case "floor":
 				
 				mazePart = MazePart.FLOOR;
@@ -203,5 +205,4 @@ public class BuildCommand extends ArgCommand {
 		}
 		return composition;
 	}
-	
 }

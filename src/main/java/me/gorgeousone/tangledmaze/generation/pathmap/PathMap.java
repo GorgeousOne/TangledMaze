@@ -117,7 +117,7 @@ public class PathMap {
 	
 	public boolean arePathGridCellsFree(List<Vec2> gridCells) {
 		
-		for(Vec2 gridCell : gridCells) {
+		for (Vec2 gridCell : gridCells) {
 			if (getGridCellType(gridCell.getX(), gridCell.getZ()) != PathAreaType.AVAILABLE)
 				return false;
 		}

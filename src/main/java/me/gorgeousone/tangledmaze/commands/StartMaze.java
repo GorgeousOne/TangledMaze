@@ -5,6 +5,7 @@ import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
 import me.gorgeousone.tangledmaze.maze.Maze;
 import me.gorgeousone.tangledmaze.tools.ClipTool;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,17 +22,15 @@ public class StartMaze extends BasicCommand {
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, String[] arguments) {
+	public void onCommand(CommandSender sender, String[] arguments) {
 		
 		Player player = (Player) sender;
 		ClipTool clipTool = clipHandler.requireCompletedClipTool(player);
 		
 		if (clipTool == null)
-			return false;
+			return;
 		
-		mazeHandler.setMaze(player, new Maze(player).setClip(clipTool.getClip()));
+		mazeHandler.setMaze(player, new Maze(player.getWorld()).setClip(clipTool.getClip()));
 		clipHandler.removeClipTool(player);
-		
-		return true;
 	}
 }

@@ -8,7 +8,6 @@ import me.gorgeousone.tangledmaze.data.Messages;
 import me.gorgeousone.tangledmaze.handlers.BuildHandler;
 import me.gorgeousone.tangledmaze.handlers.ClipToolHandler;
 import me.gorgeousone.tangledmaze.handlers.MazeHandler;
-import me.gorgeousone.tangledmaze.handlers.Renderer;
 import me.gorgeousone.tangledmaze.handlers.ToolHandler;
 import me.gorgeousone.tangledmaze.listeners.BlockUpdateListener;
 import me.gorgeousone.tangledmaze.listeners.PlayerQuitListener;
@@ -17,7 +16,7 @@ import me.gorgeousone.tangledmaze.rawmessage.ClickAction;
 import me.gorgeousone.tangledmaze.rawmessage.Color;
 import me.gorgeousone.tangledmaze.rawmessage.RawMessage;
 import me.gorgeousone.tangledmaze.updatechecks.UpdateCheck;
-import me.gorgeousone.tangledmaze.utils.ConfigUtils;
+import me.gorgeousone.tangledmaze.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +29,6 @@ public class TangledMain extends JavaPlugin {
 	private ClipToolHandler clipHandler;
 	private MazeHandler mazeHandler;
 	private BuildHandler buildHandler;
-	private Renderer renderer;
 	
 	@Override
 	public void onEnable() {
@@ -38,14 +36,10 @@ public class TangledMain extends JavaPlugin {
 		super.onEnable();
 		checkForUpdates();
 		
-		renderer = new Renderer(this);
-		buildHandler = new BuildHandler(this, renderer);
-		
-		mazeHandler = new MazeHandler(buildHandler, renderer);
-		clipHandler = new ClipToolHandler(renderer);
-		toolHandler = new ToolHandler(clipHandler, mazeHandler, renderer);
-		
-		renderer.setMazeHandler(mazeHandler);
+		mazeHandler = new MazeHandler(this);
+		clipHandler = new ClipToolHandler(this, mazeHandler);
+		toolHandler = new ToolHandler(this, clipHandler, mazeHandler);
+		buildHandler = new BuildHandler(this, mazeHandler);
 		
 		loadConfig();
 		loadMessages();
@@ -59,7 +53,8 @@ public class TangledMain extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		renderer.hideAllClues();
+		mazeHandler.hideAllClues();
+		clipHandler.hideAllClues();
 	}
 	
 	public void reloadPlugin() {
@@ -72,9 +67,9 @@ public class TangledMain extends JavaPlugin {
 	private void registerListeners() {
 		
 		PluginManager manager = Bukkit.getPluginManager();
-		manager.registerEvents(new PlayerWandInteractionListener(toolHandler, clipHandler, mazeHandler, renderer), this);
-		manager.registerEvents(new PlayerQuitListener(toolHandler, mazeHandler), this);
-		manager.registerEvents(new BlockUpdateListener(this, clipHandler, mazeHandler, renderer), this);
+		manager.registerEvents(new PlayerWandInteractionListener(toolHandler, clipHandler, mazeHandler), this);
+		manager.registerEvents(new PlayerQuitListener(toolHandler, mazeHandler, buildHandler), this);
+		manager.registerEvents(new BlockUpdateListener(this, clipHandler, mazeHandler), this);
 	}
 	
 	private void registerCommands() {
@@ -85,13 +80,13 @@ public class TangledMain extends JavaPlugin {
 		mazeCommand.addChild(new GiveWand(mazeCommand));
 		mazeCommand.addChild(new StartMaze(mazeCommand, clipHandler, mazeHandler));
 		mazeCommand.addChild(new DiscardMaze(mazeCommand, toolHandler, mazeHandler));
-		mazeCommand.addChild(new TeleportCommand(mazeCommand, mazeHandler, renderer));
-		mazeCommand.addChild(new SelectTool(mazeCommand, clipHandler, toolHandler, mazeHandler, renderer));
+		mazeCommand.addChild(new TeleportCommand(mazeCommand, mazeHandler));
+		mazeCommand.addChild(new SelectTool(mazeCommand, clipHandler, toolHandler, mazeHandler));
 		mazeCommand.addChild(new AddToMaze(mazeCommand, clipHandler, mazeHandler));
 		mazeCommand.addChild(new CutFromMaze(mazeCommand, clipHandler, mazeHandler));
-		mazeCommand.addChild(new UndoCommand(mazeCommand, mazeHandler));
+		mazeCommand.addChild(new UndoChange(mazeCommand, mazeHandler));
 		mazeCommand.addChild(new SetDimension(mazeCommand, mazeHandler));
-		mazeCommand.addChild(new BuildCommand(mazeCommand, toolHandler, mazeHandler, buildHandler));
+		mazeCommand.addChild(new BuildMaze(mazeCommand, toolHandler, mazeHandler, buildHandler));
 		mazeCommand.addChild(new UnbuildMaze(mazeCommand, mazeHandler, buildHandler));
 		
 		CommandHandler cmdHandler = new CommandHandler(this);
@@ -106,20 +101,19 @@ public class TangledMain extends JavaPlugin {
 	}
 	
 	private void loadMessages() {
-		Messages.loadMessages(ConfigUtils.loadConfig("language", this));
+		Messages.loadMessages(FileUtils.loadConfig("language", this));
 	}
 	
 	private void checkForUpdates() {
-		
+
 		int resourceId = 59284;
 		String websiteURL = "https://www.spigotmc.org/resources/tangled-maze-maze-generator-1-13.59284/";
-		
+
 		UpdateCheck.of(this).resourceId(resourceId).handleResponse((versionResponse, newVersion) -> {
-			
+
 			switch (versionResponse) {
-				
+
 				case FOUND_NEW:
-					
 					RawMessage updateMsg = new RawMessage();
 					updateMsg.addText("[").color(Color.GREEN).append("TM").color(Color.LIGHT_GREEN).append("] ").color(Color.GREEN);
 					updateMsg.lastText().append("Check out the new version of Tangled Maze: ").color(Color.YELLOW);
@@ -132,16 +126,14 @@ public class TangledMain extends JavaPlugin {
 					
 					getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + "Check out the new version v" + newVersion + " of Tangled Maze: " + websiteURL);
 					break;
-				
+
 				case LATEST:
-					getLogger().info("You are running the latest version of TangledMaze :)");
+					getLogger().info("You are running the latest version of Tangled Maze :)");
 					break;
-				
+
 				case UNAVAILABLE:
 					getLogger().info("Unable to check for updates...");
 			}
-		}).
-				
-				check();
+		}).check();
 	}
 }
