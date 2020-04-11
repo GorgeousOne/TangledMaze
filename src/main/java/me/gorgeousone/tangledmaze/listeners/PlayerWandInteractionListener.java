@@ -75,6 +75,9 @@ public class PlayerWandInteractionListener implements Listener {
 	
 	private void hidePlayersClipsIfHit(Player player, Block clickedBlock) {
 		
+		if(!player.hasPermission(Constants.BUILD_PERM))
+			return;
+		
 		Maze maze = mazeHandler.getMaze(player);
 		
 		if (maze.hasClip() && mazeHandler.isMazeVisible(maze) && maze.getClip().isBorderBlock(clickedBlock))

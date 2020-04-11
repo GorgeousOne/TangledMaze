@@ -120,8 +120,6 @@ public class MazeHandler {
 			if(isHuman(sender))
 				sender.sendMessage("/tangledmaze start");
 			
-			if(sender.hasPermission(Constants.MAZE_BACKUP_PERM))
-				sender.sendMessage("/tangledmaze load <file>");
 			return null;
 		}
 		

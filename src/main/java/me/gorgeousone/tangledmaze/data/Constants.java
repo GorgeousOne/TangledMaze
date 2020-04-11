@@ -15,13 +15,11 @@ public class Constants {
 			BUILD_PERM = "tangledmaze.build",
 			WAND_PERM = "tangledmaze.getwand",
 			MAZE_TP_PERM = "tangledmaze.teleport",
-			MAZE_BACKUP_PERM = "tangledmaze.backup",
 			RELOAD_PERM = "tangledmaze.reload";
 	
 	public static final String prefix =
 			ChatColor.DARK_GREEN + "[" +
 			ChatColor.GREEN + "TM" +
-			ChatColor.GOLD + "+" +
 			ChatColor.DARK_GREEN + "] " +
 			ChatColor.YELLOW;
 	
